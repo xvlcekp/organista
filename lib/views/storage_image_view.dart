@@ -1,7 +1,12 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:organista/bloc/app_bloc.dart';
+import 'package:organista/bloc/app_state.dart';
+import 'package:organista/views/app.dart';
+import 'package:provider/provider.dart';
 
 class StorageImageView extends StatelessWidget {
   final Reference image;
@@ -25,9 +30,28 @@ class StorageImageView extends StatelessWidget {
           case ConnectionState.done:
             if (snapshot.hasData) {
               final data = snapshot.data!;
-              return Image.memory(
-                data,
-                fit: BoxFit.cover,
+              return GestureDetector(
+                child: Image.memory(
+                  data,
+                  fit: BoxFit.cover,
+                  height: double.infinity,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                ),
+                onTap: () {
+                  AppBloc bloc = context.read<AppBloc>();
+                  log("User email is ${bloc.state.user!.email}");
+                  log('Tapped image ${image.fullPath} and logged in user is ');
+                  Scaffold(
+                    body: Image.memory(
+                      data,
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                    ),
+                  );
+                },
               );
             } else {
               return const Center(

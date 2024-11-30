@@ -41,7 +41,7 @@ class PhotoGalleryView extends HookWidget {
         ],
       ),
       body: GridView.count(
-        crossAxisCount: 2,
+        crossAxisCount: 1,
         padding: const EdgeInsets.all(8),
         mainAxisSpacing: 20.0,
         crossAxisSpacing: 20.0,
