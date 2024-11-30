@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "613500039629",
+    "project_id": "organista-project",
+    "storage_bucket": "organista-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613500039629:android:8a1fda8cbbe165717fd484",
+        "android_client_info": {
+          "package_name": "sk.anickaapavol.organista"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlY4D0adf0Z2LvJZOVtY_ziDdLUcJst9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
