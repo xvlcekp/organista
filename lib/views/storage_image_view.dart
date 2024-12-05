@@ -1,15 +1,12 @@
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:organista/bloc/app_bloc.dart';
-import 'package:organista/bloc/app_state.dart';
-import 'package:organista/views/app.dart';
-import 'package:provider/provider.dart';
+import 'package:organista/views/fullscreen_image_view.dart';
 
 class StorageImageView extends StatelessWidget {
   final Reference image;
+
   const StorageImageView({
     super.key,
     required this.image,
@@ -31,6 +28,14 @@ class StorageImageView extends StatelessWidget {
             if (snapshot.hasData) {
               final data = snapshot.data!;
               return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => FullscreenImageView(imageData: data),
+                    ),
+                  );
+                },
                 child: Image.memory(
                   data,
                   fit: BoxFit.cover,
@@ -38,24 +43,10 @@ class StorageImageView extends StatelessWidget {
                   width: double.infinity,
                   alignment: Alignment.center,
                 ),
-                onTap: () {
-                  AppBloc bloc = context.read<AppBloc>();
-                  log("User email is ${bloc.state.user!.email}");
-                  log('Tapped image ${image.fullPath} and logged in user is ');
-                  Scaffold(
-                    body: Image.memory(
-                      data,
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                    ),
-                  );
-                },
               );
             } else {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: Text("Failed to load image"),
               );
             }
         }

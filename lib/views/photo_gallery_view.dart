@@ -27,11 +27,13 @@ class PhotoGalleryView extends HookWidget {
               if (image == null) {
                 return;
               }
-              context.read<AppBloc>().add(
-                    AppEventUploadImage(
-                      filePathToUpload: image.path,
-                    ),
-                  );
+              if (context.mounted) {
+                context.read<AppBloc>().add(
+                      AppEventUploadImage(
+                        filePathToUpload: image.path,
+                      ),
+                    );
+              }
             },
             icon: const Icon(
               Icons.upload,
@@ -41,7 +43,7 @@ class PhotoGalleryView extends HookWidget {
         ],
       ),
       body: GridView.count(
-        crossAxisCount: 1,
+        crossAxisCount: 3,
         padding: const EdgeInsets.all(8),
         mainAxisSpacing: 20.0,
         crossAxisSpacing: 20.0,
