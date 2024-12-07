@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:organista/views/fullscreen_image_view.dart';
 
 class StorageImageView extends StatelessWidget {
   final Reference image;
@@ -27,22 +26,12 @@ class StorageImageView extends StatelessWidget {
           case ConnectionState.done:
             if (snapshot.hasData) {
               final data = snapshot.data!;
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => FullscreenImageView(imageData: data),
-                    ),
-                  );
-                },
-                child: Image.memory(
-                  data,
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                ),
+              return Image.memory(
+                data,
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
+                alignment: Alignment.center,
               );
             } else {
               return const Center(
