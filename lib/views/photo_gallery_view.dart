@@ -5,12 +5,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:organista/bloc/app_bloc.dart';
 import 'package:organista/bloc/app_event.dart';
 import 'package:organista/bloc/app_state.dart';
+import 'package:organista/managers/image_cache_manager.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/views/storage_image_view.dart';
 
 class PhotoGalleryView extends HookWidget {
-  const PhotoGalleryView({super.key});
+  PhotoGalleryView({super.key});
+
+  final ImageCacheManager _cacheManager = ImageCacheManager();
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +58,20 @@ class PhotoGalleryView extends HookWidget {
           final image = images.elementAt(index);
           return GestureDetector(
             onTap: () {
-              // Navigate to FullscreenImageGallery
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => FullScreenImageGallery(
                     imageList: images.toList(), // Convert to Uint8List
                     initialIndex: index,
+                    cacheManager: _cacheManager,
                   ),
                 ),
               );
             },
             child: StorageImageView(
               image: image,
+              cacheManager: _cacheManager,
             ),
           );
         },

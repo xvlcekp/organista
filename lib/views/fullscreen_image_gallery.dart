@@ -2,15 +2,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/fragments/switch_image.dart';
+import 'package:organista/managers/image_cache_manager.dart';
 
 class FullScreenImageGallery extends HookWidget {
   final List<Reference> imageList;
   final int initialIndex;
+  final ImageCacheManager cacheManager;
 
   const FullScreenImageGallery({
     super.key,
     required this.imageList,
     this.initialIndex = 0,
+    required this.cacheManager,
   });
 
   void _handleDoubleTap(TransformationController controller) {
@@ -53,29 +57,15 @@ class FullScreenImageGallery extends HookWidget {
               maxScale: 4.0,
               child: Center(
                 child: FutureBuilder<Uint8List?>(
-                  future: imageList[currentIndex.value].getData(),
+                  future: cacheManager.loadImage(imageList[currentIndex.value]),
                   builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
-                      case ConnectionState.active:
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      case ConnectionState.done:
-                        if (snapshot.hasData) {
-                          final data = snapshot.data!;
-                          return Image.memory(
-                            data,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.center,
-                          );
-                        } else {
-                          return const Center(
-                            child: Text("Failed to load image"),
-                          );
-                        }
+                    if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
                     }
+                    return Image.memory(
+                      snapshot.data!,
+                      fit: BoxFit.contain,
+                    );
                   },
                 ),
               ),
@@ -105,29 +95,6 @@ class FullScreenImageGallery extends HookWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-enum SwitchImageSide { left, right }
-
-class SwitchImage extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback switchImage;
-  final SwitchImageSide side;
-
-  const SwitchImage({super.key, required this.icon, required this.switchImage, required this.side});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: side == SwitchImageSide.left ? 16 : null,
-      right: side == SwitchImageSide.right ? 16 : null,
-      top: MediaQuery.of(context).size.height / 2 - 24,
-      child: IconButton(
-        icon: Icon(icon, color: Colors.white, size: 48),
-        onPressed: switchImage,
       ),
     );
   }

@@ -50,7 +50,7 @@ class App extends StatelessWidget {
             if (appState is AppStateLoggedOut) {
               return const LoginView();
             } else if (appState is AppStateLoggedIn) {
-              return const PhotoGalleryView();
+              return PhotoGalleryView();
             } else if (appState is AppStateIsInRegistrationView) {
               return const RegisterView();
             } else {
