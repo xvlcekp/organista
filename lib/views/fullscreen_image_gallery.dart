@@ -1,4 +1,5 @@
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -21,18 +22,19 @@ class FullScreenImageGallery extends HookWidget {
   Widget build(BuildContext context) {
     // Use hooks for state management
     final currentIndex = useState(initialIndex);
-    final TransformationController controller = useTransformationController(
-      initialValue: Matrix4.identity(),
-    );
+    final TransformationController controller = useTransformationController();
+
+    bool notLastImage() => currentIndex.value < imageList.length - 1;
+    bool notFirstImage() => currentIndex.value > 0;
 
     void goToNextImage() {
-      if (currentIndex.value < imageList.length - 1) {
+      if (notLastImage()) {
         currentIndex.value++;
       }
     }
 
     void goToPreviousImage() {
-      if (currentIndex.value > 0) {
+      if (notFirstImage()) {
         currentIndex.value--;
       }
     }
@@ -50,43 +52,50 @@ class FullScreenImageGallery extends HookWidget {
               minScale: 1.0,
               maxScale: 4.0,
               child: Center(
-                child: FutureBuilder<String>(
-                  future: imageList[currentIndex.value].getDownloadURL(),
+                child: FutureBuilder<Uint8List?>(
+                  future: imageList[currentIndex.value].getData(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                      case ConnectionState.active:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case ConnectionState.done:
+                        if (snapshot.hasData) {
+                          final data = snapshot.data!;
+                          return Image.memory(
+                            data,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.center,
+                          );
+                        } else {
+                          return const Center(
+                            child: Text("Failed to load image"),
+                          );
+                        }
                     }
-                    if (snapshot.hasError || !snapshot.hasData) {
-                      return const Icon(Icons.broken_image, color: Colors.white);
-                    }
-                    return Image.network(
-                      snapshot.data!,
-                      fit: BoxFit.contain,
-                    );
                   },
                 ),
               ),
             ),
           ),
-          if (currentIndex.value > 0)
-            Positioned(
-              left: 16,
-              top: MediaQuery.of(context).size.height / 2 - 24,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white, size: 48),
-                onPressed: goToPreviousImage,
-              ),
+          // Left Arrow
+          if (notFirstImage())
+            SwitchImage(
+              switchImage: goToPreviousImage,
+              icon: Icons.arrow_back,
+              side: SwitchImageSide.left,
             ),
           // Right Arrow
-          if (currentIndex.value < imageList.length - 1)
-            Positioned(
-              right: 16,
-              top: MediaQuery.of(context).size.height / 2 - 24,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward, color: Colors.white, size: 48),
-                onPressed: goToNextImage,
-              ),
+          if (notLastImage())
+            SwitchImage(
+              switchImage: goToNextImage,
+              icon: Icons.arrow_forward,
+              side: SwitchImageSide.right,
             ),
+          // Close (X) left upper part
           Positioned(
             top: 40,
             left: 16,
@@ -96,6 +105,29 @@ class FullScreenImageGallery extends HookWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+enum SwitchImageSide { left, right }
+
+class SwitchImage extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback switchImage;
+  final SwitchImageSide side;
+
+  const SwitchImage({super.key, required this.icon, required this.switchImage, required this.side});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: side == SwitchImageSide.left ? 16 : null,
+      right: side == SwitchImageSide.right ? 16 : null,
+      top: MediaQuery.of(context).size.height / 2 - 24,
+      child: IconButton(
+        icon: Icon(icon, color: Colors.white, size: 48),
+        onPressed: switchImage,
       ),
     );
   }
