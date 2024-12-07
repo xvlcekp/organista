@@ -1,10 +1,14 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:organista/bloc/app_bloc.dart';
 import 'package:organista/bloc/app_event.dart';
 import 'package:organista/bloc/app_state.dart';
+import 'package:organista/dialogs/delete_image_dialog.dart';
+import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/managers/image_cache_manager.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
@@ -17,65 +21,94 @@ class PhotoGalleryView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color evenItemColor = colorScheme.primary.withOpacity(0.5);
+
     final picker = useMemoized(() => ImagePicker(), [key]);
-    final images = context.watch<AppBloc>().state.images ?? [];
+    final List<Reference> images = context.watch<AppBloc>().state.images?.toList() ?? [];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Photo Gallery'),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final image = await picker.pickImage(
-                source: ImageSource.gallery,
-              );
-              if (image == null) {
-                return;
-              }
-              if (context.mounted) {
-                context.read<AppBloc>().add(
-                      AppEventUploadImage(
-                        filePathToUpload: image.path,
-                      ),
-                    );
-              }
-            },
-            icon: const Icon(
-              Icons.upload,
+        appBar: AppBar(
+          title: const Text('Photo Gallery'),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                final image = await picker.pickImage(
+                  source: ImageSource.gallery,
+                );
+                if (image == null) {
+                  return;
+                }
+                if (context.mounted) {
+                  context.read<AppBloc>().add(
+                        AppEventUploadImage(
+                          filePathToUpload: image.path,
+                        ),
+                      );
+                }
+              },
+              icon: const Icon(
+                Icons.upload,
+              ),
             ),
-          ),
-          const MainPopupMenuButton(),
-        ],
-      ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 20.0,
-          crossAxisSpacing: 20.0,
+            const MainPopupMenuButton(),
+          ],
         ),
-        itemCount: images.length,
-        itemBuilder: (context, index) {
-          final image = images.elementAt(index);
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => FullScreenImageGallery(
-                    imageList: images.toList(), // Convert to Uint8List
-                    initialIndex: index,
+        body: ReorderableListView.builder(
+          padding: const EdgeInsets.only(top: 10),
+          itemCount: images.length,
+          itemBuilder: (context, index) {
+            final image = images.elementAt(index);
+            return GestureDetector(
+              key: Key(image.name),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => FullScreenImageGallery(
+                      imageList: images, // Convert to Uint8List
+                      initialIndex: index,
+                      cacheManager: _cacheManager,
+                    ),
+                  ),
+                );
+              },
+              child: ListTile(
+                leading: SizedBox(
+                  height: 200,
+                  width: 70,
+                  child: StorageImageView(
+                    image: image,
                     cacheManager: _cacheManager,
                   ),
                 ),
-              );
-            },
-            child: StorageImageView(
-              image: image,
-              cacheManager: _cacheManager,
-            ),
-          );
-        },
-      ),
-    );
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                tileColor: evenItemColor,
+                title: Text('Item $index and name ${image.name.lastChars(4)}'),
+                trailing: IconButton(
+                  onPressed: () async {
+                    final shouldDeleteImage = await showDeleteImageDialog(context);
+                    if (shouldDeleteImage && context.mounted) {
+                      context.read<AppBloc>().add(
+                            AppEventDeleteImage(
+                              fileRefToDelete: image,
+                            ),
+                          );
+                    }
+                    return;
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              ),
+            );
+          },
+          onReorderStart: (_) => HapticFeedback.heavyImpact(),
+          onReorder: (int oldIndex, int newIndex) {
+            if (oldIndex < newIndex) {
+              newIndex -= 1;
+            }
+            final Reference item = images.removeAt(oldIndex);
+            images.insert(newIndex, item);
+          },
+        ));
   }
 }

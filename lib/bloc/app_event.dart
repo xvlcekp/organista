@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
 
 @immutable
@@ -11,6 +12,15 @@ class AppEventUploadImage implements AppEvent {
 
   const AppEventUploadImage({
     required this.filePathToUpload,
+  });
+}
+
+@immutable
+class AppEventDeleteImage implements AppEvent {
+  final Reference fileRefToDelete;
+
+  const AppEventDeleteImage({
+    required this.fileRefToDelete,
   });
 }
 

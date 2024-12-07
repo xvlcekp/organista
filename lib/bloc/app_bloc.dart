@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
 import 'package:organista/bloc/app_event.dart';
 import 'package:organista/bloc/app_state.dart';
+import 'package:organista/utils/delete_image.dart';
 import 'package:organista/utils/upload_image.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
@@ -230,6 +231,43 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           userId: user.uid,
         );
         // after upload is complete, grab the latest file references
+        final images = await _getImages(user.uid);
+        // emit the new images and turn off loading
+        emit(
+          AppStateLoggedIn(
+            isLoading: false,
+            user: user,
+            images: images,
+          ),
+        );
+      },
+    );
+
+    // handle uploading images
+    on<AppEventDeleteImage>(
+      (event, emit) async {
+        final user = state.user;
+        // log user out if we don't have an actual user in app state
+        if (user == null) {
+          emit(
+            const AppStateLoggedOut(
+              isLoading: false,
+            ),
+          );
+          return;
+        }
+        // start the loading process
+        emit(
+          AppStateLoggedIn(
+            isLoading: true,
+            user: user,
+            images: state.images ?? [],
+          ),
+        );
+        // remove the file
+        final Reference referenceFile = event.fileRefToDelete;
+        await removeImage(file: referenceFile);
+        // after remove is complete, grab the latest file references
         final images = await _getImages(user.uid);
         // emit the new images and turn off loading
         emit(
