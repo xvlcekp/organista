@@ -1,12 +1,10 @@
-import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
 import 'package:organista/bloc/app_event.dart';
 import 'package:organista/bloc/app_state.dart';
-import 'package:organista/utils/delete_image.dart';
-import 'package:organista/utils/upload_image.dart';
+import 'package:organista/utils/firebase_utils.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc()
@@ -225,7 +223,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           ),
         );
         // upload the file
-        final file = File(event.filePathToUpload);
+        final file = event.file;
         await uploadImage(
           file: file,
           userId: user.uid,

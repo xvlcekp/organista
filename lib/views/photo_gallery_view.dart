@@ -10,6 +10,7 @@ import 'package:organista/bloc/app_state.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/managers/image_cache_manager.dart';
+import 'package:organista/views/download_image_view.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/views/storage_image_view.dart';
@@ -32,6 +33,19 @@ class PhotoGalleryView extends HookWidget {
           actions: [
             IconButton(
               onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DownloadImageView(cacheManager: _cacheManager),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.add,
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
                 final image = await picker.pickImage(
                   source: ImageSource.gallery,
                 );
@@ -41,7 +55,7 @@ class PhotoGalleryView extends HookWidget {
                 if (context.mounted) {
                   context.read<AppBloc>().add(
                         AppEventUploadImage(
-                          filePathToUpload: image.path,
+                          file: image.path,
                         ),
                       );
                 }
