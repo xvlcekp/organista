@@ -7,9 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:613500039629:android:8a1fda8cbbe165717fd484",
+        "mobilesdk_app_id": "1:613500039629:android:309c878b8223ac997fd484",
         "android_client_info": {
           "package_name": "sk.anickaapavol.organista"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlY4D0adf0Z2LvJZOVtY_ziDdLUcJst9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613500039629:android:8a1fda8cbbe165717fd484",
+        "android_client_info": {
+          "package_name": "sk.organista"
         }
       },
       "oauth_client": [],

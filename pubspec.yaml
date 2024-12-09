@@ -46,6 +46,7 @@ dependencies:
   firebase_storage: ^12.3.6
   flutter_hooks: ^0.20.5
   collection: ^1.18.0
+  firebase_crashlytics: ^4.2.0
 
 dev_dependencies:
   flutter_test:
