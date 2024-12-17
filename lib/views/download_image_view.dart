@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart' show compareNatural;
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,16 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/bloc/app_bloc.dart';
 import 'package:organista/bloc/app_event.dart';
-import 'package:organista/managers/image_cache_manager.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 
 class DownloadImageView extends HookWidget {
-  final ImageCacheManager cacheManager;
-
-  const DownloadImageView({
-    super.key,
-    required this.cacheManager,
-  });
+  const DownloadImageView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +25,16 @@ class DownloadImageView extends HookWidget {
     // Fetch images dynamically based on the search query
     Future<void> fetchImages(String query) async {
       isLoading.value = true;
-      try {
-        final ListResult result = await publicStorage.ref('JKS').listAll();
-        // Filter images based on the search query and sort them numerically
-        final List<Reference> filtered = result.items
-            .where((ref) => ref.name.contains(query)) // Filter by query
-            .toList()
-          ..sort((a, b) => compareNatural(a.name, b.name));
+      final ListResult result = await publicStorage.ref('JKS').listAll();
+      // Filter images based on the search query and sort them numerically
+      final List<Reference> filtered = result.items
+          .where((ref) => ref.name.contains(query)) // Filter by query
+          .toList()
+        ..sort((a, b) => compareNatural(a.name, b.name));
 
-        allImageRefs.value = result.items;
-        filteredImageRefs.value = filtered;
-      } catch (e) {
-        print("Error fetching images: $e");
-      } finally {
-        isLoading.value = false;
-      }
+      allImageRefs.value = result.items;
+      filteredImageRefs.value = filtered;
+      isLoading.value = false;
     }
 
     // Fetch all images when the widget is initialized
@@ -68,7 +58,8 @@ class DownloadImageView extends HookWidget {
                 ),
               );
         }
-      } catch (e) {
+      } catch (e, stacktrace) {
+        FirebaseCrashlytics.instance.recordError(e, stacktrace);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error: $e')),
@@ -112,13 +103,11 @@ class DownloadImageView extends HookWidget {
                     icon: const Icon(Icons.download),
                     onPressed: () => downloadAndMoveImage(ref),
                   ),
-                  onTap: () => Navigator.push(
-                    context,
+                  onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => FullScreenImageGallery(
                         imageList: [ref], // Convert to Uint8List
                         initialIndex: 0,
-                        cacheManager: cacheManager,
                       ),
                     ),
                   ),

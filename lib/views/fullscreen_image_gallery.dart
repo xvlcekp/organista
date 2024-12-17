@@ -8,13 +8,11 @@ import 'package:organista/managers/image_cache_manager.dart';
 class FullScreenImageGallery extends HookWidget {
   final List<Reference> imageList;
   final int initialIndex;
-  final ImageCacheManager cacheManager;
 
   const FullScreenImageGallery({
     super.key,
     required this.imageList,
     this.initialIndex = 0,
-    required this.cacheManager,
   });
 
   void _handleDoubleTap(TransformationController controller) {
@@ -57,7 +55,7 @@ class FullScreenImageGallery extends HookWidget {
               maxScale: 4.0,
               child: Center(
                 child: FutureBuilder<Uint8List?>(
-                  future: cacheManager.loadImage(imageList[currentIndex.value]),
+                  future: ImageCacheManager().loadImage(imageList[currentIndex.value]),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());

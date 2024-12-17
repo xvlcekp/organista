@@ -1,23 +1,19 @@
 import 'dart:typed_data';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:organista/managers/image_cache_manager.dart';
 
 class StorageImageView extends StatelessWidget {
-  final Reference image;
-  final ImageCacheManager cacheManager;
+  final Future<Uint8List?> imageFuture;
 
   const StorageImageView({
     super.key,
-    required this.image,
-    required this.cacheManager,
+    required this.imageFuture,
   });
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Uint8List?>(
-      future: cacheManager.loadImage(image),
+      future: imageFuture, // Use the cached future
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());

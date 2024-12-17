@@ -50,7 +50,7 @@ class App extends StatelessWidget {
             if (appState is AppStateLoggedOut) {
               return const LoginView();
             } else if (appState is AppStateLoggedIn) {
-              return PhotoGalleryView();
+              return const PhotoGalleryView();
             } else if (appState is AppStateIsInRegistrationView) {
               return const RegisterView();
             } else {
@@ -59,6 +59,10 @@ class App extends StatelessWidget {
             }
           },
         ),
+        // TODO: named routes how to acces it - based on vandad's 1. video of state management course
+        // routes: {
+        //   '/add-image':(context) => const
+        // },
       ),
     );
   }

@@ -16,9 +16,7 @@ import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/views/storage_image_view.dart';
 
 class PhotoGalleryView extends HookWidget {
-  PhotoGalleryView({super.key});
-
-  final ImageCacheManager _cacheManager = ImageCacheManager();
+  const PhotoGalleryView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,102 +25,99 @@ class PhotoGalleryView extends HookWidget {
 
     final picker = useMemoized(() => ImagePicker(), [key]);
     final List<Reference> images = context.watch<AppBloc>().state.images?.toList() ?? [];
+    // Cache Futures for images
+    final cachedFutures = useState<Map<Reference, Future<Uint8List?>>>(<Reference, Future<Uint8List?>>{});
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Photo Gallery'),
-          actions: [
-            IconButton(
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => DownloadImageView(cacheManager: _cacheManager),
-                  ),
-                );
-              },
-              icon: const Icon(
-                Icons.add,
+      appBar: AppBar(
+        title: const Text('Photo Gallery'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const DownloadImageView(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+          ),
+          IconButton(
+            onPressed: () async {
+              final image = await picker.pickImage(
+                source: ImageSource.gallery,
+              );
+              if (image == null) {
+                return;
+              }
+              if (context.mounted) {
+                context.read<AppBloc>().add(
+                      AppEventUploadImage(
+                        file: image.path,
+                      ),
+                    );
+              }
+            },
+            icon: const Icon(Icons.upload),
+          ),
+          const MainPopupMenuButton(),
+        ],
+      ),
+      body: ReorderableListView.builder(
+        padding: const EdgeInsets.only(top: 10),
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          final image = images.elementAt(index);
+          // Cache future for this image if not already cached
+          cachedFutures.value.putIfAbsent(image, () => ImageCacheManager().loadImage(image));
+
+          return ListTile(
+            key: Key(image.name),
+            leading: SizedBox(
+              height: 200,
+              width: 70,
+              child: StorageImageView(
+                imageFuture: cachedFutures.value[image]!,
               ),
             ),
-            IconButton(
+            contentPadding: const EdgeInsets.symmetric(vertical: 10),
+            tileColor: evenItemColor,
+            title: Text('Item $index and name ${image.name.lastChars(4)}'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => FullScreenImageGallery(
+                    imageList: images, // Convert to Uint8List
+                    initialIndex: index,
+                  ),
+                ),
+              );
+            },
+            trailing: IconButton(
               onPressed: () async {
-                final image = await picker.pickImage(
-                  source: ImageSource.gallery,
-                );
-                if (image == null) {
-                  return;
-                }
-                if (context.mounted) {
+                final shouldDeleteImage = await showDeleteImageDialog(context);
+                if (shouldDeleteImage && context.mounted) {
                   context.read<AppBloc>().add(
-                        AppEventUploadImage(
-                          file: image.path,
+                        AppEventDeleteImage(
+                          fileRefToDelete: image,
                         ),
                       );
                 }
+                return;
               },
-              icon: const Icon(
-                Icons.upload,
-              ),
+              icon: const Icon(Icons.delete),
             ),
-            const MainPopupMenuButton(),
-          ],
-        ),
-        body: ReorderableListView.builder(
-          padding: const EdgeInsets.only(top: 10),
-          itemCount: images.length,
-          itemBuilder: (context, index) {
-            final image = images.elementAt(index);
-            return GestureDetector(
-              key: Key(image.name),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FullScreenImageGallery(
-                      imageList: images, // Convert to Uint8List
-                      initialIndex: index,
-                      cacheManager: _cacheManager,
-                    ),
-                  ),
-                );
-              },
-              child: ListTile(
-                leading: SizedBox(
-                  height: 200,
-                  width: 70,
-                  child: StorageImageView(
-                    image: image,
-                    cacheManager: _cacheManager,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                tileColor: evenItemColor,
-                title: Text('Item $index and name ${image.name.lastChars(4)}'),
-                trailing: IconButton(
-                  onPressed: () async {
-                    final shouldDeleteImage = await showDeleteImageDialog(context);
-                    if (shouldDeleteImage && context.mounted) {
-                      context.read<AppBloc>().add(
-                            AppEventDeleteImage(
-                              fileRefToDelete: image,
-                            ),
-                          );
-                    }
-                    return;
-                  },
-                  icon: const Icon(Icons.delete),
-                ),
-              ),
-            );
-          },
-          onReorderStart: (_) => HapticFeedback.heavyImpact(),
-          onReorder: (int oldIndex, int newIndex) {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final Reference item = images.removeAt(oldIndex);
-            images.insert(newIndex, item);
-          },
-        ));
+          );
+        },
+        onReorderStart: (_) => HapticFeedback.heavyImpact(),
+        onReorder: (int oldIndex, int newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final Reference item = images.removeAt(oldIndex);
+          images.insert(newIndex, item);
+        },
+      ),
+    );
   }
 }
