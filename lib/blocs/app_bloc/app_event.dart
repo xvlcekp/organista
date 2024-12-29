@@ -18,10 +18,10 @@ class AppEventUploadImage implements AppEvent {
 }
 
 @immutable
-class AppEventDeleteImage implements AppEvent {
+class AppEventDeleteMusicSheet implements AppEvent {
   final MusicSheet musicSheetToDelete;
 
-  const AppEventDeleteImage({
+  const AppEventDeleteMusicSheet({
     required this.musicSheetToDelete,
   });
 }

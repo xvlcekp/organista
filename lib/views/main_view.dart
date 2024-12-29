@@ -105,7 +105,7 @@ class MainView extends HookWidget {
                     final shouldDeleteImage = await showDeleteImageDialog(context);
                     if (shouldDeleteImage && context.mounted) {
                       context.read<AppBloc>().add(
-                            AppEventDeleteImage(
+                            AppEventDeleteMusicSheet(
                               musicSheetToDelete: musicSheet,
                             ),
                           );

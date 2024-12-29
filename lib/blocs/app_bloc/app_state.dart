@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:organista/auth/auth_error.dart';
+import 'package:organista/models/music_sheets/music_sheet.dart';
 
 @immutable
 abstract class AppState {
@@ -19,21 +18,19 @@ abstract class AppState {
 @immutable
 class AppStateLoggedIn extends AppState with EquatableMixin {
   final User user;
-  final Iterable<Reference> images;
-  final Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> imagesData;
+  final Iterable<MusicSheet> musicSheets;
   const AppStateLoggedIn({
     required super.isLoading,
     required this.user,
-    required this.images,
-    required this.imagesData,
+    required this.musicSheets,
     super.authError,
   });
 
   @override
-  String toString() => 'AppStateLoggedIn, images.length = ${images.length}';
+  String toString() => 'AppStateLoggedIn, images.length = ${musicSheets.length}';
 
   @override
-  List<Object?> get props => [isLoading, user.uid, images.length];
+  List<Object?> get props => [isLoading, user.uid, musicSheets.length];
 }
 
 @immutable
@@ -67,21 +64,10 @@ extension GetUser on AppState {
 }
 
 extension GetImages on AppState {
-  Iterable<Reference>? get images {
+  Iterable<MusicSheet>? get musicSheets {
     final cls = this;
     if (cls is AppStateLoggedIn) {
-      return cls.images;
-    } else {
-      return null;
-    }
-  }
-}
-
-extension GetImagesData on AppState {
-  Iterable<QueryDocumentSnapshot<Map<String, dynamic>>>? get imagesData {
-    final cls = this;
-    if (cls is AppStateLoggedIn) {
-      return cls.imagesData;
+      return cls.musicSheets;
     } else {
       return null;
     }
