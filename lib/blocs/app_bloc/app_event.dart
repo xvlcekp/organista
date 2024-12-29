@@ -1,5 +1,5 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:organista/models/music_sheets/music_sheet.dart';
 
 @immutable
 abstract class AppEvent {
@@ -9,18 +9,20 @@ abstract class AppEvent {
 @immutable
 class AppEventUploadImage implements AppEvent {
   final dynamic file;
+  final String fileName;
 
   const AppEventUploadImage({
     required this.file,
+    required this.fileName,
   });
 }
 
 @immutable
 class AppEventDeleteImage implements AppEvent {
-  final Reference fileRefToDelete;
+  final MusicSheet musicSheetToDelete;
 
   const AppEventDeleteImage({
-    required this.fileRefToDelete,
+    required this.musicSheetToDelete,
   });
 }
 

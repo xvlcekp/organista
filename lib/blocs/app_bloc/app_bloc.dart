@@ -2,8 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
-import 'package:organista/bloc/app_event.dart';
-import 'package:organista/bloc/app_state.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:organista/blocs/app_bloc/app_event.dart';
+import 'package:organista/blocs/app_bloc/app_state.dart';
+import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/utils/firebase_utils.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
@@ -37,14 +39,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           );
           // get images for user
           final user = userCredential.user!;
-          final images = await _getImages(user.uid);
-          emit(
-            AppStateLoggedIn(
-              isLoading: false,
-              user: user,
-              images: images,
-            ),
-          );
+          await _handleLogInWithImages(user, emit);
         } on FirebaseAuthException catch (e) {
           emit(
             AppStateLoggedOut(
@@ -81,11 +76,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             password: password,
           );
           emit(
-            AppStateLoggedIn(
-              isLoading: false,
-              user: credentials.user!,
-              images: const [],
-            ),
+            AppStateLoggedIn(isLoading: false, user: credentials.user!, images: const [], imagesData: const []),
           );
         } on FirebaseAuthException catch (e) {
           emit(
@@ -108,15 +99,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             ),
           );
         } else {
-          // go grab the user's uploaded images
-          final images = await _getImages(user.uid);
-          emit(
-            AppStateLoggedIn(
-              isLoading: false,
-              user: user,
-              images: images,
-            ),
-          );
+          await _handleLogInWithImages(user, emit);
         }
       },
     );
@@ -158,6 +141,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: true,
             user: user,
             images: state.images ?? [],
+            imagesData: state.imagesData ?? [],
           ),
         );
         // delete the user folder
@@ -186,6 +170,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
               isLoading: false,
               user: user,
               images: state.images ?? [],
+              imagesData: state.imagesData ?? [],
               authError: AuthError.from(e),
             ),
           );
@@ -220,24 +205,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: true,
             user: user,
             images: state.images ?? [],
+            imagesData: state.imagesData ?? [],
           ),
         );
         // upload the file
         final file = event.file;
+        final fileName = event.fileName;
         await uploadImage(
           file: file,
           userId: user.uid,
+          fileName: fileName,
         );
-        // after upload is complete, grab the latest file references
-        final images = await _getImages(user.uid);
-        // emit the new images and turn off loading
-        emit(
-          AppStateLoggedIn(
-            isLoading: false,
-            user: user,
-            images: images,
-          ),
-        );
+        await _handleLogInWithImages(user, emit);
       },
     );
 
@@ -260,24 +239,34 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: true,
             user: user,
             images: state.images ?? [],
+            imagesData: state.imagesData ?? [],
           ),
         );
         // remove the file
-        final Reference referenceFile = event.fileRefToDelete;
-        await removeImage(file: referenceFile);
+        final MusicSheet musicSheetToDelete = event.musicSheetToDelete;
+        Reference imageToDelete = FirebaseStorage.instance.ref(musicSheetToDelete.originalFileStorageId);
+        await removeImage(file: imageToDelete);
+        await removeMusicSheet(musicSheet: musicSheetToDelete);
         // after remove is complete, grab the latest file references
-        final images = await _getImages(user.uid);
-        // emit the new images and turn off loading
-        emit(
-          AppStateLoggedIn(
-            isLoading: false,
-            user: user,
-            images: images,
-          ),
-        );
+        await _handleLogInWithImages(user, emit);
       },
     );
   }
 
   Future<Iterable<Reference>> _getImages(String userId) => FirebaseStorage.instance.ref(userId).list().then((listResult) => listResult.items);
+
+  Future<Iterable<QueryDocumentSnapshot<Map<String, dynamic>>>> _getImageData(String userId) => FirebaseFirestore.instance.collection(userId).get().then((onValue) => onValue.docs);
+
+  Future<void> _handleLogInWithImages(User user, Emitter<AppState> emit) async {
+    final images = await _getImages(user.uid);
+    final imagesData = await _getImageData(user.uid);
+    emit(
+      AppStateLoggedIn(
+        isLoading: false,
+        user: user,
+        images: images,
+        imagesData: imagesData,
+      ),
+    );
+  }
 }

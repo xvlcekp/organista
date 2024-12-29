@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
@@ -15,34 +17,23 @@ abstract class AppState {
 }
 
 @immutable
-class AppStateLoggedIn extends AppState {
+class AppStateLoggedIn extends AppState with EquatableMixin {
   final User user;
   final Iterable<Reference> images;
+  final Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> imagesData;
   const AppStateLoggedIn({
     required super.isLoading,
     required this.user,
     required this.images,
+    required this.imagesData,
     super.authError,
   });
 
   @override
-  bool operator ==(other) {
-    final otherClass = other;
-    if (otherClass is AppStateLoggedIn) {
-      return isLoading == otherClass.isLoading && user.uid == otherClass.user.uid && images.length == otherClass.images.length;
-    } else {
-      return false;
-    }
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        user.uid,
-        images,
-      );
-
-  @override
   String toString() => 'AppStateLoggedIn, images.length = ${images.length}';
+
+  @override
+  List<Object?> get props => [isLoading, user.uid, images.length];
 }
 
 @immutable
@@ -80,6 +71,17 @@ extension GetImages on AppState {
     final cls = this;
     if (cls is AppStateLoggedIn) {
       return cls.images;
+    } else {
+      return null;
+    }
+  }
+}
+
+extension GetImagesData on AppState {
+  Iterable<QueryDocumentSnapshot<Map<String, dynamic>>>? get imagesData {
+    final cls = this;
+    if (cls is AppStateLoggedIn) {
+      return cls.imagesData;
     } else {
       return null;
     }

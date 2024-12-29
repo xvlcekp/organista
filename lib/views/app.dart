@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/bloc/app_bloc.dart';
-import 'package:organista/bloc/app_event.dart';
-import 'package:organista/bloc/app_state.dart';
+import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/app_bloc/app_event.dart';
+import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/loading/loading_screen.dart';
+import 'package:organista/providers/music_sheets_provider.dart';
 import 'package:organista/views/login_view.dart';
-import 'package:organista/views/photo_gallery_view.dart';
+import 'package:organista/views/main_view.dart';
 import 'package:organista/views/register_view.dart';
 
 class App extends StatelessWidget {
@@ -50,7 +51,9 @@ class App extends StatelessWidget {
             if (appState is AppStateLoggedOut) {
               return const LoginView();
             } else if (appState is AppStateLoggedIn) {
-              return const PhotoGalleryView();
+              return const MusicSheetBlocProvider(
+                child: MainView(),
+              );
             } else if (appState is AppStateIsInRegistrationView) {
               return const RegisterView();
             } else {
