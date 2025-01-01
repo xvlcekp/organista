@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:organista/models/music_sheets/music_sheet.dart';
+part of 'app_bloc.dart';
 
 @immutable
 abstract class AppEvent {

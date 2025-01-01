@@ -1,8 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:organista/auth/auth_error.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+part of 'app_bloc.dart';
 
 @immutable
 abstract class AppState {

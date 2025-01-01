@@ -16,7 +16,7 @@ class SwitchImage extends StatelessWidget {
       right: side == SwitchImageSide.right ? 16 : null,
       top: MediaQuery.of(context).size.height / 2 - 24,
       child: IconButton(
-        icon: Icon(icon, color: Colors.white, size: 48),
+        icon: Icon(icon, color: Colors.blueAccent, size: 48),
         onPressed: switchImage,
       ),
     );

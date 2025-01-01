@@ -2,12 +2,15 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
-import 'package:organista/blocs/app_bloc/app_event.dart';
-import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repositary.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:flutter/foundation.dart' show immutable;
+import 'package:equatable/equatable.dart';
+
+part 'app_event.dart';
+part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(const AppStateLoggedOut(isLoading: false)) {
