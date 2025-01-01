@@ -72,3 +72,11 @@ class AppEventRegister implements AppEvent {
     required this.password,
   });
 }
+
+@immutable
+class AppEventReorderMusicSheet implements AppEvent {
+  final Iterable<MusicSheet> musicSheets;
+  const AppEventReorderMusicSheet({
+    required this.musicSheets,
+  });
+}

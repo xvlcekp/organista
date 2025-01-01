@@ -24,7 +24,7 @@ class MusicSheet extends Equatable {
         sequenceId = json[MusicSheetKey.sequenceId];
 
   @override
-  String toString() => 'MusicSheet, uid = $userId, createdAt = $createdAt, fileUrl = $fileUrl, fileName = $fileName, originalFileStorageId = $originalFileStorageId';
+  String toString() => 'MusicSheet, uid = $userId, createdAt = $createdAt, fileUrl = $fileUrl, fileName = $fileName, originalFileStorageId = $originalFileStorageId, sequenceId = $sequenceId';
 
   @override
   List<Object?> get props => [
@@ -33,5 +33,6 @@ class MusicSheet extends Equatable {
         fileUrl,
         fileName,
         originalFileStorageId,
+        sequenceId,
       ];
 }

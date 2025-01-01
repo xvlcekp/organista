@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_event.dart';
-import 'package:organista/blocs/music_sheet_bloc/music_sheet_bloc.dart';
+import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/managers/image_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -27,8 +27,6 @@ class MainView extends HookWidget {
     // final List<Reference> images = context.watch<AppBloc>().state.images?.toList() ?? [];
     // Cache Futures for images
     final cachedFutures = useState<Map<Reference, Future<Uint8List?>>>(<Reference, Future<Uint8List?>>{});
-
-    // final bloc = context.read<MusicSheetCubit>();
 
     return Scaffold(
       appBar: AppBar(
@@ -66,9 +64,10 @@ class MainView extends HookWidget {
           const MainPopupMenuButton(),
         ],
       ),
-      body: BlocBuilder<MusicSheetCubit, Iterable<MusicSheet>>(
+      body: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          var musicSheets = state.toList();
+          print("Item count is ${state.musicSheets?.length}");
+          var musicSheets = (state.musicSheets ?? []).toList();
           return ReorderableListView.builder(
             padding: const EdgeInsets.only(top: 10),
             itemCount: musicSheets.length,
@@ -123,6 +122,7 @@ class MainView extends HookWidget {
               }
               final MusicSheet item = musicSheets.removeAt(oldIndex);
               musicSheets.insert(newIndex, item);
+              context.read<AppBloc>().add(AppEventReorderMusicSheet(musicSheets: musicSheets));
             },
           );
         },

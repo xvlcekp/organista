@@ -30,7 +30,7 @@ class AppStateLoggedIn extends AppState with EquatableMixin {
   String toString() => 'AppStateLoggedIn, images.length = ${musicSheets.length}';
 
   @override
-  List<Object?> get props => [isLoading, user.uid, musicSheets.length];
+  List<Object?> get props => [isLoading, user.uid, musicSheets];
 }
 
 @immutable

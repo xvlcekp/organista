@@ -1,14 +1,12 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:organista/blocs/app_bloc/app_event.dart';
 import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/models/music_sheets/music_sheet_key.dart';
-import 'package:organista/utils/firebase_utils.dart';
+import 'package:organista/repositories/firebase_auth_repository.dart';
+import 'package:organista/repositories/firebase_firestore_repositary.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(const AppStateLoggedOut(isLoading: false)) {
@@ -21,6 +19,29 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppEventDeleteAccount>(_appEventDeleteAccount);
     on<AppEventUploadImage>(_appEventUploadImage);
     on<AppEventDeleteMusicSheet>(_appEventDeleteMusicSheet);
+    on<AppEventReorderMusicSheet>(_appEventReorderMusicSheet);
+  }
+
+  final FirebaseAuthRepository _firebaseAuthRepository = FirebaseAuthRepository();
+  final FirebaseFirestoreRepositary _firebaseFirestoreRepositary = FirebaseFirestoreRepositary();
+
+  void _appEventReorderMusicSheet(event, emit) async {
+    _firebaseFirestoreRepositary.musicSheetReorder(musicSheets: event.musicSheets);
+  }
+
+  _registerMusicSheetsSubscription(User user, emit) async {
+    return emit.forEach<Iterable<MusicSheet>>(_firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
+        onData: (musicSheets) => AppStateLoggedIn(
+              isLoading: false,
+              user: user,
+              musicSheets: musicSheets,
+            ),
+        onError: (_, __) => AppStateLoggedIn(
+              isLoading: false,
+              user: user,
+              musicSheets: const [],
+              authError: const AuthErrorUnknown(),
+            ));
   }
 
   void _appEventDeleteMusicSheet(event, emit) async {
@@ -45,10 +66,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // remove the file
     final MusicSheet musicSheetToDelete = event.musicSheetToDelete;
     Reference imageToDelete = FirebaseStorage.instance.ref(musicSheetToDelete.originalFileStorageId);
-    await removeImage(file: imageToDelete);
-    await removeMusicSheet(musicSheet: musicSheetToDelete);
-    // after remove is complete, grab the latest file references
-    await _handleLogInWithImages(user, emit);
+    await _firebaseFirestoreRepositary.removeImage(file: imageToDelete);
+    await _firebaseFirestoreRepositary.removeMusicSheet(musicSheet: musicSheetToDelete);
   }
 
   void _appEventUploadImage(event, emit) async {
@@ -73,16 +92,16 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // upload the file
     final file = event.file;
     final fileName = event.fileName;
-    await uploadImage(
+    await _firebaseFirestoreRepositary.uploadImage(
       file: file,
       userId: user.uid,
       fileName: fileName,
+      totalMusicSheets: state.musicSheets?.length ?? 0,
     );
-    await _handleLogInWithImages(user, emit);
   }
 
   void _appEventDeleteAccount(event, emit) async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _firebaseAuthRepository.getCurrentUser();
     // log the user out if we don't have a current user
     if (user == null) {
       emit(
@@ -113,7 +132,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // delete the user
       await user.delete();
       // log the user out
-      await FirebaseAuth.instance.signOut();
+      await _firebaseAuthRepository.signOut();
       // log the user out in the UI as well
       emit(
         const AppStateLoggedOut(
@@ -148,7 +167,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     // log the user out
-    await FirebaseAuth.instance.signOut();
+    await _firebaseAuthRepository.signOut();
     // log the user out in the UI as well
     emit(
       const AppStateLoggedOut(
@@ -158,8 +177,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _appEventInitialize(event, emit) async {
-    // get the current user
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _firebaseAuthRepository.getCurrentUser();
     if (user == null) {
       emit(
         const AppStateLoggedOut(
@@ -167,7 +185,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         ),
       );
     } else {
-      await _handleLogInWithImages(user, emit);
+      await await _registerMusicSheetsSubscription(user, emit);
     }
   }
 
@@ -182,7 +200,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final password = event.password;
     try {
       // create the user
-      final credentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credentials = await _firebaseAuthRepository.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -217,13 +235,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       final email = event.email;
       final password = event.password;
-      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final userCredential = await _firebaseAuthRepository.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       // get images for user
       final user = userCredential.user!;
-      await _handleLogInWithImages(user, emit);
+      await _registerMusicSheetsSubscription(user, emit);
     } on FirebaseAuthException catch (e) {
       emit(
         AppStateLoggedOut(
@@ -238,26 +256,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     emit(
       const AppStateIsInRegistrationView(
         isLoading: false,
-      ),
-    );
-  }
-
-  Future<Iterable<MusicSheet>> _getMusicSheets(String userId) => FirebaseFirestore.instance
-      .collection(userId)
-      .orderBy(MusicSheetKey.sequenceId, descending: false)
-      .get()
-      .then((snapshots) => snapshots.docs.where((doc) => !doc.metadata.hasPendingWrites).map((doc) => MusicSheet(
-            musicSheetId: doc.id,
-            json: doc.data(),
-          )));
-
-  Future<void> _handleLogInWithImages(User user, Emitter<AppState> emit) async {
-    final musicSheets = await _getMusicSheets(user.uid);
-    emit(
-      AppStateLoggedIn(
-        isLoading: false,
-        user: user,
-        musicSheets: musicSheets,
       ),
     );
   }
