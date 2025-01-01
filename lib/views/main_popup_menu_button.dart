@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_event.dart';
 import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 

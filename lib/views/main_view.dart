@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_event.dart';
-import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/managers/image_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';

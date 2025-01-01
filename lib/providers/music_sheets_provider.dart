@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/blocs/music_sheet_bloc/music_sheet_bloc.dart';
 import 'package:provider/provider.dart';
 

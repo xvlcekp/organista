@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_event.dart';
-import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/providers/music_sheets_provider.dart';
