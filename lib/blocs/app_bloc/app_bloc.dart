@@ -7,6 +7,7 @@ import 'package:organista/blocs/app_bloc/app_state.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repositary.dart';
+import 'package:organista/repositories/firebase_storage_repository.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc() : super(const AppStateLoggedOut(isLoading: false)) {
@@ -24,24 +25,24 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   final FirebaseAuthRepository _firebaseAuthRepository = FirebaseAuthRepository();
   final FirebaseFirestoreRepositary _firebaseFirestoreRepositary = FirebaseFirestoreRepositary();
+  final FirebaseStorageRepository _firebaseStorageRepository = FirebaseStorageRepository();
 
   void _appEventReorderMusicSheet(event, emit) async {
     _firebaseFirestoreRepositary.musicSheetReorder(musicSheets: event.musicSheets);
   }
 
   _registerMusicSheetsSubscription(User user, emit) async {
-    return emit.forEach<Iterable<MusicSheet>>(_firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
-        onData: (musicSheets) => AppStateLoggedIn(
-              isLoading: false,
-              user: user,
-              musicSheets: musicSheets,
-            ),
-        onError: (_, __) => AppStateLoggedIn(
-              isLoading: false,
-              user: user,
-              musicSheets: const [],
-              authError: const AuthErrorUnknown(),
-            ));
+    return emit.forEach<Iterable<MusicSheet>>(
+      _firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
+      onData: (musicSheets) => AppStateLoggedIn(
+        isLoading: false,
+        user: user,
+        musicSheets: musicSheets,
+      ),
+      onError: (_, __) => const AppStateLoggedOut(
+        isLoading: false,
+      ),
+    );
   }
 
   void _appEventDeleteMusicSheet(event, emit) async {
@@ -65,7 +66,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     );
     // remove the file
     final MusicSheet musicSheetToDelete = event.musicSheetToDelete;
-    Reference imageToDelete = FirebaseStorage.instance.ref(musicSheetToDelete.originalFileStorageId);
+    Reference imageToDelete = _firebaseStorageRepository.getReference(musicSheetToDelete.originalFileStorageId);
     await _firebaseFirestoreRepositary.removeImage(file: imageToDelete);
     await _firebaseFirestoreRepositary.removeMusicSheet(musicSheet: musicSheetToDelete);
   }
@@ -119,16 +120,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         musicSheets: state.musicSheets ?? [],
       ),
     );
-    // delete the user folder
     try {
-      // delete user folder
-      final folderContents = await FirebaseStorage.instance.ref(user.uid).listAll();
-      for (final item in folderContents.items) {
-        await item.delete().catchError((_) {}); // maybe handle the error?
-      }
-      // delete the folder itself
-      await FirebaseStorage.instance.ref(user.uid).delete().catchError((_) {});
-
+      await _firebaseStorageRepository.deleteFolder(user.uid);
       // delete the user
       await user.delete();
       // log the user out
