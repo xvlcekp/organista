@@ -6,12 +6,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
+import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/image_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/views/download_image_view.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/views/storage_image_view.dart';
+
+final logger = CustomLogger.instance;
 
 class MainView extends HookWidget {
   const MainView({super.key});
@@ -64,7 +67,7 @@ class MainView extends HookWidget {
       ),
       body: BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          print("Item count is ${state.musicSheets?.length}");
+          logger.i("Item count is ${state.musicSheets?.length}");
           var musicSheets = (state.musicSheets ?? []).toList();
           return ReorderableListView.builder(
             padding: const EdgeInsets.only(top: 10),

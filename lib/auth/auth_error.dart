@@ -9,6 +9,7 @@ const Map<String, AuthError> authErrorMapping = {
   'email-already-in-use': AuthErrorEmailAlreadyInUse(),
   'requires-recent-login': AuthErrorRequiresRecentLogin(),
   'no-current-user': AuthErrorNoCurrentUser(),
+  'user-disabled': AuthErrorUserDisabled(),
 };
 
 @immutable
@@ -21,9 +22,7 @@ abstract class AuthError {
     required this.dialogText,
   });
 
-  factory AuthError.from(FirebaseAuthException exception) =>
-      authErrorMapping[exception.code.toLowerCase().trim()] ??
-      const AuthErrorUnknown();
+  factory AuthError.from(FirebaseAuthException exception) => authErrorMapping[exception.code.toLowerCase().trim()] ?? const AuthErrorUnknown();
 }
 
 @immutable
@@ -53,8 +52,7 @@ class AuthErrorRequiresRecentLogin extends AuthError {
   const AuthErrorRequiresRecentLogin()
       : super(
           dialogTitle: 'Requires recent login',
-          dialogText:
-              'You need to log out and log back in again in order to perform this operation',
+          dialogText: 'You need to log out and log back in again in order to perform this operation',
         );
 }
 
@@ -87,8 +85,7 @@ class AuthErrorWeakPassword extends AuthError {
   const AuthErrorWeakPassword()
       : super(
           dialogTitle: 'Weak password',
-          dialogText:
-              'Please choose a stronger password consisting of more characters!',
+          dialogText: 'Please choose a stronger password consisting of more characters!',
         );
 }
 
@@ -111,5 +108,14 @@ class AuthErrorEmailAlreadyInUse extends AuthError {
       : super(
           dialogTitle: 'Email already in use',
           dialogText: 'Please choose another email to register with!',
+        );
+}
+
+@immutable
+class AuthErrorUserDisabled extends AuthError {
+  const AuthErrorUserDisabled()
+      : super(
+          dialogTitle: 'User is disabled',
+          dialogText: 'This user has been disabled. Please contact support for help.',
         );
 }
