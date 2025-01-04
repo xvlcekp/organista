@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseStorageRepository {
   final Iterable<MusicSheet> musicSheets = [];
@@ -26,5 +29,27 @@ class FirebaseStorageRepository {
 
   Reference getReference(String path) {
     return instance.ref(path);
+  }
+
+  Future<Reference?> uploadImage({
+    required dynamic file, // Accepts either File or Uint8List
+    required String userId,
+  }) async {
+    String uuid = const Uuid().v4();
+    final ref = instance.ref(userId).child(uuid);
+
+    // Convert filePath to File
+    if (file is String) {
+      file = File(file);
+    }
+
+    if (file is File) {
+      await ref.putFile(file);
+    } else if (file is Uint8List) {
+      await ref.putData(file);
+    } else {
+      throw ArgumentError('Unsupported file type: ${file.runtimeType}');
+    }
+    return ref; // Upload succeeded
   }
 }

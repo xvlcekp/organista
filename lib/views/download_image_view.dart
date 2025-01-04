@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 
 class DownloadImageView extends HookWidget {
@@ -13,7 +14,7 @@ class DownloadImageView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FirebaseStorage publicStorage = FirebaseStorage.instance;
+    final FirebaseStorageRepository firebaseStorageRepository = context.read<FirebaseStorageRepository>();
 
     // State hooks
     final isLoading = useState(true);
@@ -24,7 +25,7 @@ class DownloadImageView extends HookWidget {
     // Fetch images dynamically based on the search query
     Future<void> fetchImages(String query) async {
       isLoading.value = true;
-      final ListResult result = await publicStorage.ref('JKS').listAll();
+      final ListResult result = await firebaseStorageRepository.getReference('JKS').listAll();
       // Filter images based on the search query and sort them numerically
       final List<Reference> filtered = result.items
           .where((ref) => ref.name.contains(query)) // Filter by query

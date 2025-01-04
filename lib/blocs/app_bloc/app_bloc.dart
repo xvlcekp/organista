@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
+import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -13,7 +14,11 @@ part 'app_event.dart';
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  AppBloc() : super(const AppStateLoggedOut(isLoading: false)) {
+  AppBloc({
+    required this.firebaseAuthRepository,
+    required this.firebaseFirestoreRepositary,
+    required this.firebaseStorageRepository,
+  }) : super(const AppStateLoggedOut(isLoading: false)) {
     on<AppEventGoToRegistration>(_appEventGoToRegistration);
     on<AppEventLogIn>(_appEventLogIn);
     on<AppEventGoToLogin>(_appEventGoToLogin);
@@ -26,17 +31,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppEventReorderMusicSheet>(_appEventReorderMusicSheet);
   }
 
-  final FirebaseAuthRepository _firebaseAuthRepository = FirebaseAuthRepository();
-  final FirebaseFirestoreRepository _firebaseFirestoreRepositary = FirebaseFirestoreRepository();
-  final FirebaseStorageRepository _firebaseStorageRepository = FirebaseStorageRepository();
+  final FirebaseAuthRepository firebaseAuthRepository;
+  final FirebaseFirestoreRepository firebaseFirestoreRepositary;
+  final FirebaseStorageRepository firebaseStorageRepository;
 
   void _appEventReorderMusicSheet(event, emit) async {
-    _firebaseFirestoreRepositary.musicSheetReorder(musicSheets: event.musicSheets);
+    firebaseFirestoreRepositary.musicSheetReorder(musicSheets: event.musicSheets);
   }
 
   _registerMusicSheetsSubscription(User user, emit) async {
     await emit.forEach<Iterable<MusicSheet>>(
-      _firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
+      firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
       onData: (musicSheets) => AppStateLoggedIn(
         isLoading: false,
         user: user,
@@ -69,9 +74,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     );
     // remove the file
     final MusicSheet musicSheetToDelete = event.musicSheetToDelete;
-    Reference imageToDelete = _firebaseStorageRepository.getReference(musicSheetToDelete.originalFileStorageId);
-    await _firebaseFirestoreRepositary.removeImage(file: imageToDelete);
-    await _firebaseFirestoreRepositary.removeMusicSheet(musicSheet: musicSheetToDelete);
+    Reference imageToDelete = firebaseStorageRepository.getReference(musicSheetToDelete.originalFileStorageId);
+    await firebaseFirestoreRepositary.removeImage(file: imageToDelete);
+    await firebaseFirestoreRepositary.removeMusicSheet(musicSheet: musicSheetToDelete);
   }
 
   void _appEventUploadImage(event, emit) async {
@@ -96,16 +101,37 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // upload the file
     final file = event.file;
     final fileName = event.fileName;
-    await _firebaseFirestoreRepositary.uploadImage(
-      file: file,
-      userId: user.uid,
-      fileName: fileName,
-      totalMusicSheets: state.musicSheets?.length ?? 0,
-    );
+    try {
+      final Reference? reference = await firebaseStorageRepository.uploadImage(
+        file: file,
+        userId: user.uid,
+      );
+      if (reference != null) {
+        await firebaseFirestoreRepositary.uploadMusicSheetRecord(
+          reference: reference,
+          userId: user.uid,
+          fileName: fileName,
+          totalMusicSheets: state.musicSheets?.length ?? 0,
+        );
+      } else {
+        throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
+      }
+    } catch (e) {
+      CustomLogger.instance.e('Failed to upload image: $e');
+      // TODO: handle the error
+      // emit(
+      //   AppStateLoggedIn(
+      //     isLoading: false,
+      //     user: user,
+      //     musicSheets: state.musicSheets ?? [],
+      //     authError: AuthError.from(e),
+      //   ),
+      // );
+    }
   }
 
   void _appEventDeleteAccount(event, emit) async {
-    final user = _firebaseAuthRepository.getCurrentUser();
+    final user = firebaseAuthRepository.getCurrentUser();
     // log the user out if we don't have a current user
     if (user == null) {
       emit(
@@ -124,11 +150,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     try {
-      await _firebaseStorageRepository.deleteFolder(user.uid);
+      await firebaseStorageRepository.deleteFolder(user.uid);
       // delete the user
       await user.delete();
       // log the user out
-      await _firebaseAuthRepository.signOut();
+      await firebaseAuthRepository.signOut();
       // log the user out in the UI as well
       emit(
         const AppStateLoggedOut(
@@ -163,7 +189,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     // log the user out
-    await _firebaseAuthRepository.signOut();
+    await firebaseAuthRepository.signOut();
     // log the user out in the UI as well
     emit(
       const AppStateLoggedOut(
@@ -173,7 +199,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _appEventInitialize(event, emit) async {
-    final user = _firebaseAuthRepository.getCurrentUser();
+    final user = firebaseAuthRepository.getCurrentUser();
     if (user == null) {
       emit(
         const AppStateLoggedOut(
@@ -196,7 +222,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final password = event.password;
     try {
       // create the user
-      final credentials = await _firebaseAuthRepository.createUserWithEmailAndPassword(
+      final credentials = await firebaseAuthRepository.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -231,7 +257,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       final email = event.email;
       final password = event.password;
-      final userCredential = await _firebaseAuthRepository.signInWithEmailAndPassword(
+      final userCredential = await firebaseAuthRepository.signInWithEmailAndPassword(
         email: email,
         password: password,
       );

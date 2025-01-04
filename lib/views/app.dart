@@ -7,6 +7,9 @@ import 'package:organista/providers/music_sheets_provider.dart';
 import 'package:organista/views/login_view.dart';
 import 'package:organista/views/main_view.dart';
 import 'package:organista/views/register_view.dart';
+import 'package:organista/repositories/firebase_auth_repository.dart';
+import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:organista/repositories/firebase_storage_repository.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -16,8 +19,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AppBloc>(
-      create: (_) => AppBloc()
-        ..add(
+      create: (_) => AppBloc(
+        firebaseAuthRepository: context.read<FirebaseAuthRepository>(),
+        firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>(),
+        firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
+      )..add(
           const AppEventInitialize(),
         ),
       child: MaterialApp(
