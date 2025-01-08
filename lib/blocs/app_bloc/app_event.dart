@@ -7,7 +7,7 @@ abstract class AppEvent {
 
 @immutable
 class AppEventUploadImage implements AppEvent {
-  final dynamic file;
+  final Uint8List file;
   final String fileName;
 
   const AppEventUploadImage({

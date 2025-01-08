@@ -12,6 +12,13 @@ class FirebaseFirestoreRepository {
   final instance = FirebaseFirestore.instance;
   final logger = CustomLogger.instance;
 
+  FirebaseFirestoreRepository() {
+    instance.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+  }
+
   Stream<Iterable<MusicSheet>> getMusicSheetsStream(String userId) {
     return instance.collection(userId).orderBy(MusicSheetKey.sequenceId, descending: false).snapshots(includeMetadataChanges: true).map((snapshot) {
       logger.i("Got new data");

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,24 +31,12 @@ class FirebaseStorageRepository {
   }
 
   Future<Reference?> uploadImage({
-    required dynamic file, // Accepts either File or Uint8List
+    required Uint8List file, // Accepts either File or Uint8List
     required String userId,
   }) async {
     String uuid = const Uuid().v4();
     final ref = instance.ref(userId).child(uuid);
-
-    // Convert filePath to File
-    if (file is String) {
-      file = File(file);
-    }
-
-    if (file is File) {
-      await ref.putFile(file);
-    } else if (file is Uint8List) {
-      await ref.putData(file);
-    } else {
-      throw ArgumentError('Unsupported file type: ${file.runtimeType}');
-    }
+    await ref.putData(file);
     return ref; // Upload succeeded
   }
 }

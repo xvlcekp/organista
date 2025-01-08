@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -113,6 +115,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           fileName: fileName,
           totalMusicSheets: state.musicSheets?.length ?? 0,
         );
+        emit(AppStateLoggedIn(
+          isLoading: false,
+          user: user,
+          musicSheets: state.musicSheets ?? [],
+        ));
       } else {
         throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
       }
