@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/dialogs/discard_changes_uploaded_music_sheet_dialog.dart';
 import 'package:organista/features/add_music_sheet/cubit/add_music_sheet_cubit.dart';
 import 'package:organista/features/add_music_sheet/view/add_image_controllers_view.dart';
 import 'package:organista/features/add_music_sheet/view/uploaded_music_sheet_image_view.dart';
@@ -69,7 +70,6 @@ class AddMusicSheetView extends HookWidget {
                       ),
                       Expanded(
                         child: ElevatedButton(
-                          //TODO: add dialog do you really want to discard music sheet
                           onPressed: () => resetMusicSheetCubitAndPop(context),
                           child: const Text('Discard'),
                         ),
@@ -85,8 +85,11 @@ class AddMusicSheetView extends HookWidget {
     );
   }
 
-  void resetMusicSheetCubitAndPop(BuildContext context) {
-    context.read<AddMusicSheetCubit>().resetState();
-    Navigator.pop(context);
+  void resetMusicSheetCubitAndPop(BuildContext context) async {
+    final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
+    if (shouldDiscardChanges && context.mounted) {
+      context.read<AddMusicSheetCubit>().resetState();
+      Navigator.pop(context);
+    }
   }
 }

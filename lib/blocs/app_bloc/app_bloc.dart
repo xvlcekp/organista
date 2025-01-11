@@ -59,11 +59,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final user = state.user;
     // log user out if we don't have an actual user in app state
     if (user == null) {
-      emit(
-        const AppStateLoggedOut(
-          isLoading: false,
-        ),
-      );
+      emit(const AppStateLoggedOut(isLoading: false));
       return;
     }
     // start the loading process
@@ -85,11 +81,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final user = state.user;
     // log user out if we don't have an actual user in app state
     if (user == null) {
-      emit(
-        const AppStateLoggedOut(
-          isLoading: false,
-        ),
-      );
+      emit(const AppStateLoggedOut(isLoading: false));
       return;
     }
     // start the loading process
@@ -138,14 +130,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _appEventDeleteAccount(event, emit) async {
-    final user = firebaseAuthRepository.getCurrentUser();
+    final user = state.user;
     // log the user out if we don't have a current user
     if (user == null) {
-      emit(
-        const AppStateLoggedOut(
-          isLoading: false,
-        ),
-      );
+      emit(const AppStateLoggedOut(isLoading: false));
       return;
     }
     // start loading
