@@ -59,7 +59,7 @@ extension GetUser on AppState {
   }
 }
 
-extension GetImages on AppState {
+extension GetMusicSheets on AppState {
   Iterable<MusicSheet>? get musicSheets {
     final cls = this;
     if (cls is AppStateLoggedIn) {
