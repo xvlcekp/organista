@@ -53,6 +53,7 @@ dependencies:
   googleapis: ^13.2.0
   googleapis_auth: ^1.6.0
   logger: ^2.5.0
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

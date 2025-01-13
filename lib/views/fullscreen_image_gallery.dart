@@ -1,17 +1,16 @@
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/fragments/switch_image.dart';
-import 'package:organista/managers/image_cache_manager.dart';
+import 'package:organista/models/music_sheets/music_sheet.dart';
 
 class FullScreenImageGallery extends HookWidget {
-  final List<Reference> imageList;
+  final List<MusicSheet> musicSheets;
   final int initialIndex;
 
   const FullScreenImageGallery({
     super.key,
-    required this.imageList,
+    required this.musicSheets,
     this.initialIndex = 0,
   });
 
@@ -26,7 +25,7 @@ class FullScreenImageGallery extends HookWidget {
     final currentIndex = useState(initialIndex);
     final TransformationController controller = useTransformationController();
 
-    bool notLastImage() => currentIndex.value < imageList.length - 1;
+    bool notLastImage() => currentIndex.value < musicSheets.length - 1;
     bool notFirstImage() => currentIndex.value > 0;
 
     void goToNextImage() {
@@ -54,17 +53,13 @@ class FullScreenImageGallery extends HookWidget {
               minScale: 1.0,
               maxScale: 4.0,
               child: Center(
-                child: FutureBuilder<Uint8List?>(
-                  future: ImageCacheManager().loadImage(imageList[currentIndex.value]),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    return Image.memory(
-                      snapshot.data!,
-                      fit: BoxFit.contain,
-                    );
-                  },
+                child: CachedNetworkImage(
+                  imageUrl: musicSheets[currentIndex.value].fileUrl,
+                  fadeInDuration: Duration.zero,
+                  fadeOutDuration: Duration.zero,
+                  placeholder: (context, url) => const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

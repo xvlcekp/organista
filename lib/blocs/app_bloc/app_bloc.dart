@@ -38,6 +38,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   final FirebaseStorageRepository firebaseStorageRepository;
 
   void _appEventReorderMusicSheet(event, emit) async {
+    emit(AppStateLoggedIn(
+      isLoading: false,
+      user: state.user!,
+      musicSheets: event.musicSheets,
+    ));
     firebaseFirestoreRepositary.musicSheetReorder(musicSheets: event.musicSheets);
   }
 

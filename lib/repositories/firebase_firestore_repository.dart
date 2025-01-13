@@ -20,7 +20,15 @@ class FirebaseFirestoreRepository {
   }
 
   Stream<Iterable<MusicSheet>> getMusicSheetsStream(String userId) {
-    return instance.collection(userId).orderBy(MusicSheetKey.sequenceId, descending: false).snapshots().map((snapshot) {
+    return instance
+        .collection(userId)
+        .orderBy(
+          MusicSheetKey.sequenceId,
+          descending: false,
+        )
+        .snapshots(includeMetadataChanges: true)
+        .where((event) => !event.metadata.hasPendingWrites)
+        .map((snapshot) {
       logger.i("Got new data");
       final documents = snapshot.docs;
       logger.i("New data documents length: ${documents.length}");

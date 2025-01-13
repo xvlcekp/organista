@@ -22,7 +22,7 @@ class AddMusicSheetView extends HookWidget {
       appBar: AppBar(title: const Text('Upload the music sheet')),
       body: BlocBuilder<AddMusicSheetCubit, AddMusicSheetState>(
         builder: (context, state) {
-          musicSheetNameController.text = state.fileName;
+          musicSheetNameController.text = state.fileName!;
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -70,7 +70,12 @@ class AddMusicSheetView extends HookWidget {
                       ),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => resetMusicSheetCubitAndPop(context),
+                          onPressed: () async {
+                            final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
+                            if (shouldDiscardChanges && context.mounted) {
+                              resetMusicSheetCubitAndPop(context);
+                            }
+                          },
                           child: const Text('Discard'),
                         ),
                       ),
@@ -86,8 +91,7 @@ class AddMusicSheetView extends HookWidget {
   }
 
   void resetMusicSheetCubitAndPop(BuildContext context) async {
-    final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
-    if (shouldDiscardChanges && context.mounted) {
+    if (context.mounted) {
       context.read<AddMusicSheetCubit>().resetState();
       Navigator.pop(context);
     }
