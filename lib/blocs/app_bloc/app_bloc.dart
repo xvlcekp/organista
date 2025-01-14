@@ -31,11 +31,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppEventUploadImage>(_appEventUploadImage);
     on<AppEventDeleteMusicSheet>(_appEventDeleteMusicSheet);
     on<AppEventReorderMusicSheet>(_appEventReorderMusicSheet);
+    on<AppEventEditMusicSheet>(_appEventEditMusicSheet);
   }
 
   final FirebaseAuthRepository firebaseAuthRepository;
   final FirebaseFirestoreRepository firebaseFirestoreRepositary;
   final FirebaseStorageRepository firebaseStorageRepository;
+
+  void _appEventEditMusicSheet(event, emit) async {
+    final musicSheet = event.musicSheet;
+    final fileName = event.fileName;
+    firebaseFirestoreRepositary.editMusicSheet(musicSheet: musicSheet, fileName: fileName);
+  }
 
   void _appEventReorderMusicSheet(event, emit) async {
     emit(AppStateLoggedIn(

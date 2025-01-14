@@ -1,39 +1,39 @@
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
+import 'package:organista/features/edit_music_sheet/cubit/edit_music_sheet_cubit.dart';
+import 'package:organista/features/edit_music_sheet/view/edit_music_sheet_view.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
-import 'package:organista/views/storage_image_view.dart';
 
 class MusicSheetListTile extends StatelessWidget {
   const MusicSheetListTile({
     super.key,
     required this.musicSheet,
-    required this.cachedFutures,
-    required this.image,
     required this.evenItemColor,
     required this.musicSheets,
   });
 
   final MusicSheet musicSheet;
-  final ValueNotifier<Map<Reference, Future<Uint8List?>>> cachedFutures;
-  final Reference image;
   final Color evenItemColor;
   final List<MusicSheet> musicSheets;
 
   @override
   Widget build(BuildContext context) {
-    final firebaseStorageRepository = context.read<FirebaseStorageRepository>();
     return ListTile(
       leading: SizedBox(
         height: 200,
         width: 70,
-        child: StorageImageView(
-          imageFuture: cachedFutures.value[image]!,
+        child: CachedNetworkImage(
+          imageUrl: musicSheet.fileUrl,
+          placeholder: (context, url) => const CircularProgressIndicator(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
+          memCacheHeight: 200,
+          memCacheWidth: 70,
         ),
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -43,25 +43,40 @@ class MusicSheetListTile extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => FullScreenImageGallery(
-              imageList: musicSheets.map((musicSheet) => firebaseStorageRepository.getReference(musicSheet.originalFileStorageId)).toList(), // Convert to Uint8List
+              musicSheets: musicSheets,
               initialIndex: musicSheet.sequenceId,
             ),
           ),
         );
       },
-      trailing: IconButton(
-        onPressed: () async {
-          final shouldDeleteImage = await showDeleteImageDialog(context);
-          if (shouldDeleteImage && context.mounted) {
-            context.read<AppBloc>().add(
-                  AppEventDeleteMusicSheet(
-                    musicSheetToDelete: musicSheet,
-                  ),
-                );
-          }
-          return;
-        },
-        icon: const Icon(Icons.delete),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: () async {
+              if (context.mounted) {
+                // TODO fix updating the same reference
+                context.read<EditMusicSheetCubit>().editMusicSheet(musicSheet: musicSheet);
+                Navigator.of(context).push<void>(EditMusicSheetView.route());
+              }
+            },
+            icon: const Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () async {
+              final shouldDeleteImage = await showDeleteImageDialog(context);
+              if (shouldDeleteImage && context.mounted) {
+                context.read<AppBloc>().add(
+                      AppEventDeleteMusicSheet(
+                        musicSheetToDelete: musicSheet,
+                      ),
+                    );
+              }
+              return;
+            },
+            icon: const Icon(Icons.delete),
+          ),
+        ],
       ),
     );
   }

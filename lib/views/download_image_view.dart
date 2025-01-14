@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/add_music_sheet/cubit/add_music_sheet_cubit.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
-import 'package:organista/views/fullscreen_image_gallery.dart';
 
 class DownloadImageView extends HookWidget {
   const DownloadImageView({super.key});
@@ -56,7 +55,10 @@ class DownloadImageView extends HookWidget {
         }
 
         if (context.mounted) {
-          context.read<AddMusicSheetCubit>().uploadImage(imageData, ref.name);
+          context.read<AddMusicSheetCubit>().newMusicSheet(
+                file: imageData,
+                fileName: ref.name,
+              );
           Navigator.of(context).pop();
         }
       } catch (e, stacktrace) {
@@ -104,14 +106,7 @@ class DownloadImageView extends HookWidget {
                     icon: const Icon(Icons.download),
                     onPressed: () => downloadAndMoveImage(ref),
                   ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => FullScreenImageGallery(
-                        imageList: [ref], // Convert to Uint8List
-                        initialIndex: 0,
-                      ),
-                    ),
-                  ),
+                  onTap: () => {},
                 );
               },
             ),

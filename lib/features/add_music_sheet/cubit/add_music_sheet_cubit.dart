@@ -12,11 +12,13 @@ class AddMusicSheetCubit extends Cubit<AddMusicSheetState> {
     emit(const AddMusicSheetState.init());
   }
 
-  void uploadImage(Uint8List image, String fileName, {String musicSheetId = ''}) async {
+  void newMusicSheet({
+    required String fileName,
+    required Uint8List file,
+  }) async {
     emit(state.copyWith(
-      file: image,
       fileName: fileName,
-      musicSheetId: musicSheetId,
+      file: file,
     ));
   }
 }

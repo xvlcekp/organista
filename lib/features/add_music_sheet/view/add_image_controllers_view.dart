@@ -34,9 +34,9 @@ class AddImageControllersView extends HookWidget {
               }
               final uint8ListImage = await File(image.path).readAsBytes();
               if (context.mounted) {
-                context.read<AddMusicSheetCubit>().uploadImage(
-                      uint8ListImage,
-                      "Nota ${DateTime.now().millisecondsSinceEpoch}",
+                context.read<AddMusicSheetCubit>().newMusicSheet(
+                      fileName: "Nota ${DateTime.now().millisecondsSinceEpoch}",
+                      file: uint8ListImage,
                     );
               }
             },

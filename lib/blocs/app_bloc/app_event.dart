@@ -17,6 +17,17 @@ class AppEventUploadImage implements AppEvent {
 }
 
 @immutable
+class AppEventEditMusicSheet implements AppEvent {
+  final MusicSheet musicSheet;
+  final String fileName;
+
+  const AppEventEditMusicSheet({
+    required this.musicSheet,
+    required this.fileName,
+  });
+}
+
+@immutable
 class AppEventDeleteMusicSheet implements AppEvent {
   final MusicSheet musicSheetToDelete;
 

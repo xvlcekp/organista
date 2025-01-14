@@ -69,6 +69,11 @@ class FirebaseFirestoreRepository {
     return file.delete().then((_) => true).catchError((_) => false);
   }
 
+  Future<bool> editMusicSheet({required MusicSheet musicSheet, required fileName}) async {
+    await instance.collection(musicSheet.userId).doc(musicSheet.musicSheetId).update({MusicSheetKey.fileName: fileName});
+    return true;
+  }
+
   Future<bool> removeMusicSheet({required MusicSheet musicSheet}) {
     return instance.collection(musicSheet.userId).doc(musicSheet.musicSheetId).delete().then((_) => true).catchError((_) => false);
   }
