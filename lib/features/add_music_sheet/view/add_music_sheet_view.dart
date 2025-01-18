@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/discard_changes_uploaded_music_sheet_dialog.dart';
-import 'package:organista/features/add_music_sheet/cubit/add_music_sheet_cubit.dart';
+import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
 import 'package:organista/features/add_music_sheet/view/add_image_controllers_view.dart';
 import 'package:organista/features/add_music_sheet/view/uploaded_music_sheet_image_view.dart';
+import 'package:organista/features/edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/logger/custom_logger.dart';
 
 class AddMusicSheetView extends HookWidget {
@@ -20,17 +21,20 @@ class AddMusicSheetView extends HookWidget {
     final musicSheetNameController = useTextEditingController();
     return Scaffold(
       appBar: AppBar(title: const Text('Upload the music sheet')),
-      body: BlocBuilder<AddMusicSheetCubit, AddMusicSheetState>(
+      body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
         builder: (context, state) {
-          musicSheetNameController.text = state.fileName!;
+          musicSheetNameController.text = state.fileName;
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 Expanded(
-                  flex: 2,
-                  child: (state.file == null) ? const AddImageControllersView() : UploadedMusicSheetImageView(image: state.file!),
-                ),
+                    flex: 2,
+                    child: switch (state) {
+                      InitMusicSheetState() => const AddImageControllersView(),
+                      AddMusicSheetState() => UploadedMusicSheetImageView(image: state.file),
+                      EditMusicSheetState() => throw UnimplementedError(),
+                    }),
                 Expanded(
                   flex: 3,
                   child: TextField(
@@ -52,21 +56,30 @@ class AddMusicSheetView extends HookWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (state.file != null) {
-                              context.read<AppBloc>().add(
-                                    AppEventUploadImage(
-                                      file: state.file!,
-                                      fileName: musicSheetNameController.text,
-                                    ),
-                                  );
-                              resetMusicSheetCubitAndPop(context);
-                            } else {
-                              CustomLogger.instance.e("You have to select an image first");
-                            }
-                          },
-                          child: const Text('Save'),
-                        ),
+                            child: const Text('Save'),
+                            onPressed: () {
+                              switch (state) {
+                                case InitMusicSheetState():
+                                  CustomLogger.instance.e("You have to select an image first");
+                                case AddMusicSheetState():
+                                  context.read<MusicSheetBloc>().add(
+                                        UploadImageMusicSheetEvent(
+                                          file: state.file,
+                                          fileName: musicSheetNameController.text,
+                                          user: context.read<AppBloc>().state.user!,
+                                        ),
+                                      );
+                                  resetMusicSheetCubitAndPop(context);
+                                case EditMusicSheetState():
+                                  context.read<MusicSheetBloc>().add(
+                                        RenameMusicSheetEvent(
+                                          musicSheet: state.musicSheet,
+                                          fileName: musicSheetNameController.text,
+                                        ),
+                                      );
+                                  resetMusicSheetCubitAndPop(context);
+                              }
+                            }),
                       ),
                       Expanded(
                         child: ElevatedButton(
@@ -92,7 +105,7 @@ class AddMusicSheetView extends HookWidget {
 
   void resetMusicSheetCubitAndPop(BuildContext context) async {
     if (context.mounted) {
-      context.read<AddMusicSheetCubit>().resetState();
+      context.read<AddEditMusicSheetCubit>().resetState();
       Navigator.pop(context);
     }
   }

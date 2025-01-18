@@ -1,11 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/auth/auth_error.dart';
-import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
@@ -28,118 +23,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppEventInitialize>(_appEventInitialize);
     on<AppEventLogOut>(_appEventLogOut);
     on<AppEventDeleteAccount>(_appEventDeleteAccount);
-    on<AppEventUploadImage>(_appEventUploadImage);
-    on<AppEventDeleteMusicSheet>(_appEventDeleteMusicSheet);
-    on<AppEventReorderMusicSheet>(_appEventReorderMusicSheet);
-    on<AppEventEditMusicSheet>(_appEventEditMusicSheet);
   }
 
   final FirebaseAuthRepository firebaseAuthRepository;
+  // TODO: on delete account, also delete the whole Firebase database
   final FirebaseFirestoreRepository firebaseFirestoreRepositary;
   final FirebaseStorageRepository firebaseStorageRepository;
-
-  void _appEventEditMusicSheet(event, emit) async {
-    final musicSheet = event.musicSheet;
-    final fileName = event.fileName;
-    firebaseFirestoreRepositary.editMusicSheet(musicSheet: musicSheet, fileName: fileName);
-  }
-
-  void _appEventReorderMusicSheet(event, emit) async {
-    emit(AppStateLoggedIn(
-      isLoading: false,
-      user: state.user!,
-      musicSheets: event.musicSheets,
-    ));
-    firebaseFirestoreRepositary.musicSheetReorder(musicSheets: event.musicSheets);
-  }
-
-  _registerMusicSheetsSubscription(User user, emit) async {
-    await emit.forEach<Iterable<MusicSheet>>(
-      firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
-      onData: (musicSheets) => AppStateLoggedIn(
-        isLoading: false,
-        user: user,
-        musicSheets: musicSheets,
-      ),
-      onError: (_, __) => const AppStateLoggedOut(
-        isLoading: false,
-      ),
-    );
-  }
-
-  void _appEventDeleteMusicSheet(event, emit) async {
-    final user = state.user;
-    // log user out if we don't have an actual user in app state
-    if (user == null) {
-      emit(const AppStateLoggedOut(isLoading: false));
-      return;
-    }
-    // start the loading process
-    emit(
-      AppStateLoggedIn(
-        isLoading: true,
-        user: user,
-        musicSheets: state.musicSheets ?? [],
-      ),
-    );
-    // remove the file
-    final MusicSheet musicSheetToDelete = event.musicSheetToDelete;
-    Reference imageToDelete = firebaseStorageRepository.getReference(musicSheetToDelete.originalFileStorageId);
-    await firebaseFirestoreRepositary.removeImage(file: imageToDelete);
-    await firebaseFirestoreRepositary.removeMusicSheet(musicSheet: musicSheetToDelete);
-  }
-
-  void _appEventUploadImage(event, emit) async {
-    final user = state.user;
-    // log user out if we don't have an actual user in app state
-    if (user == null) {
-      emit(const AppStateLoggedOut(isLoading: false));
-      return;
-    }
-    // start the loading process
-    emit(
-      AppStateLoggedIn(
-        isLoading: true,
-        user: user,
-        musicSheets: state.musicSheets ?? [],
-      ),
-    );
-    // upload the file
-    final file = event.file;
-    final fileName = event.fileName;
-    try {
-      final Reference? reference = await firebaseStorageRepository.uploadImage(
-        file: file,
-        userId: user.uid,
-      );
-      if (reference != null) {
-        await firebaseFirestoreRepositary.uploadMusicSheetRecord(
-          reference: reference,
-          userId: user.uid,
-          fileName: fileName,
-          totalMusicSheets: state.musicSheets?.length ?? 0,
-        );
-        emit(AppStateLoggedIn(
-          isLoading: false,
-          user: user,
-          musicSheets: state.musicSheets ?? [],
-        ));
-      } else {
-        throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
-      }
-    } catch (e) {
-      CustomLogger.instance.e('Failed to upload image: $e');
-      // TODO: handle the error
-      // emit(
-      //   AppStateLoggedIn(
-      //     isLoading: false,
-      //     user: user,
-      //     musicSheets: state.musicSheets ?? [],
-      //     authError: AuthError.from(e),
-      //   ),
-      // );
-    }
-  }
 
   void _appEventDeleteAccount(event, emit) async {
     final user = state.user;
@@ -153,7 +42,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       AppStateLoggedIn(
         isLoading: true,
         user: user,
-        musicSheets: state.musicSheets ?? [],
       ),
     );
     try {
@@ -173,7 +61,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         AppStateLoggedIn(
           isLoading: false,
           user: user,
-          musicSheets: state.musicSheets ?? [],
           authError: AuthError.from(e),
         ),
       );
@@ -213,8 +100,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           isLoading: false,
         ),
       );
-    } else {
-      await _registerMusicSheetsSubscription(user, emit);
     }
   }
 
@@ -234,7 +119,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         password: password,
       );
       emit(
-        AppStateLoggedIn(isLoading: false, user: credentials.user!, musicSheets: const []),
+        AppStateLoggedIn(isLoading: false, user: credentials.user!),
       );
     } on FirebaseAuthException catch (e) {
       emit(
@@ -268,9 +153,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         email: email,
         password: password,
       );
-      // get images for user
       final user = userCredential.user!;
-      await _registerMusicSheetsSubscription(user, emit);
+      emit(
+        AppStateLoggedIn(
+          isLoading: false,
+          user: user,
+        ),
+      );
+      // get images for user
+      // await _registerMusicSheetsSubscription(user, emit);
     } on FirebaseAuthException catch (e) {
       emit(
         AppStateLoggedOut(

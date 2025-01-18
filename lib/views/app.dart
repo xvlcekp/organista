@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
-import 'package:organista/features/add_music_sheet/cubit/add_music_sheet_cubit.dart';
-import 'package:organista/features/edit_music_sheet/cubit/edit_music_sheet_cubit.dart';
+import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/providers/music_sheets_provider.dart';
 import 'package:organista/views/login_view.dart';
@@ -23,7 +23,7 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AppBloc>(
-          create: (_) => AppBloc(
+          create: (context) => AppBloc(
             firebaseAuthRepository: context.read<FirebaseAuthRepository>(),
             firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
@@ -31,11 +31,14 @@ class App extends StatelessWidget {
               const AppEventInitialize(),
             ),
         ),
-        BlocProvider<AddMusicSheetCubit>(
-          create: (context) => AddMusicSheetCubit(),
+        BlocProvider<AddEditMusicSheetCubit>(
+          create: (context) => AddEditMusicSheetCubit(),
         ),
-        BlocProvider<EditMusicSheetCubit>(
-          create: (context) => EditMusicSheetCubit(),
+        BlocProvider<MusicSheetBloc>(
+          create: (context) => MusicSheetBloc(
+            firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>(),
+            firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
+          ),
         ),
       ],
       child: MaterialApp(

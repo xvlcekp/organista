@@ -1,10 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
-import 'package:organista/features/edit_music_sheet/cubit/edit_music_sheet_cubit.dart';
-import 'package:organista/features/edit_music_sheet/view/edit_music_sheet_view.dart';
+import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/add_music_sheet/view/add_music_sheet_view.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 
@@ -55,9 +54,9 @@ class MusicSheetListTile extends StatelessWidget {
           IconButton(
             onPressed: () async {
               if (context.mounted) {
-                // TODO fix updating the same reference
-                context.read<EditMusicSheetCubit>().editMusicSheet(musicSheet: musicSheet);
-                Navigator.of(context).push<void>(EditMusicSheetView.route());
+                // TODO fix updating the same reference, doesn't work yet
+                context.read<MusicSheetBloc>().add(EditMusicSheetEvent(musicSheet: musicSheet));
+                Navigator.of(context).push<void>(AddMusicSheetView.route());
               }
             },
             icon: const Icon(Icons.edit),
@@ -66,9 +65,9 @@ class MusicSheetListTile extends StatelessWidget {
             onPressed: () async {
               final shouldDeleteImage = await showDeleteImageDialog(context);
               if (shouldDeleteImage && context.mounted) {
-                context.read<AppBloc>().add(
-                      AppEventDeleteMusicSheet(
-                        musicSheetToDelete: musicSheet,
+                context.read<MusicSheetBloc>().add(
+                      DeleteMusicSheetEvent(
+                        musicSheet: musicSheet,
                       ),
                     );
               }

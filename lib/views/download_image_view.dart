@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/features/add_music_sheet/cubit/add_music_sheet_cubit.dart';
+import 'package:organista/features/edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 
 class DownloadImageView extends HookWidget {
@@ -55,7 +55,7 @@ class DownloadImageView extends HookWidget {
         }
 
         if (context.mounted) {
-          context.read<AddMusicSheetCubit>().newMusicSheet(
+          context.read<AddEditMusicSheetCubit>().addMusicSheet(
                 file: imageData,
                 fileName: ref.name,
               );

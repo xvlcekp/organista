@@ -14,19 +14,17 @@ abstract class AppState {
 @immutable
 class AppStateLoggedIn extends AppState with EquatableMixin {
   final User user;
-  final Iterable<MusicSheet> musicSheets;
   const AppStateLoggedIn({
     required super.isLoading,
     required this.user,
-    required this.musicSheets,
     super.authError,
   });
 
   @override
-  String toString() => 'AppStateLoggedIn, images.length = ${musicSheets.length}';
+  String toString() => 'AppStateLoggedIn';
 
   @override
-  List<Object?> get props => [isLoading, user.uid, musicSheets];
+  List<Object?> get props => [isLoading, user.uid];
 }
 
 @immutable
@@ -59,13 +57,13 @@ extension GetUser on AppState {
   }
 }
 
-extension GetMusicSheets on AppState {
-  Iterable<MusicSheet>? get musicSheets {
-    final cls = this;
-    if (cls is AppStateLoggedIn) {
-      return cls.musicSheets;
-    } else {
-      return null;
-    }
-  }
-}
+// extension GetMusicSheets on AppState {
+//   Iterable<MusicSheet>? get musicSheets {
+//     final cls = this;
+//     if (cls is AppStateLoggedIn) {
+//       return cls.musicSheets;
+//     } else {
+//       return null;
+//     }
+//   }
+// }

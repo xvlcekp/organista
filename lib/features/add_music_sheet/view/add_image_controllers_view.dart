@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:organista/features/add_music_sheet/cubit/add_music_sheet_cubit.dart';
+import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
 import 'package:organista/views/download_image_view.dart';
 
 class AddImageControllersView extends HookWidget {
@@ -34,10 +34,10 @@ class AddImageControllersView extends HookWidget {
               }
               final uint8ListImage = await File(image.path).readAsBytes();
               if (context.mounted) {
-                context.read<AddMusicSheetCubit>().newMusicSheet(
+                context.read<MusicSheetBloc>().add(AddMusicSheetEvent(
                       fileName: "Nota ${DateTime.now().millisecondsSinceEpoch}",
                       file: uint8ListImage,
-                    );
+                    ));
               }
             },
             icon: const Icon(Icons.upload),

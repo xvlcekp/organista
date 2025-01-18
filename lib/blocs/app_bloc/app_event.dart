@@ -6,37 +6,6 @@ abstract class AppEvent {
 }
 
 @immutable
-class AppEventUploadImage implements AppEvent {
-  final Uint8List file;
-  final String fileName;
-
-  const AppEventUploadImage({
-    required this.file,
-    required this.fileName,
-  });
-}
-
-@immutable
-class AppEventEditMusicSheet implements AppEvent {
-  final MusicSheet musicSheet;
-  final String fileName;
-
-  const AppEventEditMusicSheet({
-    required this.musicSheet,
-    required this.fileName,
-  });
-}
-
-@immutable
-class AppEventDeleteMusicSheet implements AppEvent {
-  final MusicSheet musicSheetToDelete;
-
-  const AppEventDeleteMusicSheet({
-    required this.musicSheetToDelete,
-  });
-}
-
-@immutable
 class AppEventDeleteAccount implements AppEvent {
   const AppEventDeleteAccount();
 }
@@ -80,13 +49,5 @@ class AppEventRegister implements AppEvent {
   const AppEventRegister({
     required this.email,
     required this.password,
-  });
-}
-
-@immutable
-class AppEventReorderMusicSheet implements AppEvent {
-  final Iterable<MusicSheet> musicSheets;
-  const AppEventReorderMusicSheet({
-    required this.musicSheets,
   });
 }
