@@ -5,7 +5,6 @@ import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/loading/loading_screen.dart';
-import 'package:organista/providers/music_sheets_provider.dart';
 import 'package:organista/views/login_view.dart';
 import 'package:organista/features/show_music_sheets/view/main_view.dart';
 import 'package:organista/views/register_view.dart';
@@ -70,9 +69,7 @@ class App extends StatelessWidget {
             if (appState is AppStateLoggedOut) {
               return const LoginView();
             } else if (appState is AppStateLoggedIn) {
-              return const MusicSheetBlocProvider(
-                child: MainView(),
-              );
+              return const MainView();
             } else if (appState is AppStateIsInRegistrationView) {
               return const RegisterView();
             } else {
