@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/discard_changes_uploaded_music_sheet_dialog.dart';
-import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
-import 'package:organista/features/add_music_sheet/view/add_image_controllers_view.dart';
-import 'package:organista/features/add_music_sheet/view/uploaded_music_sheet_image_view.dart';
-import 'package:organista/features/edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/add_edit_music_sheet/view/add_image_controllers_view.dart';
+import 'package:organista/features/add_edit_music_sheet/view/edit_music_sheet_image_view.dart';
+import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_image_view.dart';
+import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/logger/custom_logger.dart';
 
 class AddMusicSheetView extends HookWidget {
@@ -33,21 +34,24 @@ class AddMusicSheetView extends HookWidget {
                     child: switch (state) {
                       InitMusicSheetState() => const AddImageControllersView(),
                       AddMusicSheetState() => UploadedMusicSheetImageView(image: state.file),
-                      EditMusicSheetState() => throw UnimplementedError(),
+                      EditMusicSheetState() => EditMusicSheetImageView(musicSheet: state.musicSheet),
                     }),
                 Expanded(
                   flex: 3,
-                  child: TextField(
-                    controller: musicSheetNameController,
-                    decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: musicSheetNameController,
+                      decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                        ),
+                        hintText: 'Music sheet name',
+                        hintStyle: TextStyle(color: Colors.grey),
                       ),
-                      hintText: 'Music sheet name',
-                      hintStyle: TextStyle(color: Colors.grey),
+                      style: const TextStyle(color: Colors.black), // Text color
+                      onChanged: (query) {},
                     ),
-                    style: const TextStyle(color: Colors.black), // Text color
-                    onChanged: (query) {},
                   ),
                 ),
                 Expanded(

@@ -19,9 +19,8 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
     ));
   }
 
-  void editMusicSheet({required String fileName, required MusicSheet musicSheet}) {
+  void editMusicSheet({required MusicSheet musicSheet}) {
     emit(EditMusicSheetState(
-      fileName: fileName,
       musicSheet: musicSheet,
     ));
   }

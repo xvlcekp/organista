@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
-import 'package:organista/views/download_image_view.dart';
+import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/features/download_music_sheet/view/download_image_view.dart';
 
 class AddImageControllersView extends HookWidget {
   const AddImageControllersView({super.key});
@@ -17,7 +17,7 @@ class AddImageControllersView extends HookWidget {
         Expanded(
           child: IconButton(
             onPressed: () {
-              Navigator.of(context).push<void>(DownloadImageView.route());
+              Navigator.of(context).push<void>(DownloadMusicSheetView.route());
             },
             icon: const Icon(Icons.add),
             iconSize: 150,
@@ -34,10 +34,11 @@ class AddImageControllersView extends HookWidget {
               }
               final uint8ListImage = await File(image.path).readAsBytes();
               if (context.mounted) {
-                context.read<MusicSheetBloc>().add(AddMusicSheetEvent(
-                      fileName: "Nota ${DateTime.now().millisecondsSinceEpoch}",
+                // TODO: image picker cannot load the original's file name
+                context.read<AddEditMusicSheetCubit>().addMusicSheet(
+                      fileName: image.name,
                       file: uint8ListImage,
-                    ));
+                    );
               }
             },
             icon: const Icon(Icons.upload),

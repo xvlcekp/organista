@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
-import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
-import 'package:organista/features/add_music_sheet/view/add_music_sheet_view.dart';
+import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
+import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 
@@ -23,16 +24,16 @@ class MusicSheetListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: SizedBox(
-        height: 200,
-        width: 70,
+        height: 75,
+        width: 75,
         child: CachedNetworkImage(
           imageUrl: musicSheet.fileUrl,
           placeholder: (context, url) => const CircularProgressIndicator(),
           errorWidget: (context, url, error) => const Icon(Icons.error),
           fadeInDuration: Duration.zero,
           fadeOutDuration: Duration.zero,
-          memCacheHeight: 200,
-          memCacheWidth: 70,
+          memCacheHeight: 75,
+          memCacheWidth: 75,
         ),
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -54,8 +55,9 @@ class MusicSheetListTile extends StatelessWidget {
           IconButton(
             onPressed: () async {
               if (context.mounted) {
-                // TODO fix updating the same reference, doesn't work yet
-                context.read<MusicSheetBloc>().add(EditMusicSheetEvent(musicSheet: musicSheet));
+                context.read<AddEditMusicSheetCubit>().editMusicSheet(
+                      musicSheet: musicSheet,
+                    );
                 Navigator.of(context).push<void>(AddMusicSheetView.route());
               }
             },

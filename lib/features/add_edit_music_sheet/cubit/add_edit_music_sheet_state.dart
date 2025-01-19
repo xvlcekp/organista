@@ -32,10 +32,9 @@ class AddMusicSheetState extends AddEditMusicSheetState {
 @immutable
 class EditMusicSheetState extends AddEditMusicSheetState {
   final MusicSheet musicSheet;
-  const EditMusicSheetState({
-    required super.fileName,
+  EditMusicSheetState({
     required this.musicSheet,
-  });
+  }) : super(fileName: musicSheet.fileName);
 
   @override
   List<Object?> get props => [fileName, musicSheet];

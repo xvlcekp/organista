@@ -54,23 +54,3 @@ class ReorderMusicSheetEvent implements MusicSheetEvent {
     required this.musicSheets,
   });
 }
-
-@immutable
-class EditMusicSheetEvent implements MusicSheetEvent {
-  final MusicSheet musicSheet;
-
-  const EditMusicSheetEvent({
-    required this.musicSheet,
-  });
-}
-
-@immutable
-class AddMusicSheetEvent implements MusicSheetEvent {
-  final String fileName;
-  final Uint8List file;
-
-  const AddMusicSheetEvent({
-    required this.fileName,
-    required this.file,
-  });
-}

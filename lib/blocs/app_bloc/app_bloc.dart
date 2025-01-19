@@ -100,6 +100,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           isLoading: false,
         ),
       );
+    } else {
+      emit(AppStateLoggedIn(
+        isLoading: false,
+        user: user,
+      ));
     }
   }
 

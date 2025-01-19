@@ -17,11 +17,9 @@ class MusicSheetBloc extends Bloc<MusicSheetEvent, MusicSheetState> {
     required this.firebaseStorageRepository,
   }) : super(const MusicSheetsInitState()) {
     on<UploadImageMusicSheetEvent>(_uploadImageMusicSheetEvent);
-    on<EditMusicSheetEvent>(_editMusicSheetEvent);
     on<DeleteMusicSheetEvent>(_deleteMusicSheetEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
     on<RenameMusicSheetEvent>(_renameMusicSheetEvent);
-    on<AddMusicSheetEvent>(_addMusicSheetEvent);
     on<InitMusicSheetEvent>(_initMusicSheetEvent);
   }
 
@@ -46,8 +44,6 @@ class MusicSheetBloc extends Bloc<MusicSheetEvent, MusicSheetState> {
         userId: user.uid,
       );
       if (reference != null) {
-        // TODO: BUG
-        CustomLogger.instance.i("Length of all items is ${state.musicSheets.length} and so number should be");
         await firebaseFirestoreRepositary.uploadMusicSheetRecord(
           reference: reference,
           userId: user.uid,
@@ -118,8 +114,4 @@ class MusicSheetBloc extends Bloc<MusicSheetEvent, MusicSheetState> {
       onError: (_, __) => const MusicSheetsErrorState(),
     );
   }
-
-  void _addMusicSheetEvent(event, emit) async {}
-
-  void _editMusicSheetEvent(event, emit) async {}
 }

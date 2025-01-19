@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/features/add_music_sheet/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/features/add_music_sheet/view/add_music_sheet_view.dart';
+import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
-import 'package:organista/views/music_sheet_list_tile.dart';
+import 'package:organista/features/show_music_sheets/view/music_sheet_list_tile.dart';
 
 final logger = CustomLogger.instance;
 
@@ -32,7 +33,10 @@ class MainView extends HookWidget {
         title: const Text('Photo Gallery'),
         actions: [
           IconButton(
-            onPressed: () => Navigator.of(context).push<void>(AddMusicSheetView.route()),
+            onPressed: () {
+              context.read<AddEditMusicSheetCubit>().resetState();
+              Navigator.of(context).push<void>(AddMusicSheetView.route());
+            },
             icon: const Icon(Icons.add),
           ),
           const MainPopupMenuButton(),
