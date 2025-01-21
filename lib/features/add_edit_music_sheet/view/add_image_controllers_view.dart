@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/download_music_sheet/view/download_image_view.dart';
+import 'package:organista/logger/custom_logger.dart';
 
 class AddImageControllersView extends HookWidget {
   const AddImageControllersView({super.key});
@@ -30,7 +31,11 @@ class AddImageControllersView extends HookWidget {
                 source: ImageSource.gallery,
               );
               if (image is! XFile) {
-                throw ArgumentError('Unsupported file type: ${image.runtimeType}');
+                if (context.mounted) {
+                  CustomLogger.instance.i('Unsupported file type: ${image.runtimeType} while loading image from device');
+                  context.read<AddEditMusicSheetCubit>().resetState();
+                }
+                return;
               }
               final uint8ListImage = await File(image.path).readAsBytes();
               if (context.mounted) {

@@ -101,10 +101,6 @@ class MusicSheetBloc extends Bloc<MusicSheetEvent, MusicSheetState> {
 
   void _initMusicSheetEvent(event, emit) async {
     final User user = event.user;
-    _registerMusicSheetsSubscription(user, emit);
-  }
-
-  void _registerMusicSheetsSubscription(User user, emit) async {
     await emit.forEach<Iterable<MusicSheet>>(
       firebaseFirestoreRepositary.getMusicSheetsStream(user.uid),
       onData: (musicSheets) => MusicSheetsLoadedState(

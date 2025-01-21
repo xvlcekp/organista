@@ -46,6 +46,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     );
     try {
       await firebaseStorageRepository.deleteFolder(user.uid);
+      // TODO: delete all user's files
       // delete the user
       await user.delete();
       // log the user out
