@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:organista/logger/custom_logger.dart';
 
 const Map<String, AuthError> authErrorMapping = {
   'user-not-found': AuthErrorUserNotFound(),
@@ -10,6 +11,7 @@ const Map<String, AuthError> authErrorMapping = {
   'requires-recent-login': AuthErrorRequiresRecentLogin(),
   'no-current-user': AuthErrorNoCurrentUser(),
   'user-disabled': AuthErrorUserDisabled(),
+  'invalid-credential': AuthErrorInvalidCredential(),
 };
 
 @immutable
@@ -22,16 +24,21 @@ abstract class AuthError {
     required this.dialogText,
   });
 
-  factory AuthError.from(FirebaseAuthException exception) => authErrorMapping[exception.code.toLowerCase().trim()] ?? const AuthErrorUnknown();
+  factory AuthError.from(FirebaseAuthException exception) {
+    return authErrorMapping[exception.code.toLowerCase().trim()] ?? AuthErrorUnknown(exception: exception);
+  }
 }
 
 @immutable
 class AuthErrorUnknown extends AuthError {
-  const AuthErrorUnknown()
+  final FirebaseAuthException exception;
+  AuthErrorUnknown({required this.exception})
       : super(
           dialogTitle: 'Authentication error',
-          dialogText: 'Unknown authentication error',
-        );
+          dialogText: exception.message ?? 'Unknown error',
+        ) {
+    CustomLogger.instance.e(exception);
+  }
 }
 
 // auth/no-current-user
@@ -117,5 +124,14 @@ class AuthErrorUserDisabled extends AuthError {
       : super(
           dialogTitle: 'User is disabled',
           dialogText: 'This user has been disabled. Please contact support for help.',
+        );
+}
+
+@immutable
+class AuthErrorInvalidCredential extends AuthError {
+  const AuthErrorInvalidCredential()
+      : super(
+          dialogTitle: 'Credential is invalid',
+          dialogText: 'The supplied auth credential is incorrect, malformed or has expired.',
         );
 }

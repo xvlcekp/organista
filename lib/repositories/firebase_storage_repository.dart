@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:uuid/uuid.dart';
 
 class FirebaseStorageRepository {
+  final logger = CustomLogger.instance;
   final Iterable<MusicSheet> musicSheets = [];
   final instance = FirebaseStorage.instance;
 
@@ -16,14 +18,19 @@ class FirebaseStorageRepository {
   Future<void> deleteFolder(String path) async {
     final folderContents = await listFolderContents(path);
     for (final item in folderContents.items) {
-      await item.delete().catchError((_) {}); // maybe handle the error?
+      await item.delete().catchError((e) {
+        logger.e("Error while deleting item in folder");
+        logger.e(e);
+      }); // maybe handle the error?
     }
     // delete the folder itself
     await deletePath(path);
   }
 
   Future<void> deletePath(String path) {
-    return instance.ref(path).delete().catchError((_) {});
+    return instance.ref(path).delete().catchError((e) {
+      logger.e(e);
+    });
   }
 
   Reference getReference(String path) {

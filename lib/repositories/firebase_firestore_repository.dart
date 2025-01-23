@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/music_sheets/music_sheet_payload.dart';
+import 'package:organista/models/users/user_info_key.dart';
+import 'package:organista/models/users/user_info_payload.dart';
 
 class FirebaseFirestoreRepository {
   final Iterable<MusicSheet> musicSheets = [];
@@ -97,6 +100,42 @@ class FirebaseFirestoreRepository {
 
       return true; // Upload succeeded
     } catch (e) {
+      return false; // Upload failed
+    }
+  }
+
+  Future<bool> uploadNewUser({
+    required String userId,
+    required String email,
+  }) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.users);
+      final userPayload = UserInfoPayload(
+        userId: userId,
+        displayName: '',
+        email: email,
+      );
+      await firestoreRef.add(userPayload);
+
+      return true; // Upload succeeded
+    } catch (e) {
+      CustomLogger.instance.e(e);
+      return false; // Upload failed
+    }
+  }
+
+  Future<bool> deleteUser({
+    required String userId,
+  }) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.users);
+      QuerySnapshot querySnapshot = await firestoreRef.where(UserInfoKey.userId, isEqualTo: userId).get();
+      await querySnapshot.docs.first.reference.delete();
+      logger.i('User with uid $userId was deleted.');
+
+      return true; // Upload succeeded
+    } catch (e) {
+      logger.e(e);
       return false; // Upload failed
     }
   }

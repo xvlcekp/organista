@@ -45,6 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     try {
+      await firebaseFirestoreRepositary.deleteUser(userId: user.uid);
       await firebaseStorageRepository.deleteFolder(user.uid);
       // TODO: delete all user's files
       // delete the user
@@ -124,6 +125,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         email: email,
         password: password,
       );
+      await firebaseFirestoreRepositary.uploadNewUser(
+        email: credentials.user!.email!,
+        userId: credentials.user!.uid,
+      );
       emit(
         AppStateLoggedIn(isLoading: false, user: credentials.user!),
       );
@@ -166,8 +171,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           user: user,
         ),
       );
-      // get images for user
-      // await _registerMusicSheetsSubscription(user, emit);
     } on FirebaseAuthException catch (e) {
       emit(
         AppStateLoggedOut(

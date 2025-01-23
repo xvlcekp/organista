@@ -19,7 +19,7 @@ class FirebaseAuthRepository {
   }
 
   Future<UserCredential> createUserWithEmailAndPassword({required String email, required String password}) {
-    return instance.signInWithEmailAndPassword(
+    return instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
