@@ -7,6 +7,8 @@ import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/music_sheets/music_sheet_payload.dart';
+import 'package:organista/models/playlists/playlist.dart';
+import 'package:organista/models/playlists/playlist_payload.dart';
 import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
 
@@ -36,7 +38,6 @@ class FirebaseFirestoreRepository {
       final documents = snapshot.docs;
       logger.i("New data documents length: ${documents.length}");
       return documents.map((doc) => MusicSheet(
-            musicSheetId: doc.id,
             json: doc.data(),
           ));
     });
@@ -88,7 +89,7 @@ class FirebaseFirestoreRepository {
     required Reference reference,
   }) async {
     try {
-      final firestoreRef = instance.collection(userId);
+      final firestoreRef = instance.collection(FirebaseCollectionName.musicSheets);
       final musicSheetPayload = MusicSheetPayload(
         fileName: fileName,
         fileUrl: await reference.getDownloadURL(),
@@ -96,7 +97,11 @@ class FirebaseFirestoreRepository {
         sequenceId: totalMusicSheets,
         userId: userId,
       );
-      await firestoreRef.add(musicSheetPayload);
+
+      var docRef = await firestoreRef.add(musicSheetPayload);
+      musicSheetPayload[MusicSheetKey.musicSheetId] = docRef.id;
+      logger.i("Uploading music sheet record");
+      await firestoreRef.doc(docRef.id).update(musicSheetPayload);
 
       return true; // Upload succeeded
     } catch (e) {
@@ -136,6 +141,45 @@ class FirebaseFirestoreRepository {
       return true; // Upload succeeded
     } catch (e) {
       logger.e(e);
+      return false; // Upload failed
+    }
+  }
+
+  Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
+    return instance
+        .collection(FirebaseCollectionName.playlists)
+        .snapshots(
+          includeMetadataChanges: true,
+        )
+        .where((event) => !event.metadata.hasPendingWrites)
+        .map((snapshot) {
+      logger.i("Got new playlist data");
+      final documents = snapshot.docs;
+      logger.i("New playlists documents length: ${documents.length}");
+      return documents.map((doc) => Playlist(
+            playlistId: doc.id,
+            json: doc.data(),
+          ));
+    });
+  }
+
+  Future<bool> addNewPlaylist({
+    required String playlistName,
+    required String userId,
+  }) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.playlists);
+      final playlistPayload = PlaylistPayload(
+        userId: userId,
+        name: playlistName,
+        musicSheets: [],
+      );
+
+      await firestoreRef.add(playlistPayload);
+      logger.i("Uploading new playlist");
+
+      return true; // Upload succeeded
+    } catch (e) {
       return false; // Upload failed
     }
   }

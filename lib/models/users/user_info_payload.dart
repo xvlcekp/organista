@@ -1,5 +1,4 @@
 import 'dart:collection' show MapView;
-
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:organista/models/users/user_info_key.dart';
 
