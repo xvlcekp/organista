@@ -4,10 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
+import 'package:organista/models/music_sheets/list_music_sheet_extension.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/music_sheets/music_sheet_payload.dart';
 import 'package:organista/models/playlists/playlist.dart';
+import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/models/playlists/playlist_payload.dart';
 import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
@@ -24,48 +26,24 @@ class FirebaseFirestoreRepository {
     );
   }
 
-  Stream<Iterable<MusicSheet>> getMusicSheetsStream(String userId) {
-    return instance
-        .collection(userId)
-        .orderBy(
-          MusicSheetKey.sequenceId,
-          descending: false,
-        )
-        .snapshots(includeMetadataChanges: true)
-        .where((event) => !event.metadata.hasPendingWrites)
-        .map((snapshot) {
-      logger.i("Got new data");
-      final documents = snapshot.docs;
-      logger.i("New data documents length: ${documents.length}");
-      return documents.map((doc) => MusicSheet(
-            json: doc.data(),
-          ));
-    });
-  }
-
-  Future<bool> musicSheetReorder({required Iterable<MusicSheet> musicSheets}) async {
-    final batch = instance.batch();
-
-    for (int i = 0; i < musicSheets.length; i++) {
-      final musicSheet = musicSheets.elementAt(i);
-      logger.i("Updating ${musicSheet.fileName} to $i");
-
-      // Reference to the document
-      final docRef = instance.collection(musicSheet.userId).doc(musicSheet.musicSheetId);
-
-      // Add the update operation to the batch
-      batch.update(docRef, {MusicSheetKey.sequenceId: i});
-    }
-
-    // Commit the batch
-    try {
-      await batch.commit();
-      logger.i("Batch update successful");
-    } catch (e) {
-      logger.i("Batch update failed: $e");
-    }
-    return true;
-  }
+  // Stream<Iterable<MusicSheet>> getMusicSheetsStream(String userId) {
+  //   return instance
+  //       .collection(userId)
+  //       // .orderBy(
+  //       //   MusicSheetKey.sequenceId,
+  //       //   descending: false,
+  //       // )
+  //       .snapshots(includeMetadataChanges: true)
+  //       .where((event) => !event.metadata.hasPendingWrites)
+  //       .map((snapshot) {
+  //     logger.i("Got new data");
+  //     final documents = snapshot.docs;
+  //     logger.i("New data documents length: ${documents.length}");
+  //     return documents.map((doc) => MusicSheet(
+  //           json: doc.data(),
+  //         ));
+  //   });
+  // }
 
   Future<bool> removeImage({
     required Reference file,
@@ -73,19 +51,10 @@ class FirebaseFirestoreRepository {
     return file.delete().then((_) => true).catchError((_) => false);
   }
 
-  Future<bool> editMusicSheet({required MusicSheet musicSheet, required fileName}) async {
-    await instance.collection(musicSheet.userId).doc(musicSheet.musicSheetId).update({MusicSheetKey.fileName: fileName});
-    return true;
-  }
-
-  Future<bool> removeMusicSheet({required MusicSheet musicSheet}) {
-    return instance.collection(musicSheet.userId).doc(musicSheet.musicSheetId).delete().then((_) => true).catchError((_) => false);
-  }
-
+  // Nothing to do with playlist, just upload music sheet
   Future<bool> uploadMusicSheetRecord({
     required String fileName,
     required String userId,
-    required int totalMusicSheets,
     required Reference reference,
   }) async {
     try {
@@ -94,7 +63,6 @@ class FirebaseFirestoreRepository {
         fileName: fileName,
         fileUrl: await reference.getDownloadURL(),
         originalFileStorageId: reference.fullPath,
-        sequenceId: totalMusicSheets,
         userId: userId,
       );
 
@@ -124,7 +92,7 @@ class FirebaseFirestoreRepository {
 
       return true; // Upload succeeded
     } catch (e) {
-      CustomLogger.instance.e(e);
+      logger.e(e);
       return false; // Upload failed
     }
   }
@@ -143,6 +111,23 @@ class FirebaseFirestoreRepository {
       logger.e(e);
       return false; // Upload failed
     }
+  }
+
+  Stream<Playlist> getPlaylistStream(String playlistId) {
+    return instance
+        .collection(FirebaseCollectionName.playlists)
+        .doc(playlistId)
+        .snapshots(
+          includeMetadataChanges: true,
+        )
+        .map((snapshot) {
+      if (!snapshot.exists || snapshot.data() == null) {
+        logger.w("Playlist document does not exist: $playlistId");
+        return Playlist.empty(); // Handle missing playlist
+      }
+      logger.i("Dostal som update na konkretny playlist $playlistId");
+      return Playlist(playlistId: playlistId, json: snapshot.data()!);
+    });
   }
 
   Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
@@ -182,5 +167,74 @@ class FirebaseFirestoreRepository {
     } catch (e) {
       return false; // Upload failed
     }
+  }
+
+  Future<Iterable<MusicSheet>> getMusicSheetsFromRepository(String userId) async {
+    final snapshot = await instance.collection(FirebaseCollectionName.musicSheets).where(
+      MusicSheetKey.userId,
+      whereIn: ['', userId],
+    ).get(); // Fetch a single snapshot
+
+    final documents = snapshot.docs;
+
+    // Map each document to a MusicSheet object
+    return documents.map((doc) => MusicSheet(
+          json: doc.data(),
+        ));
+  }
+
+  Future<bool> addMusicSheetToPlaylist({
+    required Playlist playlist,
+    required MusicSheet musicSheet,
+  }) async {
+    try {
+      playlist.musicSheets.add(musicSheet);
+      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
+      });
+      return true; // Upload succeeded
+    } catch (e) {
+      return false; // Upload failed
+    }
+  }
+
+  Future<bool> renameMusicSheetInPlaylist({
+    required MusicSheet musicSheet,
+    required String fileName,
+    required Playlist playlist,
+  }) async {
+    try {
+      final docRef = instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId);
+      await docRef.update({
+        PlaylistKey.musicSheets: playlist.musicSheets.renameSheet(musicSheet.musicSheetId, fileName).toJsonList(),
+      });
+      logger.i("musicSheetRename update successful");
+      return true;
+    } catch (e) {
+      logger.i("musicSheetRename update failed: $e");
+      return false;
+    }
+  }
+
+  Future<void> deleteMusicSheetInPlaylist({
+    required MusicSheet musicSheet,
+    required Playlist playlist,
+  }) async {
+    logger.e("I want to remove ${musicSheet.fileName}");
+    await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      PlaylistKey.musicSheets: playlist.musicSheets.removeById(musicSheet.musicSheetId).toJsonList(),
+    });
+  }
+
+  Future<bool> musicSheetReorder({required Playlist playlist}) async {
+    try {
+      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
+      });
+      logger.i("musicSheetReorder update successful");
+    } catch (e) {
+      logger.i("musicSheetReorder update failed: $e");
+    }
+    return true;
   }
 }

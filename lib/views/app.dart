@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
-import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlist_page.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/views/login_view.dart';
-import 'package:organista/features/show_music_sheets/view/main_view.dart';
 import 'package:organista/views/register_view.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -34,8 +33,8 @@ class App extends StatelessWidget {
         BlocProvider<AddEditMusicSheetCubit>(
           create: (context) => AddEditMusicSheetCubit(),
         ),
-        BlocProvider<MusicSheetBloc>(
-          create: (context) => MusicSheetBloc(
+        BlocProvider<PlaylistBloc>(
+          create: (context) => PlaylistBloc(
             firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),

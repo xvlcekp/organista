@@ -1,8 +1,8 @@
 part of 'playlist_cubit.dart';
 
 @immutable
-sealed class PlaylistState extends Equatable {
-  const PlaylistState({
+sealed class ShowPlaylistsState extends Equatable {
+  const ShowPlaylistsState({
     required this.playlists,
   });
 
@@ -10,7 +10,7 @@ sealed class PlaylistState extends Equatable {
 }
 
 @immutable
-class InitPlaylistState extends PlaylistState {
+class InitPlaylistState extends ShowPlaylistsState {
   const InitPlaylistState() : super(playlists: const []);
 
   @override
@@ -18,7 +18,7 @@ class InitPlaylistState extends PlaylistState {
 }
 
 @immutable
-class PlaylistsLoadedState extends PlaylistState {
+class PlaylistsLoadedState extends ShowPlaylistsState {
   const PlaylistsLoadedState({required super.playlists});
 
   @override
@@ -26,7 +26,7 @@ class PlaylistsLoadedState extends PlaylistState {
 }
 
 @immutable
-class AddPlaylistState extends PlaylistState {
+class AddPlaylistState extends ShowPlaylistsState {
   final String playlistName;
   const AddPlaylistState({
     required super.playlists,
@@ -38,7 +38,7 @@ class AddPlaylistState extends PlaylistState {
 }
 
 @immutable
-class EditPlaylistState extends PlaylistState {
+class EditPlaylistState extends ShowPlaylistsState {
   final String newPlaylistName;
   final Playlist playlist;
   EditPlaylistState({

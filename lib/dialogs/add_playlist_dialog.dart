@@ -33,7 +33,7 @@ Future<dynamic> showAddPlaylistDialog({
               onPressed: () {
                 final playlistName = controller.text.trim();
                 if (playlistName.isNotEmpty) {
-                  context.read<PlaylistCubit>().addPlaylist(
+                  context.read<ShowPlaylistCubit>().addPlaylist(
                         playlistName: playlistName,
                         userId: userId,
                       );

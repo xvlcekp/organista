@@ -2,23 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
-import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/views/fullscreen_image_gallery.dart';
 
 class MusicSheetListTile extends StatelessWidget {
   const MusicSheetListTile({
     super.key,
-    required this.musicSheet,
+    required this.index,
     required this.evenItemColor,
-    required this.musicSheets,
+    required this.playlist,
   });
 
-  final MusicSheet musicSheet;
+  final int index;
   final Color evenItemColor;
-  final List<MusicSheet> musicSheets;
+  final Playlist playlist;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class MusicSheetListTile extends StatelessWidget {
         height: 75,
         width: 75,
         child: CachedNetworkImage(
-          imageUrl: musicSheet.fileUrl,
+          imageUrl: playlist.musicSheets[index].fileUrl,
           placeholder: (context, url) => const CircularProgressIndicator(),
           errorWidget: (context, url, error) => const Icon(Icons.error),
           fadeInDuration: Duration.zero,
@@ -38,13 +38,13 @@ class MusicSheetListTile extends StatelessWidget {
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 10),
       tileColor: evenItemColor,
-      title: Text(musicSheet.fileName),
+      title: Text(playlist.musicSheets[index].fileName),
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => FullScreenImageGallery(
-              musicSheets: musicSheets,
-              initialIndex: musicSheet.sequenceId,
+              musicSheets: playlist.musicSheets,
+              initialIndex: index,
             ),
           ),
         );
@@ -55,8 +55,9 @@ class MusicSheetListTile extends StatelessWidget {
           IconButton(
             onPressed: () async {
               if (context.mounted) {
-                context.read<AddEditMusicSheetCubit>().editMusicSheet(
-                      musicSheet: musicSheet,
+                context.read<AddEditMusicSheetCubit>().editMusicSheetInPlaylist(
+                      playlist: playlist,
+                      musicSheet: playlist.musicSheets[index],
                     );
                 Navigator.of(context).push<void>(AddMusicSheetView.route());
               }
@@ -67,9 +68,10 @@ class MusicSheetListTile extends StatelessWidget {
             onPressed: () async {
               final shouldDeleteImage = await showDeleteImageDialog(context);
               if (shouldDeleteImage && context.mounted) {
-                context.read<MusicSheetBloc>().add(
-                      DeleteMusicSheetEvent(
-                        musicSheet: musicSheet,
+                context.read<PlaylistBloc>().add(
+                      DeleteMusicSheetInPlaylistEvent(
+                        musicSheet: playlist.musicSheets[index],
+                        playlist: playlist,
                       ),
                     );
               }

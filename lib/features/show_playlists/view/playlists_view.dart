@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/add_playlist_dialog.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
+import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlist_cubit.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 
@@ -12,8 +15,9 @@ class PlaylistsView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = useTextEditingController();
-    final String userId = context.read<AppBloc>().state.user!.uid;
-    context.read<PlaylistCubit>().startSubscribingPlaylists(userId: userId);
+    final User user = context.read<AppBloc>().state.user!;
+    final String userId = user.uid;
+    context.read<ShowPlaylistCubit>().startSubscribingPlaylists(userId: userId);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Playlists ♬♬♬'),
@@ -28,7 +32,7 @@ class PlaylistsView extends HookWidget {
             child: Icon(Icons.add),
           ),
         ),
-        body: BlocBuilder<PlaylistCubit, PlaylistState>(
+        body: BlocBuilder<ShowPlaylistCubit, ShowPlaylistsState>(
           builder: (context, state) {
             return state.playlists.isEmpty
                 ? const Center(child: Text('No playlists available.'))
@@ -36,8 +40,11 @@ class PlaylistsView extends HookWidget {
                     itemCount: state.playlists.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(state.playlists[index].name),
-                      );
+                          title: Text(state.playlists[index].name),
+                          onTap: () {
+                            context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
+                            Navigator.of(context).push<void>(PlaylistView.route());
+                          });
                     },
                   );
           },

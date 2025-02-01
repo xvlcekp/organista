@@ -12,7 +12,6 @@ class MusicSheet extends Equatable {
   final String fileUrl;
   final String fileName;
   final String originalFileStorageId;
-  final int sequenceId;
 
   // TODO:  Uuid().v4() should be probably removed, because we want to use IDs generated from Firebase
   MusicSheet({
@@ -22,31 +21,29 @@ class MusicSheet extends Equatable {
         createdAt = (json[MusicSheetKey.createdAt] as Timestamp).toDate(),
         fileUrl = json[MusicSheetKey.fileUrl],
         fileName = json[MusicSheetKey.fileName],
-        originalFileStorageId = json[MusicSheetKey.originalFileStorageId],
-        sequenceId = json[MusicSheetKey.sequenceId];
+        originalFileStorageId = json[MusicSheetKey.originalFileStorageId];
 
   Map<String, dynamic> toJson() {
     return {
       MusicSheetKey.musicSheetId: musicSheetId,
       MusicSheetKey.userId: userId,
-      MusicSheetKey.createdAt: createdAt,
+      MusicSheetKey.createdAt: Timestamp.fromDate(createdAt),
       MusicSheetKey.fileUrl: fileUrl,
       MusicSheetKey.fileName: fileName,
       MusicSheetKey.originalFileStorageId: originalFileStorageId,
-      MusicSheetKey.sequenceId: sequenceId
     };
   }
 
   @override
-  String toString() => 'MusicSheet, uid = $userId, createdAt = $createdAt, fileUrl = $fileUrl, fileName = $fileName, originalFileStorageId = $originalFileStorageId, sequenceId = $sequenceId';
+  String toString() => 'MusicSheet, musicSheetId - $musicSheetId, fileName = $fileName';
 
   @override
   List<Object?> get props => [
+        musicSheetId,
         userId,
         createdAt,
         fileUrl,
         fileName,
         originalFileStorageId,
-        sequenceId,
       ];
 }

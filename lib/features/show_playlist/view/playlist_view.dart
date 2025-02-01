@@ -2,47 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
-import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/download_music_sheet/view/download_image_view.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
+import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
-import 'package:organista/features/show_music_sheets/view/music_sheet_list_tile.dart';
+import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
 
 final logger = CustomLogger.instance;
 
-class MainView extends HookWidget {
-  const MainView({super.key});
+class PlaylistView extends HookWidget {
+  const PlaylistView({super.key});
+
+  static Route<void> route() {
+    return MaterialPageRoute<void>(builder: (context) => PlaylistView());
+  }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color evenItemColor = colorScheme.primary.withOpacity(0.5);
+    Playlist playlist = context.read<PlaylistBloc>().state.playlist;
 
-    context.read<MusicSheetBloc>().add(
-          InitMusicSheetEvent(
-            user: context.read<AppBloc>().state.user!,
-          ),
-        );
+    // context.read<MusicSheetBloc>().add(
+    //       InitMusicSheetEvent(
+    //         user: context.read<AppBloc>().state.user!,
+    //       ),
+    //     );
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Photo Gallery'),
+        title: Text(playlist.name),
         actions: [
           IconButton(
             onPressed: () {
-              context.read<AddEditMusicSheetCubit>().resetState();
-              Navigator.of(context).push<void>(AddMusicSheetView.route());
+              Navigator.of(context).push<void>(DownloadMusicSheetView.route());
             },
             icon: const Icon(Icons.add),
           ),
           const MainPopupMenuButton(),
         ],
       ),
-      body: BlocConsumer<MusicSheetBloc, MusicSheetState>(
+      body: BlocConsumer<PlaylistBloc, PlaylistState>(
         listener: (context, appState) {
           if (appState.isLoading) {
             LoadingScreen.instance().show(
@@ -54,8 +57,8 @@ class MainView extends HookWidget {
           }
         },
         builder: (context, state) {
-          logger.i("Item count is ${state.musicSheets.length}");
-          var musicSheets = (state.musicSheets).toList();
+          var playlist = state.playlist;
+          logger.i("Item count is ${playlist.musicSheets.length}");
           return ReorderableListView(
             padding: const EdgeInsets.only(top: 10),
             onReorderStart: (_) => HapticFeedback.heavyImpact(),
@@ -63,17 +66,17 @@ class MainView extends HookWidget {
               if (oldIndex < newIndex) {
                 newIndex -= 1;
               }
-              final MusicSheet item = musicSheets.removeAt(oldIndex);
-              musicSheets.insert(newIndex, item);
-              context.read<MusicSheetBloc>().add(ReorderMusicSheetEvent(musicSheets: musicSheets));
+              final MusicSheet item = playlist.musicSheets.removeAt(oldIndex);
+              playlist.musicSheets.insert(newIndex, item);
+              context.read<PlaylistBloc>().add(ReorderMusicSheetEvent(playlist: playlist));
             },
             children: [
-              for (int index = 0; index < musicSheets.length; index += 1)
+              for (int index = 0; index < playlist.musicSheets.length; index += 1)
                 MusicSheetListTile(
-                  key: Key(musicSheets.elementAt(index).musicSheetId),
-                  musicSheet: musicSheets.elementAt(index),
+                  key: Key(playlist.musicSheets.elementAt(index).musicSheetId),
+                  index: index,
                   evenItemColor: evenItemColor,
-                  musicSheets: musicSheets,
+                  playlist: playlist,
                 )
             ],
           );

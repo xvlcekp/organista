@@ -9,7 +9,6 @@ class MusicSheetPayload extends MapView<String, dynamic> {
     required String fileName,
     required String fileUrl,
     required String originalFileStorageId,
-    required int sequenceId,
     required String userId,
   }) : super(
           {
@@ -17,7 +16,6 @@ class MusicSheetPayload extends MapView<String, dynamic> {
             MusicSheetKey.fileUrl: fileUrl,
             MusicSheetKey.originalFileStorageId: originalFileStorageId,
             MusicSheetKey.createdAt: FieldValue.serverTimestamp(),
-            MusicSheetKey.sequenceId: sequenceId,
             MusicSheetKey.userId: userId,
           },
         );

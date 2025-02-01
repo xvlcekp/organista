@@ -8,9 +8,9 @@ import 'package:organista/repositories/firebase_firestore_repository.dart';
 
 part 'playlist_state.dart';
 
-class PlaylistCubit extends Cubit<PlaylistState> {
+class ShowPlaylistCubit extends Cubit<ShowPlaylistsState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepositary;
-  PlaylistCubit({
+  ShowPlaylistCubit({
     required this.firebaseFirestoreRepositary,
   }) : super(const InitPlaylistState());
 

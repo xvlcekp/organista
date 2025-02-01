@@ -18,9 +18,9 @@ class InitMusicSheetState extends AddEditMusicSheetState {
 }
 
 @immutable
-class AddMusicSheetState extends AddEditMusicSheetState {
+class UploadMusicSheetState extends AddEditMusicSheetState {
   final Uint8List file;
-  const AddMusicSheetState({
+  const UploadMusicSheetState({
     required super.fileName,
     required this.file,
   });
@@ -31,8 +31,21 @@ class AddMusicSheetState extends AddEditMusicSheetState {
 
 @immutable
 class EditMusicSheetState extends AddEditMusicSheetState {
+  final Playlist playlist;
   final MusicSheet musicSheet;
   EditMusicSheetState({
+    required this.playlist,
+    required this.musicSheet,
+  }) : super(fileName: musicSheet.fileName);
+
+  @override
+  List<Object?> get props => [fileName, musicSheet];
+}
+
+@immutable
+class AddMusicSheetToPlaylistState extends AddEditMusicSheetState {
+  final MusicSheet musicSheet;
+  AddMusicSheetToPlaylistState({
     required this.musicSheet,
   }) : super(fileName: musicSheet.fileName);
 

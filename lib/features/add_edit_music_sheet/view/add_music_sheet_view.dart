@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/discard_changes_uploaded_music_sheet_dialog.dart';
-import 'package:organista/features/show_music_sheets/bloc/music_sheet_bloc.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_image_controllers_view.dart';
 import 'package:organista/features/add_edit_music_sheet/view/edit_music_sheet_image_view.dart';
 import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_image_view.dart';
@@ -21,7 +21,7 @@ class AddMusicSheetView extends HookWidget {
   Widget build(BuildContext context) {
     final musicSheetNameController = useTextEditingController();
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload the music sheet')),
+      appBar: AppBar(title: const Text('Download the music sheet')),
       body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
         builder: (context, state) {
           musicSheetNameController.text = state.fileName;
@@ -33,8 +33,9 @@ class AddMusicSheetView extends HookWidget {
                     flex: 2,
                     child: switch (state) {
                       InitMusicSheetState() => const AddImageControllersView(),
-                      AddMusicSheetState() => UploadedMusicSheetImageView(image: state.file),
+                      UploadMusicSheetState() => UploadedMusicSheetImageView(image: state.file),
                       EditMusicSheetState() => EditMusicSheetImageView(musicSheet: state.musicSheet),
+                      AddMusicSheetToPlaylistState() => EditMusicSheetImageView(musicSheet: state.musicSheet)
                     }),
                 Expanded(
                   flex: 3,
@@ -65,8 +66,8 @@ class AddMusicSheetView extends HookWidget {
                               switch (state) {
                                 case InitMusicSheetState():
                                   CustomLogger.instance.e("You have to select an image first");
-                                case AddMusicSheetState():
-                                  context.read<MusicSheetBloc>().add(
+                                case UploadMusicSheetState():
+                                  context.read<PlaylistBloc>().add(
                                         UploadImageMusicSheetEvent(
                                           file: state.file,
                                           fileName: musicSheetNameController.text,
@@ -75,12 +76,28 @@ class AddMusicSheetView extends HookWidget {
                                       );
                                   resetMusicSheetCubitAndPop(context);
                                 case EditMusicSheetState():
-                                  context.read<MusicSheetBloc>().add(
-                                        RenameMusicSheetEvent(
+                                  context.read<PlaylistBloc>().add(
+                                        RenameMusicSheetInPlaylistEvent(
+                                          playlist: state.playlist,
                                           musicSheet: state.musicSheet,
                                           fileName: musicSheetNameController.text,
                                         ),
                                       );
+                                  // final playlist = context.read<PlaylistBloc>().state.playlist;
+                                  // context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
+                                  //       musicSheet: state.musicSheet,
+                                  //       fileName: musicSheetNameController.text,
+                                  //       playlist: playlist,
+                                  //     ));
+                                  resetMusicSheetCubitAndPop(context);
+                                case AddMusicSheetToPlaylistState():
+                                  final playlist = context.read<PlaylistBloc>().state.playlist;
+                                  context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
+                                        musicSheet: state.musicSheet,
+                                        fileName: musicSheetNameController.text,
+                                        playlist: playlist,
+                                      ));
+                                  Navigator.of(context).pop();
                                   resetMusicSheetCubitAndPop(context);
                               }
                             }),
