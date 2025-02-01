@@ -34,6 +34,19 @@ class MusicSheet extends Equatable {
     };
   }
 
+  MusicSheet copyWith({String? fileName}) {
+    return MusicSheet(
+      json: {
+        MusicSheetKey.musicSheetId: musicSheetId,
+        MusicSheetKey.userId: userId,
+        MusicSheetKey.createdAt: Timestamp.fromDate(createdAt),
+        MusicSheetKey.fileUrl: fileUrl,
+        MusicSheetKey.fileName: fileName ?? this.fileName, // Update if provided
+        MusicSheetKey.originalFileStorageId: originalFileStorageId,
+      },
+    );
+  }
+
   @override
   String toString() => 'MusicSheet, musicSheetId - $musicSheetId, fileName = $fileName';
 

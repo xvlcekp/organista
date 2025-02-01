@@ -125,17 +125,17 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   }
 
   void _addMusicSheetToPlaylistEvent(event, emit) async {
-    final playlist = event.playlist;
-    final musicSheet = event.musicSheet;
-    final fileName = event.fileName;
+    final Playlist playlist = event.playlist;
+    final MusicSheet musicSheet = event.musicSheet;
+    final String fileName = event.fileName;
     emit(PlaylistLoadedState(
       isLoading: true,
       playlist: state.playlist,
     ));
-    // TODO: fix adding music sheet with new name
+    MusicSheet customNamedMusicSheet = musicSheet.copyWith(fileName: fileName);
     await firebaseFirestoreRepositary.addMusicSheetToPlaylist(
       playlist: playlist,
-      musicSheet: musicSheet,
+      musicSheet: customNamedMusicSheet,
     );
   }
 }
