@@ -24,28 +24,3 @@ class PlaylistsLoadedState extends ShowPlaylistsState {
   @override
   List<Object?> get props => [playlists];
 }
-
-@immutable
-class AddPlaylistState extends ShowPlaylistsState {
-  final String playlistName;
-  const AddPlaylistState({
-    required super.playlists,
-    required this.playlistName,
-  });
-
-  @override
-  List<Object?> get props => [playlists, playlistName];
-}
-
-@immutable
-class EditPlaylistState extends ShowPlaylistsState {
-  final String newPlaylistName;
-  final Playlist playlist;
-  EditPlaylistState({
-    required this.newPlaylistName,
-    required this.playlist,
-  }) : super(playlists: []);
-
-  @override
-  List<Object?> get props => [newPlaylistName, playlist];
-}

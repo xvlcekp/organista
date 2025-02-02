@@ -169,6 +169,23 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  Future<bool> renamePlaylist({
+    required String newPlaylistName,
+    required Playlist playlist,
+  }) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.playlists);
+      await firestoreRef.doc(playlist.playlistId).update({
+        PlaylistKey.name: newPlaylistName,
+      });
+      logger.i("Renaming playlist ${playlist.name} to $newPlaylistName");
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<Iterable<MusicSheet>> getMusicSheetsFromRepository(String userId) async {
     final snapshot = await instance.collection(FirebaseCollectionName.musicSheets).where(
       MusicSheetKey.userId,

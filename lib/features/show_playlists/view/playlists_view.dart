@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/dialogs/add_playlist_dialog.dart';
+import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
+import 'package:organista/dialogs/playlists/edit_playlist_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlist_cubit.dart';
@@ -36,16 +37,22 @@ class PlaylistsView extends HookWidget {
           builder: (context, state) {
             return state.playlists.isEmpty
                 ? const Center(child: Text('No playlists available.'))
-                : ListView.builder(
+                : ListView.separated(
                     itemCount: state.playlists.length,
                     itemBuilder: (context, index) {
+                      String playlistName = state.playlists[index].name;
                       return ListTile(
-                          title: Text(state.playlists[index].name),
+                          title: Text(playlistName),
+                          onLongPress: () {
+                            controller.text = playlistName;
+                            showEditPlaylistDialog(context: context, controller: controller, playlist: state.playlists[index]);
+                          },
                           onTap: () {
                             context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
                             Navigator.of(context).push<void>(PlaylistView.route());
                           });
                     },
+                    separatorBuilder: (_, __) => Divider(),
                   );
           },
         ));
