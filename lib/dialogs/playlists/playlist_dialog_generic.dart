@@ -15,7 +15,7 @@ Future<dynamic> showPlaylistDialog({
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
-            labelText: 'Playlist Name',
+            labelText: 'Playlist name',
             hintText: 'Enter playlist name',
           ),
         ),

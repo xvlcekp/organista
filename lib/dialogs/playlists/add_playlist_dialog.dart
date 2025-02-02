@@ -8,7 +8,7 @@ showAddPlaylistDialog({required BuildContext context, required TextEditingContro
   showPlaylistDialog(
     context: context,
     controller: controller,
-    title: 'Add New Playlist',
+    title: 'Add new playlist',
     actionLabel: 'Add',
     onConfirm: () {
       context.read<ShowPlaylistCubit>().addPlaylist(
