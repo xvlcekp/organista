@@ -7,7 +7,7 @@ import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/edit_playlist_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
-import 'package:organista/features/show_playlists/cubit/playlist_cubit.dart';
+import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 
 class PlaylistsView extends HookWidget {
@@ -18,7 +18,13 @@ class PlaylistsView extends HookWidget {
     final TextEditingController controller = useTextEditingController();
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
-    context.read<ShowPlaylistCubit>().startSubscribingPlaylists(userId: userId);
+
+    useEffect(() {
+      // initialize stream only once on first creation
+      context.read<ShowPlaylistsCubit>().startSubscribingPlaylists(userId: userId);
+      return null;
+    }, []);
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Playlists ♬♬♬'),
@@ -33,7 +39,7 @@ class PlaylistsView extends HookWidget {
             child: Icon(Icons.add),
           ),
         ),
-        body: BlocBuilder<ShowPlaylistCubit, ShowPlaylistsState>(
+        body: BlocBuilder<ShowPlaylistsCubit, ShowPlaylistsState>(
           builder: (context, state) {
             return state.playlists.isEmpty
                 ? const Center(child: Text('No playlists available.'))

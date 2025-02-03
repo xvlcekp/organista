@@ -6,11 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 
-part 'playlist_state.dart';
+part 'playlists_state.dart';
 
-class ShowPlaylistCubit extends Cubit<ShowPlaylistsState> {
+class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepositary;
-  ShowPlaylistCubit({
+  ShowPlaylistsCubit({
     required this.firebaseFirestoreRepositary,
   }) : super(const InitPlaylistState());
 
@@ -21,6 +21,7 @@ class ShowPlaylistCubit extends Cubit<ShowPlaylistsState> {
   }
 
   void startSubscribingPlaylists({required String userId}) async {
+    _streamSubscription.cancel();
     _streamSubscription = firebaseFirestoreRepositary.getPlaylistsStream(userId).listen((playlists) {
       emit(PlaylistsLoadedState(playlists: playlists.toList()));
     });

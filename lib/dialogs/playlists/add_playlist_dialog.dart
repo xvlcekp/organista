@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/dialogs/playlists/playlist_dialog_generic.dart';
-import 'package:organista/features/show_playlists/cubit/playlist_cubit.dart';
+import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 
 showAddPlaylistDialog({required BuildContext context, required TextEditingController controller, required String userId}) {
   controller.text = '';
@@ -11,7 +11,7 @@ showAddPlaylistDialog({required BuildContext context, required TextEditingContro
     title: 'Add new playlist',
     actionLabel: 'Add',
     onConfirm: () {
-      context.read<ShowPlaylistCubit>().addPlaylist(
+      context.read<ShowPlaylistsCubit>().addPlaylist(
             playlistName: controller.text.trim(),
             userId: userId,
           );
