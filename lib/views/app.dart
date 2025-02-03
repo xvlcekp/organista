@@ -79,6 +79,7 @@ class App extends StatelessWidget {
           },
         ),
         // TODO: named routes how to acces it - based on vandad's 1. video of state management course
+        // use library https://pub.dev/packages/go_router for advanced routing
         // routes: {
         //   '/add-image':(context) => const
         // },

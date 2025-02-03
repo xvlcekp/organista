@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
@@ -210,8 +211,10 @@ class FirebaseFirestoreRepository {
         PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
       });
       return true; // Upload succeeded
-    } catch (e) {
-      return false; // Upload failed
+    } catch (e, stacktrace) {
+      // way how to log errors to crashlytics
+      FirebaseCrashlytics.instance.recordError(e, stacktrace);
+      return false;
     }
   }
 

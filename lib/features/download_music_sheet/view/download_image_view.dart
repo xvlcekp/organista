@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart' show compareNatural;
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -29,7 +26,6 @@ class DownloadMusicSheetView extends HookWidget {
 
     // State hooks
     final isLoading = useState(true);
-    final allImageRefs = useState<List<MusicSheet>>([]); // All references fetched from Firebase
     final filteredImageRefs = useState<List<MusicSheet>>([]); // References displayed after filtering
     final searchController = useTextEditingController(); // Controller for search input
     final picker = useMemoized(() => ImagePicker(), [key]);
@@ -44,7 +40,6 @@ class DownloadMusicSheetView extends HookWidget {
           .toList()
         ..sort((a, b) => compareNatural(a.fileName, b.fileName));
 
-      allImageRefs.value = result;
       filteredImageRefs.value = filtered;
       isLoading.value = false;
     }
@@ -55,61 +50,13 @@ class DownloadMusicSheetView extends HookWidget {
       return null; // No cleanup needed
     }, []);
 
-    // Function to handle image downloads and uploads
-    Future<void> downloadAndMoveImage(Reference ref) async {
-      try {
-        final Uint8List? imageData = await ref.getData();
-        if (imageData == null) {
-          throw Exception("Failed to download image data.");
-        }
-
-        if (context.mounted) {
-          context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
-                file: imageData,
-                fileName: ref.name,
-              );
-          Navigator.of(context).pop();
-        }
-      } catch (e, stacktrace) {
-        FirebaseCrashlytics.instance.recordError(e, stacktrace);
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
-          );
-        }
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Repository ♬♬♬'),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: FloatingActionButton(
-          onPressed: () async {
-            final image = await picker.pickImage(
-              source: ImageSource.gallery,
-            );
-            if (image is! XFile) {
-              if (context.mounted) {
-                CustomLogger.instance.i('Unsupported file type: ${image.runtimeType} while loading image from device');
-                context.read<AddEditMusicSheetCubit>().resetState();
-              }
-              return;
-            }
-            final uint8ListImage = await File(image.path).readAsBytes();
-            if (context.mounted) {
-              // TODO: image picker cannot load the original's file name
-              context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
-                    fileName: image.name,
-                    file: uint8ListImage,
-                  );
-              Navigator.of(context).push<void>(AddMusicSheetView.route());
-            }
-          },
-          child: Icon(Icons.upload),
-        ),
+        padding: const EdgeInsets.only(bottom: 20.0, right: 8.0), // Adjust padding as needed
+        child: UploadFileFragment(picker: picker),
       ),
       body: Column(
         children: [
@@ -164,6 +111,63 @@ class DownloadMusicSheetView extends HookWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class UploadFileFragment extends StatelessWidget {
+  const UploadFileFragment({
+    super.key,
+    required this.picker,
+  });
+
+  final ImagePicker picker;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min, // Ensures it doesn't take extra space
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: FloatingActionButton(
+                onPressed: () async {
+                  final image = await picker.pickImage(source: ImageSource.gallery);
+                  if (image is! XFile) {
+                    if (context.mounted) {
+                      final String errorMessage = 'Unsupported file type: ${image.runtimeType} while loading image from device';
+                      CustomLogger.instance.i(errorMessage);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(errorMessage)),
+                      );
+                      context.read<AddEditMusicSheetCubit>().resetState();
+                    }
+                    return;
+                  }
+                  final uint8ListImage = await File(image.path).readAsBytes();
+                  if (context.mounted) {
+                    // TODO: image picker cannot load the original's file name
+                    context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
+                          fileName: image.name,
+                          file: uint8ListImage,
+                        );
+                    Navigator.of(context).push<void>(AddMusicSheetView.route());
+                  }
+                },
+                child: const Icon(Icons.upload),
+              ),
+            ),
+            const SizedBox(height: 16), // Space between buttons
+            FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.picture_as_pdf),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
