@@ -21,7 +21,6 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   }
 
   void startSubscribingPlaylists({required String userId}) async {
-    _streamSubscription.cancel();
     _streamSubscription = firebaseFirestoreRepositary.getPlaylistsStream(userId).listen((playlists) {
       emit(PlaylistsLoadedState(playlists: playlists.toList()));
     });

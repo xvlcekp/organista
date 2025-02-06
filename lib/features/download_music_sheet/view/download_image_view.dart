@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart' show compareNatural;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -11,6 +13,7 @@ import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_vie
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:path/path.dart';
 
 class DownloadMusicSheetView extends HookWidget {
   const DownloadMusicSheetView({super.key});
@@ -134,6 +137,7 @@ class UploadFileFragment extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: FloatingActionButton(
+                heroTag: 'uploadImageButton',
                 onPressed: () async {
                   final image = await picker.pickImage(source: ImageSource.gallery);
                   if (image is! XFile) {
@@ -162,7 +166,26 @@ class UploadFileFragment extends StatelessWidget {
             ),
             const SizedBox(height: 16), // Space between buttons
             FloatingActionButton(
-              onPressed: () {},
+              heroTag: 'uploadPdfButton',
+              onPressed: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['jpg', 'pdf', 'png'],
+                  withData: true,
+                );
+                if (result != null) {
+                  logger.e(result);
+                  final Uint8List fileBytes = result.files.first.bytes!;
+                  String fileName = result.files.first.name;
+                  if (context.mounted) {
+                    context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
+                          fileName: fileName,
+                          file: fileBytes,
+                        );
+                    Navigator.of(context).push<void>(AddMusicSheetView.route());
+                  }
+                }
+              },
               child: const Icon(Icons.picture_as_pdf),
             ),
           ],
