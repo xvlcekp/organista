@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show Uint8List, immutable;
 import 'package:equatable/equatable.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -40,6 +41,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final file = event.file;
     final fileName = event.fileName;
     final user = event.user;
+    final mediaType = event.mediaType;
     try {
       final Reference? reference = await firebaseStorageRepository.uploadImage(
         file: file,
@@ -50,6 +52,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           reference: reference,
           userId: user.uid,
           fileName: fileName,
+          mediaType: mediaType,
         );
         emit(PlaylistLoadedState(
           isLoading: false,

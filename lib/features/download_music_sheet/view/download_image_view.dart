@@ -11,9 +11,9 @@ import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:path/path.dart';
 
 class DownloadMusicSheetView extends HookWidget {
   const DownloadMusicSheetView({super.key});
@@ -157,6 +157,7 @@ class UploadFileFragment extends StatelessWidget {
                     context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
                           fileName: image.name,
                           file: uint8ListImage,
+                          mediaType: MediaType.image,
                         );
                     Navigator.of(context).push<void>(AddMusicSheetView.route());
                   }
@@ -181,6 +182,7 @@ class UploadFileFragment extends StatelessWidget {
                     context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
                           fileName: fileName,
                           file: fileBytes,
+                          mediaType: MediaType.pdf,
                         );
                     Navigator.of(context).push<void>(AddMusicSheetView.route());
                   }

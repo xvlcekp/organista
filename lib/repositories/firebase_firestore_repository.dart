@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/list_music_sheet_extension.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/music_sheets/music_sheet_payload.dart';
@@ -57,6 +58,7 @@ class FirebaseFirestoreRepository {
     required String fileName,
     required String userId,
     required Reference reference,
+    required MediaType mediaType,
   }) async {
     try {
       final firestoreRef = instance.collection(FirebaseCollectionName.musicSheets);
@@ -65,6 +67,7 @@ class FirebaseFirestoreRepository {
         fileUrl: await reference.getDownloadURL(),
         originalFileStorageId: reference.fullPath,
         userId: userId,
+        mediaType: mediaType,
       );
 
       var docRef = await firestoreRef.add(musicSheetPayload);

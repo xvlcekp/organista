@@ -17,11 +17,13 @@ class UploadImageMusicSheetEvent implements PlaylistEvent {
   final User user;
   final Uint8List file;
   final String fileName;
+  final MediaType mediaType;
 
   const UploadImageMusicSheetEvent({
     required this.user,
     required this.file,
     required this.fileName,
+    required this.mediaType,
   });
 }
 

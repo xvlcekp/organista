@@ -68,10 +68,12 @@ class AddMusicSheetView extends HookWidget {
                                   CustomLogger.instance.e("You have to select an image first");
                                 case UploadMusicSheetState():
                                   context.read<PlaylistBloc>().add(
+                                        // TODO: determine somewhere mediaType
                                         UploadImageMusicSheetEvent(
                                           file: state.file,
                                           fileName: musicSheetNameController.text,
                                           user: context.read<AppBloc>().state.user!,
+                                          mediaType: state.mediaType,
                                         ),
                                       );
                                   resetMusicSheetCubitAndPop(context);

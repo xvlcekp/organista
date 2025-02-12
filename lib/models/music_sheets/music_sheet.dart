@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,6 +13,7 @@ class MusicSheet extends Equatable {
   final String fileUrl;
   final String fileName;
   final String originalFileStorageId;
+  final MediaType mediaType;
 
   // TODO:  Uuid().v4() should be probably removed, because we want to use IDs generated from Firebase
   MusicSheet({
@@ -21,7 +23,8 @@ class MusicSheet extends Equatable {
         createdAt = (json[MusicSheetKey.createdAt] as Timestamp).toDate(),
         fileUrl = json[MusicSheetKey.fileUrl],
         fileName = json[MusicSheetKey.fileName],
-        originalFileStorageId = json[MusicSheetKey.originalFileStorageId];
+        originalFileStorageId = json[MusicSheetKey.originalFileStorageId],
+        mediaType = MediaType.fromString(json[MusicSheetKey.mediaType]);
 
   Map<String, dynamic> toJson() {
     return {
@@ -31,6 +34,7 @@ class MusicSheet extends Equatable {
       MusicSheetKey.fileUrl: fileUrl,
       MusicSheetKey.fileName: fileName,
       MusicSheetKey.originalFileStorageId: originalFileStorageId,
+      MusicSheetKey.mediaType: mediaType.name,
     };
   }
 
@@ -43,6 +47,7 @@ class MusicSheet extends Equatable {
         MusicSheetKey.fileUrl: fileUrl,
         MusicSheetKey.fileName: fileName ?? this.fileName, // Update if provided
         MusicSheetKey.originalFileStorageId: originalFileStorageId,
+        MusicSheetKey.mediaType: mediaType.name,
       },
     );
   }
@@ -58,5 +63,6 @@ class MusicSheet extends Equatable {
         fileUrl,
         fileName,
         originalFileStorageId,
+        mediaType,
       ];
 }

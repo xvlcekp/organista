@@ -9,6 +9,7 @@ class MusicSheetKey {
   static const fileUrl = 'file_url';
   static const fileName = 'file_name';
   static const originalFileStorageId = 'original_file_storage_id';
+  static const mediaType = 'media_type';
 
   const MusicSheetKey._();
 }

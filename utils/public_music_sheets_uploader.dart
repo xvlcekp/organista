@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 
@@ -25,6 +26,7 @@ void main() async {
         reference: reference,
         userId: '',
         fileName: 'nazov_suboru.pdf',
+        mediaType: MediaType.pdf,
       );
     } else {
       throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
