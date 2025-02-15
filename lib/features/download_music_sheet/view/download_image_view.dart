@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
+import 'package:organista/features/add_edit_music_sheet/view/music_sheet_fulscreen_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -107,7 +108,13 @@ class DownloadMusicSheetView extends HookWidget {
                             Navigator.of(context).push<void>(AddMusicSheetView.route());
                           },
                         ),
-                        onTap: () => {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MusicSheetFullScreenView(musicSheet: musicSheet),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
