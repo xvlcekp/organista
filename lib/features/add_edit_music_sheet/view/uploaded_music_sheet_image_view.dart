@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
-import 'package:organista/logger/custom_logger.dart';
 import 'package:pdfx/pdfx.dart';
 
 class UploadedMusicSheetImageView extends StatelessWidget {

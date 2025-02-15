@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/fragments/switch_image.dart';
+import 'package:organista/features/show_playlist/view/playlist_view.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/views/pdf_viewer_widget.dart';
+import 'package:pdfx/pdfx.dart';
 
-class FullScreenImageGallery extends HookWidget {
+class FullScreenImageGallery extends StatelessWidget {
   final List<MusicSheet> musicSheets;
   final int initialIndex;
 
@@ -14,80 +16,44 @@ class FullScreenImageGallery extends HookWidget {
     this.initialIndex = 0,
   });
 
-  void _handleDoubleTap(TransformationController controller) {
-    // Reset the transformation to the original size
-    controller.value = Matrix4.identity();
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Use hooks for state management
-    final currentIndex = useState(initialIndex);
-    final TransformationController controller = useTransformationController();
-
-    bool notLastImage() => currentIndex.value < musicSheets.length - 1;
-    bool notFirstImage() => currentIndex.value > 0;
-
-    void goToNextImage() {
-      if (notLastImage()) {
-        currentIndex.value++;
-      }
-    }
-
-    void goToPreviousImage() {
-      if (notFirstImage()) {
-        currentIndex.value--;
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          GestureDetector(
-            onDoubleTap: () => _handleDoubleTap(controller),
-            child: InteractiveViewer(
-              transformationController: controller,
-              panEnabled: true,
-              boundaryMargin: const EdgeInsets.all(80),
-              minScale: 1.0,
-              maxScale: 4.0,
-              child: Center(
-                child: CachedNetworkImage(
-                  imageUrl: musicSheets[currentIndex.value].fileUrl,
-                  fadeInDuration: Duration.zero,
-                  fadeOutDuration: Duration.zero,
-                  placeholder: (context, url) => const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                  fit: BoxFit.contain,
-                ),
+      body: PhotoViewGallery.builder(
+        pageController: PageController(initialPage: initialIndex),
+        scrollPhysics: const BouncingScrollPhysics(),
+        builder: (_, int index) {
+          logger.e("Index is $index");
+          final musicSheet = musicSheets[index];
+
+          if (musicSheet.mediaType == MediaType.image) {
+            return PhotoViewGalleryPageOptions(
+              imageProvider: CachedNetworkImageProvider(
+                musicSheet.fileUrl,
               ),
-            ),
+              initialScale: PhotoViewComputedScale.contained * 1.0,
+              minScale: PhotoViewComputedScale.contained * 1.0,
+            );
+          } else {
+            return PhotoViewGalleryPageOptions.customChild(
+              child: PdfViewerWidget(fileUrl: musicSheet.fileUrl),
+              minScale: PhotoViewComputedScale.contained * 1.0,
+              maxScale: PhotoViewComputedScale.contained * 3.0,
+              initialScale: PhotoViewComputedScale.contained * 1.0,
+            );
+          }
+        },
+        itemCount: musicSheets.length,
+        loadingBuilder: (context, event) => const Center(
+          child: SizedBox(
+            width: 20.0,
+            height: 20.0,
+            child: CircularProgressIndicator(
+                // value: event == null ? 0 : event.cumulativeBytesLoaded / event.expectedTotalBytes,
+                ),
           ),
-          // Left Arrow
-          if (notFirstImage())
-            SwitchImage(
-              switchImage: goToPreviousImage,
-              icon: Icons.arrow_back,
-              side: SwitchImageSide.left,
-            ),
-          // Right Arrow
-          if (notLastImage())
-            SwitchImage(
-              switchImage: goToNextImage,
-              icon: Icons.arrow_forward,
-              side: SwitchImageSide.right,
-            ),
-          // Close (X) left upper part
-          Positioned(
-            top: 40,
-            left: 16,
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

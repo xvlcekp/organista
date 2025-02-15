@@ -57,6 +57,7 @@ dependencies:
   file_picker: ^8.3.1
   pdfx: ^2.8.0
   flutter_cache_manager: ^3.4.1
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:
