@@ -13,17 +13,15 @@ class InitPlaylistEvent implements PlaylistEvent {
 }
 
 @immutable
-class UploadImageMusicSheetEvent implements PlaylistEvent {
+class UploadNewMusicSheetEvent implements PlaylistEvent {
   final User user;
-  final Uint8List file;
+  final File file;
   final String fileName;
-  final MediaType mediaType;
 
-  const UploadImageMusicSheetEvent({
+  const UploadNewMusicSheetEvent({
     required this.user,
     required this.file,
     required this.fileName,
-    required this.mediaType,
   });
 }
 

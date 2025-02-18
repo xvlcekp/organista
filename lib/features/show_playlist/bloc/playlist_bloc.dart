@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart' show Uint8List, immutable;
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
@@ -18,7 +20,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     required this.firebaseFirestoreRepositary,
     required this.firebaseStorageRepository,
   }) : super(PlaylistInitState()) {
-    on<UploadImageMusicSheetEvent>(_uploadImageMusicSheetEvent);
+    on<UploadNewMusicSheetEvent>(_uploadNewMusicSheetEvent);
     on<DeleteMusicSheetInPlaylistEvent>(_deleteMusicSheetInPlaylistEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
     on<RenameMusicSheetInPlaylistEvent>(_renameMusicSheetInPlaylistEvent);
@@ -29,7 +31,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepositary;
   final FirebaseStorageRepository firebaseStorageRepository;
 
-  void _uploadImageMusicSheetEvent(event, emit) async {
+  void _uploadNewMusicSheetEvent(event, emit) async {
     // start the loading process
     emit(
       PlaylistLoadedState(
@@ -38,12 +40,11 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       ),
     );
     // upload the file
-    final file = event.file;
-    final fileName = event.fileName;
-    final user = event.user;
-    final mediaType = event.mediaType;
+    final File file = event.file;
+    final String fileName = event.fileName;
+    final User user = event.user;
     try {
-      final Reference? reference = await firebaseStorageRepository.uploadImage(
+      final Reference? reference = await firebaseStorageRepository.uploadFile(
         file: file,
         userId: user.uid,
       );
@@ -52,7 +53,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           reference: reference,
           userId: user.uid,
           fileName: fileName,
-          mediaType: mediaType,
+          mediaType: MediaType.fromPath(file.path),
         );
         emit(PlaylistLoadedState(
           isLoading: false,

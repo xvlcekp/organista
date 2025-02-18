@@ -1,53 +1,58 @@
-import 'dart:typed_data';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:pdfx/pdfx.dart';
 
-class UploadedMusicSheetImageView extends StatelessWidget {
-  const UploadedMusicSheetImageView({
+class UploadedMusicSheetFileView extends StatelessWidget {
+  const UploadedMusicSheetFileView({
     super.key,
-    required this.image,
+    required this.file,
   });
 
-  final Uint8List image;
+  final File file;
 
   @override
   Widget build(BuildContext context) {
-    final pdfController = PdfController(
-      document: PdfDocument.openData(image),
-    );
+    Widget child;
+    switch (MediaType.fromPath(file.path)) {
+      case MediaType.image:
+        child = Image.file(
+          file,
+          fit: BoxFit.fitHeight,
+        );
+
+      case MediaType.pdf:
+        final pdfController = PdfController(
+          document: PdfDocument.openFile(file.path),
+        );
+        child = PdfView(
+          controller: pdfController,
+          renderer: (PdfPage page) => page.render(
+            width: page.width * 0.5,
+            height: page.height * 0.5,
+            format: PdfPageImageFormat.jpeg,
+            backgroundColor: '#FFFFFF',
+          ),
+        );
+
+      default:
+        child = const Placeholder();
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // GestureDetector(
-        // child:
-        Expanded(
-          child: PdfView(
-            controller: pdfController,
-          ),
+        GestureDetector(
+          child: child,
+          onTap: () {
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => MusicSheetFullScreenView(musicSheet: musicSheet),
+            //   ),
+            // );
+          },
         ),
-        // Image.memory(
-        //   image,
-        //   fit: BoxFit.fitHeight,
-        // ),
-
-        // onTap: () {
-        //   CustomLogger.instance.i("Tapped");
-        //   Navigator.of(context).push(
-        //     MaterialPageRoute(
-        //       builder: (_) => Scaffold(
-        //         body: InteractiveViewer(
-        //           child: Image.memory(
-        //             image,
-        //             fit: BoxFit.fitHeight,
-        //             alignment: Alignment.center,
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   );
-        // }),
         IconButton(
           onPressed: () => context.read<AddEditMusicSheetCubit>().resetState(),
           icon: Icon(Icons.change_circle),

@@ -77,6 +77,7 @@ class FirebaseFirestoreRepository {
 
       return true; // Upload succeeded
     } catch (e) {
+      logger.e(e);
       return false; // Upload failed
     }
   }
@@ -169,6 +170,7 @@ class FirebaseFirestoreRepository {
 
       return true; // Upload succeeded
     } catch (e) {
+      logger.e(e);
       return false; // Upload failed
     }
   }
@@ -186,6 +188,7 @@ class FirebaseFirestoreRepository {
 
       return true;
     } catch (e) {
+      logger.e(e);
       return false;
     }
   }
@@ -234,7 +237,7 @@ class FirebaseFirestoreRepository {
       logger.i("musicSheetRename update successful");
       return true;
     } catch (e) {
-      logger.i("musicSheetRename update failed: $e");
+      logger.e(e);
       return false;
     }
   }

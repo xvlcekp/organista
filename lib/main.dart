@@ -21,7 +21,5 @@ void main() async {
 }
 
 // TODO:
-// Co v pripade viacerych stran na pesnicke
-// PDF, alebo JPG? Kombinacia?
 // globalny repositar s dodatocnymi info o piesnach
 // otestovat flutter_cached_pdfview

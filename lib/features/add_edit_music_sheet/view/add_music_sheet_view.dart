@@ -33,7 +33,7 @@ class AddMusicSheetView extends HookWidget {
                     flex: 2,
                     child: switch (state) {
                       InitMusicSheetState() => const AddImageControllersView(),
-                      UploadMusicSheetState() => UploadedMusicSheetImageView(image: state.file),
+                      UploadMusicSheetState() => UploadedMusicSheetFileView(file: state.file),
                       EditMusicSheetState() => MusicSheetView(
                           musicSheet: state.musicSheet,
                           mode: MusicSheetViewMode.preview,
@@ -74,12 +74,10 @@ class AddMusicSheetView extends HookWidget {
                                   CustomLogger.instance.e("You have to select an image first");
                                 case UploadMusicSheetState():
                                   context.read<PlaylistBloc>().add(
-                                        // TODO: determine somewhere mediaType
-                                        UploadImageMusicSheetEvent(
+                                        UploadNewMusicSheetEvent(
                                           file: state.file,
                                           fileName: musicSheetNameController.text,
                                           user: context.read<AppBloc>().state.user!,
-                                          mediaType: state.mediaType,
                                         ),
                                       );
                                   resetMusicSheetCubitAndPop(context);
@@ -91,12 +89,6 @@ class AddMusicSheetView extends HookWidget {
                                           fileName: musicSheetNameController.text,
                                         ),
                                       );
-                                  // final playlist = context.read<PlaylistBloc>().state.playlist;
-                                  // context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
-                                  //       musicSheet: state.musicSheet,
-                                  //       fileName: musicSheetNameController.text,
-                                  //       playlist: playlist,
-                                  //     ));
                                   resetMusicSheetCubitAndPop(context);
                                 case AddMusicSheetToPlaylistState():
                                   final playlist = context.read<PlaylistBloc>().state.playlist;

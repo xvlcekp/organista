@@ -19,16 +19,13 @@ class InitMusicSheetState extends AddEditMusicSheetState {
 
 @immutable
 class UploadMusicSheetState extends AddEditMusicSheetState {
-  final Uint8List file;
-  final MediaType mediaType;
-  const UploadMusicSheetState({
-    required super.fileName,
+  final File file;
+  UploadMusicSheetState({
     required this.file,
-    required this.mediaType,
-  });
+  }) : super(fileName: basename(file.path));
 
   @override
-  List<Object?> get props => [fileName, file];
+  List<Object?> get props => [file];
 }
 
 @immutable
