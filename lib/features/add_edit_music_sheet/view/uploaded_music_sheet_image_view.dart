@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
@@ -11,21 +11,21 @@ class UploadedMusicSheetFileView extends StatelessWidget {
     required this.file,
   });
 
-  final File file;
+  final PlatformFile file;
 
   @override
   Widget build(BuildContext context) {
     Widget child;
-    switch (MediaType.fromPath(file.path)) {
+    switch (MediaType.fromPath(file.name)) {
       case MediaType.image:
-        child = Image.file(
-          file,
+        child = Image.memory(
+          file.bytes!,
           fit: BoxFit.fitHeight,
         );
 
       case MediaType.pdf:
         final pdfController = PdfController(
-          document: PdfDocument.openFile(file.path),
+          document: PdfDocument.openData(file.bytes!),
         );
         child = PdfView(
           controller: pdfController,

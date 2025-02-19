@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart' show compareNatural;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -142,8 +140,7 @@ class UploadFileFragment extends StatelessWidget {
                 );
                 if (result != null) {
                   if (context.mounted) {
-                    // TODO: switch to Platformfile or something more universal?
-                    final File file = File(result.files.first.path!);
+                    final PlatformFile file = result.files.first;
                     context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
                           file: file,
                         );

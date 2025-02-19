@@ -19,10 +19,10 @@ class InitMusicSheetState extends AddEditMusicSheetState {
 
 @immutable
 class UploadMusicSheetState extends AddEditMusicSheetState {
-  final File file;
+  final PlatformFile file;
   UploadMusicSheetState({
     required this.file,
-  }) : super(fileName: basename(file.path));
+  }) : super(fileName: basename(file.name));
 
   @override
   List<Object?> get props => [file];

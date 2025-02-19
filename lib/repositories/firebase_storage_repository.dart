@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
@@ -39,27 +38,18 @@ class FirebaseStorageRepository {
   }
 
   Future<Reference?> uploadFile({
-    // TODO: replace file with PlatformFile type
-    required dynamic file,
+    required PlatformFile file,
     required String userId,
   }) async {
     String uuid = const Uuid().v4();
     final ref = instance.ref(userId).child(uuid);
-    if (file is File) {
-      await ref.putFile(
-        file,
-      );
-    } else if (file is PlatformFile) {
-      logger.i('Mime type is ' + (lookupMimeType(file.name) ?? ''));
-      await ref.putData(
-        file.bytes!,
-        SettableMetadata(
-          contentType: lookupMimeType(file.name),
-        ),
-      );
-    } else {
-      Exception("Unsupported type of file to upload to Firebase");
-    }
+    logger.i('Mime type is ' + (lookupMimeType(file.name) ?? ''));
+    await ref.putData(
+      file.bytes!,
+      SettableMetadata(
+        contentType: lookupMimeType(file.name),
+      ),
+    );
 
     return ref; // Upload succeeded
   }

@@ -15,7 +15,7 @@ class InitPlaylistEvent implements PlaylistEvent {
 @immutable
 class UploadNewMusicSheetEvent implements PlaylistEvent {
   final User user;
-  final File file;
+  final PlatformFile file;
   final String fileName;
 
   const UploadNewMusicSheetEvent({

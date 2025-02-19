@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
@@ -40,7 +39,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       ),
     );
     // upload the file
-    final File file = event.file;
+    final PlatformFile file = event.file;
     final String fileName = event.fileName;
     final User user = event.user;
     try {
@@ -53,7 +52,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           reference: reference,
           userId: user.uid,
           fileName: fileName,
-          mediaType: MediaType.fromPath(file.path),
+          mediaType: MediaType.fromPath(file.name),
         );
         emit(PlaylistLoadedState(
           isLoading: false,
