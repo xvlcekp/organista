@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:http/http.dart';
 import 'package:pdfx/pdfx.dart';
 
 enum PdfViewMode { full, thumbnail, preview }
@@ -27,8 +29,16 @@ class PdfViewerWidget extends HookWidget {
 
     useEffect(() {
       Future(() async {
-        final pdfFile = await _downloadAndCachePdf(fileUrl);
-        final document = PdfDocument.openFile(pdfFile.path);
+        late Future<PdfDocument> document;
+        if (kIsWeb) {
+          Response response = await get(
+            Uri.parse(fileUrl),
+          );
+          document = PdfDocument.openData(response.bodyBytes);
+        } else {
+          final pdfFile = await _downloadAndCachePdf(fileUrl);
+          document = PdfDocument.openFile(pdfFile.path);
+        }
         pdfController.value = PdfController(document: document);
         isLoading.value = false;
       });
