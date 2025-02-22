@@ -1,1 +1,35 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"organista-project","appId":"1:613500039629:android:8a1fda8cbbe165717fd484","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"organista-project","configurations":{"android":"1:613500039629:android:8a1fda8cbbe165717fd484","web":"1:613500039629:web:7213a0f92d44390c7fd484"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "organista-project",
+          "appId": "1:613500039629:android:8a1fda8cbbe165717fd484",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "organista-project",
+          "configurations": {
+            "android": "1:613500039629:android:8a1fda8cbbe165717fd484",
+            "web": "1:613500039629:web:7213a0f92d44390c7fd484"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
