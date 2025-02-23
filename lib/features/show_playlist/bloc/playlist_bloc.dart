@@ -45,7 +45,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     try {
       final Reference? reference = await firebaseStorageRepository.uploadFile(
         file: file,
-        userId: user.uid,
+        bucket: user.uid,
       );
       if (reference != null) {
         await firebaseFirestoreRepositary.uploadMusicSheetRecord(
