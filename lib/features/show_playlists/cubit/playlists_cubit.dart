@@ -39,4 +39,8 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   void editPlaylistName({required String newPlaylistName, required Playlist playlist}) async {
     await firebaseFirestoreRepositary.renamePlaylist(newPlaylistName: newPlaylistName, playlist: playlist);
   }
+
+  void deletePlaylist({required Playlist playlist}) async {
+    await firebaseFirestoreRepositary.deletePlaylist(playlist: playlist);
+  }
 }

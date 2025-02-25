@@ -193,6 +193,18 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  Future<bool> deletePlaylist({required Playlist playlist}) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.playlists);
+      await firestoreRef.doc(playlist.playlistId).delete();
+      logger.i("Removing playlist ${playlist.name} with id ${playlist.playlistId}");
+      return true;
+    } catch (e) {
+      logger.e(e);
+      return false;
+    }
+  }
+
   Future<Iterable<MusicSheet>> getMusicSheetsFromRepository(String userId) async {
     final snapshot = await instance.collection(FirebaseCollectionName.musicSheets).where(
       MusicSheetKey.userId,

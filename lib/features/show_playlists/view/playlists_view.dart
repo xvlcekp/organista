@@ -4,10 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
+import 'package:organista/dialogs/playlists/delete_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/edit_playlist_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
+import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 
 class PlaylistsView extends HookWidget {
@@ -46,17 +48,39 @@ class PlaylistsView extends HookWidget {
                 : ListView.separated(
                     itemCount: state.playlists.length,
                     itemBuilder: (context, index) {
-                      String playlistName = state.playlists[index].name;
-                      return ListTile(
-                          title: Text(playlistName),
-                          onLongPress: () {
-                            controller.text = playlistName;
-                            showEditPlaylistDialog(context: context, controller: controller, playlist: state.playlists[index]);
+                      Playlist playlist = state.playlists[index];
+                      return Dismissible(
+                          key: UniqueKey(),
+                          direction: DismissDirection.endToStart,
+                          background: const ColoredBox(
+                            color: Colors.red,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Icon(Icons.delete, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          confirmDismiss: (DismissDirection direction) async {
+                            final shouldDeletePlaylist = await showDeletePlaylistDialog(context);
+                            if (shouldDeletePlaylist && context.mounted) {
+                              context.read<ShowPlaylistsCubit>().deletePlaylist(
+                                    playlist: playlist,
+                                  );
+                            }
+                            return;
                           },
-                          onTap: () {
-                            context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
-                            Navigator.of(context).push<void>(PlaylistView.route());
-                          });
+                          child: ListTile(
+                              title: Text(playlist.name),
+                              onLongPress: () {
+                                controller.text = playlist.name;
+                                showEditPlaylistDialog(context: context, controller: controller, playlist: state.playlists[index]);
+                              },
+                              onTap: () {
+                                context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
+                                Navigator.of(context).push<void>(PlaylistView.route());
+                              }));
                     },
                     separatorBuilder: (_, __) => Divider(),
                   );
