@@ -7,7 +7,7 @@ import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
-import 'package:organista/views/fullscreen_image_gallery.dart';
+import 'package:organista/features/full_screen_gallery/fullscreen_image_gallery.dart';
 
 class MusicSheetListTile extends HookWidget {
   const MusicSheetListTile({

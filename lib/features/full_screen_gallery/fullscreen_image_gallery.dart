@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/views/pdf_viewer_widget.dart';
+import 'package:organista/features/pdf_viewer/pdf_viewer_widget.dart';
 import 'package:pdfx/pdfx.dart';
 
 class FullScreenImageGallery extends StatelessWidget {
