@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
-import 'package:organista/features/add_edit_music_sheet/view/music_sheet_view.dart';
+import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';

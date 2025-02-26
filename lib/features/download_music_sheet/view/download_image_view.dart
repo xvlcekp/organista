@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
-import 'package:organista/features/add_edit_music_sheet/view/music_sheet_fulscreen_view.dart';
+import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 
@@ -104,7 +104,7 @@ class DownloadMusicSheetView extends HookWidget {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => MusicSheetFullScreenView(musicSheet: musicSheet),
+                              builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
                             ),
                           );
                         },

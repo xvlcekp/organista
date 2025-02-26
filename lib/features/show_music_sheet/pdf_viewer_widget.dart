@@ -4,19 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
+import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:pdfx/pdfx.dart';
 
-enum PdfViewMode { full, thumbnail, preview }
-
 class PdfViewerWidget extends HookWidget {
   final String fileUrl;
-  final PdfViewMode mode;
+  final MusicSheetViewMode mode;
 
   const PdfViewerWidget({
     super.key,
     required this.fileUrl,
-    this.mode = PdfViewMode.full, // Default to full mode
+    this.mode = MusicSheetViewMode.full, // Default to full mode
   });
 
   Future<File?> _downloadAndCachePdf(String url) async {
@@ -60,9 +59,9 @@ class PdfViewerWidget extends HookWidget {
     }
 
     return switch (mode) {
-      PdfViewMode.full => getPdfFullView(pdfController),
-      PdfViewMode.thumbnail => getPdfThumbnailView(pdfController),
-      PdfViewMode.preview => getPdfPreview(pdfController),
+      MusicSheetViewMode.full => getPdfFullView(pdfController),
+      MusicSheetViewMode.thumbnail => getPdfThumbnailView(pdfController),
+      MusicSheetViewMode.preview => getPdfPreview(pdfController),
     };
   }
 
@@ -90,37 +89,41 @@ class PdfViewerWidget extends HookWidget {
     );
   }
 
-  Stack getPdfFullView(ValueNotifier<PdfController?> pdfController) {
-    return Stack(
-      children: [
-        /// PDF Viewer as the base layer
-        Positioned.fill(
-          child: PdfView(
-            controller: pdfController.value!,
-            scrollDirection: Axis.vertical,
-          ),
-        ),
-
-        /// Page number overlay at the bottom-right
-        Positioned(
-          bottom: 16, // Adjust to your preference
-          right: 16, // Adjust to your preference
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.6), // Semi-transparent background
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: PdfPageNumber(
-              controller: pdfController.value!,
-              builder: (_, state, loadingState, pagesCount) => DefaultTextStyle(
-                style: const TextStyle(fontSize: 18, color: Colors.white),
-                child: Text('${pdfController.value!.page}/${pagesCount ?? 0}'),
+  Widget getPdfFullView(ValueNotifier<PdfController?> pdfController) {
+    return PhotoView.customChild(
+        minScale: PhotoViewComputedScale.contained * 1.0,
+        maxScale: PhotoViewComputedScale.contained * 3.0,
+        initialScale: PhotoViewComputedScale.contained * 1.0,
+        child: Stack(
+          children: [
+            /// PDF Viewer as the base layer
+            Positioned.fill(
+              child: PdfView(
+                controller: pdfController.value!,
+                scrollDirection: Axis.vertical,
               ),
             ),
-          ),
-        ),
-      ],
-    );
+
+            /// Page number overlay at the bottom-right
+            Positioned(
+              bottom: 16, // Adjust to your preference
+              right: 16, // Adjust to your preference
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6), // Semi-transparent background
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: PdfPageNumber(
+                  controller: pdfController.value!,
+                  builder: (_, state, loadingState, pagesCount) => DefaultTextStyle(
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                    child: Text('${pdfController.value!.page}/${pagesCount ?? 0}'),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }
