@@ -17,55 +17,52 @@ class CachedNetworkImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (mode) {
-      MusicSheetViewMode.full => getFullImageView(),
-      MusicSheetViewMode.thumbnail => getThumbnailImageView(),
-      MusicSheetViewMode.preview => getPreviewImage(context),
+      MusicSheetViewMode.full => _buildFullImageView(),
+      MusicSheetViewMode.thumbnail => _buildThumbnailImage(),
+      MusicSheetViewMode.preview => _buildPreviewImage(context),
     };
   }
 
-  Widget getFullImageView() {
+  Widget _buildFullImageView() {
     return PhotoView.customChild(
-        minScale: PhotoViewComputedScale.contained * 1.0,
-        maxScale: PhotoViewComputedScale.contained * 3.0,
-        initialScale: PhotoViewComputedScale.contained * 1.0,
-        child: CachedNetworkImage(
-          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          fadeInDuration: Duration.zero,
-          fadeOutDuration: Duration.zero,
-          imageUrl: musicSheet.fileUrl,
-          fit: BoxFit.fitHeight,
-        ));
+      minScale: PhotoViewComputedScale.contained,
+      maxScale: PhotoViewComputedScale.contained * 3.0,
+      initialScale: PhotoViewComputedScale.contained,
+      child: _buildImage(),
+    );
   }
 
-  Widget getPreviewImage(BuildContext context) {
+  Widget _buildPreviewImage(BuildContext context) {
     return GestureDetector(
-        onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CachedNetworkImageWidget(
-                  musicSheet: musicSheet,
-                  mode: MusicSheetViewMode.full,
-                ),
-              ),
-            ),
-        child: CachedNetworkImage(
-          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-          errorWidget: (context, url, error) => const Icon(Icons.error),
-          imageUrl: musicSheet.fileUrl,
-          fit: BoxFit.fitHeight,
-          filterQuality: FilterQuality.high,
-          memCacheWidth: 500,
-        ));
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CachedNetworkImageWidget(
+            musicSheet: musicSheet,
+            mode: MusicSheetViewMode.full,
+          ),
+        ),
+      ),
+      child: _buildImage(memCacheWidth: 500, filterQuality: FilterQuality.medium),
+    );
   }
 
-  Widget getThumbnailImageView() {
+  Widget _buildThumbnailImage() {
+    return _buildImage(
+      memCacheWidth: 75,
+      filterQuality: FilterQuality.low,
+    );
+  }
+
+  Widget _buildImage({int? memCacheWidth, FilterQuality filterQuality = FilterQuality.high}) {
     return CachedNetworkImage(
       placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
       errorWidget: (context, url, error) => const Icon(Icons.error),
+      fadeInDuration: Duration.zero,
+      fadeOutDuration: Duration.zero,
       imageUrl: musicSheet.fileUrl,
       fit: BoxFit.fitHeight,
-      filterQuality: FilterQuality.low,
-      memCacheWidth: 75,
+      memCacheWidth: memCacheWidth,
+      filterQuality: filterQuality,
     );
   }
 }

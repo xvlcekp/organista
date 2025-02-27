@@ -11,6 +11,7 @@ import 'package:pdfx/pdfx.dart';
 class PdfViewerWidget extends HookWidget {
   final String fileUrl;
   final MusicSheetViewMode mode;
+  final Color backgroundColor = Colors.white;
 
   const PdfViewerWidget({
     super.key,
@@ -76,8 +77,7 @@ class PdfViewerWidget extends HookWidget {
       renderer: (PdfPage page) => page.render(
         width: page.width * 0.5,
         height: page.height * 0.5,
-        format: PdfPageImageFormat.jpeg,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#${backgroundColor.value.toRadixString(16)}',
       ),
     );
   }
@@ -88,8 +88,7 @@ class PdfViewerWidget extends HookWidget {
       renderer: (PdfPage page) => page.render(
         width: page.width * 0.25,
         height: page.height * 0.25,
-        format: PdfPageImageFormat.jpeg,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#${backgroundColor.value.toRadixString(16)}',
       ),
     );
   }
