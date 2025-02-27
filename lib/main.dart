@@ -11,10 +11,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  CustomLogger log = CustomLogger.instance;
-  await log.setup();
-  Bloc.observer = SimpleBlocObserver(logger: log);
-  log.i('App started');
+  await logger.setup();
+  Bloc.observer = SimpleBlocObserver(logger: logger);
+  logger.i('App started');
   runApp(
     const AppRepository(),
   );

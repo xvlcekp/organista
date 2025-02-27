@@ -22,7 +22,7 @@ class PdfViewerWidget extends HookWidget {
     try {
       return await DefaultCacheManager().getSingleFile(url);
     } catch (e) {
-      CustomLogger.instance.e("Failed to load PDF: $e");
+      logger.e("Failed to load PDF: $e");
       return null;
     }
   }
@@ -55,7 +55,12 @@ class PdfViewerWidget extends HookWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (pdfController.value == null) {
-      return const Center(child: Icon(Icons.error));
+      return const Center(
+        child: Icon(
+          Icons.warning_rounded,
+          color: Colors.red,
+        ),
+      );
     }
 
     return switch (mode) {

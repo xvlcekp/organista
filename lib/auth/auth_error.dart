@@ -39,7 +39,7 @@ class AuthErrorUnknown extends AuthError {
           dialogTitle: 'Authentication error',
           dialogText: exception.message ?? 'Unknown error',
         ) {
-    CustomLogger.instance.e(exception);
+    logger.e(exception);
   }
 }
 

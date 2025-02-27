@@ -62,7 +62,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
       }
     } catch (e) {
-      CustomLogger.instance.e('Failed to upload image: $e');
+      logger.e('Failed to upload image: $e');
       emit(
         PlaylistLoadedState(
           isLoading: false,

@@ -7,7 +7,6 @@ import 'package:uuid/uuid.dart';
 import 'package:mime/mime.dart';
 
 class FirebaseStorageRepository {
-  final logger = CustomLogger.instance;
   final Iterable<MusicSheet> musicSheets = [];
   final instance = FirebaseStorage.instance;
 

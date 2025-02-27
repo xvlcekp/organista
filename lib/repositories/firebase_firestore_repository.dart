@@ -19,7 +19,6 @@ import 'package:organista/models/users/user_info_payload.dart';
 class FirebaseFirestoreRepository {
   final Iterable<MusicSheet> musicSheets = [];
   final instance = FirebaseFirestore.instance;
-  final logger = CustomLogger.instance;
 
   FirebaseFirestoreRepository() {
     instance.settings = const Settings(

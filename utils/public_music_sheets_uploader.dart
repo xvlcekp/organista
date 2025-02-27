@@ -40,7 +40,6 @@ class UploadFolderScreen extends StatefulWidget {
 }
 
 class _UploadFolderScreenState extends State<UploadFolderScreen> {
-  final CustomLogger logger = CustomLogger.instance;
   bool isUploading = false;
   List<String> uploadedFiles = [];
 

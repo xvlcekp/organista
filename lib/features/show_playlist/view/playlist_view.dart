@@ -10,8 +10,6 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
 
-final logger = CustomLogger.instance;
-
 class PlaylistView extends HookWidget {
   const PlaylistView({super.key});
 

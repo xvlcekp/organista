@@ -71,7 +71,7 @@ class AddMusicSheetView extends HookWidget {
                             onPressed: () {
                               switch (state) {
                                 case InitMusicSheetState():
-                                  CustomLogger.instance.e("You have to select an image first");
+                                  logger.e("You have to select an image first");
                                 case UploadMusicSheetState():
                                   context.read<PlaylistBloc>().add(
                                         UploadNewMusicSheetEvent(
