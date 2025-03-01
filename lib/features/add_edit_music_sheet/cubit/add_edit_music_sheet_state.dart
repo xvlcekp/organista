@@ -25,7 +25,7 @@ class UploadMusicSheetState extends AddEditMusicSheetState {
   }) : super(fileName: basename(file.name));
 
   @override
-  List<Object?> get props => [file];
+  List<Object?> get props => [file.name];
 }
 
 @immutable
