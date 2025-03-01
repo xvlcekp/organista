@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/features/download_music_sheet/view/download_image_view.dart';
+import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 
 class AddImageControllersView extends HookWidget {
   const AddImageControllersView({super.key});
@@ -12,7 +12,7 @@ class AddImageControllersView extends HookWidget {
         Expanded(
           child: IconButton(
             onPressed: () {
-              Navigator.of(context).push<void>(DownloadMusicSheetView.route());
+              Navigator.of(context).push<void>(MusicSheetRepositoryView.route());
             },
             icon: const Icon(Icons.add),
             iconSize: 150,

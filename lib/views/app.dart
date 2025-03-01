@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
+import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlist_page.dart';
@@ -39,6 +40,11 @@ class App extends StatelessWidget {
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),
         ),
+        BlocProvider<MusicSheetRepositoryBloc>(
+          create: (context) => MusicSheetRepositoryBloc(
+            firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
+          ),
+        )
       ],
       child: MaterialApp(
         title: 'Photo Library',

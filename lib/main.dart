@@ -21,4 +21,3 @@ void main() async {
 
 // TODO:
 // globalny repositar s dodatocnymi info o piesnach
-// otestovat flutter_cached_pdfview
