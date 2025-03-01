@@ -60,7 +60,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
       fadeInDuration: Duration.zero,
       fadeOutDuration: Duration.zero,
       imageUrl: musicSheet.fileUrl,
-      fit: BoxFit.fitHeight,
+      fit: BoxFit.fitWidth,
       memCacheWidth: memCacheWidth,
       filterQuality: filterQuality,
     );

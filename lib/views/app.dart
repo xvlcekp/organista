@@ -40,11 +40,6 @@ class App extends StatelessWidget {
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),
         ),
-        BlocProvider<MusicSheetRepositoryBloc>(
-          create: (context) => MusicSheetRepositoryBloc(
-            firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
-          ),
-        )
       ],
       child: MaterialApp(
         title: 'Photo Library',

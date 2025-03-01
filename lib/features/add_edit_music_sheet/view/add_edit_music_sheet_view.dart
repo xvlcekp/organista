@@ -6,22 +6,22 @@ import 'package:organista/dialogs/discard_changes_uploaded_music_sheet_dialog.da
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_image_controllers_view.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
-import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_image_view.dart';
+import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_file_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/logger/custom_logger.dart';
 
-class AddMusicSheetView extends HookWidget {
-  const AddMusicSheetView({super.key});
+class AddEditMusicSheetView extends HookWidget {
+  const AddEditMusicSheetView({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const AddMusicSheetView());
+    return MaterialPageRoute<void>(builder: (_) => const AddEditMusicSheetView());
   }
 
   @override
   Widget build(BuildContext context) {
     final musicSheetNameController = useTextEditingController();
     return Scaffold(
-      appBar: AppBar(title: const Text('Download the music sheet')),
+      appBar: AppBar(title: const Text('Modify music sheet')),
       body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
         builder: (context, state) {
           musicSheetNameController.text = state.fileName;

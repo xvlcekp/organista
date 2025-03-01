@@ -56,7 +56,7 @@ class MusicSheetRepositoryView extends StatelessWidget {
                       itemCount: state.filteredMusicSheets.length,
                       itemBuilder: (context, index) {
                         final musicSheet = state.filteredMusicSheets[index];
-                        return MusicSheetTile(musicSheet: musicSheet);
+                        return RepositoryMusicSheetTile(musicSheet: musicSheet);
                       },
                     );
                   }

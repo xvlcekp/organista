@@ -2,7 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
-import 'package:organista/features/add_edit_music_sheet/view/add_music_sheet_view.dart';
+import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 
 class UploadMusicSheetFragment extends StatelessWidget {
   const UploadMusicSheetFragment({super.key});
@@ -30,7 +30,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
                           file: file,
                         );
-                    Navigator.of(context).push<void>(AddMusicSheetView.route());
+                    Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                   }
                 }
               },
