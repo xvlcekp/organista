@@ -12,6 +12,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   MusicSheetRepositoryBloc({required this.firebaseFirestoreRepository}) : super(MusicSheetRepositoryLoading()) {
     on<LoadMusicSheets>(_onLoadMusicSheets);
     on<SearchMusicSheets>(_onSearchMusicSheets);
+    on<DeleteMusicSheet>(_onDeleteMusicSheet);
   }
 
   List<MusicSheet> _sortMusicSheetsByAlphabet(List<MusicSheet> musicSheets) {
@@ -41,5 +42,10 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
       }).toList();
       emit(MusicSheetRepositoryLoaded(allMusicSheets: allSheets, filteredMusicSheets: filteredSheets));
     }
+  }
+
+  Future<void> _onDeleteMusicSheet(DeleteMusicSheet event, Emitter<MusicSheetRepositoryState> emit) async {
+    final musicSheetToDelete = event.musicSheet;
+    await firebaseFirestoreRepository.deleteMusicSheetFromRepository(musicSheet: musicSheetToDelete);
   }
 }

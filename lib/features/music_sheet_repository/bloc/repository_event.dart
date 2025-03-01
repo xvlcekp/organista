@@ -1,3 +1,5 @@
+import 'package:organista/models/music_sheets/music_sheet.dart';
+
 sealed class MusicSheetRepositoryEvent {}
 
 class LoadMusicSheets extends MusicSheetRepositoryEvent {
@@ -7,5 +9,10 @@ class LoadMusicSheets extends MusicSheetRepositoryEvent {
 
 class SearchMusicSheets extends MusicSheetRepositoryEvent {
   final String query;
-  SearchMusicSheets(this.query);
+  SearchMusicSheets({required this.query});
+}
+
+class DeleteMusicSheet extends MusicSheetRepositoryEvent {
+  final MusicSheet musicSheet;
+  DeleteMusicSheet({required this.musicSheet});
 }

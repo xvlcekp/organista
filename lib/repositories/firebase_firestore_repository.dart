@@ -274,4 +274,16 @@ class FirebaseFirestoreRepository {
     }
     return true;
   }
+
+  Future<bool> deleteMusicSheetFromRepository({required MusicSheet musicSheet}) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.musicSheets);
+      await firestoreRef.doc(musicSheet.musicSheetId).delete();
+      logger.i("Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId}");
+      return true;
+    } catch (e) {
+      logger.e(e);
+      return false;
+    }
+  }
 }

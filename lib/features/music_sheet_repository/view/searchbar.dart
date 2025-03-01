@@ -25,7 +25,7 @@ class RepositorySearchbar extends StatelessWidget {
         style: const TextStyle(color: Colors.white),
         onChanged: (query) {
           logger.i(query);
-          context.read<MusicSheetRepositoryBloc>().add(SearchMusicSheets(query));
+          context.read<MusicSheetRepositoryBloc>().add(SearchMusicSheets(query: query));
         },
       ),
     );
