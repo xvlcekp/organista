@@ -10,7 +10,7 @@ class PlaylistPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ShowPlaylistsCubit(firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>()),
+      create: (_) => ShowPlaylistsCubit(firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>()),
       child: const PlaylistsView(),
     );
   }

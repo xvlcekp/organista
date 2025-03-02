@@ -24,7 +24,7 @@ class App extends StatelessWidget {
         BlocProvider<AppBloc>(
           create: (context) => AppBloc(
             firebaseAuthRepository: context.read<FirebaseAuthRepository>(),
-            firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>(),
+            firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           )..add(
               const AppEventInitialize(),
@@ -35,7 +35,7 @@ class App extends StatelessWidget {
         ),
         BlocProvider<PlaylistBloc>(
           create: (context) => PlaylistBloc(
-            firebaseFirestoreRepositary: context.read<FirebaseFirestoreRepository>(),
+            firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),
         ),

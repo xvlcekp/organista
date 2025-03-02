@@ -13,7 +13,7 @@ part 'app_state.dart';
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({
     required this.firebaseAuthRepository,
-    required this.firebaseFirestoreRepositary,
+    required this.firebaseFirestoreRepository,
     required this.firebaseStorageRepository,
   }) : super(const AppStateLoggedOut(isLoading: false)) {
     on<AppEventGoToRegistration>(_appEventGoToRegistration);
@@ -27,7 +27,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   final FirebaseAuthRepository firebaseAuthRepository;
   // TODO: on delete account, also delete the whole Firebase database
-  final FirebaseFirestoreRepository firebaseFirestoreRepositary;
+  final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
 
   void _appEventDeleteAccount(event, emit) async {
@@ -45,7 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     try {
-      await firebaseFirestoreRepositary.deleteUser(userId: user.uid);
+      await firebaseFirestoreRepository.deleteUser(userId: user.uid);
       await firebaseStorageRepository.deleteFolder(user.uid);
       // TODO: delete all user's files
       // delete the user
@@ -125,7 +125,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         email: email,
         password: password,
       );
-      await firebaseFirestoreRepositary.uploadNewUser(
+      await firebaseFirestoreRepository.uploadNewUser(
         email: credentials.user!.email!,
         userId: credentials.user!.uid,
       );

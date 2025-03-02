@@ -9,9 +9,9 @@ import 'package:organista/repositories/firebase_firestore_repository.dart';
 part 'playlists_state.dart';
 
 class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
-  final FirebaseFirestoreRepository firebaseFirestoreRepositary;
+  final FirebaseFirestoreRepository firebaseFirestoreRepository;
   ShowPlaylistsCubit({
-    required this.firebaseFirestoreRepositary,
+    required this.firebaseFirestoreRepository,
   }) : super(const InitPlaylistState());
 
   late final StreamSubscription<Iterable<Playlist>> _streamSubscription;
@@ -21,7 +21,7 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   }
 
   void startSubscribingPlaylists({required String userId}) async {
-    _streamSubscription = firebaseFirestoreRepositary.getPlaylistsStream(userId).listen((playlists) {
+    _streamSubscription = firebaseFirestoreRepository.getPlaylistsStream(userId).listen((playlists) {
       emit(PlaylistsLoadedState(playlists: playlists.toList()));
     });
   }
@@ -33,14 +33,14 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   }
 
   void addPlaylist({required String playlistName, required String userId}) async {
-    await firebaseFirestoreRepositary.addNewPlaylist(playlistName: playlistName, userId: userId);
+    await firebaseFirestoreRepository.addNewPlaylist(playlistName: playlistName, userId: userId);
   }
 
   void editPlaylistName({required String newPlaylistName, required Playlist playlist}) async {
-    await firebaseFirestoreRepositary.renamePlaylist(newPlaylistName: newPlaylistName, playlist: playlist);
+    await firebaseFirestoreRepository.renamePlaylist(newPlaylistName: newPlaylistName, playlist: playlist);
   }
 
   void deletePlaylist({required Playlist playlist}) async {
-    await firebaseFirestoreRepositary.deletePlaylist(playlist: playlist);
+    await firebaseFirestoreRepository.deletePlaylist(playlist: playlist);
   }
 }

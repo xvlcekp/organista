@@ -44,7 +44,7 @@ class _UploadFolderScreenState extends State<UploadFolderScreen> {
   List<String> uploadedFiles = [];
 
   final FirebaseAuthRepository firebaseAuthRepository = FirebaseAuthRepository();
-  final FirebaseFirestoreRepository firebaseFirestoreRepositary = FirebaseFirestoreRepository();
+  final FirebaseFirestoreRepository firebaseFirestoreRepository = FirebaseFirestoreRepository();
   final FirebaseStorageRepository firebaseStorageRepository = FirebaseStorageRepository();
 
   Map<String, String> filenameMapping = {}; // Stores JSON filename mappings
@@ -136,7 +136,7 @@ class _UploadFolderScreenState extends State<UploadFolderScreen> {
             bucket: 'public/JKS',
           );
           if (reference != null) {
-            final uploadSucceeded = await firebaseFirestoreRepositary.uploadMusicSheetRecord(
+            final uploadSucceeded = await firebaseFirestoreRepository.uploadMusicSheetRecord(
               reference: reference,
               userId: '',
               fileName: fileNameFromConfig,

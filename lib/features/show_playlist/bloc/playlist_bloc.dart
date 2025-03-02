@@ -16,7 +16,7 @@ part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   PlaylistBloc({
-    required this.firebaseFirestoreRepositary,
+    required this.firebaseFirestoreRepository,
     required this.firebaseStorageRepository,
   }) : super(PlaylistInitState()) {
     on<UploadNewMusicSheetEvent>(_uploadNewMusicSheetEvent);
@@ -27,7 +27,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<InitPlaylistEvent>(_initPlaylistEvent);
   }
 
-  final FirebaseFirestoreRepository firebaseFirestoreRepositary;
+  final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
 
   void _uploadNewMusicSheetEvent(event, emit) async {
@@ -48,7 +48,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         bucket: user.uid,
       );
       if (reference != null) {
-        await firebaseFirestoreRepositary.uploadMusicSheetRecord(
+        await firebaseFirestoreRepository.uploadMusicSheetRecord(
           reference: reference,
           userId: user.uid,
           fileName: fileName,
@@ -84,8 +84,8 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final Playlist playlist = event.playlist;
     // TODO: we don't want to remove image globally
     // Reference imageToDelete = firebaseStorageRepository.getReference(musicSheetToDelete.originalFileStorageId);
-    // await firebaseFirestoreRepositary.removeImage(file: imageToDelete);
-    await firebaseFirestoreRepositary.deleteMusicSheetInPlaylist(
+    // await firebaseFirestoreRepositaoy.removeImage(file: imageToDelete);
+    await firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
       musicSheet: musicSheetToDelete,
       playlist: playlist,
     );
@@ -96,14 +96,14 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       isLoading: true,
       playlist: state.playlist,
     ));
-    await firebaseFirestoreRepositary.musicSheetReorder(playlist: event.playlist);
+    await firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
   }
 
   void _renameMusicSheetInPlaylistEvent(event, emit) async {
     final musicSheet = event.musicSheet;
     final fileName = event.fileName;
     final playlist = event.playlist;
-    await firebaseFirestoreRepositary.renameMusicSheetInPlaylist(
+    await firebaseFirestoreRepository.renameMusicSheetInPlaylist(
       musicSheet: musicSheet,
       fileName: fileName,
       playlist: playlist,
@@ -118,7 +118,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     ));
 
     await emit.forEach<Playlist>(
-      firebaseFirestoreRepositary.getPlaylistStream(event.playlist.playlistId),
+      firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
       onData: (Playlist playlist) => PlaylistLoadedState(
         isLoading: false,
         playlist: playlist,
@@ -136,7 +136,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       playlist: state.playlist,
     ));
     MusicSheet customNamedMusicSheet = musicSheet.copyWith(fileName: fileName);
-    await firebaseFirestoreRepositary.addMusicSheetToPlaylist(
+    await firebaseFirestoreRepository.addMusicSheetToPlaylist(
       playlist: playlist,
       musicSheet: customNamedMusicSheet,
     );
