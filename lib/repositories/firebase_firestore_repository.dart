@@ -46,12 +46,6 @@ class FirebaseFirestoreRepository {
   //   });
   // }
 
-  Future<bool> removeImage({
-    required Reference file,
-  }) {
-    return file.delete().then((_) => true).catchError((_) => false);
-  }
-
   // Nothing to do with playlist, just upload music sheet
   Future<bool> uploadMusicSheetRecord({
     required String fileName,
@@ -105,16 +99,29 @@ class FirebaseFirestoreRepository {
     required String userId,
   }) async {
     try {
-      final firestoreRef = instance.collection(FirebaseCollectionName.users);
-      QuerySnapshot querySnapshot = await firestoreRef.where(UserInfoKey.userId, isEqualTo: userId).get();
-      await querySnapshot.docs.first.reference.delete();
-      logger.i('User with uid $userId was deleted.');
-
-      return true; // Upload succeeded
+      await _deleteUserData(userId);
+      return true; // Deletion succeeded
     } catch (e) {
       logger.e(e);
-      return false; // Upload failed
+      return false; // Deletion failed
     }
+  }
+
+  Future<void> _deleteUserData(String userId) async {
+    await Future.wait([
+      _deleteDocuments(FirebaseCollectionName.users, UserInfoKey.userId, userId),
+      _deleteDocuments(FirebaseCollectionName.playlists, PlaylistKey.userId, userId),
+      _deleteDocuments(FirebaseCollectionName.musicSheets, MusicSheetKey.userId, userId),
+    ]);
+  }
+
+  Future<void> _deleteDocuments(String collectionName, String userKey, String userId) async {
+    final snapshot = await instance.collection(collectionName).where(userKey, isEqualTo: userId).get();
+
+    await Future.wait(snapshot.docs.map((doc) async {
+      await doc.reference.delete();
+      logger.i('$collectionName document ${doc.id} with user id $userId was deleted.');
+    }));
   }
 
   Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String userId) {

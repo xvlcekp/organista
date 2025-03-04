@@ -27,19 +27,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: UploadFolderScreen(),
+      home: _UploadFolderScreen(),
     );
   }
 }
 
-class UploadFolderScreen extends StatefulWidget {
-  const UploadFolderScreen({super.key});
+class _UploadFolderScreen extends StatefulWidget {
+  const _UploadFolderScreen();
 
   @override
   _UploadFolderScreenState createState() => _UploadFolderScreenState();
 }
 
-class _UploadFolderScreenState extends State<UploadFolderScreen> {
+class _UploadFolderScreenState extends State<_UploadFolderScreen> {
   bool isUploading = false;
   List<String> uploadedFiles = [];
 

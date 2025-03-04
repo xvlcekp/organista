@@ -82,9 +82,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     // remove the file
     final MusicSheet musicSheetToDelete = event.musicSheet;
     final Playlist playlist = event.playlist;
-    // TODO: we don't want to remove image globally
-    // Reference imageToDelete = firebaseStorageRepository.getReference(musicSheetToDelete.originalFileStorageId);
-    // await firebaseFirestoreRepositaoy.removeImage(file: imageToDelete);
+
     await firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
       musicSheet: musicSheetToDelete,
       playlist: playlist,

@@ -26,7 +26,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   final FirebaseAuthRepository firebaseAuthRepository;
-  // TODO: on delete account, also delete the whole Firebase database
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
 
@@ -47,7 +46,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       await firebaseFirestoreRepository.deleteUser(userId: user.uid);
       await firebaseStorageRepository.deleteFolder(user.uid);
-      // TODO: delete all user's files
       // delete the user
       await user.delete();
       // log the user out
