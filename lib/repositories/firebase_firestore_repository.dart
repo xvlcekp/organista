@@ -117,6 +117,24 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String userId) {
+    return instance
+        .collection(FirebaseCollectionName.musicSheets)
+        .where(PlaylistKey.userId, whereIn: ['', userId])
+        .snapshots(
+          includeMetadataChanges: true,
+        )
+        .where((event) => !event.metadata.hasPendingWrites)
+        .map((snapshot) {
+          logger.i("Got repository music sheets data");
+          final documents = snapshot.docs;
+          logger.i("New repository music sheets length: ${documents.length}");
+          return documents.map((doc) => MusicSheet(
+                json: doc.data(),
+              ));
+        });
+  }
+
   Stream<Playlist> getPlaylistStream(String playlistId) {
     return instance
         .collection(FirebaseCollectionName.playlists)
@@ -137,6 +155,7 @@ class FirebaseFirestoreRepository {
   Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
     return instance
         .collection(FirebaseCollectionName.playlists)
+        .where(PlaylistKey.userId, isEqualTo: userId)
         .snapshots(
           includeMetadataChanges: true,
         )

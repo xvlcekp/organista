@@ -42,7 +42,7 @@ class FirebaseStorageRepository {
   }) async {
     String uuid = const Uuid().v4();
     final ref = instance.ref(bucket).child(uuid);
-    logger.i('Mime type is ' + (lookupMimeType(file.name) ?? ''));
+    logger.i('Mime type is ${lookupMimeType(file.name) ?? ''}');
     await ref.putData(
       file.bytes!,
       SettableMetadata(

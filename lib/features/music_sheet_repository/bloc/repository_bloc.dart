@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/music_sheet_repository/bloc/repository_event.dart';
 import 'package:organista/features/music_sheet_repository/bloc/repository_state.dart';
+import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 
@@ -10,9 +13,9 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
 
   MusicSheetRepositoryBloc({required this.firebaseFirestoreRepository}) : super(MusicSheetRepositoryLoading()) {
-    on<LoadMusicSheets>(_onLoadMusicSheets);
     on<SearchMusicSheets>(_onSearchMusicSheets);
     on<DeleteMusicSheet>(_onDeleteMusicSheet);
+    on<InitMusicSheetsRepositoryEvent>(_initMusicSheetsRepositoryEvent);
   }
 
   List<MusicSheet> _sortMusicSheetsByAlphabet(List<MusicSheet> musicSheets) {
@@ -20,26 +23,19 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     return musicSheets;
   }
 
-  Future<void> _onLoadMusicSheets(LoadMusicSheets event, Emitter<MusicSheetRepositoryState> emit) async {
-    emit(MusicSheetRepositoryLoading());
-    try {
-      final String userId = event.userId;
-      final musicSheets = await firebaseFirestoreRepository.getMusicSheetsFromRepository(userId);
-      final sortedMusicSheets = _sortMusicSheetsByAlphabet(musicSheets.toList());
-      emit(MusicSheetRepositoryLoaded(allMusicSheets: sortedMusicSheets, filteredMusicSheets: sortedMusicSheets));
-    } catch (e) {
-      emit(MusicSheetRepositoryError("Failed to load music sheets"));
-    }
+  List<MusicSheet> _filterMusicSheets(List<MusicSheet> allMusicSheets, String query) {
+    final normalizedQuery = removeDiacritics(query.toLowerCase());
+    final filteredSheets = allMusicSheets.where((sheet) {
+      final normalizedFileName = removeDiacritics(sheet.fileName.toLowerCase());
+      return normalizedFileName.contains(normalizedQuery);
+    }).toList();
+    return filteredSheets;
   }
 
   Future<void> _onSearchMusicSheets(SearchMusicSheets event, Emitter<MusicSheetRepositoryState> emit) async {
     if (state is MusicSheetRepositoryLoaded) {
       final allSheets = (state as MusicSheetRepositoryLoaded).allMusicSheets;
-      final normalizedQuery = removeDiacritics(event.query.toLowerCase());
-      final filteredSheets = allSheets.where((sheet) {
-        final normalizedFileName = removeDiacritics(sheet.fileName.toLowerCase());
-        return normalizedFileName.contains(normalizedQuery);
-      }).toList();
+      final filteredSheets = _filterMusicSheets(allSheets, event.query);
       emit(MusicSheetRepositoryLoaded(allMusicSheets: allSheets, filteredMusicSheets: filteredSheets));
     }
   }
@@ -47,5 +43,23 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   Future<void> _onDeleteMusicSheet(DeleteMusicSheet event, Emitter<MusicSheetRepositoryState> emit) async {
     final musicSheetToDelete = event.musicSheet;
     await firebaseFirestoreRepository.deleteMusicSheetFromRepository(musicSheet: musicSheetToDelete);
+  }
+
+  Future<void> _initMusicSheetsRepositoryEvent(event, emit) async {
+    logger.e("Init repository was called");
+    try {
+      final userId = event.userId;
+      emit(MusicSheetRepositoryLoading());
+
+      await for (final musicSheets in firebaseFirestoreRepository.getRepositoryMusicSheetsStream(userId)) {
+        final sortedMusicSheets = _sortMusicSheetsByAlphabet(musicSheets.toList());
+        emit(MusicSheetRepositoryLoaded(
+          allMusicSheets: sortedMusicSheets,
+          filteredMusicSheets: sortedMusicSheets,
+        ));
+      }
+    } catch (e) {
+      emit(MusicSheetRepositoryError("Failed to load music sheets"));
+    }
   }
 }

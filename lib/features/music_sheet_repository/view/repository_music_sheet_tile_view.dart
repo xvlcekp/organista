@@ -11,8 +11,13 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 
 class RepositoryMusicSheetTile extends StatelessWidget {
   final MusicSheet musicSheet;
+  final TextEditingController searchBarController;
 
-  const RepositoryMusicSheetTile({super.key, required this.musicSheet});
+  const RepositoryMusicSheetTile({
+    super.key,
+    required this.musicSheet,
+    required this.searchBarController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +40,7 @@ class RepositoryMusicSheetTile extends StatelessWidget {
                 final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
                 if (shouldDeleteMusicSheet && context.mounted) {
                   context.read<MusicSheetRepositoryBloc>().add(DeleteMusicSheet(musicSheet: musicSheet));
+                  searchBarController.text = '';
                 }
               },
               icon: const Icon(Icons.delete),
