@@ -95,7 +95,7 @@ class _UploadFolderScreenState extends State<_UploadFolderScreen> {
     return user;
   }
 
-  Future<void> uploadFolder() async {
+  Future<void> uploadFolder(BuildContext context) async {
     setState(() {
       isUploading = true;
       uploadedFiles.clear();
@@ -182,7 +182,7 @@ class _UploadFolderScreenState extends State<_UploadFolderScreen> {
           Text(filenameMapping.isNotEmpty ? "JSON Loaded: ${filenameMapping.length} mappings" : "No JSON file selected"),
           SizedBox(height: 20),
           ElevatedButton(
-            onPressed: isUploading ? null : uploadFolder,
+            onPressed: isUploading ? null : () => uploadFolder(context),
             child: Text(isUploading ? "Uploading..." : "Pick & Upload Files"),
           ),
           SizedBox(height: 20),

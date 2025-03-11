@@ -21,7 +21,6 @@ class MusicSheetView extends StatelessWidget {
     return switch (musicSheet.mediaType) {
       MediaType.image => CachedNetworkImageWidget(musicSheet: musicSheet, mode: mode),
       MediaType.pdf => PdfViewerWidget(fileUrl: musicSheet.fileUrl, mode: mode),
-      _ => const Placeholder(),
     };
   }
 }
