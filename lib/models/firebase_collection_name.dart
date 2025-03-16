@@ -6,6 +6,7 @@ class FirebaseCollectionName {
   static const String users = 'users';
   static const String playlists = 'playlists';
   static const String categories = 'categories';
+  static const String repositories = 'repositories';
   const FirebaseCollectionName._();
 }
 

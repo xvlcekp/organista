@@ -15,6 +15,8 @@ import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/models/playlists/playlist_payload.dart';
 import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
+import 'package:organista/models/repositories/repository.dart';
+import 'package:organista/models/repositories/repository_key.dart';
 
 class FirebaseFirestoreRepository {
   final Iterable<MusicSheet> musicSheets = [];
@@ -124,22 +126,23 @@ class FirebaseFirestoreRepository {
     }));
   }
 
-  Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String userId) {
+  Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
     return instance
+        .collection(FirebaseCollectionName.repositories)
+        .doc(repositoryId)
         .collection(FirebaseCollectionName.musicSheets)
-        .where(PlaylistKey.userId, whereIn: ['', userId])
         .snapshots(
           includeMetadataChanges: true,
         )
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
-          logger.i("Got repository music sheets data");
-          final documents = snapshot.docs;
-          logger.i("New repository music sheets length: ${documents.length}");
-          return documents.map((doc) => MusicSheet(
-                json: doc.data(),
-              ));
-        });
+      logger.i("Got repository music sheets data for repository: $repositoryId");
+      final documents = snapshot.docs;
+      logger.i("New repository music sheets length: ${documents.length}");
+      return documents.map((doc) => MusicSheet(
+            json: doc.data(),
+          ));
+    });
   }
 
   Stream<Playlist> getPlaylistStream(String playlistId) {
@@ -311,5 +314,25 @@ class FirebaseFirestoreRepository {
       logger.e(e);
       return false;
     }
+  }
+
+  Stream<Iterable<Repository>> getRepositoriesStream() {
+    return instance
+        .collection(FirebaseCollectionName.repositories)
+        .snapshots(
+          includeMetadataChanges: true,
+        )
+        .where((event) => !event.metadata.hasPendingWrites)
+        .map((snapshot) {
+      logger.i("Got repositories data");
+      final documents = snapshot.docs;
+      logger.i("New repositories length: ${documents.length}");
+      return documents.map((doc) => Repository(
+            json: {
+              ...doc.data(),
+              RepositoryKey.repositoryId: doc.id,
+            },
+          ));
+    });
   }
 }

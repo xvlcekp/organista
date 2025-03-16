@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
+import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -34,7 +34,7 @@ class PlaylistView extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).push<void>(MusicSheetRepositoryView.route());
+              Navigator.of(context).push<void>(RepositoriesView.route());
             },
             icon: const Icon(Icons.add),
           ),

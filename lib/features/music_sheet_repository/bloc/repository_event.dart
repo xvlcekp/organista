@@ -15,6 +15,6 @@ class DeleteMusicSheet extends MusicSheetRepositoryEvent {
 
 @immutable
 class InitMusicSheetsRepositoryEvent implements MusicSheetRepositoryEvent {
-  final String userId;
-  const InitMusicSheetsRepositoryEvent({required this.userId});
+  final String repositoryId;
+  const InitMusicSheetsRepositoryEvent({required this.repositoryId});
 }

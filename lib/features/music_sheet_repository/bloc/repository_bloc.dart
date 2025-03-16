@@ -48,10 +48,10 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   Future<void> _initMusicSheetsRepositoryEvent(event, emit) async {
     logger.e("Init repository was called");
     try {
-      final userId = event.userId;
+      final repositoryId = event.repositoryId;
       emit(MusicSheetRepositoryLoading());
 
-      await for (final musicSheets in firebaseFirestoreRepository.getRepositoryMusicSheetsStream(userId)) {
+      await for (final musicSheets in firebaseFirestoreRepository.getRepositoryMusicSheetsStream(repositoryId)) {
         final sortedMusicSheets = _sortMusicSheetsByAlphabet(musicSheets.toList());
         emit(MusicSheetRepositoryLoaded(
           allMusicSheets: sortedMusicSheets,
@@ -59,6 +59,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
         ));
       }
     } catch (e) {
+      logger.e("Failed to load music sheets", error: e);
       emit(MusicSheetRepositoryError("Failed to load music sheets"));
     }
   }
