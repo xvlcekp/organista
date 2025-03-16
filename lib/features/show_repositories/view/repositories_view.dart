@@ -23,32 +23,19 @@ class RepositoriesView extends HookWidget {
       create: (_) => ShowRepositoriesCubit(
         firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
       ),
-      child: _RepositoriesViewContent(),
+      child: const RepositoriesViewContent(),
     );
   }
 }
 
-class _RepositoriesViewContent extends HookWidget {
-  // List of vibrant colors for repository tiles
-  final List<Color> _colors = [
-    Colors.blue[400]!,
-    Colors.red[400]!,
-    Colors.green[400]!,
-    Colors.orange[400]!,
-    Colors.purple[400]!,
-    Colors.teal[400]!,
-    Colors.pink[400]!,
-    Colors.indigo[400]!,
-  ];
-
-  Color _getRandomColor() {
-    return _colors[math.Random().nextInt(_colors.length)];
-  }
+class RepositoriesViewContent extends HookWidget {
+  const RepositoriesViewContent({super.key});
 
   @override
   Widget build(BuildContext context) {
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
+    final selectedTabIndex = useState(0); // 0 for Global, 1 for Personal
 
     useEffect(() {
       // initialize stream only once on first creation
@@ -59,99 +46,152 @@ class _RepositoriesViewContent extends HookWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Repositories 📁'),
-        actions: [
-          const MainPopupMenuButton(),
+        actions: const [
+          MainPopupMenuButton(),
         ],
       ),
       body: BlocBuilder<ShowRepositoriesCubit, ShowRepositoriesState>(
         builder: (context, state) {
-          if (state.repositories.isEmpty) {
-            return const Center(child: Text('No repositories available.'));
-          }
+          return _buildRepositoryList(context, state, userId, selectedTabIndex.value);
+        },
+      ),
+      bottomNavigationBar: _buildBottomNavBar(selectedTabIndex),
+    );
+  }
 
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.0,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-              ),
-              itemCount: state.repositories.length,
-              itemBuilder: (context, index) {
-                Repository repository = state.repositories[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MusicSheetRepositoryView.route(
-                        repositoryId: repository.repositoryId,
-                        repositoryName: repository.name,
-                      ),
-                      // RepositoryMusicSheetsView.route(
-                      //   repositoryId: repository.repositoryId,
-                      //   repositoryName: repository.name,
-                      // ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: _getRandomColor(),
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 4.0,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          right: -20,
-                          bottom: -20,
-                          child: Icon(
-                            Icons.folder,
-                            size: 100,
-                            color: Colors.white.withOpacity(0.2),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                repository.name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${repository.musicSheets.length} sheets',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.8),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
+  Widget _buildRepositoryList(BuildContext context, ShowRepositoriesState state, String userId, int selectedTabIndex) {
+    final globalRepositories = state.repositories.where((repo) => repo.userId.isEmpty).toList();
+    final personalRepositories = state.repositories.where((repo) => repo.userId == userId).toList();
+    final currentRepositories = selectedTabIndex == 0 ? globalRepositories : personalRepositories;
+
+    if (currentRepositories.isEmpty) {
+      return Center(
+        child: Text(selectedTabIndex == 0 ? 'No global repositories available.' : 'No personal repositories available.'),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.0,
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
+        ),
+        itemCount: currentRepositories.length,
+        itemBuilder: (context, index) {
+          return RepositoryTile(repository: currentRepositories[index]);
         },
       ),
     );
+  }
+
+  Widget _buildBottomNavBar(ValueNotifier<int> selectedTabIndex) {
+    return BottomNavigationBar(
+      currentIndex: selectedTabIndex.value,
+      onTap: (index) {
+        selectedTabIndex.value = index;
+      },
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.public),
+          label: 'Global',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Personal',
+        ),
+      ],
+    );
+  }
+}
+
+class RepositoryTile extends StatelessWidget {
+  final Repository repository;
+
+  const RepositoryTile({
+    super.key,
+    required this.repository,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MusicSheetRepositoryView.route(
+            repositoryId: repository.repositoryId,
+            repositoryName: repository.name,
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: _getRandomColor(),
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 4.0,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: Icon(
+                Icons.folder,
+                size: 100,
+                color: Colors.white.withOpacity(0.2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    repository.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${repository.musicSheets.length} sheets',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getRandomColor() {
+    final List<Color> colors = [
+      Colors.blue[400]!,
+      Colors.red[400]!,
+      Colors.green[400]!,
+      Colors.orange[400]!,
+      Colors.purple[400]!,
+      Colors.teal[400]!,
+      Colors.pink[400]!,
+      Colors.indigo[400]!,
+    ];
+    return colors[math.Random().nextInt(colors.length)];
   }
 }
