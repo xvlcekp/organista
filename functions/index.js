@@ -8,7 +8,7 @@ const bucket = admin.storage().bucket(); // Initialize Firebase Storage bucket
 
 exports.deleteStorageFilesOnDocDelete = functions.firestore
 .onDocumentDeleted(
-    "musicSheets/{documentId}", 
+    "repositories/{repositoryId}/musicSheets/{documentId}", 
     async (event) => {
         const snap = event.data;
         const deletedData = snap.data();
