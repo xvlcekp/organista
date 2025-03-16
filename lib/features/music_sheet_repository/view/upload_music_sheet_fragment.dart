@@ -5,7 +5,12 @@ import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_she
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 
 class UploadMusicSheetFragment extends StatelessWidget {
-  const UploadMusicSheetFragment({super.key});
+  final String repositoryId;
+
+  const UploadMusicSheetFragment({
+    super.key,
+    required this.repositoryId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +34,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     final PlatformFile file = result.files.first;
                     context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
                           file: file,
+                          repositoryId: repositoryId,
                         );
                     Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                   }

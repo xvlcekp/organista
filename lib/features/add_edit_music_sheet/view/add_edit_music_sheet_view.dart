@@ -8,6 +8,7 @@ import 'package:organista/features/add_edit_music_sheet/view/add_image_controlle
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_file_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 
 class AddEditMusicSheetView extends HookWidget {
@@ -78,9 +79,10 @@ class AddEditMusicSheetView extends HookWidget {
                                           file: state.file,
                                           fileName: musicSheetNameController.text,
                                           user: context.read<AppBloc>().state.user!,
+                                          repositoryId: state.repositoryId,
                                         ),
                                       );
-                                  resetMusicSheetCubitAndPop(context);
+                                  resetMusicSheetCubitAndShowPlaylist(context);
                                 case EditMusicSheetState():
                                   context.read<PlaylistBloc>().add(
                                         RenameMusicSheetInPlaylistEvent(
@@ -89,7 +91,7 @@ class AddEditMusicSheetView extends HookWidget {
                                           fileName: musicSheetNameController.text,
                                         ),
                                       );
-                                  resetMusicSheetCubitAndPop(context);
+                                  resetMusicSheetCubitAndShowPlaylist(context);
                                 case AddMusicSheetToPlaylistState():
                                   final playlist = context.read<PlaylistBloc>().state.playlist;
                                   context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
@@ -98,7 +100,7 @@ class AddEditMusicSheetView extends HookWidget {
                                         playlist: playlist,
                                       ));
                                   Navigator.of(context).pop();
-                                  resetMusicSheetCubitAndPop(context);
+                                  resetMusicSheetCubitAndShowPlaylist(context);
                               }
                             }),
                       ),
@@ -107,7 +109,7 @@ class AddEditMusicSheetView extends HookWidget {
                           onPressed: () async {
                             final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
                             if (shouldDiscardChanges && context.mounted) {
-                              resetMusicSheetCubitAndPop(context);
+                              resetMusicSheetCubitAndShowPlaylist(context);
                             }
                           },
                           child: const Text('Discard'),
@@ -124,10 +126,10 @@ class AddEditMusicSheetView extends HookWidget {
     );
   }
 
-  void resetMusicSheetCubitAndPop(BuildContext context) async {
+  void resetMusicSheetCubitAndShowPlaylist(BuildContext context) async {
     if (context.mounted) {
       context.read<AddEditMusicSheetCubit>().resetState();
-      Navigator.pop(context);
+      Navigator.of(context).push(PlaylistView.route());
     }
   }
 }

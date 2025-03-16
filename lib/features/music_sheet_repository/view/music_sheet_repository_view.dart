@@ -42,9 +42,9 @@ class MusicSheetRepositoryView extends HookWidget {
       )..add(InitMusicSheetsRepositoryEvent(repositoryId: repositoryId)),
       child: Scaffold(
         appBar: AppBar(title: Text('♬ $repositoryName')),
-        floatingActionButton: const Padding(
-          padding: EdgeInsets.only(bottom: 20.0, right: 8.0),
-          child: UploadMusicSheetFragment(),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0, right: 8.0),
+          child: UploadMusicSheetFragment(repositoryId: repositoryId),
         ),
         body: Column(
           children: [
@@ -71,7 +71,11 @@ class MusicSheetRepositoryView extends HookWidget {
                       itemCount: state.filteredMusicSheets.length,
                       itemBuilder: (context, index) {
                         final musicSheet = state.filteredMusicSheets[index];
-                        return RepositoryMusicSheetTile(musicSheet: musicSheet, searchBarController: searchBarController);
+                        return RepositoryMusicSheetTile(
+                          musicSheet: musicSheet,
+                          searchBarController: searchBarController,
+                          repositoryId: repositoryId,
+                        );
                       },
                     );
                   }

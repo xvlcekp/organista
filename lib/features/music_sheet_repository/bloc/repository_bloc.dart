@@ -42,7 +42,11 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
 
   Future<void> _onDeleteMusicSheet(DeleteMusicSheet event, Emitter<MusicSheetRepositoryState> emit) async {
     final musicSheetToDelete = event.musicSheet;
-    await firebaseFirestoreRepository.deleteMusicSheetFromRepository(musicSheet: musicSheetToDelete);
+    final repositoryId = event.repositoryId;
+    await firebaseFirestoreRepository.deleteMusicSheetFromRepository(
+      musicSheet: musicSheetToDelete,
+      repositoryId: repositoryId,
+    );
   }
 
   Future<void> _initMusicSheetsRepositoryEvent(event, emit) async {

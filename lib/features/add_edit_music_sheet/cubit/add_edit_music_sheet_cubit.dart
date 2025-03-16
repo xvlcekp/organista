@@ -15,8 +15,14 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
     emit(const InitMusicSheetState());
   }
 
-  void uploadMusicSheet({required PlatformFile file}) {
-    emit(UploadMusicSheetState(file: file));
+  void uploadMusicSheet({
+    required PlatformFile file,
+    required String repositoryId,
+  }) {
+    emit(UploadMusicSheetState(
+      file: file,
+      repositoryId: repositoryId,
+    ));
   }
 
   void editMusicSheetInPlaylist({required Playlist playlist, required MusicSheet musicSheet}) {

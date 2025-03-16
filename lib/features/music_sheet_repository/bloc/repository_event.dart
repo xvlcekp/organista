@@ -10,7 +10,11 @@ class SearchMusicSheets extends MusicSheetRepositoryEvent {
 
 class DeleteMusicSheet extends MusicSheetRepositoryEvent {
   final MusicSheet musicSheet;
-  DeleteMusicSheet({required this.musicSheet});
+  final String repositoryId;
+  DeleteMusicSheet({
+    required this.musicSheet,
+    required this.repositoryId,
+  });
 }
 
 @immutable

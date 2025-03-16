@@ -20,8 +20,10 @@ class InitMusicSheetState extends AddEditMusicSheetState {
 @immutable
 class UploadMusicSheetState extends AddEditMusicSheetState {
   final PlatformFile file;
+  final String repositoryId;
   UploadMusicSheetState({
     required this.file,
+    required this.repositoryId,
   }) : super(fileName: basename(file.name));
 
   @override

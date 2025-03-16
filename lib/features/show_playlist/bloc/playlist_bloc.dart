@@ -42,6 +42,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final PlatformFile file = event.file;
     final String fileName = event.fileName;
     final User user = event.user;
+    final String repositoryId = event.repositoryId;
     try {
       final Reference? reference = await firebaseStorageRepository.uploadFile(
         file: file,
@@ -53,6 +54,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           userId: user.uid,
           fileName: fileName,
           mediaType: MediaType.fromPath(file.name),
+          repositoryId: repositoryId,
         );
         emit(PlaylistLoadedState(
           isLoading: false,

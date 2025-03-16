@@ -54,9 +54,10 @@ class FirebaseFirestoreRepository {
     required String userId,
     required Reference reference,
     required MediaType mediaType,
+    required String repositoryId,
   }) async {
     try {
-      final firestoreRef = instance.collection(FirebaseCollectionName.musicSheets);
+      final firestoreRef = instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
       final musicSheetPayload = MusicSheetPayload(
         fileName: fileName,
         fileUrl: await reference.getDownloadURL(),
@@ -124,25 +125,6 @@ class FirebaseFirestoreRepository {
       await doc.reference.delete();
       logger.i('$collectionName document ${doc.id} with user id $userId was deleted.');
     }));
-  }
-
-  Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
-    return instance
-        .collection(FirebaseCollectionName.repositories)
-        .doc(repositoryId)
-        .collection(FirebaseCollectionName.musicSheets)
-        .snapshots(
-          includeMetadataChanges: true,
-        )
-        .where((event) => !event.metadata.hasPendingWrites)
-        .map((snapshot) {
-      logger.i("Got repository music sheets data for repository: $repositoryId");
-      final documents = snapshot.docs;
-      logger.i("New repository music sheets length: ${documents.length}");
-      return documents.map((doc) => MusicSheet(
-            json: doc.data(),
-          ));
-    });
   }
 
   Stream<Playlist> getPlaylistStream(String playlistId) {
@@ -233,20 +215,6 @@ class FirebaseFirestoreRepository {
     }
   }
 
-  Future<Iterable<MusicSheet>> getMusicSheetsFromRepository(String userId) async {
-    final snapshot = await instance.collection(FirebaseCollectionName.musicSheets).where(
-      MusicSheetKey.userId,
-      whereIn: ['', userId],
-    ).get(); // Fetch a single snapshot
-
-    final documents = snapshot.docs;
-
-    // Map each document to a MusicSheet object
-    return documents.map((doc) => MusicSheet(
-          json: doc.data(),
-        ));
-  }
-
   Future<bool> addMusicSheetToPlaylist({
     required Playlist playlist,
     required MusicSheet musicSheet,
@@ -304,11 +272,34 @@ class FirebaseFirestoreRepository {
     return true;
   }
 
-  Future<bool> deleteMusicSheetFromRepository({required MusicSheet musicSheet}) async {
+  Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
+    return instance
+        .collection(FirebaseCollectionName.repositories)
+        .doc(repositoryId)
+        .collection(FirebaseCollectionName.musicSheets)
+        .snapshots(
+          includeMetadataChanges: true,
+        )
+        .where((event) => !event.metadata.hasPendingWrites)
+        .map((snapshot) {
+      logger.i("Got repository music sheets data for repository: $repositoryId");
+      final documents = snapshot.docs;
+      logger.i("New repository music sheets length: ${documents.length}");
+
+      return documents.map((doc) => MusicSheet(
+            json: doc.data(),
+          ));
+    });
+  }
+
+  Future<bool> deleteMusicSheetFromRepository({
+    required MusicSheet musicSheet,
+    required String repositoryId,
+  }) async {
     try {
-      final firestoreRef = instance.collection(FirebaseCollectionName.musicSheets);
+      final firestoreRef = instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
       await firestoreRef.doc(musicSheet.musicSheetId).delete();
-      logger.i("Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId}");
+      logger.i("Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId");
       return true;
     } catch (e) {
       logger.e(e);

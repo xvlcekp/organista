@@ -17,11 +17,13 @@ class UploadNewMusicSheetEvent implements PlaylistEvent {
   final User user;
   final PlatformFile file;
   final String fileName;
+  final String repositoryId;
 
   const UploadNewMusicSheetEvent({
     required this.user,
     required this.file,
     required this.fileName,
+    required this.repositoryId,
   });
 }
 
