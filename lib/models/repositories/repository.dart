@@ -46,6 +46,8 @@ class Repository extends Equatable {
     );
   }
 
+  bool get isPrivate => userId != '';
+
   @override
   String toString() => 'Repository, repositoryId = $repositoryId, name = $name';
 

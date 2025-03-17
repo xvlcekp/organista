@@ -7,26 +7,23 @@ import 'package:organista/features/music_sheet_repository/bloc/repository_state.
 import 'package:organista/features/music_sheet_repository/view/repository_music_sheet_tile_view.dart';
 import 'package:organista/features/music_sheet_repository/view/searchbar.dart';
 import 'package:organista/features/music_sheet_repository/view/upload_music_sheet_fragment.dart';
+import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 
 class MusicSheetRepositoryView extends HookWidget {
-  final String repositoryId;
-  final String repositoryName;
+  final Repository repository;
 
   const MusicSheetRepositoryView({
     super.key,
-    required this.repositoryId,
-    required this.repositoryName,
+    required this.repository,
   });
 
   static Route<void> route({
-    required String repositoryId,
-    required String repositoryName,
+    required Repository repository,
   }) {
     return MaterialPageRoute<void>(
         builder: (_) => MusicSheetRepositoryView(
-              repositoryId: repositoryId,
-              repositoryName: repositoryName,
+              repository: repository,
             ));
   }
 
@@ -35,17 +32,20 @@ class MusicSheetRepositoryView extends HookWidget {
     final firebaseFirestoreRepository = context.read<FirebaseFirestoreRepository>();
     // final userId = context.read<AppBloc>().state.user!.uid;
     final searchBarController = useTextEditingController();
+    final repositoryId = repository.repositoryId;
 
     return BlocProvider(
       create: (context) => MusicSheetRepositoryBloc(
         firebaseFirestoreRepository: firebaseFirestoreRepository,
       )..add(InitMusicSheetsRepositoryEvent(repositoryId: repositoryId)),
       child: Scaffold(
-        appBar: AppBar(title: Text('♬ $repositoryName')),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 20.0, right: 8.0),
-          child: UploadMusicSheetFragment(repositoryId: repositoryId),
-        ),
+        appBar: AppBar(title: Text('♬ ${repository.name}')),
+        floatingActionButton: repository.isPrivate
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 20.0, right: 8.0),
+                child: UploadMusicSheetFragment(repositoryId: repositoryId),
+              )
+            : null,
         body: Column(
           children: [
             // Search Bar

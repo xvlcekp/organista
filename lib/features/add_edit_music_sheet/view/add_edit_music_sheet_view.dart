@@ -82,7 +82,7 @@ class AddEditMusicSheetView extends HookWidget {
                                           repositoryId: state.repositoryId,
                                         ),
                                       );
-                                  resetMusicSheetCubitAndShowPlaylist(context);
+                                  resetMusicSheetCubitAndPop(context);
                                 case EditMusicSheetState():
                                   context.read<PlaylistBloc>().add(
                                         RenameMusicSheetInPlaylistEvent(
@@ -126,10 +126,21 @@ class AddEditMusicSheetView extends HookWidget {
     );
   }
 
+  // TODO: fix these routes
+  // TODO: remove user from authentication on user delete
+
   void resetMusicSheetCubitAndShowPlaylist(BuildContext context) async {
     if (context.mounted) {
       context.read<AddEditMusicSheetCubit>().resetState();
+      Navigator.of(context).pop();
       Navigator.of(context).push(PlaylistView.route());
+    }
+  }
+
+  void resetMusicSheetCubitAndPop(BuildContext context) async {
+    if (context.mounted) {
+      context.read<AddEditMusicSheetCubit>().resetState();
+      Navigator.of(context).pop();
     }
   }
 }

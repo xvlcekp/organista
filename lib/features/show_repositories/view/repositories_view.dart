@@ -121,8 +121,7 @@ class RepositoryTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MusicSheetRepositoryView.route(
-            repositoryId: repository.repositoryId,
-            repositoryName: repository.name,
+            repository: repository,
           ),
         );
       },

@@ -13,6 +13,7 @@ import 'package:organista/models/music_sheets/music_sheet_payload.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/models/playlists/playlist_payload.dart';
+import 'package:organista/models/repositories/repository_payload.dart';
 import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
 import 'package:organista/models/repositories/repository.dart';
@@ -290,6 +291,24 @@ class FirebaseFirestoreRepository {
             json: doc.data(),
           ));
     });
+  }
+
+  Future<bool> createUserRepository({
+    required String userId,
+  }) async {
+    try {
+      final firestoreRef = instance.collection(FirebaseCollectionName.repositories);
+      final repositoryPayload = RepositoryPayload(
+        userId: userId,
+        name: 'Custom repository',
+      );
+      await firestoreRef.add(repositoryPayload);
+
+      return true; // Upload succeeded
+    } catch (e) {
+      logger.e(e);
+      return false; // Upload failed
+    }
   }
 
   Future<bool> deleteMusicSheetFromRepository({
