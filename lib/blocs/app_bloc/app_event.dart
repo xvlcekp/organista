@@ -51,3 +51,10 @@ class AppEventRegister implements AppEvent {
     required this.password,
   });
 }
+
+@immutable
+class AppEventForgotPassword implements AppEvent {
+  final String email;
+
+  const AppEventForgotPassword({required this.email});
+}

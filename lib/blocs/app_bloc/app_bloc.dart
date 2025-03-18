@@ -23,6 +23,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppEventInitialize>(_appEventInitialize);
     on<AppEventLogOut>(_appEventLogOut);
     on<AppEventDeleteAccount>(_appEventDeleteAccount);
+    on<AppEventForgotPassword>(_appEventForgotPassword);
   }
 
   final FirebaseAuthRepository firebaseAuthRepository;
@@ -188,5 +189,29 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         isLoading: false,
       ),
     );
+  }
+
+  void _appEventForgotPassword(event, emit) async {
+    emit(
+      const AppStateLoggedOut(
+        isLoading: true,
+      ),
+    );
+    try {
+      await firebaseAuthRepository.sendPasswordResetEmail(event.email);
+      emit(
+        const AppStateLoggedOut(
+          isLoading: false,
+          passwordResetSent: true,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      emit(
+        AppStateLoggedOut(
+          isLoading: false,
+          authError: AuthError.from(e),
+        ),
+      );
+    }
   }
 }

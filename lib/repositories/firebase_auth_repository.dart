@@ -32,4 +32,8 @@ class FirebaseAuthRepository {
   Future<void> signOut() {
     return instance.signOut();
   }
+
+  Future<void> sendPasswordResetEmail(String email) {
+    return instance.sendPasswordResetEmail(email: email);
+  }
 }

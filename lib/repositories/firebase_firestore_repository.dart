@@ -115,7 +115,8 @@ class FirebaseFirestoreRepository {
     await Future.wait([
       _deleteDocuments(FirebaseCollectionName.users, UserInfoKey.userId, userId),
       _deleteDocuments(FirebaseCollectionName.playlists, PlaylistKey.userId, userId),
-      _deleteDocuments(FirebaseCollectionName.musicSheets, MusicSheetKey.userId, userId),
+      _deleteDocuments(FirebaseCollectionName.musicSheets, MusicSheetKey.userId, userId), // TODO: remove music from here when musicSheets repository will be removed
+      _deleteDocuments(FirebaseCollectionName.repositories, RepositoryKey.userId, userId),
     ]);
   }
 

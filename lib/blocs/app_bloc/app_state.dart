@@ -4,10 +4,12 @@ part of 'app_bloc.dart';
 abstract class AppState {
   final bool isLoading;
   final AuthError? authError;
+  final bool passwordResetSent;
 
   const AppState({
     required this.isLoading,
     this.authError,
+    this.passwordResetSent = false,
   });
 }
 
@@ -32,10 +34,11 @@ class AppStateLoggedOut extends AppState {
   const AppStateLoggedOut({
     required super.isLoading,
     super.authError,
+    super.passwordResetSent = false,
   });
 
   @override
-  String toString() => 'AppStateLoggedOut, isLoading = $isLoading, authError = $authError';
+  String toString() => 'AppStateLoggedOut, isLoading = $isLoading, authError = $authError, passwordResetSent = $passwordResetSent';
 }
 
 @immutable
