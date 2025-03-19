@@ -45,6 +45,7 @@ class _UploadFolderScreenState extends State<_UploadFolderScreen> {
   List<String> uploadedFiles = [];
   List<Repository> repositories = [];
   Repository? selectedRepository;
+  User? authenticatedUser;
 
   final FirebaseAuthRepository firebaseAuthRepository = FirebaseAuthRepository();
   final FirebaseFirestoreRepository firebaseFirestoreRepository = FirebaseFirestoreRepository();
@@ -60,8 +61,8 @@ class _UploadFolderScreenState extends State<_UploadFolderScreen> {
 
   Future<void> loadRepositories() async {
     try {
-      final user = await checkUserAuth();
-      if (user != null) {
+      authenticatedUser = await checkUserAuth();
+      if (authenticatedUser != null) {
         final repoStream = firebaseFirestoreRepository.getRepositoriesStream();
         repoStream.listen((repos) {
           setState(() {
@@ -151,6 +152,23 @@ class _UploadFolderScreenState extends State<_UploadFolderScreen> {
       return;
     }
 
+    // Check if user is still authenticated
+    if (authenticatedUser == null) {
+      logger.i("User authentication expired, attempting to re-authenticate");
+      authenticatedUser = await checkUserAuth();
+      if (authenticatedUser == null) {
+        setState(() {
+          isUploading = false;
+        });
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Authentication failed. Please restart the app.")),
+          );
+        }
+        return;
+      }
+    }
+
     for (var file in result.files) {
       try {
         if (file.bytes == null) continue; // Skip if file is empty
@@ -162,38 +180,34 @@ class _UploadFolderScreenState extends State<_UploadFolderScreen> {
           continue; // Skip if mapping exists but file not found in mapping
         }
 
-        final user = await checkUserAuth();
+        // Determine the filename to use
+        String fileNameToUse;
 
-        if (user != null) {
-          // Determine the filename to use
-          String fileNameToUse;
+        if (filenameMapping.isEmpty) {
+          // If no JSON mapping file is selected, use the original filename
+          fileNameToUse = file.name;
+          logger.i("Using original filename: $fileNameToUse");
+        } else {
+          // Use the mapped filename from the JSON
+          fileNameToUse = filenameMapping[file.name]!;
+          logger.i("Using mapped filename: $fileNameToUse, original file name was ${file.name}");
+        }
 
-          if (filenameMapping.isEmpty) {
-            // If no JSON mapping file is selected, use the original filename
-            fileNameToUse = file.name;
-            logger.i("Using original filename: $fileNameToUse");
-          } else {
-            // Use the mapped filename from the JSON
-            fileNameToUse = filenameMapping[file.name]!;
-            logger.i("Using mapped filename: $fileNameToUse, original file name was ${file.name}");
-          }
-
-          final reference = await firebaseStorageRepository.uploadFile(
-            file: file,
-            bucket: 'public/${selectedRepository!.name}',
+        final reference = await firebaseStorageRepository.uploadFile(
+          file: file,
+          bucket: 'public/${selectedRepository!.name}',
+        );
+        if (reference != null) {
+          final uploadSucceeded = await firebaseFirestoreRepository.uploadMusicSheetRecord(
+            reference: reference,
+            userId: '',
+            fileName: fileNameToUse,
+            mediaType: MediaType.fromPath(file.name),
+            repositoryId: selectedRepository!.repositoryId,
           );
-          if (reference != null) {
-            final uploadSucceeded = await firebaseFirestoreRepository.uploadMusicSheetRecord(
-              reference: reference,
-              userId: '',
-              fileName: fileNameToUse,
-              mediaType: MediaType.fromPath(file.name),
-              repositoryId: selectedRepository!.repositoryId,
-            );
-            logger.i('Manual upload of recording succeeded? - $uploadSucceeded');
-          } else {
-            throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
-          }
+          logger.i('Manual upload of recording succeeded? - $uploadSucceeded');
+        } else {
+          throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
         }
 
         setState(() {
