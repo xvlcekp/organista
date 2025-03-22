@@ -18,6 +18,3 @@ void main() async {
     const AppRepository(),
   );
 }
-
-// TODO:
-// globalny repositar s dodatocnymi info o piesnach

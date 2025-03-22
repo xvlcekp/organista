@@ -294,14 +294,27 @@ class FirebaseFirestoreRepository {
     });
   }
 
+  Future<bool> createGlobalRepository({
+    required String name,
+  }) async {
+    return _createRepository(userId: '', name: name);
+  }
+
   Future<bool> createUserRepository({
     required String userId,
+  }) async {
+    return _createRepository(userId: userId, name: 'Custom repository');
+  }
+
+  Future<bool> _createRepository({
+    required String userId,
+    required String name,
   }) async {
     try {
       final firestoreRef = instance.collection(FirebaseCollectionName.repositories);
       final repositoryPayload = RepositoryPayload(
         userId: userId,
-        name: 'Custom repository',
+        name: name,
       );
       await firestoreRef.add(repositoryPayload);
 
@@ -345,5 +358,23 @@ class FirebaseFirestoreRepository {
             },
           ));
     });
+  }
+
+  Future<int> getRepositoryMusicSheetsCount(String repositoryId) async {
+    try {
+      final AggregateQuerySnapshot snapshot = await instance
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(
+            FirebaseCollectionName.musicSheets,
+          )
+          .count()
+          .get();
+
+      return snapshot.count ?? 0;
+    } catch (e) {
+      logger.e('Error getting music sheets count: $e');
+      return 0;
+    }
   }
 }

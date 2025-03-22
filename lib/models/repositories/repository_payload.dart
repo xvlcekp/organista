@@ -13,7 +13,6 @@ class RepositoryPayload extends MapView<String, dynamic> {
             RepositoryKey.name: name,
             RepositoryKey.userId: userId,
             RepositoryKey.createdAt: FieldValue.serverTimestamp(),
-            RepositoryKey.musicSheets: [],
           },
         );
 }

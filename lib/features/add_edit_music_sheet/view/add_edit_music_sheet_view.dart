@@ -127,7 +127,6 @@ class AddEditMusicSheetView extends HookWidget {
   }
 
   // TODO: fix these routes
-  // TODO: remove user from authentication on user delete
 
   void resetMusicSheetCubitAndShowPlaylist(BuildContext context) async {
     if (context.mounted) {

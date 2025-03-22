@@ -11,15 +11,13 @@ class Repository extends Equatable {
   final String name;
   final String userId;
   final DateTime createdAt;
-  final List<MusicSheet> musicSheets;
 
   Repository({
     required Map<String, dynamic> json,
   })  : repositoryId = json[RepositoryKey.repositoryId] ?? const Uuid().v4(),
         name = json[RepositoryKey.name] ?? '',
         userId = json[RepositoryKey.userId] ?? '',
-        createdAt = (json[RepositoryKey.createdAt] as Timestamp).toDate(),
-        musicSheets = (json[RepositoryKey.musicSheets] as List<dynamic>?)?.map((sheet) => MusicSheet(json: sheet as Map<String, dynamic>)).toList() ?? [];
+        createdAt = (json[RepositoryKey.createdAt] as Timestamp).toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -27,7 +25,6 @@ class Repository extends Equatable {
       RepositoryKey.name: name,
       RepositoryKey.userId: userId,
       RepositoryKey.createdAt: Timestamp.fromDate(createdAt),
-      RepositoryKey.musicSheets: musicSheets.map((sheet) => sheet.toJson()).toList(),
     };
   }
 
@@ -41,7 +38,6 @@ class Repository extends Equatable {
         RepositoryKey.name: name ?? this.name,
         RepositoryKey.userId: userId,
         RepositoryKey.createdAt: Timestamp.fromDate(createdAt),
-        RepositoryKey.musicSheets: musicSheets?.map((sheet) => sheet.toJson()).toList() ?? this.musicSheets.map((sheet) => sheet.toJson()).toList(),
       },
     );
   }
@@ -57,6 +53,5 @@ class Repository extends Equatable {
         name,
         userId,
         createdAt,
-        musicSheets,
       ];
 }

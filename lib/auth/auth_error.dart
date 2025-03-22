@@ -14,8 +14,6 @@ const Map<String, AuthError> authErrorMapping = {
   'invalid-credential': AuthErrorInvalidCredential(),
 };
 
-// TODO: fix [firebase_auth/quota-exceeded] Exceeded quota for verifying passwords.
-
 @immutable
 abstract class AuthError {
   final String dialogTitle;
