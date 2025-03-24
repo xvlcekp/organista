@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
@@ -42,9 +43,9 @@ class App extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Photo Library',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
         home: BlocConsumer<AppBloc, AppState>(
           listener: (context, appState) {

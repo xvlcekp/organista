@@ -18,6 +18,7 @@ class RegisterView extends HookWidget {
     );
 
     final isPasswordVisible = useState(false);
+    final theme = Theme.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -30,26 +31,22 @@ class RegisterView extends HookWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Logo or App Name
-                  const Icon(
+                  Icon(
                     Icons.music_note,
                     size: 80,
-                    color: Colors.blue,
+                    color: theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 24),
-                  const Text(
+                  Text(
                     'Create Account',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: theme.textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Sign up to get started',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -59,20 +56,7 @@ class RegisterView extends HookWidget {
                     controller: emailController,
                     decoration: InputDecoration(
                       hintText: 'Email',
-                      prefixIcon: const Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.blue, width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[100],
+                      prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -82,28 +66,16 @@ class RegisterView extends HookWidget {
                     controller: passwordController,
                     decoration: InputDecoration(
                       hintText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
                       suffixIcon: IconButton(
                         icon: Icon(
                           isPasswordVisible.value ? Icons.visibility_off : Icons.visibility,
+                          color: theme.colorScheme.primary,
                         ),
                         onPressed: () {
                           isPasswordVisible.value = !isPasswordVisible.value;
                         },
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.blue, width: 2),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[100],
                     ),
                     obscureText: !isPasswordVisible.value,
                     obscuringCharacter: '◉',
@@ -122,12 +94,9 @@ class RegisterView extends HookWidget {
                           );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
                     child: const Text(
                       'Sign Up',
@@ -142,17 +111,20 @@ class RegisterView extends HookWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Already have an account?'),
+                      Text(
+                        'Already have an account?',
+                        style: theme.textTheme.bodyLarge,
+                      ),
                       TextButton(
                         onPressed: () {
                           context.read<AppBloc>().add(
                                 const AppEventGoToLogin(),
                               );
                         },
-                        child: const Text(
+                        child: Text(
                           'Sign In',
-                          style: TextStyle(
-                            color: Colors.blue,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
