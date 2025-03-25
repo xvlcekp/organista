@@ -68,51 +68,66 @@ class AddEditMusicSheetView extends HookWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                            child: const Text('Save'),
-                            onPressed: () {
-                              switch (state) {
-                                case InitMusicSheetState():
-                                  logger.e("You have to select an image first");
-                                case UploadMusicSheetState():
-                                  context.read<PlaylistBloc>().add(
-                                        UploadNewMusicSheetEvent(
-                                          file: state.file,
-                                          fileName: musicSheetNameController.text,
-                                          user: context.read<AppBloc>().state.user!,
-                                          repositoryId: state.repositoryId,
-                                        ),
-                                      );
-                                  resetMusicSheetCubitAndPop(context);
-                                case EditMusicSheetState():
-                                  context.read<PlaylistBloc>().add(
-                                        RenameMusicSheetInPlaylistEvent(
-                                          playlist: state.playlist,
-                                          musicSheet: state.musicSheet,
-                                          fileName: musicSheetNameController.text,
-                                        ),
-                                      );
-                                  resetMusicSheetCubitAndShowPlaylist(context);
-                                case AddMusicSheetToPlaylistState():
-                                  final playlist = context.read<PlaylistBloc>().state.playlist;
-                                  context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
-                                        musicSheet: state.musicSheet,
-                                        fileName: musicSheetNameController.text,
-                                        playlist: playlist,
-                                      ));
-                                  Navigator.of(context).pop();
-                                  resetMusicSheetCubitAndShowPlaylist(context);
-                              }
-                            }),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
                           onPressed: () async {
                             final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
                             if (shouldDiscardChanges && context.mounted) {
                               resetMusicSheetCubitAndShowPlaylist(context);
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[300],
+                            foregroundColor: Colors.black87,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30), // Make the button circular
+                            ),
+                          ),
                           child: const Text('Discard'),
+                        ),
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30), // Make the button circular
+                            ),
+                          ),
+                          onPressed: () {
+                            switch (state) {
+                              case InitMusicSheetState():
+                                logger.e("You have to select an image first");
+                              case UploadMusicSheetState():
+                                context.read<PlaylistBloc>().add(
+                                      UploadNewMusicSheetEvent(
+                                        file: state.file,
+                                        fileName: musicSheetNameController.text,
+                                        user: context.read<AppBloc>().state.user!,
+                                        repositoryId: state.repositoryId,
+                                      ),
+                                    );
+                                resetMusicSheetCubitAndPop(context);
+                              case EditMusicSheetState():
+                                context.read<PlaylistBloc>().add(
+                                      RenameMusicSheetInPlaylistEvent(
+                                        playlist: state.playlist,
+                                        musicSheet: state.musicSheet,
+                                        fileName: musicSheetNameController.text,
+                                      ),
+                                    );
+                                resetMusicSheetCubitAndShowPlaylist(context);
+                              case AddMusicSheetToPlaylistState():
+                                final playlist = context.read<PlaylistBloc>().state.playlist;
+                                context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
+                                      musicSheet: state.musicSheet,
+                                      fileName: musicSheetNameController.text,
+                                      playlist: playlist,
+                                    ));
+                                Navigator.of(context).pop();
+                                resetMusicSheetCubitAndShowPlaylist(context);
+                            }
+                          },
+                          child: const Text('Save'),
                         ),
                       ),
                     ],

@@ -20,6 +20,7 @@ class PlaylistsView extends HookWidget {
     final TextEditingController controller = useTextEditingController();
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
+    final theme = Theme.of(context);
 
     useEffect(() {
       // initialize stream only once on first creation
@@ -28,63 +29,140 @@ class PlaylistsView extends HookWidget {
     }, []);
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Playlists ♬♬♬'),
-          actions: [
-            const MainPopupMenuButton(),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Icon(Icons.music_note, color: theme.colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              'My Playlists',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: FloatingActionButton(
-            onPressed: () => showAddPlaylistDialog(context: context, controller: controller, userId: userId),
-            child: Icon(Icons.add),
-          ),
-        ),
-        body: BlocBuilder<ShowPlaylistsCubit, ShowPlaylistsState>(
-          builder: (context, state) {
-            return state.playlists.isEmpty
-                ? const Center(child: Text('No playlists available.'))
-                : ListView.separated(
-                    itemCount: state.playlists.length,
-                    itemBuilder: (context, index) {
-                      Playlist playlist = state.playlists[index];
-                      return Dismissible(
-                          key: UniqueKey(),
-                          direction: DismissDirection.endToStart,
-                          background: const ColoredBox(
-                            color: Colors.red,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Icon(Icons.delete, color: Colors.white),
-                              ),
+        actions: [
+          const MainPopupMenuButton(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => showAddPlaylistDialog(context: context, controller: controller, userId: userId),
+        icon: const Icon(Icons.add),
+        label: const Text('New Playlist'),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+      ),
+      body: BlocBuilder<ShowPlaylistsCubit, ShowPlaylistsState>(
+        builder: (context, state) {
+          if (state.playlists.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.music_off,
+                    size: 64,
+                    color: theme.colorScheme.primary.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No playlists yet',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Create your first playlist to get started',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: state.playlists.length,
+            itemBuilder: (context, index) {
+              Playlist playlist = state.playlists[index];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Dismissible(
+                  key: ValueKey(playlist.playlistId),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 24),
+                    child: Icon(
+                      Icons.delete,
+                      color: theme.colorScheme.onError,
+                    ),
+                  ),
+                  confirmDismiss: (DismissDirection direction) async {
+                    final shouldDeletePlaylist = await showDeletePlaylistDialog(context);
+                    if (shouldDeletePlaylist && context.mounted) {
+                      context.read<ShowPlaylistsCubit>().deletePlaylist(
+                            playlist: playlist,
+                          );
+                    }
+                    return;
+                  },
+                  child: InkWell(
+                    onLongPress: () {
+                      controller.text = playlist.name;
+                      showEditPlaylistDialog(context: context, controller: controller, playlist: state.playlists[index]);
+                    },
+                    onTap: () {
+                      context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
+                      Navigator.of(context).push<void>(PlaylistView.route());
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  playlist.name,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tap to view playlist',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          confirmDismiss: (DismissDirection direction) async {
-                            final shouldDeletePlaylist = await showDeletePlaylistDialog(context);
-                            if (shouldDeletePlaylist && context.mounted) {
-                              context.read<ShowPlaylistsCubit>().deletePlaylist(
-                                    playlist: playlist,
-                                  );
-                            }
-                            return;
-                          },
-                          child: ListTile(
-                              title: Text(playlist.name),
-                              onLongPress: () {
-                                controller.text = playlist.name;
-                                showEditPlaylistDialog(context: context, controller: controller, playlist: state.playlists[index]);
-                              },
-                              onTap: () {
-                                context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
-                                Navigator.of(context).push<void>(PlaylistView.route());
-                              }));
-                    },
-                    separatorBuilder: (_, __) => Divider(),
-                  );
-          },
-        ));
+                          Icon(
+                            Icons.chevron_right,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 }
