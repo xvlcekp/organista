@@ -54,7 +54,6 @@ class UploadFolderScreen extends HookWidget {
     // Initialize repositories
     useEffect(() {
       loadRepositories(
-        context,
         authenticatedUser,
         repositories,
         selectedRepository,
@@ -69,18 +68,22 @@ class UploadFolderScreen extends HookWidget {
 
     Future<void> createNewRepository() async {
       if (newRepositoryNameController.text.trim().isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Repository name cannot be empty")),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Repository name cannot be empty")),
+          );
+        }
         return;
       }
 
       if (authenticatedUser.value == null) {
         authenticatedUser.value = await checkUserAuth();
         if (authenticatedUser.value == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Authentication failed. Please restart the app.")),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Authentication failed. Please restart the app.")),
+            );
+          }
           return;
         }
       }
@@ -90,16 +93,20 @@ class UploadFolderScreen extends HookWidget {
           name: newRepositoryNameController.text.trim(),
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Repository created successfully")),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Repository created successfully")),
+          );
+        }
 
         newRepositoryNameController.clear();
       } catch (e) {
         logger.e("Error creating repository", error: e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Failed to create repository: ${e.toString()}")),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to create repository: ${e.toString()}")),
+          );
+        }
       }
     }
 
@@ -126,9 +133,11 @@ class UploadFolderScreen extends HookWidget {
 
     Future<void> uploadFolder() async {
       if (selectedRepository.value == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please select a repository first")),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Please select a repository first")),
+          );
+        }
         return;
       }
 
@@ -318,7 +327,6 @@ Future<User?> checkUserAuth() async {
 }
 
 Future<void> loadRepositories(
-  BuildContext context,
   ValueNotifier<User?> authenticatedUser,
   ValueNotifier<List<Repository>> repositories,
   ValueNotifier<Repository?> selectedRepository,

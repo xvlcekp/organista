@@ -59,14 +59,3 @@ extension GetUser on AppState {
     }
   }
 }
-
-// extension GetMusicSheets on AppState {
-//   Iterable<MusicSheet>? get musicSheets {
-//     final cls = this;
-//     if (cls is AppStateLoggedIn) {
-//       return cls.musicSheets;
-//     } else {
-//       return null;
-//     }
-//   }
-// }
