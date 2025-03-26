@@ -71,6 +71,14 @@ class PlaylistView extends HookWidget {
           } else {
             LoadingScreen.instance().hide();
           }
+          if (appState.errorMessage.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(appState.errorMessage),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
         },
         builder: (context, state) {
           var playlist = state.playlist;

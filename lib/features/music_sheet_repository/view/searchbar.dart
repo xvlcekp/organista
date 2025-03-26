@@ -13,21 +13,32 @@ class RepositorySearchbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
-        color: Colors.grey[800],
-        borderRadius: BorderRadius.circular(8),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         controller: searchBarController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Search music sheets...',
-          border: InputBorder.none,
-          hintStyle: TextStyle(color: Colors.white60),
-          icon: Icon(Icons.search, color: Colors.white),
+          border: InputBorder.none, // Removes the border
+          enabledBorder: InputBorder.none, // Removes border when enabled
+          focusedBorder: InputBorder.none, // Removes border when focused
+          hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+          icon: Icon(Icons.search, color: theme.colorScheme.onSurface),
         ),
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: theme.colorScheme.onSurface),
         onChanged: (query) {
           context.read<MusicSheetRepositoryBloc>().add(SearchMusicSheets(query: query));
         },

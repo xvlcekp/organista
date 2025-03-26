@@ -10,6 +10,7 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:flutter/material.dart';
 
 part 'playlist_event.dart';
 part 'playlist_state.dart';
@@ -123,7 +124,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         isLoading: false,
         playlist: playlist,
       ),
-      onError: (_, __) => PlaylistErrorState(),
+      onError: (_, __) => PlaylistErrorState(errorMessage: "Error on initialization"),
     );
   }
 
@@ -131,14 +132,24 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final Playlist playlist = event.playlist;
     final MusicSheet musicSheet = event.musicSheet;
     final String fileName = event.fileName;
+
     emit(PlaylistLoadedState(
       isLoading: true,
       playlist: state.playlist,
     ));
-    MusicSheet customNamedMusicSheet = musicSheet.copyWith(fileName: fileName);
-    await firebaseFirestoreRepository.addMusicSheetToPlaylist(
-      playlist: playlist,
-      musicSheet: customNamedMusicSheet,
-    );
+
+    if (!state.playlist.musicSheets.any((sheet) => sheet.musicSheetId == musicSheet.musicSheetId)) {
+      MusicSheet customNamedMusicSheet = musicSheet.copyWith(fileName: fileName);
+      await firebaseFirestoreRepository.addMusicSheetToPlaylist(
+        playlist: playlist,
+        musicSheet: customNamedMusicSheet,
+      );
+    } else {
+      emit(PlaylistLoadedState(
+        isLoading: false,
+        playlist: state.playlist,
+        errorMessage: 'Music sheet already exists in the playlist.',
+      ));
+    }
   }
 }

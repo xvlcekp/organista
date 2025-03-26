@@ -7,6 +7,8 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.blue,
         brightness: Brightness.light,
+        surface: Colors.white,
+        onSurface: Colors.black.withAlpha(150),
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
@@ -84,6 +86,8 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.blue,
         brightness: Brightness.dark,
+        surface: Colors.black.withAlpha(150),
+        onSurface: Colors.white,
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
