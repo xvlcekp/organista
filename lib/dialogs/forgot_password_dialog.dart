@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 
 Future<void> showForgotPasswordDialog(BuildContext context, TextEditingController emailController) async {
+  final theme = Theme.of(context);
   TextEditingController resetPasswordEmailController = TextEditingController();
   resetPasswordEmailController.text = emailController.text;
   showDialog(
@@ -12,39 +13,37 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
       ),
-      title: const Text(
+      title: Text(
         'Reset Password',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
+        style: theme.textTheme.titleLarge,
       ),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'Enter your email address and we\'ll send you a link to reset your password.',
-              style: TextStyle(color: Colors.black54, fontSize: 13),
+              style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: resetPasswordEmailController,
               decoration: InputDecoration(
                 hintText: 'Enter your email',
-                hintStyle: const TextStyle(fontSize: 12),
-                prefixIcon: const Icon(Icons.email_outlined, size: 18),
+                hintStyle: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                prefixIcon: Icon(Icons.email_outlined, size: 18, color: theme.colorScheme.onSurface),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
+                  borderSide: BorderSide(color: theme.colorScheme.onSurface),
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 isDense: true,
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: theme.colorScheme.surface,
               ),
               keyboardType: TextInputType.emailAddress,
-              style: const TextStyle(fontSize: 12.0), // Even smaller font size for input field
+              style: const TextStyle(fontSize: 12.0),
             ),
           ],
         ),
@@ -52,9 +51,6 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.grey[700],
-          ),
           child: const Text('Cancel'),
         ),
         ElevatedButton(
@@ -83,13 +79,9 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
               ),
             );
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          style: theme.elevatedButtonTheme.style?.copyWith(
+            backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
+            foregroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
           ),
           child: const Text('Reset Password'),
         ),

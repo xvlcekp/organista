@@ -21,6 +21,8 @@ class AddEditMusicSheetView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final musicSheetNameController = useTextEditingController();
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Modify music sheet')),
       body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
@@ -50,14 +52,14 @@ class AddEditMusicSheetView extends HookWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
                       controller: musicSheetNameController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                          borderSide: BorderSide(color: theme.colorScheme.onSurface, width: 0.0),
                         ),
                         hintText: 'Music sheet name',
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
                       ),
-                      style: const TextStyle(color: Colors.black), // Text color
+                      style: TextStyle(color: theme.colorScheme.onSurface),
                       onChanged: (query) {},
                     ),
                   ),
@@ -74,24 +76,19 @@ class AddEditMusicSheetView extends HookWidget {
                               resetMusicSheetCubitAndShowPlaylist(context);
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
-                            foregroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30), // Make the button circular
-                            ),
+                          style: theme.elevatedButtonTheme.style?.copyWith(
+                            backgroundColor: WidgetStateProperty.all(theme.colorScheme.secondary),
+                            foregroundColor: WidgetStateProperty.all(theme.colorScheme.onSecondary),
                           ),
-                          child: const Text('Discard'),
+                          child: Text('Discard'),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30), // Make the button circular
-                            ),
+                          style: theme.elevatedButtonTheme.style?.copyWith(
+                            backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
+                            foregroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
                           ),
                           onPressed: () {
                             switch (state) {

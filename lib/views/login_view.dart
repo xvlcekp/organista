@@ -25,7 +25,7 @@ class LoginView extends HookWidget {
       listener: (context, state) {
         if (state.passwordResetSent == true) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Password reset email sent. Please check your inbox.')),
+            SnackBar(content: Text('Password reset email sent. Please check your inbox.', style: theme.textTheme.bodyMedium)),
           );
         }
       },
@@ -65,7 +65,14 @@ class LoginView extends HookWidget {
                       controller: emailController,
                       decoration: InputDecoration(
                         hintText: 'Email',
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
                         prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
+                        filled: true,
+                        fillColor: theme.colorScheme.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: theme.colorScheme.onSurface),
+                        ),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -75,6 +82,7 @@ class LoginView extends HookWidget {
                       controller: passwordController,
                       decoration: InputDecoration(
                         hintText: 'Password',
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
                         prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -84,6 +92,12 @@ class LoginView extends HookWidget {
                           onPressed: () {
                             isPasswordVisible.value = !isPasswordVisible.value;
                           },
+                        ),
+                        filled: true,
+                        fillColor: theme.colorScheme.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: theme.colorScheme.onSurface),
                         ),
                       ),
                       obscureText: !isPasswordVisible.value,
@@ -114,18 +128,11 @@ class LoginView extends HookWidget {
                               ),
                             );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      style: theme.elevatedButtonTheme.style?.copyWith(
+                        backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
+                        foregroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
                       ),
-                      child: const Text(
-                        'Sign In',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: const Text('Sign In'),
                     ),
                     const SizedBox(height: 16),
                     // Register Link
@@ -162,3 +169,5 @@ class LoginView extends HookWidget {
     );
   }
 }
+
+// PROMPT: please add textTheme.button to the app_theme.dart based on buttons from login_view.dart

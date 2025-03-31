@@ -100,10 +100,6 @@ class RegisterView extends HookWidget {
                     ),
                     child: const Text(
                       'Sign Up',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
