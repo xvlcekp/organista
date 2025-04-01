@@ -112,7 +112,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   }
 
   void _initPlaylistEvent(event, emit) async {
-    logger.e("Init playlist was called");
+    logger.i("Init playlist was called");
     emit(PlaylistLoadedState(
       isLoading: true,
       playlist: event.playlist,

@@ -128,10 +128,7 @@ class LoginView extends HookWidget {
                               ),
                             );
                       },
-                      style: theme.elevatedButtonTheme.style?.copyWith(
-                        backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
-                        foregroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
-                      ),
+                      style: theme.elevatedButtonTheme.style,
                       child: const Text('Sign In'),
                     ),
                     const SizedBox(height: 16),

@@ -43,7 +43,7 @@ class LoadingScreen {
       builder: (context) {
         final theme = Theme.of(context);
         return Material(
-          color: theme.colorScheme.onSurface.withAlpha(150),
+          color: theme.colorScheme.surface.withAlpha(150),
           child: Center(
             child: Container(
               constraints: BoxConstraints(

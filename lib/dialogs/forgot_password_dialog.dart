@@ -79,10 +79,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
               ),
             );
           },
-          style: theme.elevatedButtonTheme.style?.copyWith(
-            backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
-            foregroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
-          ),
+          style: theme.elevatedButtonTheme.style,
           child: const Text('Reset Password'),
         ),
       ],

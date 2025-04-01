@@ -93,11 +93,7 @@ class RegisterView extends HookWidget {
                             ),
                           );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
+                    style: theme.elevatedButtonTheme.style,
                     child: const Text(
                       'Sign Up',
                     ),

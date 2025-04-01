@@ -86,10 +86,7 @@ class AddEditMusicSheetView extends HookWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          style: theme.elevatedButtonTheme.style?.copyWith(
-                            backgroundColor: WidgetStateProperty.all(theme.colorScheme.primary),
-                            foregroundColor: WidgetStateProperty.all(theme.colorScheme.onPrimary),
-                          ),
+                          style: theme.elevatedButtonTheme.style,
                           onPressed: () {
                             switch (state) {
                               case InitMusicSheetState():

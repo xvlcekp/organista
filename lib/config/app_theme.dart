@@ -28,14 +28,16 @@ class AppTheme {
     required Color hintColor,
     required Color labelColor,
   }) {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.blue,
+      brightness: brightness,
+      surface: surfaceColor,
+      onSurface: onSurfaceColor,
+    );
+
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
-        brightness: brightness,
-        surface: surfaceColor,
-        onSurface: onSurfaceColor,
-      ),
+      colorScheme: colorScheme,
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
@@ -48,10 +50,12 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
+          backgroundColor: colorScheme.primary, // Use primary color from color scheme
+          foregroundColor: colorScheme.onPrimary, // Use onPrimary color from color scheme
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
