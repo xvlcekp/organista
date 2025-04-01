@@ -18,3 +18,5 @@ void main() async {
     const AppRepository(),
   );
 }
+
+// TODO: format staihnutia z onedrivu https://onedrive.live.com/?id=FD3BD2FF7EA852EE%211739&resid=FD3BD2FF7EA852EE%211739&authkey=%21AMXgPV%5FBpTSE4bE&cid=fd3bd2ff7ea852ee&action=download 

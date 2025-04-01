@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
@@ -8,10 +7,12 @@ import 'package:organista/repositories/firebase_firestore_repository.dart';
 
 class RepositoryTile extends HookWidget {
   final Repository repository;
+  final int index;
 
   const RepositoryTile({
     super.key,
     required this.repository,
+    required this.index,
   });
 
   @override
@@ -33,7 +34,7 @@ class RepositoryTile extends HookWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: _getRandomColor(),
+          color: _getFixedColor(),
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
@@ -91,7 +92,7 @@ class RepositoryTile extends HookWidget {
     count.value = result;
   }
 
-  Color _getRandomColor() {
+  Color _getFixedColor() {
     final List<Color> colors = [
       Colors.blue[400]!,
       Colors.red[400]!,
@@ -102,6 +103,7 @@ class RepositoryTile extends HookWidget {
       Colors.pink[400]!,
       Colors.indigo[400]!,
     ];
-    return colors[math.Random().nextInt(colors.length)];
+    // Use the index attribute to select a color, wrapping around if necessary
+    return colors[index % colors.length];
   }
 }

@@ -73,13 +73,13 @@ class RepositoriesViewContent extends HookWidget {
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 1.0,
+          childAspectRatio: 1.5,
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
         ),
         itemCount: currentRepositories.length,
         itemBuilder: (context, index) {
-          return RepositoryTile(repository: currentRepositories[index]);
+          return RepositoryTile(repository: currentRepositories[index], index: index);
         },
       ),
     );

@@ -22,7 +22,7 @@ class FullScreenImageGallery extends StatelessWidget {
         pageController: PageController(initialPage: initialIndex),
         scrollPhysics: const BouncingScrollPhysics(),
         builder: (_, int index) {
-          logger.e("Index is $index");
+          logger.i("Index is $index");
           final musicSheet = musicSheets[index];
 
           return PhotoViewGalleryPageOptions.customChild(
