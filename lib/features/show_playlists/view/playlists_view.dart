@@ -32,13 +32,11 @@ class PlaylistsView extends HookWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.music_note, color: theme.colorScheme.primary),
+            Icon(Icons.list_alt, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
             Text(
               'My Playlists',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: theme.textTheme.titleLarge,
             ),
           ],
         ),
@@ -141,7 +139,7 @@ class PlaylistsView extends HookWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Tap to view playlist',
+                                  "Music sheets: ${playlist.musicSheets.length}",
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),
