@@ -174,13 +174,16 @@ class UploadFolderScreen extends HookWidget {
         try {
           if (file.bytes == null) continue;
 
-          if (filenameMapping.value.isNotEmpty && !filenameMapping.value.containsKey(file.name)) {
-            logger.i("filenameMapping is not empty, these files are in the mapping: ${filenameMapping.value.keys}");
-            logger.i("${file.name} not found in the files mapping, skipping this file!");
-            continue;
-          }
+          String fileNameToUse = file.name; // Default to original name
+          List<String> matchingKeys = filenameMapping.value.keys.where((key) => file.name.startsWith(key)).toList();
 
-          String fileNameToUse = filenameMapping.value.isEmpty ? file.name : filenameMapping.value[file.name]!;
+          if (matchingKeys.isNotEmpty) {
+            String baseName = filenameMapping.value[matchingKeys.first]!;
+            String remainingName = file.name.substring(matchingKeys.first.length).trim().replaceAll('.pdf', '');
+            remainingName = remainingName.replaceAll('__', '');
+
+            fileNameToUse = "$baseName $remainingName"; // Rename with base name and remaining name
+          }
 
           logger.i(filenameMapping.value.isEmpty ? "Using original filename: $fileNameToUse" : "Using mapped filename: $fileNameToUse, original file name was ${file.name}");
 
@@ -202,7 +205,7 @@ class UploadFolderScreen extends HookWidget {
             throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
           }
 
-          uploadedFiles.value = [...uploadedFiles.value, file.name];
+          uploadedFiles.value = [...uploadedFiles.value, fileNameToUse]; // Use renamed file
         } catch (e) {
           logger.e("Error uploading ${file.name}", error: e);
         }
