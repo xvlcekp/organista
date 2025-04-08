@@ -117,7 +117,6 @@ class AddEditMusicSheetView extends HookWidget {
                                       fileName: musicSheetNameController.text,
                                       playlist: playlist,
                                     ));
-                                Navigator.of(context).pop();
                                 resetMusicSheetCubitAndShowPlaylist(context);
                             }
                           },
@@ -135,13 +134,16 @@ class AddEditMusicSheetView extends HookWidget {
     );
   }
 
-  // TODO: fix these routes
-
   void resetMusicSheetCubitAndShowPlaylist(BuildContext context) async {
     if (context.mounted) {
       context.read<AddEditMusicSheetCubit>().resetState();
-      Navigator.of(context).pop();
-      Navigator.of(context).push(PlaylistView.route());
+
+      Navigator.of(context).popUntil((route) {
+        if (route is MaterialPageRoute) {
+          return route.builder(context) is PlaylistView;
+        }
+        return false;
+      });
     }
   }
 
