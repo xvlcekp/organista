@@ -74,7 +74,7 @@ class App extends StatelessWidget {
             } else if (appState is AppStateIsInRegistrationView) {
               return const RegisterView();
             } else {
-              // this should never happen
+              // this should never happen test
               return Container();
             }
           },
