@@ -72,6 +72,7 @@ class AppLocalizations {
   String get deleteTooltip => _localizedValues[locale.languageCode]!['deleteTooltip']!;
   String get renamePlaylist => _localizedValues[locale.languageCode]!['renamePlaylist']!;
   String get rename => _localizedValues[locale.languageCode]!['rename']!;
+  String get ok => _localizedValues[locale.languageCode]!['ok']!;
 
   // Model-related strings
   String get musicSheet => _localizedValues[locale.languageCode]!['musicSheet']!;
@@ -124,6 +125,8 @@ class AppLocalizations {
   String get tapToView => _localizedValues[locale.languageCode]!['tapToView']!;
   String get deletePlaylist => _localizedValues[locale.languageCode]!['deletePlaylist']!;
   String get deletePlaylistMessage => _localizedValues[locale.languageCode]!['deletePlaylistMessage']!;
+  String get about => _localizedValues[locale.languageCode]!['about']!;
+  String get aboutMessage => _localizedValues[locale.languageCode]!['aboutMessage']!;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -182,6 +185,7 @@ class AppLocalizations {
       'deleteTooltip': 'Delete music sheet',
       'renamePlaylist': 'Rename playlist',
       'rename': 'Rename',
+      'ok': 'OK',
 
       // Model-related strings
       'musicSheet': 'Music Sheet',
@@ -234,6 +238,8 @@ class AppLocalizations {
       'tapToView': 'Tap to view',
       'deletePlaylist': 'Delete playlist',
       'deletePlaylistMessage': 'Are you sure you want to delete this playlist? You cannot undo this operation!',
+      'about': 'About',
+      'aboutMessage': 'Organista\n\nA music sheet management application\nCreated by Your Name\nVersion 1.0.0',
     },
     'sk': {
       'appTitle': 'Organista',
@@ -291,6 +297,7 @@ class AppLocalizations {
       'deleteTooltip': 'Vymazať notový zápis',
       'renamePlaylist': 'Premenovať playlist',
       'rename': 'Premenovať',
+      'ok': 'OK',
 
       // Model-related strings
       'musicSheet': 'Notový záznam',
@@ -343,6 +350,8 @@ class AppLocalizations {
       'tapToView': 'Kliknutím zobrazíte',
       'deletePlaylist': 'Vymazať playlist',
       'deletePlaylistMessage': 'Ste si istí, že chcete vymazať tento playlist? Táto akcia sa nedá vrátiť späť!',
+      'about': 'O aplikácii',
+      'aboutMessage': 'Organista\n\nAplikácia na správu notových záznamov\nVytvoril/a Vaše Meno\nVerzia 1.0.0',
     },
   };
 }

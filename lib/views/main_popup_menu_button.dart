@@ -5,8 +5,9 @@ import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/features/settings/view/settings_view.dart';
+import 'package:organista/features/about/view/about_view.dart';
 
-enum MenuAction { logout, deleteAccount, settings }
+enum MenuAction { logout, deleteAccount, settings, about }
 
 class MainPopupMenuButton extends StatelessWidget {
   const MainPopupMenuButton({super.key});
@@ -41,6 +42,13 @@ class MainPopupMenuButton extends StatelessWidget {
               ),
             );
             break;
+          case MenuAction.about:
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AboutView(),
+              ),
+            );
+            break;
         }
       },
       itemBuilder: (context) {
@@ -72,6 +80,16 @@ class MainPopupMenuButton extends StatelessWidget {
                 const Icon(Icons.delete_forever, size: 20),
                 const SizedBox(width: 8),
                 Text(localizations.deleteAccount),
+              ],
+            ),
+          ),
+          PopupMenuItem<MenuAction>(
+            value: MenuAction.about,
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline, size: 20),
+                const SizedBox(width: 8),
+                Text(localizations.about),
               ],
             ),
           ),
