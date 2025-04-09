@@ -42,8 +42,10 @@ class LoadingScreen {
     final overlay = OverlayEntry(
       builder: (context) {
         final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+
         return Material(
-          color: theme.colorScheme.surface.withAlpha(150),
+          color: colorScheme.scrim.withOpacity(0.5),
           child: Center(
             child: Container(
               constraints: BoxConstraints(
@@ -52,19 +54,31 @@ class LoadingScreen {
                 minWidth: size.width * 0.5,
               ),
               decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(10.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withOpacity(0.2),
+                    blurRadius: 10.0,
+                    spreadRadius: 2.0,
+                  ),
+                ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(24.0),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 10),
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          colorScheme.primary,
+                        ),
+                        strokeWidth: 3.0,
+                      ),
+                      const SizedBox(height: 24),
                       StreamBuilder(
                         stream: textController.stream,
                         builder: (context, snapshot) {
@@ -72,13 +86,17 @@ class LoadingScreen {
                             return Text(
                               snapshot.data as String,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: theme.colorScheme.onSurface),
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                              ),
                             );
                           } else {
                             return Container();
                           }
                         },
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
