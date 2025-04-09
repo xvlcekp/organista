@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart' show BuildContext;
 import 'package:organista/dialogs/generic_dialog.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 Future<bool> showDiscardUploadedMusicSheetChangesDialog(BuildContext context) {
+  final localizations = AppLocalizations.of(context);
+
   return showGenericDialog<bool>(
     context: context,
-    title: 'Discard changes',
-    content: 'Are you sure you want to go back without saving changes? You cannot undo this operation!',
+    title: localizations.discardChanges,
+    content: localizations.discardChangesMessage,
     optionsBuilder: () => {
-      'Cancel': false,
-      'Discard changes': true,
+      localizations.cancel: false,
+      localizations.discardChanges: true,
     },
   ).then(
     (value) => value ?? false,

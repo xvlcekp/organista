@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 Future<dynamic> showPlaylistDialog({
   required BuildContext context,
@@ -7,6 +8,7 @@ Future<dynamic> showPlaylistDialog({
   required String actionLabel, // Button label (Add or Rename)
   required VoidCallback onConfirm, // Action to perform when confirmed
 }) {
+  final localizations = AppLocalizations.of(context);
   return showDialog(
     context: context,
     builder: (_) {
@@ -14,9 +16,9 @@ Future<dynamic> showPlaylistDialog({
         title: Text(title),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Playlist name',
-            hintText: 'Enter playlist name',
+          decoration: InputDecoration(
+            labelText: localizations.playlistName,
+            hintText: localizations.enterPlaylistName,
           ),
         ),
         actions: [
@@ -24,7 +26,7 @@ Future<dynamic> showPlaylistDialog({
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog without saving
             },
-            child: const Text('Cancel'),
+            child: Text(localizations.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -35,8 +37,8 @@ Future<dynamic> showPlaylistDialog({
                 Navigator.of(context).pop(); // Close the dialog
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Playlist name cannot be empty'),
+                  SnackBar(
+                    content: Text(localizations.playlistNameEmpty),
                   ),
                 );
               }

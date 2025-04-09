@@ -11,6 +11,7 @@ import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class PlaylistsView extends HookWidget {
   const PlaylistsView({super.key});
@@ -21,6 +22,7 @@ class PlaylistsView extends HookWidget {
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     useEffect(() {
       // initialize stream only once on first creation
@@ -35,7 +37,7 @@ class PlaylistsView extends HookWidget {
             Icon(Icons.list_alt, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
             Text(
-              'My Playlists',
+              localizations.myPlaylists,
               style: theme.textTheme.titleLarge,
             ),
           ],
@@ -47,7 +49,7 @@ class PlaylistsView extends HookWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showAddPlaylistDialog(context: context, controller: controller, userId: userId),
         icon: const Icon(Icons.add),
-        label: const Text('New Playlist'),
+        label: Text(localizations.newPlaylist),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
@@ -65,14 +67,14 @@ class PlaylistsView extends HookWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No playlists yet',
+                    localizations.noPlaylistsYet,
                     style: theme.textTheme.titleLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Create your first playlist to get started',
+                    localizations.createFirstPlaylist,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -139,7 +141,7 @@ class PlaylistsView extends HookWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "Music sheets: ${playlist.musicSheets.length}",
+                                  "${localizations.musicSheets}: ${playlist.musicSheets.length}",
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),

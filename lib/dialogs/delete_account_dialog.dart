@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart' show BuildContext;
 import 'package:organista/dialogs/generic_dialog.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 Future<bool> showDeleteAccountDialog(BuildContext context) {
+  final localizations = AppLocalizations.of(context);
+
   return showGenericDialog<bool>(
     context: context,
-    title: 'Delete account',
-    content: 'Are you sure you want to delete your account? You cannot undo this operation!',
+    title: localizations.deleteAccount,
+    content: localizations.deleteAccountMessage,
     optionsBuilder: () => {
-      'Cancel': false,
-      'Delete account': true,
+      localizations.cancel: false,
+      localizations.deleteAccount: true,
     },
   ).then(
     (value) => value ?? false,

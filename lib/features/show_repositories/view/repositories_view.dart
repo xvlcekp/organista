@@ -7,6 +7,8 @@ import 'package:organista/features/show_repositories/cubit/repositories_cubit.da
 import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
+import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 
 class RepositoriesView extends HookWidget {
   const RepositoriesView({super.key});
@@ -34,6 +36,7 @@ class RepositoriesViewContent extends HookWidget {
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
     final selectedTabIndex = useState(0); // 0 for Global, 1 for Personal
+    final localizations = AppLocalizations.of(context);
 
     useEffect(() {
       // initialize stream only once on first creation
@@ -43,7 +46,7 @@ class RepositoriesViewContent extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Repositories 📁'),
+        title: Text('${localizations.repositories} 📁'),
         actions: const [
           MainPopupMenuButton(),
         ],
@@ -61,10 +64,11 @@ class RepositoriesViewContent extends HookWidget {
     final globalRepositories = state.repositories.where((repo) => repo.userId.isEmpty).toList();
     final personalRepositories = state.repositories.where((repo) => repo.userId == userId).toList();
     final currentRepositories = selectedTabIndex == 0 ? globalRepositories : personalRepositories;
+    final localizations = AppLocalizations.of(context);
 
     if (currentRepositories.isEmpty) {
       return Center(
-        child: Text(selectedTabIndex == 0 ? 'No global repositories available.' : 'No personal repositories available.'),
+        child: Text(selectedTabIndex == 0 ? localizations.noGlobalRepositories : localizations.noPersonalRepositories),
       );
     }
 
@@ -86,19 +90,21 @@ class RepositoriesViewContent extends HookWidget {
   }
 
   Widget _buildBottomNavBar(ValueNotifier<int> selectedTabIndex) {
+    final localizations = AppLocalizations.of(navigatorKey.currentContext!);
+
     return BottomNavigationBar(
       currentIndex: selectedTabIndex.value,
       onTap: (index) {
         selectedTabIndex.value = index;
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.public),
-          label: 'Global',
+          icon: const Icon(Icons.public),
+          label: localizations.global,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Personal',
+          icon: const Icon(Icons.person),
+          label: localizations.personal,
         ),
       ],
     );

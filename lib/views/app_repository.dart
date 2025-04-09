@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:organista/l10n/locale_provider.dart';
 import 'package:organista/views/app.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -20,6 +22,9 @@ class AppRepository extends StatelessWidget {
         ),
         RepositoryProvider<FirebaseStorageRepository>(
           create: (context) => FirebaseStorageRepository(),
+        ),
+        ChangeNotifierProvider<LocaleProvider>(
+          create: (context) => LocaleProvider(),
         ),
       ],
       child: const App(),

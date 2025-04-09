@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class RepositoryTile extends HookWidget {
   final Repository repository;
@@ -18,6 +19,7 @@ class RepositoryTile extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final musicSheetsCount = useState(0);
+    final localizations = AppLocalizations.of(context);
 
     useEffect(() {
       _loadMusicSheetsCount(context, musicSheetsCount);
@@ -72,7 +74,7 @@ class RepositoryTile extends HookWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${musicSheetsCount.value} sheets',
+                    '${musicSheetsCount.value} ${localizations.sheets}',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.8),
                       fontSize: 14,

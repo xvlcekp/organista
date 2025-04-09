@@ -6,9 +6,9 @@ import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class PlaylistView extends HookWidget {
   const PlaylistView({super.key});
@@ -21,6 +21,7 @@ class PlaylistView extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isEditMode = useState(false);
+    final localizations = AppLocalizations.of(context);
     Playlist playlist = context.read<PlaylistBloc>().state.playlist;
 
     return Scaffold(
@@ -66,7 +67,7 @@ class PlaylistView extends HookWidget {
           if (appState.isLoading) {
             LoadingScreen.instance().show(
               context: context,
-              text: 'Loading...',
+              text: localizations.loading,
             );
           } else {
             LoadingScreen.instance().hide();
@@ -96,16 +97,16 @@ class PlaylistView extends HookWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No music sheets yet',
+                    localizations.noMusicSheetsYet,
                     style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: theme.colorScheme.primary.withOpacity(0.5),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Add your first music sheet to get started',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    localizations.addYourFirstMusicSheet,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary.withOpacity(0.5),
                     ),
                   ),
                 ],
@@ -113,26 +114,27 @@ class PlaylistView extends HookWidget {
             );
           }
 
-          return ReorderableListView(
-            padding: const EdgeInsets.all(16),
+          return ReorderableListView.builder(
+            itemCount: playlist.musicSheets.length,
             onReorderStart: (_) => HapticFeedback.heavyImpact(),
-            onReorder: (int oldIndex, int newIndex) {
+            onReorder: (oldIndex, newIndex) {
               if (oldIndex < newIndex) {
                 newIndex -= 1;
               }
-              final MusicSheet item = playlist.musicSheets.removeAt(oldIndex);
-              playlist.musicSheets.insert(newIndex, item);
-              context.read<PlaylistBloc>().add(ReorderMusicSheetEvent(playlist: playlist));
+              final musicSheet = playlist.musicSheets.removeAt(oldIndex);
+              playlist.musicSheets.insert(newIndex, musicSheet);
+              context.read<PlaylistBloc>().add(
+                    ReorderMusicSheetEvent(playlist: playlist),
+                  );
             },
-            children: [
-              for (int index = 0; index < playlist.musicSheets.length; index += 1)
-                MusicSheetListTile(
-                  key: Key(playlist.musicSheets.elementAt(index).musicSheetId),
-                  index: index,
-                  playlist: playlist,
-                  isEditMode: isEditMode.value,
-                )
-            ],
+            itemBuilder: (context, index) {
+              return MusicSheetListTile(
+                key: ValueKey(playlist.musicSheets[index].musicSheetId),
+                index: index,
+                playlist: playlist,
+                isEditMode: isEditMode.value,
+              );
+            },
           );
         },
       ),

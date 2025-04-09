@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class LoginView extends HookWidget {
   const LoginView({super.key});
@@ -20,12 +21,13 @@ class LoginView extends HookWidget {
 
     final isPasswordVisible = useState(false);
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return BlocListener<AppBloc, AppState>(
       listener: (context, state) {
         if (state.passwordResetSent == true) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password reset email sent. Please check your inbox.', style: theme.textTheme.bodyMedium)),
+            SnackBar(content: Text(localizations.passwordResetEmailSent, style: theme.textTheme.bodyMedium)),
           );
         }
       },
@@ -47,13 +49,13 @@ class LoginView extends HookWidget {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Welcome Back!',
+                      localizations.welcomeBack,
                       style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue',
+                      localizations.signInToContinue,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -64,7 +66,7 @@ class LoginView extends HookWidget {
                     TextField(
                       controller: emailController,
                       decoration: InputDecoration(
-                        hintText: 'Email',
+                        hintText: localizations.email,
                         hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
                         prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
                         filled: true,
@@ -81,7 +83,7 @@ class LoginView extends HookWidget {
                     TextField(
                       controller: passwordController,
                       decoration: InputDecoration(
-                        hintText: 'Password',
+                        hintText: localizations.password,
                         hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
                         prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
                         suffixIcon: IconButton(
@@ -110,7 +112,7 @@ class LoginView extends HookWidget {
                       child: TextButton(
                         onPressed: () => showForgotPasswordDialog(context, emailController),
                         child: Text(
-                          'Forgot Password?',
+                          localizations.forgotPassword,
                           style: TextStyle(color: theme.colorScheme.primary),
                         ),
                       ),
@@ -129,7 +131,7 @@ class LoginView extends HookWidget {
                             );
                       },
                       style: theme.elevatedButtonTheme.style,
-                      child: const Text('Sign In'),
+                      child: Text(localizations.login),
                     ),
                     const SizedBox(height: 16),
                     // Register Link
@@ -137,7 +139,7 @@ class LoginView extends HookWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Don't have an account?",
+                          localizations.noAccount,
                           style: theme.textTheme.bodyLarge,
                         ),
                         TextButton(
@@ -147,7 +149,7 @@ class LoginView extends HookWidget {
                                 );
                           },
                           child: Text(
-                            'Sign Up',
+                            localizations.register,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold,

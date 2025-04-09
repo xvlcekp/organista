@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:organista/l10n/app_localizations.dart';
 import 'package:path/path.dart';
 
 enum MediaType {
@@ -13,7 +15,7 @@ enum MediaType {
       case '.jpg':
         return MediaType.image;
       default:
-        Exception('Unsupported file extension');
+        Exception(AppLocalizations.of(navigatorKey.currentContext!).unsupportedFileExtension);
         return MediaType.image;
     }
   }
@@ -22,8 +24,11 @@ enum MediaType {
     return MediaType.values.firstWhere(
       (e) => e.name == mediaType,
       orElse: () {
-        throw ArgumentError('No matching MediaType for: $mediaType');
+        throw ArgumentError(AppLocalizations.of(navigatorKey.currentContext!).noMatchingMediaType.replaceAll('{mediaType}', mediaType));
       },
     );
   }
 }
+
+// Global navigator key to access context from anywhere
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

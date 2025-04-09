@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 Future<void> showForgotPasswordDialog(BuildContext context, TextEditingController emailController) async {
   final theme = Theme.of(context);
+  final localizations = AppLocalizations.of(context);
   TextEditingController resetPasswordEmailController = TextEditingController();
   resetPasswordEmailController.text = emailController.text;
   showDialog(
@@ -14,7 +16,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
         borderRadius: BorderRadius.circular(16.0),
       ),
       title: Text(
-        'Reset Password',
+        localizations.resetPassword,
         style: theme.textTheme.titleLarge,
       ),
       content: SizedBox(
@@ -23,14 +25,14 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Enter your email address and we\'ll send you a link to reset your password.',
+              localizations.resetPasswordMessage,
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 12),
             TextField(
               controller: resetPasswordEmailController,
               decoration: InputDecoration(
-                hintText: 'Enter your email',
+                hintText: localizations.enterEmailHint,
                 hintStyle: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
                 prefixIcon: Icon(Icons.email_outlined, size: 18, color: theme.colorScheme.onSurface),
                 border: OutlineInputBorder(
@@ -51,15 +53,15 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(localizations.cancel),
         ),
         ElevatedButton(
           onPressed: () {
             final email = resetPasswordEmailController.text.trim();
             if (email.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Please enter your email'),
+                SnackBar(
+                  content: Text(localizations.pleaseEnterEmail),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -72,15 +74,15 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
             Navigator.of(context).pop();
 
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Password reset link sent to your email'),
+              SnackBar(
+                content: Text(localizations.passwordResetLinkSent),
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Colors.green,
               ),
             );
           },
           style: theme.elevatedButtonTheme.style,
-          child: const Text('Reset Password'),
+          child: Text(localizations.resetPassword),
         ),
       ],
     ),

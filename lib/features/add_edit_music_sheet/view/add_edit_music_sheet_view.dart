@@ -10,6 +10,7 @@ import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_shee
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class AddEditMusicSheetView extends HookWidget {
   const AddEditMusicSheetView({super.key});
@@ -22,9 +23,10 @@ class AddEditMusicSheetView extends HookWidget {
   Widget build(BuildContext context) {
     final musicSheetNameController = useTextEditingController();
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Modify music sheet')),
+      appBar: AppBar(title: Text(localizations.modifyMusicSheet)),
       body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
         builder: (context, state) {
           musicSheetNameController.text = state.fileName;
@@ -56,7 +58,7 @@ class AddEditMusicSheetView extends HookWidget {
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: theme.colorScheme.onSurface, width: 0.0),
                         ),
-                        hintText: 'Music sheet name',
+                        hintText: localizations.musicSheetName,
                         hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
                       ),
                       style: TextStyle(color: theme.colorScheme.onSurface),
@@ -80,7 +82,7 @@ class AddEditMusicSheetView extends HookWidget {
                             backgroundColor: WidgetStateProperty.all(theme.colorScheme.secondary),
                             foregroundColor: WidgetStateProperty.all(theme.colorScheme.onSecondary),
                           ),
-                          child: Text('Discard'),
+                          child: Text(localizations.discard),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -90,7 +92,7 @@ class AddEditMusicSheetView extends HookWidget {
                           onPressed: () {
                             switch (state) {
                               case InitMusicSheetState():
-                                logger.e("You have to select an image first");
+                                logger.e(localizations.selectImageFirst);
                               case UploadMusicSheetState():
                                 context.read<PlaylistBloc>().add(
                                       UploadNewMusicSheetEvent(
@@ -120,12 +122,12 @@ class AddEditMusicSheetView extends HookWidget {
                                 resetMusicSheetCubitAndShowPlaylist(context);
                             }
                           },
-                          child: const Text('Save'),
+                          child: Text(localizations.save),
                         ),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           );

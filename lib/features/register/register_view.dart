@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/extensions/if_debugging.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class RegisterView extends HookWidget {
   const RegisterView({super.key});
@@ -19,6 +20,7 @@ class RegisterView extends HookWidget {
 
     final isPasswordVisible = useState(false);
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -38,13 +40,13 @@ class RegisterView extends HookWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Create Account',
+                    localizations.createAccount,
                     style: theme.textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Sign up to get started',
+                    localizations.signUpToGetStarted,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -55,7 +57,7 @@ class RegisterView extends HookWidget {
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      hintText: 'Email',
+                      hintText: localizations.email,
                       prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -65,7 +67,7 @@ class RegisterView extends HookWidget {
                   TextField(
                     controller: passwordController,
                     decoration: InputDecoration(
-                      hintText: 'Password',
+                      hintText: localizations.password,
                       prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -94,8 +96,8 @@ class RegisterView extends HookWidget {
                           );
                     },
                     style: theme.elevatedButtonTheme.style,
-                    child: const Text(
-                      'Sign Up',
+                    child: Text(
+                      localizations.register,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -104,7 +106,7 @@ class RegisterView extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Already have an account?',
+                        localizations.alreadyHaveAccount,
                         style: theme.textTheme.bodyLarge,
                       ),
                       TextButton(
@@ -114,7 +116,7 @@ class RegisterView extends HookWidget {
                               );
                         },
                         child: Text(
-                          'Sign In',
+                          localizations.login,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
