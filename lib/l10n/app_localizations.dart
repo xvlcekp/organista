@@ -112,6 +112,10 @@ class AppLocalizations {
   String get playlistName => _localizedValues[locale.languageCode]!['playlistName']!;
   String get enterPlaylistName => _localizedValues[locale.languageCode]!['enterPlaylistName']!;
   String get playlistNameEmpty => _localizedValues[locale.languageCode]!['playlistNameEmpty']!;
+  String get theme => _localizedValues[locale.languageCode]!['theme']!;
+  String get darkTheme => _localizedValues[locale.languageCode]!['darkTheme']!;
+  String get lightTheme => _localizedValues[locale.languageCode]!['lightTheme']!;
+  String get systemTheme => _localizedValues[locale.languageCode]!['systemTheme']!;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -134,7 +138,7 @@ class AppLocalizations {
       'deleteImageMessage': 'Are you sure you want to delete this image? You cannot undo this operation!',
       'logout': 'Logout',
       'logoutMessage': 'Are you sure you want to logout?',
-      'deleteAccount': 'Delete Account',
+      'deleteAccount': 'Delete account',
       'deleteAccountMessage': 'Are you sure you want to delete your account? This action cannot be undone.',
       'forgotPassword': 'Forgot Password',
       'resetPassword': 'Reset Password',
@@ -210,6 +214,10 @@ class AppLocalizations {
       'playlistName': 'Playlist name',
       'enterPlaylistName': 'Enter playlist name',
       'playlistNameEmpty': 'Playlist name cannot be empty',
+      'theme': 'Theme',
+      'darkTheme': 'Dark theme',
+      'lightTheme': 'Light theme',
+      'systemTheme': 'System theme',
     },
     'sk': {
       'appTitle': 'Organista',
@@ -231,7 +239,7 @@ class AppLocalizations {
       'deleteImageMessage': 'Ste si istí, že chcete vymazať tento obrázok? Túto akciu sa nedá vrátiť späť!',
       'logout': 'Odhlásiť sa',
       'logoutMessage': 'Ste si istí, že sa chcete odhlásiť?',
-      'deleteAccount': 'Vymazať účet',
+      'deleteAccount': 'Odstrániť účet',
       'deleteAccountMessage': 'Ste si istí, že chcete vymazať svoj účet? Táto akcia sa nedá vrátiť späť.',
       'forgotPassword': 'Zabudli ste heslo',
       'resetPassword': 'Obnoviť heslo',
@@ -307,6 +315,10 @@ class AppLocalizations {
       'playlistName': 'Názov playlistu',
       'enterPlaylistName': 'Zadajte názov playlistu',
       'playlistNameEmpty': 'Názov playlistu nemôže byť prázdny',
+      'theme': 'Téma',
+      'darkTheme': 'Tmavá téma',
+      'lightTheme': 'Svetlá téma',
+      'systemTheme': 'Systémová téma',
     },
   };
 }

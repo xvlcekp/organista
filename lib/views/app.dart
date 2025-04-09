@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/config/app_theme.dart';
@@ -8,8 +7,8 @@ import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlist_page.dart';
+import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/l10n/app_localizations.dart';
-import 'package:organista/l10n/locale_provider.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/login/login_view.dart';
 import 'package:organista/features/register/register_view.dart';
@@ -17,6 +16,7 @@ import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -45,17 +45,20 @@ class App extends StatelessWidget {
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),
         ),
+        BlocProvider<SettingsCubit>(
+          create: (context) => SettingsCubit(context.read<SharedPreferences>()),
+        ),
       ],
-      child: Consumer<LocaleProvider>(
-        builder: (context, localeProvider, child) {
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, settingsState) {
           return MaterialApp(
             navigatorKey: navigatorKey,
             title: AppLocalizations.of(context).appTitle,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.system,
+            themeMode: settingsState.themeMode,
             debugShowCheckedModeBanner: false,
-            locale: localeProvider.locale,
+            locale: settingsState.locale,
             supportedLocales: const [
               Locale('en', ''), // English
               Locale('sk', ''), // Slovak

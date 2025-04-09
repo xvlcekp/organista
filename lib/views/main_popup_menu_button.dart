@@ -4,16 +4,15 @@ import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/l10n/app_localizations.dart';
-import 'package:organista/l10n/locale_provider.dart';
+import 'package:organista/features/settings/view/settings_view.dart';
 
-enum MenuAction { logout, deleteAccount, language }
+enum MenuAction { logout, deleteAccount, settings }
 
 class MainPopupMenuButton extends StatelessWidget {
   const MainPopupMenuButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context);
     final localizations = AppLocalizations.of(context);
 
     return PopupMenuButton<MenuAction>(
@@ -35,36 +34,11 @@ class MainPopupMenuButton extends StatelessWidget {
                   );
             }
             break;
-          case MenuAction.language:
-            // Show language selection dialog
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(localizations.language),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        title: Text(localizations.english),
-                        onTap: () {
-                          localeProvider.setLocale(const Locale('en', ''));
-                          Navigator.of(context).pop();
-                        },
-                        trailing: localeProvider.locale.languageCode == 'en' ? const Icon(Icons.check) : null,
-                      ),
-                      ListTile(
-                        title: Text(localizations.slovak),
-                        onTap: () {
-                          localeProvider.setLocale(const Locale('sk', ''));
-                          Navigator.of(context).pop();
-                        },
-                        trailing: localeProvider.locale.languageCode == 'sk' ? const Icon(Icons.check) : null,
-                      ),
-                    ],
-                  ),
-                );
-              },
+          case MenuAction.settings:
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SettingsView(),
+              ),
             );
             break;
         }
@@ -72,16 +46,34 @@ class MainPopupMenuButton extends StatelessWidget {
       itemBuilder: (context) {
         return [
           PopupMenuItem<MenuAction>(
-            value: MenuAction.language,
-            child: Text(localizations.language),
+            value: MenuAction.settings,
+            child: Row(
+              children: [
+                const Icon(Icons.settings, size: 20),
+                const SizedBox(width: 8),
+                Text(localizations.settings),
+              ],
+            ),
           ),
           PopupMenuItem<MenuAction>(
             value: MenuAction.logout,
-            child: Text(localizations.logout),
+            child: Row(
+              children: [
+                const Icon(Icons.logout, size: 20),
+                const SizedBox(width: 8),
+                Text(localizations.logout),
+              ],
+            ),
           ),
           PopupMenuItem<MenuAction>(
             value: MenuAction.deleteAccount,
-            child: Text(localizations.deleteAccount),
+            child: Row(
+              children: [
+                const Icon(Icons.delete_forever, size: 20),
+                const SizedBox(width: 8),
+                Text(localizations.deleteAccount),
+              ],
+            ),
           ),
         ];
       },
