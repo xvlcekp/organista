@@ -31,6 +31,7 @@ class AppLocalizations {
   String get yes => _localizedValues[locale.languageCode]!['yes']!;
   String get no => _localizedValues[locale.languageCode]!['no']!;
   String get cancel => _localizedValues[locale.languageCode]!['cancel']!;
+  String get create => _localizedValues[locale.languageCode]!['create']!;
   String get delete => _localizedValues[locale.languageCode]!['delete']!;
   String get deleteImage => _localizedValues[locale.languageCode]!['deleteImage']!;
   String get deleteImageMessage => _localizedValues[locale.languageCode]!['deleteImageMessage']!;
@@ -66,6 +67,11 @@ class AppLocalizations {
   String get createAccount => _localizedValues[locale.languageCode]!['createAccount']!;
   String get signUpToGetStarted => _localizedValues[locale.languageCode]!['signUpToGetStarted']!;
   String get alreadyHaveAccount => _localizedValues[locale.languageCode]!['alreadyHaveAccount']!;
+  String get download => _localizedValues[locale.languageCode]!['download']!;
+  String get downloadTooltip => _localizedValues[locale.languageCode]!['downloadTooltip']!;
+  String get deleteTooltip => _localizedValues[locale.languageCode]!['deleteTooltip']!;
+  String get renamePlaylist => _localizedValues[locale.languageCode]!['renamePlaylist']!;
+  String get rename => _localizedValues[locale.languageCode]!['rename']!;
 
   // Model-related strings
   String get musicSheet => _localizedValues[locale.languageCode]!['musicSheet']!;
@@ -100,7 +106,6 @@ class AppLocalizations {
   String get sheets => _localizedValues[locale.languageCode]!['sheets']!;
   String get addMusicSheet => _localizedValues[locale.languageCode]!['addMusicSheet']!;
   String get edit => _localizedValues[locale.languageCode]!['edit']!;
-  String get download => _localizedValues[locale.languageCode]!['download']!;
   String get change => _localizedValues[locale.languageCode]!['change']!;
   String get noMusicSheets => _localizedValues[locale.languageCode]!['noMusicSheets']!;
   String get add => _localizedValues[locale.languageCode]!['add']!;
@@ -116,6 +121,9 @@ class AppLocalizations {
   String get darkTheme => _localizedValues[locale.languageCode]!['darkTheme']!;
   String get lightTheme => _localizedValues[locale.languageCode]!['lightTheme']!;
   String get systemTheme => _localizedValues[locale.languageCode]!['systemTheme']!;
+  String get tapToView => _localizedValues[locale.languageCode]!['tapToView']!;
+  String get deletePlaylist => _localizedValues[locale.languageCode]!['deletePlaylist']!;
+  String get deletePlaylistMessage => _localizedValues[locale.languageCode]!['deletePlaylistMessage']!;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -133,6 +141,7 @@ class AppLocalizations {
       'yes': 'Yes',
       'no': 'No',
       'cancel': 'Cancel',
+      'create': 'Create',
       'delete': 'Delete',
       'deleteImage': 'Delete image',
       'deleteImageMessage': 'Are you sure you want to delete this image? You cannot undo this operation!',
@@ -168,6 +177,11 @@ class AppLocalizations {
       'createAccount': 'Create Account',
       'signUpToGetStarted': 'Sign up to get started',
       'alreadyHaveAccount': 'Already have an account?',
+      'download': 'Download',
+      'downloadTooltip': 'Download music sheet',
+      'deleteTooltip': 'Delete music sheet',
+      'renamePlaylist': 'Rename playlist',
+      'rename': 'Rename',
 
       // Model-related strings
       'musicSheet': 'Music Sheet',
@@ -202,7 +216,6 @@ class AppLocalizations {
       'sheets': 'sheets',
       'addMusicSheet': 'Add music sheet',
       'edit': 'Edit',
-      'download': 'Download',
       'change': 'Change',
       'noMusicSheets': 'No music sheets found',
       'add': 'Add',
@@ -218,6 +231,9 @@ class AppLocalizations {
       'darkTheme': 'Dark theme',
       'lightTheme': 'Light theme',
       'systemTheme': 'System theme',
+      'tapToView': 'Tap to view',
+      'deletePlaylist': 'Delete playlist',
+      'deletePlaylistMessage': 'Are you sure you want to delete this playlist? You cannot undo this operation!',
     },
     'sk': {
       'appTitle': 'Organista',
@@ -234,9 +250,10 @@ class AppLocalizations {
       'yes': 'Áno',
       'no': 'Nie',
       'cancel': 'Zrušiť',
+      'create': 'Vytvoriť',
       'delete': 'Vymazať',
       'deleteImage': 'Vymazať obrázok',
-      'deleteImageMessage': 'Ste si istí, že chcete vymazať tento obrázok? Túto akciu sa nedá vrátiť späť!',
+      'deleteImageMessage': 'Ste si istí, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!',
       'logout': 'Odhlásiť sa',
       'logoutMessage': 'Ste si istí, že sa chcete odhlásiť?',
       'deleteAccount': 'Odstrániť účet',
@@ -269,6 +286,11 @@ class AppLocalizations {
       'createAccount': 'Vytvoriť účet',
       'signUpToGetStarted': 'Zaregistrujte sa, aby ste začali',
       'alreadyHaveAccount': 'Už máte účet?',
+      'download': 'Stiahnuť',
+      'downloadTooltip': 'Stiahnuť notový zápis',
+      'deleteTooltip': 'Vymazať notový zápis',
+      'renamePlaylist': 'Premenovať playlist',
+      'rename': 'Premenovať',
 
       // Model-related strings
       'musicSheet': 'Notový záznam',
@@ -293,9 +315,9 @@ class AppLocalizations {
       'newPlaylist': 'Nový zoznam skladieb',
       'noPlaylistsYet': 'Zatiaľ žiadne playlisty',
       'createFirstPlaylist': 'Vytvorte svoj prvý playlist',
-      'musicSheets': 'Notové záznamy',
-      'searchMusicSheets': 'Vyhľadať notové záznamy...',
-      'noMusicSheetsFound': 'Nenašli sa žiadne notové záznamy',
+      'musicSheets': 'Noty',
+      'searchMusicSheets': 'Vyhľadať noty...',
+      'noMusicSheetsFound': 'Nenašli sa žiadne noty',
       'noGlobalRepositories': 'Žiadne globálne repozitáre nie sú k dispozícii.',
       'noPersonalRepositories': 'Žiadne osobné repozitáre nie sú k dispozícii.',
       'global': 'Globálne',
@@ -303,7 +325,6 @@ class AppLocalizations {
       'sheets': 'záznamov',
       'addMusicSheet': 'Pridať notový záznam',
       'edit': 'Upraviť',
-      'download': 'Stiahnuť',
       'change': 'Zmeniť',
       'noMusicSheets': 'Nenašli sa žiadne noty',
       'add': 'Pridať',
@@ -319,6 +340,9 @@ class AppLocalizations {
       'darkTheme': 'Tmavá téma',
       'lightTheme': 'Svetlá téma',
       'systemTheme': 'Systémová téma',
+      'tapToView': 'Kliknutím zobrazíte',
+      'deletePlaylist': 'Vymazať playlist',
+      'deletePlaylistMessage': 'Ste si istí, že chcete vymazať tento playlist? Táto akcia sa nedá vrátiť späť!',
     },
   };
 }

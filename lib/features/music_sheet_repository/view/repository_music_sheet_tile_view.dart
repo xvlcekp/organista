@@ -8,6 +8,7 @@ import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.d
 import 'package:organista/features/music_sheet_repository/bloc/repository_event.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/l10n/app_localizations.dart';
 
 class RepositoryMusicSheetTile extends StatelessWidget {
   final MusicSheet musicSheet;
@@ -24,39 +25,79 @@ class RepositoryMusicSheetTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userId = context.read<AppBloc>().state.user!.uid;
-    return ListTile(
-      title: Text(musicSheet.fileName),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.download),
-            onPressed: () {
-              context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
-              Navigator.of(context).push<void>(AddEditMusicSheetView.route());
-            },
-          ),
-          if (musicSheet.userId == userId) // Only show delete button if the user owns the file
-            IconButton(
-              onPressed: () async {
-                final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
-                if (shouldDeleteMusicSheet && context.mounted) {
-                  context.read<MusicSheetRepositoryBloc>().add(DeleteMusicSheet(
-                        musicSheet: musicSheet,
-                        repositoryId: repositoryId,
-                      ));
-                  searchBarController.text = '';
-                }
-              },
-              icon: const Icon(Icons.delete),
-            ),
-        ],
-      ),
+    final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
+
+    return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
         ));
       },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: theme.dividerColor.withOpacity(0.1),
+              width: 1,
+            ),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.music_note,
+              color: theme.colorScheme.primary.withOpacity(0.7),
+              size: 24,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                musicSheet.fileName,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.download_rounded,
+                    color: theme.colorScheme.primary,
+                  ),
+                  tooltip: localizations.downloadTooltip,
+                  onPressed: () {
+                    context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
+                    Navigator.of(context).push<void>(AddEditMusicSheetView.route());
+                  },
+                ),
+                if (musicSheet.userId == userId)
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete_outline_rounded,
+                      color: theme.colorScheme.error,
+                    ),
+                    tooltip: localizations.deleteTooltip,
+                    onPressed: () async {
+                      final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
+                      if (shouldDeleteMusicSheet && context.mounted) {
+                        context.read<MusicSheetRepositoryBloc>().add(DeleteMusicSheet(
+                              musicSheet: musicSheet,
+                              repositoryId: repositoryId,
+                            ));
+                        searchBarController.text = '';
+                      }
+                    },
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
