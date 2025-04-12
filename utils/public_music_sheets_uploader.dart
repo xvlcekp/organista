@@ -43,6 +43,7 @@ class UploadFolderScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isUploading = useState(false);
     final uploadedFiles = useState<List<String>>([]);
     final repositories = useState<List<Repository>>([]);
@@ -259,6 +260,7 @@ class UploadFolderScreen extends HookWidget {
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
+                  style: theme.elevatedButtonTheme.style,
                   onPressed: createNewRepository,
                   child: const Text("Create Repository"),
                 ),
@@ -266,6 +268,7 @@ class UploadFolderScreen extends HookWidget {
             ),
           ),
           ElevatedButton(
+            style: theme.elevatedButtonTheme.style,
             onPressed: pickJsonFile,
             child: const Text("Pick JSON Mapping File (Optional)"),
           ),
@@ -275,6 +278,7 @@ class UploadFolderScreen extends HookWidget {
               : "No JSON file selected - all files will be uploaded with original filenames"),
           const SizedBox(height: 20),
           ElevatedButton(
+            style: theme.elevatedButtonTheme.style,
             onPressed: isUploading.value || selectedRepository.value == null ? null : uploadFolder,
             child: Text(isUploading.value ? "Uploading..." : "Pick & Upload Files"),
           ),

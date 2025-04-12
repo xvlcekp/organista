@@ -140,7 +140,7 @@ class FirebaseFirestoreRepository {
         logger.w("Playlist document does not exist: $playlistId");
         return Playlist.empty(); // Handle missing playlist
       }
-      logger.i("Dostal som update na konkretny playlist $playlistId");
+      logger.i("Got new update for playlist $playlistId");
       return Playlist(playlistId: playlistId, json: snapshot.data()!);
     });
   }
@@ -149,14 +149,14 @@ class FirebaseFirestoreRepository {
     return instance
         .collection(FirebaseCollectionName.playlists)
         .where(PlaylistKey.userId, isEqualTo: userId)
+        .orderBy(PlaylistKey.name)
         .snapshots(
           includeMetadataChanges: true,
         )
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
-      logger.i("Got new playlist data");
       final documents = snapshot.docs;
-      logger.i("New playlists documents length: ${documents.length}");
+      logger.i("Got new playlist data with length: ${documents.length}");
       return documents.map((doc) => Playlist(
             playlistId: doc.id,
             json: doc.data(),

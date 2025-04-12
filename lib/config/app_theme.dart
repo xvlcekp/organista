@@ -50,7 +50,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),

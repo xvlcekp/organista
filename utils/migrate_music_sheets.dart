@@ -125,12 +125,14 @@ class _MigrationScreenState extends State<_MigrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text("Music Sheets Migration Tool")),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton(
+            style: theme.elevatedButtonTheme.style,
             onPressed: isMigrating ? null : migrateMusicSheets,
             child: Text(isMigrating ? "Migration in progress..." : "Start Migration"),
           ),

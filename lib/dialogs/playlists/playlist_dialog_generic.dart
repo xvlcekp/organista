@@ -9,6 +9,7 @@ Future<dynamic> showPlaylistDialog({
   required VoidCallback onConfirm, // Action to perform when confirmed
 }) {
   final localizations = AppLocalizations.of(context);
+  final theme = Theme.of(context);
   return showDialog(
     context: context,
     builder: (_) {
@@ -29,6 +30,7 @@ Future<dynamic> showPlaylistDialog({
             child: Text(localizations.cancel),
           ),
           ElevatedButton(
+            style: theme.elevatedButtonTheme.style,
             onPressed: () {
               final playlistName = controller.text.trim();
               if (playlistName.isNotEmpty) {

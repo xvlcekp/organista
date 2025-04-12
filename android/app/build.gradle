@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "sk.anickaapavol.organista"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = Math.max(35, flutter.compileSdkVersion)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

@@ -56,6 +56,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
           child: Text(localizations.cancel),
         ),
         ElevatedButton(
+          style: theme.elevatedButtonTheme.style,
           onPressed: () {
             final email = resetPasswordEmailController.text.trim();
             if (email.isEmpty) {
@@ -81,7 +82,6 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
               ),
             );
           },
-          style: theme.elevatedButtonTheme.style,
           child: Text(localizations.resetPassword),
         ),
       ],
