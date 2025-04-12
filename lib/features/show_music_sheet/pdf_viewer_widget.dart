@@ -6,16 +6,17 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:pdfx/pdfx.dart';
 
 class PdfViewerWidget extends HookWidget {
-  final String fileUrl;
+  final MusicSheet musicSheet;
   final MusicSheetViewMode mode;
   final Color backgroundColor = Colors.white;
 
   const PdfViewerWidget({
     super.key,
-    required this.fileUrl,
+    required this.musicSheet,
     this.mode = MusicSheetViewMode.full, // Default to full mode
   });
 
@@ -38,10 +39,10 @@ class PdfViewerWidget extends HookWidget {
         Future<PdfDocument>? document;
 
         if (kIsWeb) {
-          final response = await get(Uri.parse(fileUrl));
+          final response = await get(Uri.parse(musicSheet.fileUrl));
           document = PdfDocument.openData(response.bodyBytes);
         } else {
-          final pdfFile = await _downloadAndCachePdf(fileUrl);
+          final pdfFile = await _downloadAndCachePdf(musicSheet.fileUrl);
           document = pdfFile != null ? PdfDocument.openFile(pdfFile.path) : null;
         }
 
@@ -50,7 +51,7 @@ class PdfViewerWidget extends HookWidget {
       });
 
       return null;
-    }, [fileUrl]);
+    }, [musicSheet.fileUrl]);
 
     if (isLoading.value) {
       return const Center(child: CircularProgressIndicator());
@@ -94,6 +95,8 @@ class PdfViewerWidget extends HookWidget {
   }
 
   Widget getPdfFullView(ValueNotifier<PdfController?> pdfController) {
+    final showTitle = useState(true);
+
     return PhotoView.customChild(
         minScale: PhotoViewComputedScale.contained * 1.0,
         maxScale: PhotoViewComputedScale.contained * 3.0,
@@ -108,14 +111,35 @@ class PdfViewerWidget extends HookWidget {
               ),
             ),
 
+            /// Music sheet name at the bottom-left
+            if (showTitle.value)
+              Positioned(
+                bottom: 16,
+                left: 16,
+                child: GestureDetector(
+                  onTap: () => showTitle.value = false,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: DefaultTextStyle(
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                      child: Text(musicSheet.fileName),
+                    ),
+                  ),
+                ),
+              ),
+
             /// Page number overlay at the bottom-right
             Positioned(
-              bottom: 16, // Adjust to your preference
-              right: 16, // Adjust to your preference
+              bottom: 16,
+              right: 16,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6), // Semi-transparent background
+                  color: Colors.black.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: PdfPageNumber(
