@@ -65,6 +65,7 @@ class RepositoriesViewContent extends HookWidget {
     final personalRepositories = state.repositories.where((repo) => repo.userId == userId).toList();
     final currentRepositories = selectedTabIndex == 0 ? globalRepositories : personalRepositories;
     final localizations = AppLocalizations.of(context);
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     if (currentRepositories.isEmpty) {
       return Center(
@@ -75,9 +76,9 @@ class RepositoriesViewContent extends HookWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.5,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: isLandscape ? 4 : 2,
+          childAspectRatio: isLandscape ? 1.2 : 1.5,
           crossAxisSpacing: 8.0,
           mainAxisSpacing: 8.0,
         ),

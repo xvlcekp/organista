@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
@@ -46,19 +47,11 @@ class RepositoryMusicSheetTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.music_note,
-              color: theme.colorScheme.primary.withOpacity(0.7),
-              size: 24,
-            ),
-            const SizedBox(width: 16),
             Expanded(
-              child: Text(
+              child: AutoSizeText(
                 musicSheet.fileName,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium,
+                maxLines: 2,
               ),
             ),
             Row(

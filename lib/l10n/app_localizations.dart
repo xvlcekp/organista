@@ -9,7 +9,7 @@ class AppLocalizations {
     final localizations = Localizations.of<AppLocalizations>(context, AppLocalizations);
     if (localizations == null) {
       // Return a default instance with English locale if localization is not available yet
-      return AppLocalizations(const Locale('en', ''));
+      return AppLocalizations(const Locale('sk', ''));
     }
     return localizations;
   }
@@ -295,7 +295,7 @@ class AppLocalizations {
       'download': 'Stiahnuť',
       'downloadTooltip': 'Stiahnuť notový zápis',
       'deleteTooltip': 'Vymazať notový zápis',
-      'renamePlaylist': 'Premenovať playlist',
+      'renamePlaylist': 'Premenovať zoznam skladieb',
       'rename': 'Premenovať',
       'ok': 'OK',
 
@@ -320,16 +320,16 @@ class AppLocalizations {
       // Feature-specific strings
       'myPlaylists': 'Moje zoznamy skladieb',
       'newPlaylist': 'Nový zoznam skladieb',
-      'noPlaylistsYet': 'Zatiaľ žiadne playlisty',
-      'createFirstPlaylist': 'Vytvorte svoj prvý playlist',
-      'musicSheets': 'Noty',
+      'noPlaylistsYet': 'Zatiaľ žiadne zoznamy skladieb',
+      'createFirstPlaylist': 'Vytvorte svoj prvý zoznam skladieb',
+      'musicSheets': 'Počet nôt',
       'searchMusicSheets': 'Vyhľadať noty...',
       'noMusicSheetsFound': 'Nenašli sa žiadne noty',
       'noGlobalRepositories': 'Žiadne globálne repozitáre nie sú k dispozícii.',
       'noPersonalRepositories': 'Žiadne osobné repozitáre nie sú k dispozícii.',
       'global': 'Globálne',
       'personal': 'Osobné',
-      'sheets': 'záznamov',
+      'sheets': 'položiek',
       'addMusicSheet': 'Pridať notový záznam',
       'edit': 'Upraviť',
       'change': 'Zmeniť',
@@ -340,16 +340,16 @@ class AppLocalizations {
       'enterEmailHint': 'Zadajte svoj e-mail',
       'pleaseEnterEmail': 'Prosím, zadajte svoj e-mail',
       'passwordResetLinkSent': 'Odkaz na obnovenie hesla bol odoslaný na váš e-mail',
-      'playlistName': 'Názov playlistu',
-      'enterPlaylistName': 'Zadajte názov playlistu',
-      'playlistNameEmpty': 'Názov playlistu nemôže byť prázdny',
+      'playlistName': 'Názov zoznamu',
+      'enterPlaylistName': 'Zadajte názov zoznamu',
+      'playlistNameEmpty': 'Názov zoznamu nemôže byť prázdny',
       'theme': 'Téma',
       'darkTheme': 'Tmavá téma',
       'lightTheme': 'Svetlá téma',
       'systemTheme': 'Systémová téma',
       'tapToView': 'Kliknutím zobrazíte',
-      'deletePlaylist': 'Vymazať playlist',
-      'deletePlaylistMessage': 'Ste si istý, že chcete vymazať tento playlist? Táto akcia sa nedá vrátiť späť!',
+      'deletePlaylist': 'Vymazať zoznam skladieb',
+      'deletePlaylistMessage': 'Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!',
       'about': 'O aplikácii',
       'aboutMessage': 'Organista\n\nAplikácia na správu notových záznamov\nVytvoril/a Vaše Meno\nVerzia 1.0.0',
     },
