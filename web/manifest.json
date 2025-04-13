@@ -1,6 +1,6 @@
 {
-    "name": "organista",
-    "short_name": "organista",
+    "name": "Organista",
+    "short_name": "Organista",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
