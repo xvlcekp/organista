@@ -1,55 +1,96 @@
 import 'dart:async';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mime/mime.dart';
 
 class FirebaseStorageRepository {
-  final Iterable<MusicSheet> musicSheets = [];
-  final instance = FirebaseStorage.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
+  /// Lists all items in a folder
   Future<ListResult> listFolderContents(String path) {
-    return instance.ref(path).listAll();
+    return _storage.ref(path).listAll();
   }
 
+  /// Recursively deletes a folder and all its contents
   Future<void> deleteFolder(String path) async {
-    final folderContents = await listFolderContents(path);
-    for (final item in folderContents.items) {
-      await item.delete().catchError((e) {
-        logger.e("Error while deleting item in folder");
-        logger.e(e);
-      }); // maybe handle the error?
+    try {
+      final folderContents = await listFolderContents(path);
+
+      // Delete all items in the folder
+      for (final item in folderContents.items) {
+        try {
+          await item.delete();
+        } catch (e, stackTrace) {
+          logger.e("Error while deleting item ${item.fullPath} in folder $path: $e");
+          FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage item');
+        }
+      }
+
+      // Delete all subfolders
+      for (final folder in folderContents.prefixes) {
+        await deleteFolder(folder.fullPath);
+      }
+
+      // Delete the folder itself
+      await deletePath(path);
+    } catch (e, stackTrace) {
+      logger.e("Error deleting folder $path: $e");
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage folder');
     }
-    // delete the folder itself
-    await deletePath(path);
   }
 
-  Future<void> deletePath(String path) {
-    return instance.ref(path).delete().catchError((e) {
-      logger.e(e);
-    });
+  /// Deletes a specific path from storage
+  Future<void> deletePath(String path) async {
+    try {
+      await _storage.ref(path).delete();
+    } catch (e, stackTrace) {
+      logger.e("Error deleting path $path: $e");
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage path');
+    }
   }
 
+  /// Gets a reference to a storage path
   Reference getReference(String path) {
-    return instance.ref(path);
+    return _storage.ref(path);
   }
 
+  /// Uploads a file to Firebase Storage and returns the reference
   Future<Reference?> uploadFile({
     required PlatformFile file,
     required String bucket,
   }) async {
-    String uuid = const Uuid().v4();
-    final ref = instance.ref(bucket).child(uuid);
-    logger.i('Mime type is ${lookupMimeType(file.name) ?? ''}');
-    await ref.putData(
-      file.bytes!,
-      SettableMetadata(
-        contentType: lookupMimeType(file.name),
-      ),
-    );
+    try {
+      final String uuid = const Uuid().v4();
+      final Reference ref = _storage.ref(bucket).child(uuid);
+      final String? mimeType = lookupMimeType(file.name);
 
-    return ref; // Upload succeeded
+      logger.i('Uploading file ${file.name} with mime type ${mimeType ?? 'unknown'}');
+
+      if (file.bytes == null) {
+        logger.e('File bytes are null, cannot upload file ${file.name}');
+        return null;
+      }
+
+      await ref.putData(
+        file.bytes!,
+        SettableMetadata(
+          contentType: mimeType,
+          customMetadata: {
+            'originalFileName': file.name,
+            'uploadedAt': DateTime.now().toIso8601String(),
+          },
+        ),
+      );
+
+      logger.i('Successfully uploaded file to ${ref.fullPath}');
+      return ref;
+    } catch (e, stackTrace) {
+      logger.e('Error uploading file ${file.name}: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error uploading file');
+      return null;
+    }
   }
 }
