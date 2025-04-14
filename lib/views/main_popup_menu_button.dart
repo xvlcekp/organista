@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
-import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/features/settings/view/settings_view.dart';
 import 'package:organista/features/about/view/about_view.dart';
 
-enum MenuAction { logout, deleteAccount, settings, about }
+enum MenuAction { logout, settings, about }
 
 class MainPopupMenuButton extends StatelessWidget {
   const MainPopupMenuButton({super.key});
@@ -24,14 +23,6 @@ class MainPopupMenuButton extends StatelessWidget {
             if (shouldLogOut && context.mounted) {
               context.read<AppBloc>().add(
                     const AppEventLogOut(),
-                  );
-            }
-            break;
-          case MenuAction.deleteAccount:
-            final shouldDeleteAccount = await showDeleteAccountDialog(context);
-            if (shouldDeleteAccount && context.mounted) {
-              context.read<AppBloc>().add(
-                    const AppEventDeleteAccount(),
                   );
             }
             break;
@@ -70,16 +61,6 @@ class MainPopupMenuButton extends StatelessWidget {
                 const Icon(Icons.logout, size: 20),
                 const SizedBox(width: 8),
                 Text(localizations.logout),
-              ],
-            ),
-          ),
-          PopupMenuItem<MenuAction>(
-            value: MenuAction.deleteAccount,
-            child: Row(
-              children: [
-                const Icon(Icons.delete_forever, size: 20),
-                const SizedBox(width: 8),
-                Text(localizations.deleteAccount),
               ],
             ),
           ),

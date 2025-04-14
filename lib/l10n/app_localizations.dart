@@ -127,6 +127,9 @@ class AppLocalizations {
   String get deletePlaylistMessage => _localizedValues[locale.languageCode]!['deletePlaylistMessage']!;
   String get about => _localizedValues[locale.languageCode]!['about']!;
   String get aboutMessage => _localizedValues[locale.languageCode]!['aboutMessage']!;
+  String get appSettings => _localizedValues[locale.languageCode]!['appSettings']!;
+  String get accountManagement => _localizedValues[locale.languageCode]!['accountManagement']!;
+  String get version => _localizedValues[locale.languageCode]!['version']!;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -239,7 +242,10 @@ class AppLocalizations {
       'deletePlaylist': 'Delete playlist',
       'deletePlaylistMessage': 'Are you sure you want to delete this playlist? You cannot undo this operation!',
       'about': 'About',
-      'aboutMessage': 'Organista\n\nA music sheet management application\nCreated by Your Name\nVersion 1.0.0',
+      'aboutMessage': 'Organista\n\nA music sheet management application\nCreated by Pavol Vlček',
+      'appSettings': 'App Settings',
+      'accountManagement': 'Account Management',
+      'version': 'Version',
     },
     'sk': {
       'appTitle': 'Organista',
@@ -351,7 +357,10 @@ class AppLocalizations {
       'deletePlaylist': 'Vymazať zoznam skladieb',
       'deletePlaylistMessage': 'Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!',
       'about': 'O aplikácii',
-      'aboutMessage': 'Organista\n\nAplikácia na správu notových záznamov\nVytvoril/a Vaše Meno\nVerzia 1.0.0',
+      'aboutMessage': 'Organista\n\nAplikácia na správu notových záznamov\nVytvoril Pavol Vlček',
+      'appSettings': 'Nastavenia aplikácie',
+      'accountManagement': 'Správa účtu',
+      'version': 'Verzia',
     },
   };
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/l10n/app_localizations.dart';
 
@@ -19,6 +21,14 @@ class SettingsView extends StatelessWidget {
         builder: (context, state) {
           return ListView(
             children: [
+              // App Settings Section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  localizations.appSettings,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
               ListTile(
                 title: Text(localizations.language),
                 trailing: DropdownButton<String>(
@@ -64,6 +74,30 @@ class SettingsView extends StatelessWidget {
                     }
                   },
                 ),
+              ),
+
+              // Account Management Section
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  localizations.accountManagement,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.delete_forever, color: Theme.of(context).colorScheme.error),
+                title: Text(
+                  localizations.deleteAccount,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+                onTap: () async {
+                  final shouldDeleteAccount = await showDeleteAccountDialog(context);
+                  if (shouldDeleteAccount && context.mounted) {
+                    context.read<AppBloc>().add(
+                          const AppEventDeleteAccount(),
+                        );
+                  }
+                },
               ),
             ],
           );
