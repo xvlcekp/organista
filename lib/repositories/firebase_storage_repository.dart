@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mime/mime.dart';
@@ -63,6 +64,12 @@ class FirebaseStorageRepository {
     required String bucket,
   }) async {
     try {
+      // Check file size
+      if (file.size > AppConstants.maxFileSizeBytes) {
+        logger.e('File ${file.name} is too large. Maximum size is ${AppConstants.maxFileSizeMB}MB.');
+        throw Exception('File is too large. Maximum size is ${AppConstants.maxFileSizeMB}MB.');
+      }
+
       final String uuid = const Uuid().v4();
       final Reference ref = _storage.ref(bucket).child(uuid);
       final String? mimeType = lookupMimeType(file.name);
