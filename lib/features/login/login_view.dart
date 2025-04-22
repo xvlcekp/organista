@@ -42,10 +42,10 @@ class LoginView extends HookWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Logo or App Name
-                    Icon(
-                      Icons.music_note,
-                      size: 80,
-                      color: theme.colorScheme.primary,
+                    Image.asset(
+                      'assets/images/organista_icon.png',
+                      width: 80,
+                      height: 80,
                     ),
                     const SizedBox(height: 24),
                     Text(

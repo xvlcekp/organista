@@ -2,6 +2,8 @@
 
 ## Google play release
 
+**Compile** - `flutter clean; flutter pub get; flutter build appbundle`
+
 **import debug symbols** - https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
 
 ## Firebase

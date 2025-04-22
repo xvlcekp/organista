@@ -130,6 +130,9 @@ class AppLocalizations {
   String get appSettings => _localizedValues[locale.languageCode]!['appSettings']!;
   String get accountManagement => _localizedValues[locale.languageCode]!['accountManagement']!;
   String get version => _localizedValues[locale.languageCode]!['version']!;
+  String get frequentlyAskedQuestions => _localizedValues[locale.languageCode]!['frequentlyAskedQuestions']!;
+  String get couldNotOpenUrl => _localizedValues[locale.languageCode]!['couldNotOpenUrl']!;
+  String get errorOpeningUrl => _localizedValues[locale.languageCode]!['errorOpeningUrl']!;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -246,6 +249,9 @@ class AppLocalizations {
       'appSettings': 'App Settings',
       'accountManagement': 'Account Management',
       'version': 'Version',
+      'frequentlyAskedQuestions': 'Frequently Asked Questions',
+      'couldNotOpenUrl': 'Could not open the URL',
+      'errorOpeningUrl': 'Error opening URL: {error}',
     },
     'sk': {
       'appTitle': 'Organista',
@@ -361,6 +367,9 @@ class AppLocalizations {
       'appSettings': 'Nastavenia aplikácie',
       'accountManagement': 'Správa účtu',
       'version': 'Verzia',
+      'frequentlyAskedQuestions': 'Často kladené otázky',
+      'couldNotOpenUrl': 'Nepodarilo sa otvoriť URL',
+      'errorOpeningUrl': 'Chyba pri otváraní URL: {error}',
     },
   };
 }
