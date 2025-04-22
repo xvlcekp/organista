@@ -32,9 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added FAQ to about
 - added organ icon
 
-[1.0.0]: 
-
-
 ## [1.0.0] - 2025-04-21
 ### Added
 - Initial release
