@@ -77,4 +77,22 @@
 -keep class * extends com.google.android.play.core.splitcompat.SplitCompatApplication { *; }
 -keep class * implements com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener { *; }
 -keep class * implements com.google.android.play.core.tasks.OnFailureListener { *; }
--keep class * implements com.google.android.play.core.tasks.OnSuccessListener { *; } 
+-keep class * implements com.google.android.play.core.tasks.OnSuccessListener { *; }
+
+# Native debug symbols
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+-keepattributes Deprecated
+-keepattributes DeprecatedSinceApi
+-keepattributes DeprecatedUntilApi
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi,Deprecated
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi,Deprecated,InnerClasses
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi,Deprecated,InnerClasses,Signature
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi,Deprecated,InnerClasses,Signature,Exceptions
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi,Deprecated,InnerClasses,Signature,Exceptions,SourceFile
+-keepattributes DeprecatedSinceApi,DeprecatedUntilApi,Deprecated,InnerClasses,Signature,Exceptions,SourceFile,LineNumberTable 

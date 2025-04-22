@@ -48,6 +48,11 @@ android {
             'enableDeferredComponents': 'false',
             'applicationName': 'io.flutter.app.FlutterApplication'
         ]
+        
+        // Enable native debug symbols
+        ndk {
+            debugSymbolLevel 'FULL'
+        }
     }
 
     signingConfigs {
@@ -69,6 +74,11 @@ android {
             shrinkResources true
             // Specifies the ProGuard rules file
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            
+            // Enable native debug symbols for release builds
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
 }
