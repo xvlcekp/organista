@@ -8,7 +8,7 @@ class AppLocalizations {
   static AppLocalizations of(BuildContext context) {
     final localizations = Localizations.of<AppLocalizations>(context, AppLocalizations);
     if (localizations == null) {
-      // Return a default instance with English locale if localization is not available yet
+      // Return a default instance with Slovak locale if localization is not available yet
       return AppLocalizations(const Locale('sk', ''));
     }
     return localizations;

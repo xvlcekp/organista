@@ -45,7 +45,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit(this._prefs)
       : super(SettingsState(
           themeMode: ThemeMode.values[_prefs.getInt(_themeKey) ?? 0],
-          locale: Locale(_prefs.getString(_languageKey) ?? 'en'),
+          locale: Locale(_prefs.getString(_languageKey) ?? 'sk'),
         ));
 
   void changeTheme(ThemeMode themeMode) {
