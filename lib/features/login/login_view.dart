@@ -5,6 +5,8 @@ import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
 import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/widgets/email_text_field.dart';
+import 'package:organista/widgets/password_text_field.dart';
 
 class LoginView extends HookWidget {
   const LoginView({super.key});
@@ -43,7 +45,7 @@ class LoginView extends HookWidget {
                   children: [
                     // Logo or App Name
                     Image.asset(
-                      'assets/images/organista_icon.png',
+                      'assets/images/organista_icon_200x200.png',
                       width: 80,
                       height: 80,
                     ),
@@ -63,47 +65,19 @@ class LoginView extends HookWidget {
                     ),
                     const SizedBox(height: 32),
                     // Email Field
-                    TextField(
+                    EmailTextField(
                       controller: emailController,
-                      decoration: InputDecoration(
-                        hintText: localizations.email,
-                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
-                        prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
-                        filled: true,
-                        fillColor: theme.colorScheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: theme.colorScheme.onSurface),
-                        ),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
+                      hintText: localizations.email,
                     ),
                     const SizedBox(height: 16),
                     // Password Field
-                    TextField(
+                    PasswordTextField(
                       controller: passwordController,
-                      decoration: InputDecoration(
-                        hintText: localizations.password,
-                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
-                        prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            isPasswordVisible.value ? Icons.visibility_off : Icons.visibility,
-                            color: theme.colorScheme.primary,
-                          ),
-                          onPressed: () {
-                            isPasswordVisible.value = !isPasswordVisible.value;
-                          },
-                        ),
-                        filled: true,
-                        fillColor: theme.colorScheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: theme.colorScheme.onSurface),
-                        ),
-                      ),
+                      hintText: localizations.password,
                       obscureText: !isPasswordVisible.value,
-                      obscuringCharacter: '◉',
+                      onToggleVisibility: () {
+                        isPasswordVisible.value = !isPasswordVisible.value;
+                      },
                     ),
                     const SizedBox(height: 8),
                     // Forgot Password

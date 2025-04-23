@@ -4,6 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/extensions/if_debugging.dart';
 import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/widgets/email_text_field.dart';
+import 'package:organista/widgets/password_text_field.dart';
 
 class RegisterView extends HookWidget {
   const RegisterView({super.key});
@@ -18,7 +20,12 @@ class RegisterView extends HookWidget {
       text: 'test123'.ifDebugging,
     );
 
+    final verifyPasswordController = useTextEditingController(
+      text: 'test123'.ifDebugging,
+    );
+
     final isPasswordVisible = useState(false);
+    final isVerifyPasswordVisible = useState(false);
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context);
 
@@ -34,7 +41,7 @@ class RegisterView extends HookWidget {
                 children: [
                   // Logo or App Name
                   Image.asset(
-                    'assets/images/organista_icon.png',
+                    'assets/images/organista_icon_200x200.png',
                     width: 80,
                     height: 80,
                   ),
@@ -54,40 +61,67 @@ class RegisterView extends HookWidget {
                   ),
                   const SizedBox(height: 32),
                   // Email Field
-                  TextField(
+                  EmailTextField(
                     controller: emailController,
-                    decoration: InputDecoration(
-                      hintText: localizations.email,
-                      prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
+                    hintText: localizations.email,
                   ),
                   const SizedBox(height: 16),
                   // Password Field
-                  TextField(
+                  PasswordTextField(
                     controller: passwordController,
-                    decoration: InputDecoration(
-                      hintText: localizations.password,
-                      prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          isPasswordVisible.value ? Icons.visibility_off : Icons.visibility,
-                          color: theme.colorScheme.primary,
-                        ),
-                        onPressed: () {
-                          isPasswordVisible.value = !isPasswordVisible.value;
-                        },
-                      ),
-                    ),
+                    hintText: localizations.password,
                     obscureText: !isPasswordVisible.value,
-                    obscuringCharacter: '◉',
+                    onToggleVisibility: () {
+                      isPasswordVisible.value = !isPasswordVisible.value;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  // Verify Password Field
+                  PasswordTextField(
+                    controller: verifyPasswordController,
+                    hintText: localizations.verifyPassword,
+                    obscureText: !isVerifyPasswordVisible.value,
+                    onToggleVisibility: () {
+                      isVerifyPasswordVisible.value = !isVerifyPasswordVisible.value;
+                    },
                   ),
                   const SizedBox(height: 24),
                   // Register Button
                   ElevatedButton(
                     onPressed: () {
-                      final email = emailController.text;
+                      final email = emailController.text.trim();
                       final password = passwordController.text;
+                      final verifyPassword = verifyPasswordController.text;
+
+                      // Validate fields
+                      if (email.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(localizations.emailRequired)),
+                        );
+                        return;
+                      }
+
+                      if (password.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(localizations.passwordRequired)),
+                        );
+                        return;
+                      }
+
+                      if (verifyPassword.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(localizations.verifyPasswordRequired)),
+                        );
+                        return;
+                      }
+
+                      if (password != verifyPassword) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(localizations.passwordsDoNotMatch)),
+                        );
+                        return;
+                      }
+
                       context.read<AppBloc>().add(
                             AppEventRegister(
                               email: email,

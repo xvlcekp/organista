@@ -43,6 +43,11 @@ class AppLocalizations {
   String get resetPassword => _localizedValues[locale.languageCode]!['resetPassword']!;
   String get email => _localizedValues[locale.languageCode]!['email']!;
   String get password => _localizedValues[locale.languageCode]!['password']!;
+  String get verifyPassword => _localizedValues[locale.languageCode]!['verifyPassword']!;
+  String get emailRequired => _localizedValues[locale.languageCode]!['emailRequired']!;
+  String get passwordRequired => _localizedValues[locale.languageCode]!['passwordRequired']!;
+  String get verifyPasswordRequired => _localizedValues[locale.languageCode]!['verifyPasswordRequired']!;
+  String get passwordsDoNotMatch => _localizedValues[locale.languageCode]!['passwordsDoNotMatch']!;
   String get login => _localizedValues[locale.languageCode]!['login']!;
   String get register => _localizedValues[locale.languageCode]!['register']!;
   String get playlists => _localizedValues[locale.languageCode]!['playlists']!;
@@ -162,6 +167,11 @@ class AppLocalizations {
       'resetPassword': 'Reset Password',
       'email': 'Email',
       'password': 'Password',
+      'verifyPassword': 'Verify Password',
+      'emailRequired': 'Email is required',
+      'passwordRequired': 'Password is required',
+      'verifyPasswordRequired': 'Please verify your password',
+      'passwordsDoNotMatch': 'Passwords do not match',
       'login': 'Login',
       'register': 'Register',
       'playlists': 'Playlists',
@@ -280,6 +290,11 @@ class AppLocalizations {
       'resetPassword': 'Obnoviť heslo',
       'email': 'E-mail',
       'password': 'Heslo',
+      'verifyPassword': 'Potvrďte heslo',
+      'emailRequired': 'E-mail je povinný',
+      'passwordRequired': 'Heslo je povinné',
+      'verifyPasswordRequired': 'Prosím, potvrďte svoje heslo',
+      'passwordsDoNotMatch': 'Heslá sa nezhodujú',
       'login': 'Prihlásiť sa',
       'register': 'Registrovať sa',
       'playlists': 'Zoznamy skladieb',
