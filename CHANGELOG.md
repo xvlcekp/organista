@@ -25,13 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - 
 
-## [1.0.2] - 
+## [1.0.2] - 2025-04-24
 ### Added
 - Pridaný textový vstup na zopakovanie hesla pri registrácii
 - Optimalizovaná ikona
-- Drobné optimalizácie
+- Drobné úpravy
 
-## [1.0.1] - 2025-04-22
+## [1.0.1] - 2025-04-22 [https://github.com/xvlcekp/organista/tree/release/1.0.1](https://github.com/xvlcekp/organista/tree/release/1.0.1)
 ### Added
 - Slovak language as default language
 - added FAQ to about
