@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
+import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 
 class UploadMusicSheetFragment extends StatelessWidget {
   final String repositoryId;
@@ -15,6 +18,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -31,27 +35,36 @@ class UploadMusicSheetFragment extends StatelessWidget {
                   withData: true,
                 );
                 if (result != null) {
-                  final PlatformFile file = result.files.first;
+                  try {
+                    final PlatformFile file = result.files.first;
+                    final MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
 
-                  // Check file size
-                  if (file.size > AppConstants.maxFileSizeBytes) {
+                    // Check file size
+                    if (file.size > AppConstants.maxFileSizeBytes) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(localizations.fileTooLarge.replaceAll('{maxSize}', AppConstants.maxFileSizeMB.toString())),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                      return;
+                    }
+
+                    if (context.mounted) {
+                      context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
+                            file: musicSheetFile,
+                            repositoryId: repositoryId,
+                          );
+                      Navigator.of(context).push<void>(AddEditMusicSheetView.route());
+                    }
+                  } on UnsupportedFileExtensionException {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('File is too large. Maximum size is ${AppConstants.maxFileSizeMB}MB.'),
-                          backgroundColor: Colors.red,
-                        ),
+                        SnackBar(content: Text(localizations.unsupportedFileExtension)),
                       );
                     }
-                    return;
-                  }
-
-                  if (context.mounted) {
-                    context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
-                          file: file,
-                          repositoryId: repositoryId,
-                        );
-                    Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                   }
                 }
               },

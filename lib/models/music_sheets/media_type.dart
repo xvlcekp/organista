@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:organista/l10n/app_localizations.dart';
 import 'package:path/path.dart';
 
 enum MediaType {
@@ -15,8 +13,7 @@ enum MediaType {
       case '.jpg':
         return MediaType.image;
       default:
-        Exception(AppLocalizations.of(navigatorKey.currentContext!).unsupportedFileExtension);
-        return MediaType.image;
+        throw UnsupportedFileExtensionException(fileExtension);
     }
   }
 
@@ -24,11 +21,24 @@ enum MediaType {
     return MediaType.values.firstWhere(
       (e) => e.name == mediaType,
       orElse: () {
-        throw ArgumentError(AppLocalizations.of(navigatorKey.currentContext!).noMatchingMediaType.replaceAll('{mediaType}', mediaType));
+        throw NoMatchingMediaTypeException(mediaType);
       },
     );
   }
 }
 
-// Global navigator key to access context from anywhere
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+class UnsupportedFileExtensionException implements Exception {
+  final String extension;
+  UnsupportedFileExtensionException(this.extension);
+
+  @override
+  String toString() => 'Unsupported file extension: $extension';
+}
+
+class NoMatchingMediaTypeException implements Exception {
+  final String mediaType;
+  NoMatchingMediaTypeException(this.mediaType);
+
+  @override
+  String toString() => 'No matching media type found for: $mediaType';
+}

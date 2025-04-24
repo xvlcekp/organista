@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:uuid/uuid.dart';
@@ -55,8 +54,7 @@ class MusicSheet extends Equatable {
 
   @override
   String toString() {
-    final localizations = AppLocalizations.of(navigatorKey.currentContext!);
-    return '${localizations.musicSheet}, ${localizations.musicSheetId} - $musicSheetId, ${localizations.fileName} = $fileName';
+    return 'MusicSheet, musicSheetId - $musicSheetId, fileName = $fileName';
   }
 
   @override

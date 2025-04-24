@@ -12,7 +12,6 @@ import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/login/login_view.dart';
 import 'package:organista/features/register/register_view.dart';
-import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
@@ -52,7 +51,6 @@ class App extends StatelessWidget {
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settingsState) {
           return MaterialApp(
-            navigatorKey: navigatorKey,
             title: AppLocalizations.of(context).appTitle,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

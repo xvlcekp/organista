@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/media_type.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -40,7 +39,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       ),
     );
     // upload the file
-    final PlatformFile file = event.file;
+    final MusicSheetFile file = event.file;
     final String fileName = event.fileName;
     final User user = event.user;
     final String repositoryId = event.repositoryId;
@@ -54,7 +53,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           reference: reference,
           userId: user.uid,
           fileName: fileName,
-          mediaType: MediaType.fromPath(file.name),
+          mediaType: file.mediaType,
           repositoryId: repositoryId,
         );
         emit(PlaylistLoadedState(

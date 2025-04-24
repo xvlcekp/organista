@@ -8,7 +8,6 @@ import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
 import 'package:organista/l10n/app_localizations.dart';
-import 'package:organista/models/music_sheets/media_type.dart';
 
 class RepositoriesView extends HookWidget {
   const RepositoriesView({super.key});
@@ -56,7 +55,7 @@ class RepositoriesViewContent extends HookWidget {
           return _buildRepositoryList(context, state, userId, selectedTabIndex.value);
         },
       ),
-      bottomNavigationBar: _buildBottomNavBar(selectedTabIndex),
+      bottomNavigationBar: _buildBottomNavBar(localizations, selectedTabIndex),
     );
   }
 
@@ -90,9 +89,7 @@ class RepositoriesViewContent extends HookWidget {
     );
   }
 
-  Widget _buildBottomNavBar(ValueNotifier<int> selectedTabIndex) {
-    final localizations = AppLocalizations.of(navigatorKey.currentContext!);
-
+  Widget _buildBottomNavBar(AppLocalizations localizations, ValueNotifier<int> selectedTabIndex) {
     return BottomNavigationBar(
       currentIndex: selectedTabIndex.value,
       onTap: (index) {

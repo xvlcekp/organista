@@ -1,7 +1,7 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:pdfx/pdfx.dart';
 
@@ -11,12 +11,12 @@ class UploadedMusicSheetFileView extends StatelessWidget {
     required this.file,
   });
 
-  final PlatformFile file;
+  final MusicSheetFile file;
 
   @override
   Widget build(BuildContext context) {
     Widget child;
-    switch (MediaType.fromPath(file.name)) {
+    switch (file.mediaType) {
       case MediaType.image:
         child = Image.memory(
           file.bytes!,

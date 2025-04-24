@@ -7,7 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/media_type.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
@@ -175,6 +175,7 @@ class UploadFolderScreen extends HookWidget {
         try {
           if (file.bytes == null) continue;
 
+          MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
           String fileNameToUse = file.name; // Default to original name
           List<String> matchingKeys = filenameMapping.value.keys.where((key) => file.name.startsWith(key)).toList();
 
@@ -189,7 +190,7 @@ class UploadFolderScreen extends HookWidget {
           logger.i(filenameMapping.value.isEmpty ? "Using original filename: $fileNameToUse" : "Using mapped filename: $fileNameToUse, original file name was ${file.name}");
 
           final reference = await firebaseStorageRepository.uploadFile(
-            file: file,
+            file: musicSheetFile,
             bucket: 'public/${selectedRepository.value!.name}',
           );
 
@@ -198,7 +199,7 @@ class UploadFolderScreen extends HookWidget {
               reference: reference,
               userId: '',
               fileName: fileNameToUse,
-              mediaType: MediaType.fromPath(file.name),
+              mediaType: musicSheetFile.mediaType,
               repositoryId: selectedRepository.value!.repositoryId,
             );
             logger.i('Manual upload of recording succeeded? - $uploadSucceeded');

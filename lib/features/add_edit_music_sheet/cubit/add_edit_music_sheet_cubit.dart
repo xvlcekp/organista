@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:path/path.dart';
@@ -16,7 +16,7 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
   }
 
   void uploadMusicSheet({
-    required PlatformFile file,
+    required MusicSheetFile file,
     required String repositoryId,
   }) {
     emit(UploadMusicSheetState(

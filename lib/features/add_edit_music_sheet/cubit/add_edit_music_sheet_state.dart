@@ -19,7 +19,7 @@ class InitMusicSheetState extends AddEditMusicSheetState {
 
 @immutable
 class UploadMusicSheetState extends AddEditMusicSheetState {
-  final PlatformFile file;
+  final MusicSheetFile file;
   final String repositoryId;
   UploadMusicSheetState({
     required this.file,
