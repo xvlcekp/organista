@@ -177,7 +177,8 @@ class UploadFolderScreen extends HookWidget {
 
           MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
           String fileNameToUse = file.name; // Default to original name
-          List<String> matchingKeys = filenameMapping.value.keys.where((key) => file.name.startsWith(key)).toList();
+          String fileNameWithoutExtension = file.name.replaceAll(RegExp(r'\.[^.]+$'), '');
+          List<String> matchingKeys = filenameMapping.value.keys.where((key) => fileNameWithoutExtension == key).toList();
 
           if (matchingKeys.isNotEmpty) {
             String baseName = filenameMapping.value[matchingKeys.first]!;
