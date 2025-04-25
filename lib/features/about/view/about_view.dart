@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -41,16 +42,12 @@ class AboutView extends HookWidget {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
                   } else {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(localizations.couldNotOpenUrl)),
-                      );
+                      showErrorDialog(context, localizations.couldNotOpenUrl);
                     }
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(localizations.errorOpeningUrl.replaceAll('{error}', e.toString()))),
-                    );
+                    showErrorDialog(context, localizations.errorOpeningUrl.replaceAll('{error}', e.toString()));
                   }
                 }
               },

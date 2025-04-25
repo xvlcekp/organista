@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
@@ -70,9 +71,7 @@ class UploadFolderScreen extends HookWidget {
     Future<void> createNewRepository() async {
       if (newRepositoryNameController.text.trim().isEmpty) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Repository name cannot be empty")),
-          );
+          showErrorDialog(context, "Repository name cannot be empty");
         }
         return;
       }
@@ -81,9 +80,7 @@ class UploadFolderScreen extends HookWidget {
         authenticatedUser.value = await checkUserAuth();
         if (authenticatedUser.value == null) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Authentication failed. Please restart the app.")),
-            );
+            showErrorDialog(context, "Authentication failed. Please restart the app.");
           }
           return;
         }
@@ -95,18 +92,14 @@ class UploadFolderScreen extends HookWidget {
         );
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Repository created successfully")),
-          );
+          showErrorDialog(context, "Repository created successfully");
         }
 
         newRepositoryNameController.clear();
       } catch (e) {
         logger.e("Error creating repository", error: e);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to create repository: ${e.toString()}")),
-          );
+          showErrorDialog(context, "Failed to create repository: ${e.toString()}");
         }
       }
     }
@@ -135,9 +128,7 @@ class UploadFolderScreen extends HookWidget {
     Future<void> uploadFolder() async {
       if (selectedRepository.value == null) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Please select a repository first")),
-          );
+          showErrorDialog(context, "Please select a repository first");
         }
         return;
       }
@@ -163,9 +154,7 @@ class UploadFolderScreen extends HookWidget {
         if (authenticatedUser.value == null) {
           isUploading.value = false;
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Authentication failed. Please restart the app.")),
-            );
+            showErrorDialog(context, "Authentication failed. Please restart the app.");
           }
           return;
         }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/loading/loading_screen.dart';
@@ -73,12 +74,7 @@ class PlaylistView extends HookWidget {
             LoadingScreen.instance().hide();
           }
           if (appState.errorMessage.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(appState.errorMessage),
-                duration: const Duration(seconds: 2),
-              ),
-            );
+            showErrorDialog(context, appState.errorMessage);
           }
         },
         builder: (context, state) {

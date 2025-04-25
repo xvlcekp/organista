@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/l10n/app_localizations.dart';
 
 Future<dynamic> showPlaylistDialog({
@@ -38,11 +39,7 @@ Future<dynamic> showPlaylistDialog({
                 controller.clear();
                 Navigator.of(context).pop(); // Close the dialog
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(localizations.playlistNameEmpty),
-                  ),
-                );
+                showErrorDialog(context, localizations.playlistNameEmpty);
               }
             },
             child: Text(actionLabel),

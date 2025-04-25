@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/widgets/email_text_field.dart';
@@ -95,30 +96,22 @@ class RegisterView extends HookWidget {
 
                       // Validate fields
                       if (email.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(localizations.emailRequired)),
-                        );
+                        showErrorDialog(context, localizations.emailRequired);
                         return;
                       }
 
                       if (password.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(localizations.passwordRequired)),
-                        );
+                        showErrorDialog(context, localizations.passwordRequired);
                         return;
                       }
 
                       if (verifyPassword.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(localizations.verifyPasswordRequired)),
-                        );
+                        showErrorDialog(context, localizations.verifyPasswordRequired);
                         return;
                       }
 
                       if (password != verifyPassword) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(localizations.passwordsDoNotMatch)),
-                        );
+                        showErrorDialog(context, localizations.passwordsDoNotMatch);
                         return;
                       }
 

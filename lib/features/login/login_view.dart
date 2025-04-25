@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
 import 'package:organista/l10n/app_localizations.dart';
@@ -28,9 +29,7 @@ class LoginView extends HookWidget {
     return BlocListener<AppBloc, AppState>(
       listener: (context, state) {
         if (state.passwordResetSent == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(localizations.passwordResetEmailSent, style: theme.textTheme.bodyMedium)),
-          );
+          showErrorDialog(context, localizations.passwordResetEmailSent);
         }
       },
       child: Scaffold(

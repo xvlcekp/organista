@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/l10n/app_localizations.dart';
 
 Future<void> showForgotPasswordDialog(BuildContext context, TextEditingController emailController) async {
@@ -60,12 +61,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
           onPressed: () {
             final email = resetPasswordEmailController.text.trim();
             if (email.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(localizations.pleaseEnterEmail),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              showErrorDialog(context, localizations.pleaseEnterEmail);
               return;
             }
 

@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/config/app_constants.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
@@ -42,12 +43,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     // Check file size
                     if (file.size > AppConstants.maxFileSizeBytes) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(localizations.fileTooLarge.replaceAll('{maxSize}', AppConstants.maxFileSizeMB.toString())),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
+                        showErrorDialog(context, localizations.fileTooLarge.replaceAll('{maxSize}', AppConstants.maxFileSizeMB.toString()));
                       }
                       return;
                     }
@@ -61,9 +57,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     }
                   } on UnsupportedFileExtensionException {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(localizations.unsupportedFileExtension)),
-                      );
+                      showErrorDialog(context, localizations.unsupportedFileExtension);
                     }
                   }
                 }

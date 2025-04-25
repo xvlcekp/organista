@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
@@ -112,9 +113,7 @@ class _MigrationScreenState extends State<_MigrationScreen> {
     } catch (e) {
       logger.e('Migration failed', error: e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Migration failed: ${e.toString()}')),
-        );
+        showErrorDialog(context, 'Migration failed: ${e.toString()}');
       }
     } finally {
       setState(() {

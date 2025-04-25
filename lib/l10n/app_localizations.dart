@@ -139,6 +139,7 @@ class AppLocalizations {
   String get couldNotOpenUrl => _localizedValues[locale.languageCode]!['couldNotOpenUrl']!;
   String get errorOpeningUrl => _localizedValues[locale.languageCode]!['errorOpeningUrl']!;
   String get fileTooLarge => _localizedValues[locale.languageCode]!['fileTooLarge']!;
+  String get anErrorHappened => _localizedValues[locale.languageCode]!['anErrorHappened']!;
 
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -265,6 +266,7 @@ class AppLocalizations {
       'errorOpeningUrl': 'Error opening URL: {error}',
 
       'fileTooLarge': 'File is too large. Maximum size is {maxSize}MB.',
+      'anErrorHappened': 'An error happened',
     },
     'sk': {
       'appTitle': 'Organista',
@@ -390,6 +392,7 @@ class AppLocalizations {
       'errorOpeningUrl': 'Chyba pri otváraní URL: {error}',
 
       'fileTooLarge': 'Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.',
+      'anErrorHappened': 'Nastala chyba',
     },
   };
 }
