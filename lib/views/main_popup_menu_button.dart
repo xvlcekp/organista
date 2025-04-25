@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
-import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/features/settings/view/settings_view.dart';
 import 'package:organista/features/about/view/about_view.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 enum MenuAction { logout, settings, about }
 
@@ -13,7 +13,7 @@ class MainPopupMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     return PopupMenuButton<MenuAction>(
       onSelected: (value) async {

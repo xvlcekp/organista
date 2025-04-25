@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 Future<dynamic> showPlaylistDialog({
   required BuildContext context,
@@ -9,7 +9,7 @@ Future<dynamic> showPlaylistDialog({
   required String actionLabel, // Button label (Add or Rename)
   required VoidCallback onConfirm, // Action to perform when confirmed
 }) {
-  final localizations = AppLocalizations.of(context);
+  final localizations = context.loc;
   final theme = Theme.of(context);
   return showDialog(
     context: context,

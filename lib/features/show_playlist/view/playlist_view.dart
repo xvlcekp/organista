@@ -9,7 +9,7 @@ import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class PlaylistView extends HookWidget {
   const PlaylistView({super.key});
@@ -22,7 +22,7 @@ class PlaylistView extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isEditMode = useState(false);
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
     Playlist playlist = context.read<PlaylistBloc>().state.playlist;
 
     return Scaffold(

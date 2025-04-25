@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,7 +10,7 @@ class AboutView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
     final version = useState<String>('');
 
     useEffect(() {
@@ -47,7 +47,7 @@ class AboutView extends HookWidget {
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    showErrorDialog(context, localizations.errorOpeningUrl.replaceAll('{error}', e.toString()));
+                    showErrorDialog(context, '${localizations.errorOpeningUrl}: ${e.toString()}');
                   }
                 }
               },

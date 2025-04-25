@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class RepositorySearchbar extends HookWidget {
   final TextEditingController searchBarController;
@@ -14,7 +14,7 @@ class RepositorySearchbar extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),

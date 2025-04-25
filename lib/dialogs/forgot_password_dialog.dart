@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 Future<void> showForgotPasswordDialog(BuildContext context, TextEditingController emailController) async {
   final theme = Theme.of(context);
-  final localizations = AppLocalizations.of(context);
+  final localizations = context.loc;
   TextEditingController resetPasswordEmailController = TextEditingController();
   resetPasswordEmailController.text = emailController.text;
   showDialog(

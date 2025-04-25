@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/dialogs/playlists/playlist_dialog_generic.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 showEditPlaylistDialog({required BuildContext context, required TextEditingController controller, required Playlist playlist}) {
-  final localizations = AppLocalizations.of(context);
+  final localizations = context.loc;
 
   showPlaylistDialog(
     context: context,

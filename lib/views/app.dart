@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlist_page.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
-import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/login/login_view.dart';
 import 'package:organista/features/register/register_view.dart';
@@ -16,6 +15,7 @@ import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -51,28 +51,20 @@ class App extends StatelessWidget {
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settingsState) {
           return MaterialApp(
-            title: AppLocalizations.of(context).appTitle,
+            title: 'Organista',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: settingsState.themeMode,
             debugShowCheckedModeBanner: false,
             locale: settingsState.locale,
-            supportedLocales: const [
-              Locale('en', ''), // English
-              Locale('sk', ''), // Slovak
-            ],
-            localizationsDelegates: [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: BlocConsumer<AppBloc, AppState>(
               listener: (context, appState) {
                 if (appState.isLoading) {
                   LoadingScreen.instance().show(
                     context: context,
-                    text: AppLocalizations.of(context).loading,
+                    text: context.loc.loading,
                   );
                 } else {
                   LoadingScreen.instance().hide();

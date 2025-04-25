@@ -10,7 +10,7 @@ import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_shee
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class AddEditMusicSheetView extends HookWidget {
   const AddEditMusicSheetView({super.key});
@@ -23,7 +23,7 @@ class AddEditMusicSheetView extends HookWidget {
   Widget build(BuildContext context) {
     final musicSheetNameController = useTextEditingController();
     final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     return Scaffold(
       appBar: AppBar(title: Text(localizations.modifyMusicSheet)),

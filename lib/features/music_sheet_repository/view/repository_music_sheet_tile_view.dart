@@ -9,7 +9,7 @@ import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.d
 import 'package:organista/features/music_sheet_repository/bloc/repository_event.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class RepositoryMusicSheetTile extends StatelessWidget {
   final MusicSheet musicSheet;
@@ -27,7 +27,7 @@ class RepositoryMusicSheetTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final userId = context.read<AppBloc>().state.user!.uid;
     final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     return InkWell(
       onTap: () {

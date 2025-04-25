@@ -5,7 +5,7 @@ import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 import 'package:organista/widgets/email_text_field.dart';
 import 'package:organista/widgets/password_text_field.dart';
 
@@ -24,7 +24,7 @@ class LoginView extends HookWidget {
 
     final isPasswordVisible = useState(false);
     final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     return BlocListener<AppBloc, AppState>(
       listener: (context, state) {

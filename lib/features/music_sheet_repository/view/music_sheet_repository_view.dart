@@ -9,7 +9,7 @@ import 'package:organista/features/music_sheet_repository/view/searchbar.dart';
 import 'package:organista/features/music_sheet_repository/view/upload_music_sheet_fragment.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class MusicSheetRepositoryView extends HookWidget {
   final Repository repository;
@@ -33,7 +33,7 @@ class MusicSheetRepositoryView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
     final searchBarController = useTextEditingController();
     final repositoryId = repository.repositoryId;
 

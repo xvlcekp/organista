@@ -11,7 +11,7 @@ import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class PlaylistsView extends HookWidget {
   const PlaylistsView({super.key});
@@ -22,7 +22,7 @@ class PlaylistsView extends HookWidget {
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
     final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     useEffect(() {
       // initialize stream only once on first creation

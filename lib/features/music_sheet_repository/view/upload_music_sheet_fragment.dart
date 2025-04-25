@@ -5,9 +5,9 @@ import 'package:organista/config/app_constants.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
-import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class UploadMusicSheetFragment extends StatelessWidget {
   final String repositoryId;
@@ -19,7 +19,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -43,7 +43,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     // Check file size
                     if (file.size > AppConstants.maxFileSizeBytes) {
                       if (context.mounted) {
-                        showErrorDialog(context, localizations.fileTooLarge.replaceAll('{maxSize}', AppConstants.maxFileSizeMB.toString()));
+                        showErrorDialog(context, localizations.fileTooLarge(AppConstants.maxFileSizeMB.toString()));
                       }
                       return;
                     }

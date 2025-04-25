@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
     final settingsCubit = context.read<SettingsCubit>();
 
     return Scaffold(

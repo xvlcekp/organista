@@ -7,7 +7,7 @@ import 'package:organista/features/show_repositories/cubit/repositories_cubit.da
 import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
-import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/extensions/buildcontext/loc.dart';
 
 class RepositoriesView extends HookWidget {
   const RepositoriesView({super.key});
@@ -35,7 +35,7 @@ class RepositoriesViewContent extends HookWidget {
     final User user = context.read<AppBloc>().state.user!;
     final String userId = user.uid;
     final selectedTabIndex = useState(0); // 0 for Global, 1 for Personal
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
 
     useEffect(() {
       // initialize stream only once on first creation
@@ -55,7 +55,7 @@ class RepositoriesViewContent extends HookWidget {
           return _buildRepositoryList(context, state, userId, selectedTabIndex.value);
         },
       ),
-      bottomNavigationBar: _buildBottomNavBar(localizations, selectedTabIndex),
+      bottomNavigationBar: _buildBottomNavBar(context, selectedTabIndex),
     );
   }
 
@@ -63,7 +63,7 @@ class RepositoriesViewContent extends HookWidget {
     final globalRepositories = state.repositories.where((repo) => repo.userId.isEmpty).toList();
     final personalRepositories = state.repositories.where((repo) => repo.userId == userId).toList();
     final currentRepositories = selectedTabIndex == 0 ? globalRepositories : personalRepositories;
-    final localizations = AppLocalizations.of(context);
+    final localizations = context.loc;
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     if (currentRepositories.isEmpty) {
@@ -89,7 +89,8 @@ class RepositoriesViewContent extends HookWidget {
     );
   }
 
-  Widget _buildBottomNavBar(AppLocalizations localizations, ValueNotifier<int> selectedTabIndex) {
+  Widget _buildBottomNavBar(BuildContext context, ValueNotifier<int> selectedTabIndex) {
+    final localizations = context.loc;
     return BottomNavigationBar(
       currentIndex: selectedTabIndex.value,
       onTap: (index) {
