@@ -125,11 +125,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         password: password,
       );
       await firebaseFirestoreRepository.uploadNewUser(
-        email: credentials.user!.email!,
-        userId: credentials.user!.uid,
+        user: credentials.user!,
       );
       await firebaseFirestoreRepository.createUserRepository(
-        userId: credentials.user!.uid,
+        user: credentials.user!,
       );
       emit(
         AppStateLoggedIn(isLoading: false, user: credentials.user!),

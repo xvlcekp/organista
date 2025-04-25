@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
@@ -32,14 +33,13 @@ class FirebaseFirestoreRepository {
   // USER OPERATIONS
 
   Future<bool> uploadNewUser({
-    required String userId,
-    required String email,
+    required User user,
   }) async {
     try {
       final userPayload = UserInfoPayload(
-        userId: userId,
+        userId: user.uid,
         displayName: '',
-        email: email,
+        email: user.email!,
       );
       await instance.collection(FirebaseCollectionName.users).add(userPayload);
       return true;
@@ -333,8 +333,8 @@ class FirebaseFirestoreRepository {
     return _createRepository(userId: '', name: name);
   }
 
-  Future<bool> createUserRepository({required String userId}) async {
-    return _createRepository(userId: userId, name: 'Custom repository');
+  Future<bool> createUserRepository({required User user}) async {
+    return _createRepository(userId: user.uid, name: 'Custom repository - ${user.email ?? 'without email'}');
   }
 
   Future<bool> _createRepository({
