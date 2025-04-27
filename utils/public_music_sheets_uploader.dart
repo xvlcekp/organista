@@ -42,6 +42,36 @@ class MyApp extends StatelessWidget {
 class UploadFolderScreen extends HookWidget {
   const UploadFolderScreen({super.key});
 
+  String _mapFileName(String originalFileName, Map<String, String> mapping) {
+    String fileNameWithoutExt = originalFileName.trim().replaceAll(RegExp(r'\.(pdf|jpg|png)$'), '');
+    String fileNameToUse = fileNameWithoutExt;
+
+    // Case 1: Exact match - file name equals a key in the mapping
+    if (mapping.containsKey(fileNameWithoutExt)) {
+      fileNameToUse = mapping[fileNameWithoutExt]!;
+    }
+    // Case 2: Partial match - file name starts with a key in the mapping
+    else {
+      List<String> matchingKeys = mapping.keys.where((key) => fileNameWithoutExt.startsWith(key)).toList();
+
+      if (matchingKeys.isNotEmpty) {
+        // Sort by length to get the longest matching key
+        matchingKeys.sort((a, b) => b.length.compareTo(a.length));
+        String baseName = mapping[matchingKeys.first]!;
+        String remainingName = fileNameWithoutExt.substring(matchingKeys.first.length).trim();
+        remainingName = remainingName.replaceAll('__', '');
+
+        fileNameToUse = remainingName.isEmpty ? baseName : "$baseName $remainingName";
+      }
+      // Case 3: No match - use original filename without extension
+      else {
+        fileNameToUse = fileNameWithoutExt;
+      }
+    }
+
+    return fileNameToUse;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -165,17 +195,7 @@ class UploadFolderScreen extends HookWidget {
           if (file.bytes == null) continue;
 
           MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
-          String fileNameToUse = file.name; // Default to original name
-          String fileNameWithoutExtension = file.name.replaceAll(RegExp(r'\.[^.]+$'), '');
-          List<String> matchingKeys = filenameMapping.value.keys.where((key) => fileNameWithoutExtension == key).toList();
-
-          if (matchingKeys.isNotEmpty) {
-            String baseName = filenameMapping.value[matchingKeys.first]!;
-            String remainingName = file.name.substring(matchingKeys.first.length).trim().replaceAll('.pdf', '');
-            remainingName = remainingName.replaceAll('__', '');
-
-            fileNameToUse = "$baseName $remainingName"; // Rename with base name and remaining name
-          }
+          String fileNameToUse = _mapFileName(file.name, filenameMapping.value);
 
           logger.i(filenameMapping.value.isEmpty ? "Using original filename: $fileNameToUse" : "Using mapped filename: $fileNameToUse, original file name was ${file.name}");
 
@@ -197,7 +217,7 @@ class UploadFolderScreen extends HookWidget {
             throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
           }
 
-          uploadedFiles.value = [...uploadedFiles.value, fileNameToUse]; // Use renamed file
+          uploadedFiles.value = [...uploadedFiles.value, fileNameToUse];
         } catch (e) {
           logger.e("Error uploading ${file.name}", error: e);
         }
@@ -334,9 +354,10 @@ Future<void> loadRepositories(
     if (authenticatedUser.value != null) {
       final repoStream = firebaseFirestoreRepository.getRepositoriesStream();
       repoStream.listen((repos) {
-        repositories.value = repos.toList();
-        if (repos.isNotEmpty && selectedRepository.value == null) {
-          selectedRepository.value = repos.first;
+        final publicRepos = repos.where((repo) => repo.userId.isEmpty).toList();
+        repositories.value = publicRepos;
+        if (publicRepos.isNotEmpty && selectedRepository.value == null) {
+          selectedRepository.value = publicRepos.first;
         }
       });
     }
@@ -344,3 +365,5 @@ Future<void> loadRepositories(
     logger.e("Error loading repositories", error: e);
   }
 }
+
+// TODO: filtracia public / sukromnych repozitarov na urovni Firebase
