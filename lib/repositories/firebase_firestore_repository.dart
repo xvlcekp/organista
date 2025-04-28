@@ -318,9 +318,8 @@ class FirebaseFirestoreRepository {
         .snapshots(includeMetadataChanges: true)
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
-      logger.i("Got repository music sheets data for repository: $repositoryId");
       final documents = snapshot.docs;
-      logger.i("New repository music sheets length: ${documents.length}");
+      logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
       return documents.map((doc) => MusicSheet(json: doc.data()));
     }).handleError((error, stackTrace) {
       logger.e('Error in getRepositoryMusicSheetsStream: $error');
