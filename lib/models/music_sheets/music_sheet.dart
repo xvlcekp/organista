@@ -14,6 +14,7 @@ class MusicSheet extends Equatable {
   final String fileName;
   final String originalFileStorageId;
   final MediaType mediaType;
+  final int sequenceId;
 
   // TODO:  Uuid().v4() should be probably removed, because we want to use IDs generated from Firebase
   MusicSheet({
@@ -24,7 +25,8 @@ class MusicSheet extends Equatable {
         fileUrl = json[MusicSheetKey.fileUrl],
         fileName = json[MusicSheetKey.fileName],
         originalFileStorageId = json[MusicSheetKey.originalFileStorageId],
-        mediaType = MediaType.fromString(json[MusicSheetKey.mediaType]);
+        mediaType = MediaType.fromString(json[MusicSheetKey.mediaType]),
+        sequenceId = json[MusicSheetKey.sequenceId] ?? 0;
 
   Map<String, dynamic> toJson() {
     return {
@@ -35,6 +37,7 @@ class MusicSheet extends Equatable {
       MusicSheetKey.fileName: fileName,
       MusicSheetKey.originalFileStorageId: originalFileStorageId,
       MusicSheetKey.mediaType: mediaType.name,
+      MusicSheetKey.sequenceId: sequenceId,
     };
   }
 
@@ -48,6 +51,7 @@ class MusicSheet extends Equatable {
         MusicSheetKey.fileName: fileName ?? this.fileName, // Update if provided
         MusicSheetKey.originalFileStorageId: originalFileStorageId,
         MusicSheetKey.mediaType: mediaType.name,
+        MusicSheetKey.sequenceId: sequenceId,
       },
     );
   }
@@ -66,5 +70,6 @@ class MusicSheet extends Equatable {
         fileName,
         originalFileStorageId,
         mediaType,
+        sequenceId,
       ];
 }

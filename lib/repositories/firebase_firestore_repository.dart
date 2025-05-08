@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/list_music_sheet_extension.dart';
@@ -194,6 +195,7 @@ class FirebaseFirestoreRepository {
         originalFileStorageId: reference.fullPath,
         userId: userId,
         mediaType: mediaType,
+        sequenceId: fileName.sequenceId,
       );
 
       var docRef = await firestoreRef.add(musicSheetPayload);

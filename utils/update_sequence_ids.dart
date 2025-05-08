@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
@@ -55,11 +56,7 @@ Future<void> updateSequenceIds({
           final fileName = data[MusicSheetKey.fileName] as String;
 
           // Extract sequence ID from file name
-          int sequenceId = 0;
-          final match = RegExp(r'^(\d+)').firstMatch(fileName);
-          if (match != null) {
-            sequenceId = int.parse(match.group(1)!);
-          }
+          int sequenceId = fileName.sequenceId;
 
           // Update the document with sequence_id
           await doc.reference.update({
