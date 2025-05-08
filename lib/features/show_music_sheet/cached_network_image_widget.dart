@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
+import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -63,6 +64,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
       fit: BoxFit.contain,
       memCacheWidth: memCacheWidth,
       filterQuality: filterQuality,
+      cacheManager: PersistentCacheManager(),
     );
   }
 }

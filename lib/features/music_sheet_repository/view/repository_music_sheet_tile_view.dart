@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/app_bloc/app_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
@@ -8,10 +9,12 @@ import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_shee
 import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.dart';
 import 'package:organista/features/music_sheet_repository/bloc/repository_event.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
+import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-class RepositoryMusicSheetTile extends StatelessWidget {
+class RepositoryMusicSheetTile extends HookWidget {
   final MusicSheet musicSheet;
   final String repositoryId;
   final TextEditingController searchBarController;
@@ -23,17 +26,42 @@ class RepositoryMusicSheetTile extends StatelessWidget {
     required this.repositoryId,
   });
 
+  Future<bool> _checkIfCached() async {
+    try {
+      final file = await PersistentCacheManager().getFileFromCache(musicSheet.fileUrl);
+      return file != null;
+    } catch (e) {
+      logger.e("Error checking cache for ${musicSheet.fileName}: $e");
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userId = context.read<AppBloc>().state.user!.uid;
     final theme = Theme.of(context);
     final localizations = context.loc;
+    final isCached = useState<bool>(false);
+
+    useEffect(() {
+      _checkIfCached().then((cached) {
+        isCached.value = cached;
+      });
+      return null;
+    }, [musicSheet.fileUrl]);
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context)
+            .push(MaterialPageRoute(
           builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
-        ));
+        ))
+            .then((_) {
+          // Check cache status after returning from the view
+          _checkIfCached().then((cached) {
+            isCached.value = cached;
+          });
+        });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -57,6 +85,14 @@ class RepositoryMusicSheetTile extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (isCached.value)
+                  IconButton(
+                    icon: Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                    ),
+                    onPressed: () {},
+                  ),
                 IconButton(
                   icon: Icon(
                     Icons.download_rounded,
