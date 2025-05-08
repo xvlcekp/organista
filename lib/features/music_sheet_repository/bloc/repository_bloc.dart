@@ -50,9 +50,9 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   }
 
   Future<void> _initMusicSheetsRepositoryEvent(event, emit) async {
-    logger.e("Init repository was called");
     try {
       final repositoryId = event.repositoryId;
+      logger.i("Init repository was called for repository: $repositoryId");
       emit(MusicSheetRepositoryLoading());
 
       await for (final musicSheets in firebaseFirestoreRepository.getRepositoryMusicSheetsStream(repositoryId)) {

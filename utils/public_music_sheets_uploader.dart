@@ -12,8 +12,9 @@ import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
-import 'package:organista/config/config_controller.dart';
 import 'package:organista/models/repositories/repository.dart';
+
+import 'auth_utils.dart';
 
 final firebaseAuthRepository = FirebaseAuthRepository();
 final firebaseFirestoreRepository = FirebaseFirestoreRepository();
@@ -107,7 +108,7 @@ class UploadFolderScreen extends HookWidget {
       }
 
       if (authenticatedUser.value == null) {
-        authenticatedUser.value = await checkUserAuth();
+        authenticatedUser.value = await authUtils.checkUserAuth();
         if (authenticatedUser.value == null) {
           if (context.mounted) {
             showErrorDialog(context, "Authentication failed. Please restart the app.");
@@ -180,7 +181,7 @@ class UploadFolderScreen extends HookWidget {
 
       if (authenticatedUser.value == null) {
         logger.i("User authentication expired, attempting to re-authenticate");
-        authenticatedUser.value = await checkUserAuth();
+        authenticatedUser.value = await authUtils.checkUserAuth();
         if (authenticatedUser.value == null) {
           isUploading.value = false;
           if (context.mounted) {
@@ -323,34 +324,13 @@ class UploadFolderScreen extends HookWidget {
   }
 }
 
-Future<User?> checkUserAuth() async {
-  await Config.load();
-
-  final emailUploaderUser = Config.get('emailUploaderUser') ?? '';
-  final passwordUploaderUser = Config.get('passwordUploaderUser') ?? '';
-  logger.i(emailUploaderUser);
-
-  await firebaseAuthRepository.signInWithEmailAndPassword(
-    email: emailUploaderUser,
-    password: passwordUploaderUser,
-  );
-  final User? user = firebaseAuthRepository.getCurrentUser();
-
-  if (user == null) {
-    logger.e("User is NOT authenticated.");
-    return null;
-  }
-  logger.i("User is authenticated: ${user.uid}");
-  return user;
-}
-
 Future<void> loadRepositories(
   ValueNotifier<User?> authenticatedUser,
   ValueNotifier<List<Repository>> repositories,
   ValueNotifier<Repository?> selectedRepository,
 ) async {
   try {
-    authenticatedUser.value = await checkUserAuth();
+    authenticatedUser.value = await authUtils.checkUserAuth();
     if (authenticatedUser.value != null) {
       final repoStream = firebaseFirestoreRepository.getRepositoriesStream();
       repoStream.listen((repos) {

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,9 +6,10 @@ import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/repositories/firebase_auth_repository.dart';
-import 'package:organista/config/config_controller.dart';
 import 'package:organista/models/repositories/repository_payload.dart';
 import 'package:organista/models/repositories/repository_key.dart';
+
+import 'auth_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,27 +44,6 @@ class _MigrationScreenState extends State<_MigrationScreen> {
   final FirebaseAuthRepository firebaseAuthRepository = FirebaseAuthRepository();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future<User?> checkUserAuth() async {
-    await Config.load();
-
-    final emailUploaderUser = Config.get('emailUploaderUser') ?? '';
-    final passwordUploaderUser = Config.get('passwordUploaderUser') ?? '';
-    logger.i(emailUploaderUser);
-
-    await firebaseAuthRepository.signInWithEmailAndPassword(
-      email: emailUploaderUser,
-      password: passwordUploaderUser,
-    );
-    final User? user = firebaseAuthRepository.getCurrentUser();
-
-    if (user == null) {
-      logger.e("User is NOT authenticated.");
-      return null;
-    }
-    logger.i("User is authenticated: ${user.uid}");
-    return user;
-  }
-
   Future<void> migrateMusicSheets() async {
     setState(() {
       isMigrating = true;
@@ -72,7 +51,7 @@ class _MigrationScreenState extends State<_MigrationScreen> {
     });
 
     try {
-      final user = await checkUserAuth();
+      final user = await authUtils.checkUserAuth();
       if (user == null) {
         throw Exception('Authentication failed');
       }
