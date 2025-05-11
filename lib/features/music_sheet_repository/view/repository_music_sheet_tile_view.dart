@@ -86,12 +86,9 @@ class RepositoryMusicSheetTile extends HookWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (isCached.value)
-                  IconButton(
-                    icon: Icon(
-                      Icons.check_circle,
-                      color: Colors.green,
-                    ),
-                    onPressed: () {},
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
                   ),
                 IconButton(
                   icon: Icon(
