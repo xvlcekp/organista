@@ -36,9 +36,6 @@ class UploadedMusicSheetFileView extends StatelessWidget {
             backgroundColor: '#FFFFFF',
           ),
         );
-
-      default:
-        child = const Placeholder();
     }
     return Row(
       mainAxisSize: MainAxisSize.min,

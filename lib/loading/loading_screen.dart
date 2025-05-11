@@ -45,7 +45,7 @@ class LoadingScreen {
         final colorScheme = theme.colorScheme;
 
         return Material(
-          color: colorScheme.scrim.withOpacity(0.5),
+          color: colorScheme.scrim.withAlpha(125),
           child: Center(
             child: Container(
               constraints: BoxConstraints(
@@ -58,7 +58,7 @@ class LoadingScreen {
                 borderRadius: BorderRadius.circular(10.0),
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.shadow.withOpacity(0.2),
+                    color: colorScheme.shadow.withAlpha(40),
                     blurRadius: 10.0,
                     spreadRadius: 2.0,
                   ),

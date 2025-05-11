@@ -41,7 +41,7 @@ class RepositoryTile extends HookWidget {
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withAlpha(40),
               blurRadius: 4.0,
               offset: const Offset(0, 2),
             ),
@@ -55,7 +55,7 @@ class RepositoryTile extends HookWidget {
               child: Icon(
                 Icons.folder,
                 size: 100,
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withAlpha(40),
               ),
             ),
             Padding(
@@ -76,7 +76,7 @@ class RepositoryTile extends HookWidget {
                   Text(
                     '${musicSheetsCount.value} ${localizations.sheets}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withAlpha(200),
                       fontSize: 14,
                     ),
                   ),

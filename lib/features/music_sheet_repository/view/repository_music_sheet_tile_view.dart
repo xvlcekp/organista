@@ -68,7 +68,7 @@ class RepositoryMusicSheetTile extends HookWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: theme.dividerColor.withOpacity(0.1),
+              color: theme.dividerColor.withAlpha(25),
               width: 1,
             ),
           ),

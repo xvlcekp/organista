@@ -34,7 +34,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
               controller: resetPasswordEmailController,
               decoration: InputDecoration(
                 hintText: localizations.enterEmailHint,
-                hintStyle: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                hintStyle: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(153)),
                 prefixIcon: Icon(Icons.email_outlined, size: 18, color: theme.colorScheme.onSurface),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),

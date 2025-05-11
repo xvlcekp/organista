@@ -89,20 +89,20 @@ class PlaylistView extends HookWidget {
                   Icon(
                     Icons.music_off,
                     size: 64,
-                    color: theme.colorScheme.primary.withOpacity(0.5),
+                    color: theme.colorScheme.primary.withAlpha(130),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     localizations.noMusicSheetsYet,
                     style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary.withOpacity(0.5),
+                      color: theme.colorScheme.primary.withAlpha(130),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     localizations.addYourFirstMusicSheet,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary.withOpacity(0.5),
+                      color: theme.colorScheme.primary.withAlpha(130),
                     ),
                   ),
                 ],

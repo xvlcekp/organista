@@ -59,7 +59,7 @@ class AddEditMusicSheetView extends HookWidget {
                           borderSide: BorderSide(color: theme.colorScheme.onSurface, width: 0.0),
                         ),
                         hintText: localizations.musicSheetName,
-                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(153)),
                       ),
                       style: TextStyle(color: theme.colorScheme.onSurface),
                       onChanged: (query) {},
