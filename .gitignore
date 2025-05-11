@@ -44,4 +44,7 @@ app.*.map.json
 
 assets/config/credentials.json
 
+# Music sheets
 content/
+# Files created after upgrade to flutter 3.29.3
+/android/app/.cxx
