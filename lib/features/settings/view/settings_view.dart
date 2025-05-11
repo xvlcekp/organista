@@ -75,6 +75,15 @@ class SettingsView extends StatelessWidget {
                   },
                 ),
               ),
+              ListTile(
+                title: Text(context.loc.showNavigationArrows),
+                trailing: Switch(
+                  value: state.showNavigationArrows,
+                  onChanged: (bool value) {
+                    settingsCubit.changeShowNavigationArrows(value);
+                  },
+                ),
+              ),
 
               // Account Management Section
               Padding(

@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
+import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -97,61 +99,118 @@ class PdfViewerWidget extends HookWidget {
   Widget getPdfFullView(ValueNotifier<PdfController?> pdfController) {
     final showTitle = useState(true);
 
-    return PhotoView.customChild(
-        minScale: PhotoViewComputedScale.contained * 1.0,
-        maxScale: PhotoViewComputedScale.contained * 3.0,
-        initialScale: PhotoViewComputedScale.contained * 1.0,
-        child: Stack(
-          children: [
-            /// PDF Viewer as the base layer
-            Positioned.fill(
-              child: PdfView(
-                controller: pdfController.value!,
-                scrollDirection: Axis.vertical,
-              ),
-            ),
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, settingsState) {
+        return PhotoView.customChild(
+            minScale: PhotoViewComputedScale.contained * 1.0,
+            maxScale: PhotoViewComputedScale.contained * 3.0,
+            initialScale: PhotoViewComputedScale.contained * 1.0,
+            child: Stack(
+              children: [
+                /// PDF Viewer as the base layer
+                Positioned.fill(
+                  child: PdfView(
+                    controller: pdfController.value!,
+                    scrollDirection: Axis.vertical,
+                  ),
+                ),
 
-            /// Music sheet name at the bottom-left
-            if (showTitle.value)
-              Positioned(
-                bottom: 16,
-                left: 16,
-                child: GestureDetector(
-                  onTap: () => showTitle.value = false,
+                /// Music sheet name at the bottom-left
+                if (showTitle.value)
+                  Positioned(
+                    bottom: 16,
+                    left: 16,
+                    child: GestureDetector(
+                      onTap: () => showTitle.value = false,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: DefaultTextStyle(
+                          style: const TextStyle(fontSize: 12, color: Colors.white),
+                          child: Text(musicSheet.fileName),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                /// Page number overlay at the bottom-right
+                Positioned(
+                  bottom: 16,
+                  right: 16,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: DefaultTextStyle(
-                      style: const TextStyle(fontSize: 12, color: Colors.white),
-                      child: Text(musicSheet.fileName),
+                    child: PdfPageNumber(
+                      controller: pdfController.value!,
+                      builder: (_, state, loadingState, pagesCount) => DefaultTextStyle(
+                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                        child: Text('${pdfController.value!.page}/${pagesCount ?? 0}'),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-            /// Page number overlay at the bottom-right
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: PdfPageNumber(
-                  controller: pdfController.value!,
-                  builder: (_, state, loadingState, pagesCount) => DefaultTextStyle(
-                    style: const TextStyle(fontSize: 18, color: Colors.white),
-                    child: Text('${pdfController.value!.page}/${pagesCount ?? 0}'),
+                /// Navigation buttons
+                if (settingsState.showNavigationArrows)
+                  PdfPageNumber(
+                    controller: pdfController.value!,
+                    builder: (_, state, loadingState, pagesCount) {
+                      if (pagesCount == null || pagesCount <= 1) {
+                        return const SizedBox.shrink(); // Don't show buttons if only one page
+                      }
+
+                      return Stack(
+                        children: [
+                          // Previous page button at the top
+                          if (pdfController.value!.page > 1)
+                            Positioned(
+                              top: 30,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: IconButton(
+                                  icon: const Icon(Icons.arrow_upward, color: Colors.white),
+                                  onPressed: () {
+                                    pdfController.value!.jumpToPage(pdfController.value!.page - 1);
+                                  },
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: Colors.black.withOpacity(0.6),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // Next page button at the bottom
+                          if (pdfController.value!.page < pagesCount)
+                            Positioned(
+                              bottom: 30,
+                              left: 0,
+                              right: 0,
+                              child: Center(
+                                child: IconButton(
+                                  icon: const Icon(Icons.arrow_downward, color: Colors.white),
+                                  onPressed: () {
+                                    pdfController.value!.jumpToPage(pdfController.value!.page + 1);
+                                  },
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: Colors.black.withOpacity(0.6),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
-                ),
-              ),
-            ),
-          ],
-        ));
+              ],
+            ));
+      },
+    );
   }
 }

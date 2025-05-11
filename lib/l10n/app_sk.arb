@@ -118,5 +118,6 @@
     "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",
     "errorOpeningUrl": "Chyba pri otváraní URL: {error}",
     "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
-    "anErrorHappened": "Nastala chyba"
+    "anErrorHappened": "Nastala chyba",
+    "showNavigationArrows": "Zobraziť navigačné šípky"
 }

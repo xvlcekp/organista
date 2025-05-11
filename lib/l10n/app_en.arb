@@ -118,5 +118,6 @@
     "couldNotOpenUrl": "Could not open the URL",
     "errorOpeningUrl": "Error opening URL: {error}",
     "fileTooLarge": "File is too large. Maximum size is {maxSize}MB.",
-    "anErrorHappened": "An error happened"
+    "anErrorHappened": "An error happened",
+    "showNavigationArrows": "Show navigation arrows"
 }
