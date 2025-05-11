@@ -7,6 +7,9 @@
 **import debug symbols** - 
 /app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
 
+- Napísanie Changelogu
+- vytvorenie release branche
+
 https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
 
 ## Firebase
