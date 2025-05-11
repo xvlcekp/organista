@@ -170,39 +170,74 @@ class PdfViewerWidget extends HookWidget {
 
                       return Stack(
                         children: [
-                          // Previous page button at the top
+                          // Previous page touch area at the top
                           if (pdfController.value!.page > 1)
                             Positioned(
-                              top: 10,
+                              top: 0,
                               left: 0,
                               right: 0,
-                              child: Center(
-                                child: IconButton(
-                                  icon: const Icon(Icons.arrow_upward, color: Colors.white),
-                                  onPressed: () {
-                                    pdfController.value!.jumpToPage(pdfController.value!.page - 1);
-                                  },
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: Colors.black.withAlpha(153),
+                              height: MediaQuery.of(context).size.height * 0.2,
+                              child: GestureDetector(
+                                onTap: () {
+                                  pdfController.value!.jumpToPage(pdfController.value!.page - 1);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.white.withAlpha(0),
+                                        Colors.green.withAlpha(100),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      child: const Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.green,
+                                        size: 20,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
 
-                          // Next page button at the bottom
+                          // Next page touch area at the bottom
                           if (pdfController.value!.page < pagesCount)
                             Positioned(
-                              bottom: 10,
+                              bottom: 0,
                               left: 0,
                               right: 0,
-                              child: Center(
-                                child: IconButton(
-                                  icon: const Icon(Icons.arrow_downward, color: Colors.white),
-                                  onPressed: () {
-                                    pdfController.value!.jumpToPage(pdfController.value!.page + 1);
-                                  },
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: Colors.black.withAlpha(153),
+                              height: MediaQuery.of(context).size.height * 0.2,
+                              child: GestureDetector(
+                                onTap: () {
+                                  pdfController.value!.jumpToPage(pdfController.value!.page + 1);
+                                  logger.i("Next page");
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.white.withAlpha(0),
+                                        Colors.green.withAlpha(100),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      child: const Icon(
+                                        Icons.arrow_downward,
+                                        color: Colors.green,
+                                        size: 20,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
