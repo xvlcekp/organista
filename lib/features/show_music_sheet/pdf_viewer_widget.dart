@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
+import 'package:organista/extensions/color.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/logger/custom_logger.dart';
@@ -80,7 +81,7 @@ class PdfViewerWidget extends HookWidget {
       renderer: (PdfPage page) => page.render(
         width: page.width * 0.5,
         height: page.height * 0.5,
-        backgroundColor: '#${backgroundColor.value.toRadixString(16)}',
+        backgroundColor: backgroundColor.toHex(),
       ),
     );
   }
@@ -91,7 +92,7 @@ class PdfViewerWidget extends HookWidget {
       renderer: (PdfPage page) => page.render(
         width: page.width * 0.25,
         height: page.height * 0.25,
-        backgroundColor: '#${backgroundColor.value.toRadixString(16)}',
+        backgroundColor: backgroundColor.toHex(),
       ),
     );
   }
@@ -101,7 +102,9 @@ class PdfViewerWidget extends HookWidget {
 
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, settingsState) {
-        return PhotoView.customChild(
+        return SafeArea(
+          // needed to use SafeArea because after update to new flutter, it overlays bottom navigation bar
+          child: PhotoView.customChild(
             minScale: PhotoViewComputedScale.contained * 1.0,
             maxScale: PhotoViewComputedScale.contained * 3.0,
             initialScale: PhotoViewComputedScale.contained * 1.0,
@@ -125,7 +128,7 @@ class PdfViewerWidget extends HookWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.black.withAlpha(153),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: DefaultTextStyle(
@@ -143,7 +146,7 @@ class PdfViewerWidget extends HookWidget {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withAlpha(153),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: PdfPageNumber(
@@ -170,7 +173,7 @@ class PdfViewerWidget extends HookWidget {
                           // Previous page button at the top
                           if (pdfController.value!.page > 1)
                             Positioned(
-                              top: 30,
+                              top: 10,
                               left: 0,
                               right: 0,
                               child: Center(
@@ -180,7 +183,7 @@ class PdfViewerWidget extends HookWidget {
                                     pdfController.value!.jumpToPage(pdfController.value!.page - 1);
                                   },
                                   style: IconButton.styleFrom(
-                                    backgroundColor: Colors.black.withOpacity(0.6),
+                                    backgroundColor: Colors.black.withAlpha(153),
                                   ),
                                 ),
                               ),
@@ -189,7 +192,7 @@ class PdfViewerWidget extends HookWidget {
                           // Next page button at the bottom
                           if (pdfController.value!.page < pagesCount)
                             Positioned(
-                              bottom: 30,
+                              bottom: 10,
                               left: 0,
                               right: 0,
                               child: Center(
@@ -199,7 +202,7 @@ class PdfViewerWidget extends HookWidget {
                                     pdfController.value!.jumpToPage(pdfController.value!.page + 1);
                                   },
                                   style: IconButton.styleFrom(
-                                    backgroundColor: Colors.black.withOpacity(0.6),
+                                    backgroundColor: Colors.black.withAlpha(153),
                                   ),
                                 ),
                               ),
@@ -209,7 +212,9 @@ class PdfViewerWidget extends HookWidget {
                     },
                   ),
               ],
-            ));
+            ),
+          ),
+        );
       },
     );
   }
