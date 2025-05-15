@@ -136,23 +136,19 @@ class AddEditMusicSheetView extends HookWidget {
     );
   }
 
-  void resetMusicSheetCubitAndShowPlaylist(BuildContext context) async {
-    if (context.mounted) {
-      context.read<AddEditMusicSheetCubit>().resetState();
+  void resetMusicSheetCubitAndShowPlaylist(BuildContext context) {
+    context.read<AddEditMusicSheetCubit>().resetState();
 
-      Navigator.of(context).popUntil((route) {
-        if (route is MaterialPageRoute) {
-          return route.builder(context) is PlaylistView;
-        }
-        return false;
-      });
-    }
+    Navigator.of(context).popUntil((route) {
+      if (route is MaterialPageRoute) {
+        return route.builder(context) is PlaylistView;
+      }
+      return false;
+    });
   }
 
-  void resetMusicSheetCubitAndPop(BuildContext context) async {
-    if (context.mounted) {
-      context.read<AddEditMusicSheetCubit>().resetState();
-      Navigator.of(context).pop();
-    }
+  void resetMusicSheetCubitAndPop(BuildContext context) {
+    context.read<AddEditMusicSheetCubit>().resetState();
+    Navigator.of(context).pop();
   }
 }

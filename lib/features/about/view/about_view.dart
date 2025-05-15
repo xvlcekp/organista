@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -58,7 +59,7 @@ class AboutView extends HookWidget {
             ),
             const SizedBox(height: 20),
             SelectableText(
-              'Email: rozpravaciaappka@gmail.com',
+              'Email: ${AppConstants.contactEmail}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 20),

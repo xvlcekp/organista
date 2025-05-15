@@ -15,4 +15,6 @@ class AppConstants {
 
   /// Maximum number of objects to keep in cache
   static const int maxCacheObjects = 5000;
+
+  static const String contactEmail = 'rozpravaciaappka@gmail.com';
 }
