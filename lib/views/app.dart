@@ -8,6 +8,7 @@ import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlist_page.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
+import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/login/login_view.dart';
 import 'package:organista/features/register/register_view.dart';
@@ -15,7 +16,6 @@ import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatelessWidget {
   const App({
