@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
@@ -115,8 +115,8 @@ class RegisterView extends HookWidget {
                         return;
                       }
 
-                      context.read<AppBloc>().add(
-                            AppEventRegister(
+                      context.read<AuthBloc>().add(
+                            AuthEventRegister(
                               email: email,
                               password: password,
                             ),
@@ -138,8 +138,8 @@ class RegisterView extends HookWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          context.read<AppBloc>().add(
-                                const AppEventGoToLogin(),
+                          context.read<AuthBloc>().add(
+                                const AuthEventGoToLogin(),
                               );
                         },
                         child: Text(

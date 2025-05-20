@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
@@ -25,12 +25,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<AppBloc>(
-          create: (context) => AppBloc(
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           )..add(
-              const AppEventInitialize(),
+              const AuthEventInitialize(),
             ),
         ),
         BlocProvider<AddEditMusicSheetCubit>(
@@ -57,9 +57,9 @@ class App extends StatelessWidget {
             locale: settingsState.locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            home: BlocConsumer<AppBloc, AppState>(
-              listener: (context, appState) {
-                if (appState.isLoading) {
+            home: BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, authState) {
+                if (authState.isLoading) {
                   LoadingScreen.instance().show(
                     context: context,
                     text: context.loc.loading,
@@ -68,7 +68,7 @@ class App extends StatelessWidget {
                   LoadingScreen.instance().hide();
                 }
 
-                final authError = appState.authError;
+                final authError = authState.authError;
                 if (authError != null) {
                   showAuthError(
                     authError: authError,
@@ -76,12 +76,12 @@ class App extends StatelessWidget {
                   );
                 }
               },
-              builder: (context, appState) {
-                if (appState is AppStateLoggedOut) {
+              builder: (context, authState) {
+                if (authState is AuthStateLoggedOut) {
                   return const LoginView();
-                } else if (appState is AppStateLoggedIn) {
+                } else if (authState is AuthStateLoggedIn) {
                   return const PlaylistPage();
-                } else if (appState is AppStateIsInRegistrationView) {
+                } else if (authState is AuthStateIsInRegistrationView) {
                   return const RegisterView();
                 } else {
                   // this should never happen test

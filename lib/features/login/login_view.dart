@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/config_controller.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
@@ -35,7 +35,7 @@ class LoginView extends HookWidget {
     final theme = Theme.of(context);
     final localizations = context.loc;
 
-    return BlocListener<AppBloc, AppState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.passwordResetSent == true) {
           showErrorDialog(context, localizations.passwordResetEmailSent);
@@ -105,8 +105,8 @@ class LoginView extends HookWidget {
                       onPressed: () {
                         final email = emailController.text;
                         final password = passwordController.text;
-                        context.read<AppBloc>().add(
-                              AppEventLogIn(
+                        context.read<AuthBloc>().add(
+                              AuthEventLogIn(
                                 email: email,
                                 password: password,
                               ),
@@ -126,8 +126,8 @@ class LoginView extends HookWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            context.read<AppBloc>().add(
-                                  const AppEventGoToRegistration(),
+                            context.read<AuthBloc>().add(
+                                  const AuthEventGoToRegistration(),
                                 );
                           },
                           child: Text(

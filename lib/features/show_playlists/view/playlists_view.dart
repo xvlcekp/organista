@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/delete_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/edit_playlist_dialog.dart';
@@ -19,7 +19,7 @@ class PlaylistsView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = useTextEditingController();
-    final AuthUser user = context.read<AppBloc>().state.user!;
+    final AuthUser user = context.read<AuthBloc>().state.user!;
     final String userId = user.id;
     final theme = Theme.of(context);
     final localizations = context.loc;

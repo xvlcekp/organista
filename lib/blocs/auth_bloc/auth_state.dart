@@ -1,12 +1,12 @@
-part of 'app_bloc.dart';
+part of 'auth_bloc.dart';
 
 @immutable
-abstract class AppState {
+abstract class AuthState {
   final bool isLoading;
   final AuthError? authError;
   final bool passwordResetSent;
 
-  const AppState({
+  const AuthState({
     required this.isLoading,
     this.authError,
     this.passwordResetSent = false,
@@ -14,9 +14,9 @@ abstract class AppState {
 }
 
 @immutable
-class AppStateLoggedIn extends AppState with EquatableMixin {
+class AuthStateLoggedIn extends AuthState with EquatableMixin {
   final AuthUser user;
-  const AppStateLoggedIn({
+  const AuthStateLoggedIn({
     required super.isLoading,
     required this.user,
     super.authError,
@@ -30,8 +30,8 @@ class AppStateLoggedIn extends AppState with EquatableMixin {
 }
 
 @immutable
-class AppStateLoggedOut extends AppState {
-  const AppStateLoggedOut({
+class AuthStateLoggedOut extends AuthState {
+  const AuthStateLoggedOut({
     required super.isLoading,
     super.authError,
     super.passwordResetSent = false,
@@ -42,17 +42,17 @@ class AppStateLoggedOut extends AppState {
 }
 
 @immutable
-class AppStateIsInRegistrationView extends AppState {
-  const AppStateIsInRegistrationView({
+class AuthStateIsInRegistrationView extends AuthState {
+  const AuthStateIsInRegistrationView({
     required super.isLoading,
     super.authError,
   });
 }
 
-extension GetUser on AppState {
+extension GetUser on AuthState {
   AuthUser? get user {
     final cls = this;
-    if (cls is AppStateLoggedIn) {
+    if (cls is AuthStateLoggedIn) {
       return cls.user;
     } else {
       return null;

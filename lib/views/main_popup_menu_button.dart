@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/features/settings/view/settings_view.dart';
 import 'package:organista/features/about/view/about_view.dart';
@@ -21,8 +21,8 @@ class MainPopupMenuButton extends StatelessWidget {
           case MenuAction.logout:
             final shouldLogOut = await showLogOutDialog(context);
             if (shouldLogOut && context.mounted) {
-              context.read<AppBloc>().add(
-                    const AppEventLogOut(),
+              context.read<AuthBloc>().add(
+                    const AuthEventLogOut(),
                   );
             }
             break;

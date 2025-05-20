@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
@@ -32,7 +32,7 @@ class RepositoriesViewContent extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthUser user = context.read<AppBloc>().state.user!;
+    final AuthUser user = context.read<AuthBloc>().state.user!;
     final String userId = user.id;
     final selectedTabIndex = useState(0); // 0 for Global, 1 for Personal
     final localizations = context.loc;

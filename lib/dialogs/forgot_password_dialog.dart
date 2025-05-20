@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/blocs/app_bloc/app_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
@@ -65,8 +65,8 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
               return;
             }
 
-            context.read<AppBloc>().add(
-                  AppEventForgotPassword(email: email),
+            context.read<AuthBloc>().add(
+                  AuthEventForgotPassword(email: email),
                 );
             Navigator.of(context).pop();
 
