@@ -38,7 +38,7 @@ class RepositoryMusicSheetTile extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.read<AppBloc>().state.user!.uid;
+    final userId = context.read<AppBloc>().state.user!.id;
     final theme = Theme.of(context);
     final localizations = context.loc;
     final isCached = useState<bool>(false);

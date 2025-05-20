@@ -15,7 +15,7 @@ abstract class AppState {
 
 @immutable
 class AppStateLoggedIn extends AppState with EquatableMixin {
-  final User user;
+  final AuthUser user;
   const AppStateLoggedIn({
     required super.isLoading,
     required this.user,
@@ -26,7 +26,7 @@ class AppStateLoggedIn extends AppState with EquatableMixin {
   String toString() => 'AppStateLoggedIn';
 
   @override
-  List<Object?> get props => [isLoading, user.uid];
+  List<Object?> get props => [isLoading, user.id];
 }
 
 @immutable
@@ -50,7 +50,7 @@ class AppStateIsInRegistrationView extends AppState {
 }
 
 extension GetUser on AppState {
-  User? get user {
+  AuthUser? get user {
     final cls = this;
     if (cls is AppStateLoggedIn) {
       return cls.user;

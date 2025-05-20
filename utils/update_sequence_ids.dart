@@ -6,9 +6,8 @@ import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:organista/firebase_options.dart';
 import 'package:organista/dialogs/error_dialog.dart';
+import 'package:organista/services/auth/auth_service.dart';
 
 import 'auth_utils.dart';
 
@@ -81,9 +80,7 @@ Future<void> updateSequenceIds({
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await AuthService.firebase().initialize();
   runApp(const MyApp());
 }
 

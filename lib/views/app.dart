@@ -12,7 +12,6 @@ import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/login/login_view.dart';
 import 'package:organista/features/register/register_view.dart';
-import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +27,6 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider<AppBloc>(
           create: (context) => AppBloc(
-            firebaseAuthRepository: context.read<FirebaseAuthRepository>(),
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           )..add(

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,6 +9,7 @@ import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
+import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
@@ -19,8 +19,8 @@ class PlaylistsView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = useTextEditingController();
-    final User user = context.read<AppBloc>().state.user!;
-    final String userId = user.uid;
+    final AuthUser user = context.read<AppBloc>().state.user!;
+    final String userId = user.id;
     final theme = Theme.of(context);
     final localizations = context.loc;
 

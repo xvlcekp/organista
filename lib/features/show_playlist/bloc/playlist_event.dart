@@ -7,14 +7,14 @@ abstract class PlaylistEvent {
 
 @immutable
 class InitPlaylistEvent implements PlaylistEvent {
-  final User user;
+  final AuthUser user;
   final Playlist playlist;
   const InitPlaylistEvent({required this.user, required this.playlist});
 }
 
 @immutable
 class UploadNewMusicSheetEvent implements PlaylistEvent {
-  final User user;
+  final AuthUser user;
   final MusicSheetFile file;
   final String fileName;
   final String repositoryId;

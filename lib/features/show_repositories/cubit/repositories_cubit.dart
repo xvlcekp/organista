@@ -21,7 +21,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   }
 
   void startSubscribingRepositories({required String userId}) async {
-    _streamSubscription = firebaseFirestoreRepository.getRepositoriesStream().listen((repositories) {
+    _streamSubscription = firebaseFirestoreRepository.getRepositoriesStream(userId: userId).listen((repositories) {
       emit(RepositoriesLoadedState(repositories: repositories.toList()));
     });
   }

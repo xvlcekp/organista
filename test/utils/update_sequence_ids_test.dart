@@ -1,49 +1,61 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:organista/services/auth/auth_user.dart';
 
 import '../../utils/auth_utils.dart';
 import '../../utils/update_sequence_ids.dart';
 
 // Tested how to do testing with mockito
 
-@GenerateMocks([User])
+@GenerateMocks([AuthUser])
 import 'update_sequence_ids_test.mocks.dart';
 
 // Create a mock for AuthUtils manually since it's our own class
 class MockAuthUtils extends Mock implements AuthUtils {
   @override
-  Future<User?> checkUserAuth() async {
+  Future<AuthUser?> checkUserAuth() async {
     return super.noSuchMethod(
       Invocation.method(#checkUserAuth, []),
-      returnValue: Future<User?>.value(null),
-    ) as Future<User?>;
+      returnValue: Future<AuthUser?>.value(null),
+    ) as Future<AuthUser?>;
   }
 }
 
 void main() {
   late FakeFirebaseFirestore fakeFirestore;
-  late MockUser mockUser;
+  late MockAuthUser mockUser;
   late MockAuthUtils mockAuthUtils;
+  late String repositoryId;
+  late CollectionReference musicSheetsCollection;
 
   setUp(() {
     fakeFirestore = FakeFirebaseFirestore();
-    mockUser = MockUser();
+    mockUser = MockAuthUser();
     mockAuthUtils = MockAuthUtils();
+
+    // Setup repository and collection references
+    repositoryId = 'c36X6vfMxHypT3CQUT9N';
+    final repositoriesCollection = fakeFirestore.collection(FirebaseCollectionName.repositories);
+
+    // Create repository document
+    repositoriesCollection.doc(repositoryId).set({
+      'name': 'Test Repository',
+      'userId': 'test_user_id',
+    });
+
+    musicSheetsCollection = repositoriesCollection.doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
   });
 
   group('updateSequenceIds', () {
     test('should update sequence IDs for documents without sequence_id', () async {
       WidgetsFlutterBinding.ensureInitialized();
       // Arrange
-      final repositoryId = 'c36X6vfMxHypT3CQUT9N';
-      final musicSheetsCollection = fakeFirestore.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
-
       // Add test documents
       await musicSheetsCollection.add({
         MusicSheetKey.fileName: '1_Test_Sheet.pdf',
@@ -68,24 +80,18 @@ void main() {
       final docs = await musicSheetsCollection.get();
       expect(docs.docs.length, 3);
 
-      // Check first document
-      expect(docs.docs[0].data()[MusicSheetKey.sequenceId], 1);
-      expect(docs.docs[0].data()[MusicSheetKey.fileName], '1_Test_Sheet.pdf');
+      expect((docs.docs[0].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 1);
+      expect((docs.docs[0].data() as Map<String, dynamic>)[MusicSheetKey.fileName], '1_Test_Sheet.pdf');
 
-      // Check second document
-      expect(docs.docs[1].data()[MusicSheetKey.sequenceId], 2);
-      expect(docs.docs[1].data()[MusicSheetKey.fileName], '2_Another_Sheet.pdf');
+      expect((docs.docs[1].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 2);
+      expect((docs.docs[1].data() as Map<String, dynamic>)[MusicSheetKey.fileName], '2_Another_Sheet.pdf');
 
-      // Check third document (no number in filename)
-      expect(docs.docs[2].data()[MusicSheetKey.sequenceId], 0);
-      expect(docs.docs[2].data()[MusicSheetKey.fileName], 'No_Number_Sheet.pdf');
+      expect((docs.docs[2].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 0);
+      expect((docs.docs[2].data() as Map<String, dynamic>)[MusicSheetKey.fileName], 'No_Number_Sheet.pdf');
     });
 
     test('should skip documents that already have sequence_id', () async {
       // Arrange
-      final repositoryId = 'c36X6vfMxHypT3CQUT9N';
-      final musicSheetsCollection = fakeFirestore.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
-
       // Add test documents
       await musicSheetsCollection.add({
         MusicSheetKey.fileName: '1_Test_Sheet.pdf',
@@ -108,13 +114,11 @@ void main() {
       final docs = await musicSheetsCollection.get();
       expect(docs.docs.length, 2);
 
-      // Check first document (should remain unchanged)
-      expect(docs.docs[0].data()[MusicSheetKey.sequenceId], 999);
-      expect(docs.docs[0].data()[MusicSheetKey.fileName], '1_Test_Sheet.pdf');
+      expect((docs.docs[0].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 999);
+      expect((docs.docs[0].data() as Map<String, dynamic>)[MusicSheetKey.fileName], '1_Test_Sheet.pdf');
 
-      // Check second document (should be updated)
-      expect(docs.docs[1].data()[MusicSheetKey.sequenceId], 2);
-      expect(docs.docs[1].data()[MusicSheetKey.fileName], '2_Another_Sheet.pdf');
+      expect((docs.docs[1].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 2);
+      expect((docs.docs[1].data() as Map<String, dynamic>)[MusicSheetKey.fileName], '2_Another_Sheet.pdf');
     });
 
     test('should throw exception when user is not authenticated', () async {
@@ -133,9 +137,6 @@ void main() {
 
     test('should handle empty collection', () async {
       // Arrange
-      final repositoryId = 'c36X6vfMxHypT3CQUT9N';
-      final musicSheetsCollection = fakeFirestore.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
-
       // Mock auth check
       when(mockAuthUtils.checkUserAuth()).thenAnswer((_) => Future.value(mockUser));
 
@@ -152,9 +153,6 @@ void main() {
 
     test('should handle invalid file names gracefully', () async {
       // Arrange
-      final repositoryId = 'c36X6vfMxHypT3CQUT9N';
-      final musicSheetsCollection = fakeFirestore.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
-
       // Add test documents with invalid file names
       await musicSheetsCollection.add({
         MusicSheetKey.fileName: 'Invalid_Sheet.pdf',
@@ -176,13 +174,11 @@ void main() {
       final docs = await musicSheetsCollection.get();
       expect(docs.docs.length, 2);
 
-      // Check first document (invalid filename)
-      expect(docs.docs[0].data()[MusicSheetKey.sequenceId], 0);
-      expect(docs.docs[0].data()[MusicSheetKey.fileName], 'Invalid_Sheet.pdf');
+      expect((docs.docs[0].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 0);
+      expect((docs.docs[0].data() as Map<String, dynamic>)[MusicSheetKey.fileName], 'Invalid_Sheet.pdf');
 
-      // Check second document (valid filename)
-      expect(docs.docs[1].data()[MusicSheetKey.sequenceId], 123);
-      expect(docs.docs[1].data()[MusicSheetKey.fileName], '123_Valid_Sheet.pdf');
+      expect((docs.docs[1].data() as Map<String, dynamic>)[MusicSheetKey.sequenceId], 123);
+      expect((docs.docs[1].data() as Map<String, dynamic>)[MusicSheetKey.fileName], '123_Valid_Sheet.pdf');
     });
   });
 }

@@ -9,7 +9,7 @@ const Map<String, AuthError> authErrorMapping = {
   'operation-not-allowed': AuthErrorOperationNotAllowed(),
   'email-already-in-use': AuthErrorEmailAlreadyInUse(),
   'requires-recent-login': AuthErrorRequiresRecentLogin(),
-  'no-current-user': AuthErrorNoCurrentUser(),
+  'no-current-user': AuthErrorUserNotLoggedIn(),
   'user-disabled': AuthErrorUserDisabled(),
   'invalid-credential': AuthErrorInvalidCredential(),
 };
@@ -41,14 +41,23 @@ class AuthErrorUnknown extends AuthError {
   }
 }
 
+@immutable
+class AuthGenericException extends AuthError {
+  const AuthGenericException()
+      : super(
+          dialogTitle: 'Authentication error',
+          dialogText: 'An unknown error occurred',
+        );
+}
+
 // auth/no-current-user
 
 @immutable
-class AuthErrorNoCurrentUser extends AuthError {
-  const AuthErrorNoCurrentUser()
+class AuthErrorUserNotLoggedIn extends AuthError {
+  const AuthErrorUserNotLoggedIn()
       : super(
-          dialogTitle: 'No current user!',
-          dialogText: 'No current user with this information was found!',
+          dialogTitle: 'User not logged in!',
+          dialogText: 'No user is currently logged in!',
         );
 }
 

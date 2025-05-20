@@ -1,30 +1,25 @@
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
-import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/models/repositories/repository.dart';
+import 'package:organista/services/auth/auth_service.dart';
+import 'package:organista/services/auth/auth_user.dart';
 
 import 'auth_utils.dart';
 
-final firebaseAuthRepository = FirebaseAuthRepository();
 final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firebaseStorageRepository = FirebaseStorageRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await AuthService.firebase().initialize();
   runApp(const MyApp());
 }
 
@@ -80,7 +75,7 @@ class UploadFolderScreen extends HookWidget {
     final uploadedFiles = useState<List<String>>([]);
     final repositories = useState<List<Repository>>([]);
     final selectedRepository = useState<Repository?>(null);
-    final authenticatedUser = useState<User?>(null);
+    final authenticatedUser = useState<AuthUser?>(null);
     final filenameMapping = useState<Map<String, String>>({});
     final newRepositoryNameController = useTextEditingController();
 
@@ -325,14 +320,14 @@ class UploadFolderScreen extends HookWidget {
 }
 
 Future<void> loadRepositories(
-  ValueNotifier<User?> authenticatedUser,
+  ValueNotifier<AuthUser?> authenticatedUser,
   ValueNotifier<List<Repository>> repositories,
   ValueNotifier<Repository?> selectedRepository,
 ) async {
   try {
     authenticatedUser.value = await authUtils.checkUserAuth();
     if (authenticatedUser.value != null) {
-      final repoStream = firebaseFirestoreRepository.getRepositoriesStream();
+      final repoStream = firebaseFirestoreRepository.getRepositoriesStream(userId: authenticatedUser.value!.id);
       repoStream.listen((repos) {
         final publicRepos = repos.where((repo) => repo.userId.isEmpty).toList();
         repositories.value = publicRepos;
@@ -345,5 +340,3 @@ Future<void> loadRepositories(
     logger.e("Error loading repositories", error: e);
   }
 }
-
-// TODO: filtracia public / sukromnych repozitarov na urovni Firebase

@@ -1,31 +1,29 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/config/config_controller.dart';
+import 'package:organista/services/auth/auth_service.dart';
+import 'package:organista/services/auth/auth_user.dart';
 
 class AuthUtils {
-  final FirebaseAuthRepository _authRepository;
+  AuthUtils();
 
-  AuthUtils({FirebaseAuthRepository? authRepository}) : _authRepository = authRepository ?? FirebaseAuthRepository();
-
-  Future<User?> checkUserAuth() async {
+  Future<AuthUser?> checkUserAuth() async {
     await Config.load();
 
     final emailUploaderUser = Config.get('emailUploaderUser') ?? '';
     final passwordUploaderUser = Config.get('passwordUploaderUser') ?? '';
     logger.i(emailUploaderUser);
 
-    await _authRepository.signInWithEmailAndPassword(
+    await AuthService.firebase().logIn(
       email: emailUploaderUser,
       password: passwordUploaderUser,
     );
-    final User? user = _authRepository.getCurrentUser();
+    final AuthUser? user = AuthService.firebase().currentUser;
 
     if (user == null) {
       logger.e("User is NOT authenticated.");
       return null;
     }
-    logger.i("User is authenticated: ${user.uid}");
+    logger.i("User is authenticated: ${user.id}");
     return user;
   }
 }

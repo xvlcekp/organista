@@ -1,18 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:organista/auth/auth_error.dart';
-import 'package:organista/repositories/firebase_auth_repository.dart';
+import 'package:organista/services/auth/auth_error.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
+import 'package:organista/services/auth/auth_service.dart';
+import 'package:organista/services/auth/auth_user.dart';
 
 part 'app_event.dart';
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({
-    required this.firebaseAuthRepository,
     required this.firebaseFirestoreRepository,
     required this.firebaseStorageRepository,
   }) : super(const AppStateLoggedOut(isLoading: false)) {
@@ -26,7 +26,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<AppEventForgotPassword>(_appEventForgotPassword);
   }
 
-  final FirebaseAuthRepository firebaseAuthRepository;
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
 
@@ -45,12 +44,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     try {
-      await firebaseFirestoreRepository.deleteUser(userId: user.uid);
-      await firebaseStorageRepository.deleteFolder(user.uid);
+      await firebaseFirestoreRepository.deleteUser(userId: user.id);
+      await firebaseStorageRepository.deleteFolder(user.id);
       // delete the user
-      await user.delete();
+      await AuthService.firebase().deleteUser();
       // log the user out
-      await firebaseAuthRepository.signOut();
+      await AuthService.firebase().logOut();
       // log the user out in the UI as well
       emit(
         const AppStateLoggedOut(
@@ -84,7 +83,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     // log the user out
-    await firebaseAuthRepository.signOut();
+    await AuthService.firebase().logOut();
     // log the user out in the UI as well
     emit(
       const AppStateLoggedOut(
@@ -94,7 +93,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
   void _appEventInitialize(event, emit) async {
-    final user = firebaseAuthRepository.getCurrentUser();
+    final user = AuthService.firebase().currentUser;
     if (user == null) {
       emit(
         const AppStateLoggedOut(
@@ -120,18 +119,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     final password = event.password;
     try {
       // create the user
-      final credentials = await firebaseAuthRepository.createUserWithEmailAndPassword(
+      final authUser = await AuthService.firebase().createUser(
         email: email,
         password: password,
       );
       await firebaseFirestoreRepository.uploadNewUser(
-        user: credentials.user!,
+        user: authUser,
       );
       await firebaseFirestoreRepository.createUserRepository(
-        user: credentials.user!,
+        user: authUser,
       );
       emit(
-        AppStateLoggedIn(isLoading: false, user: credentials.user!),
+        AppStateLoggedIn(isLoading: false, user: authUser),
       );
     } on FirebaseAuthException catch (e) {
       emit(
@@ -161,11 +160,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     try {
       final email = event.email;
       final password = event.password;
-      final userCredential = await firebaseAuthRepository.signInWithEmailAndPassword(
+      final authUser = await AuthService.firebase().logIn(
         email: email,
         password: password,
       );
-      final user = userCredential.user!;
+      final user = authUser;
       emit(
         AppStateLoggedIn(
           isLoading: false,
@@ -197,11 +196,11 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ),
     );
     try {
-      await firebaseAuthRepository.sendPasswordResetEmail(event.email);
+      final resetSuccess = await AuthService.firebase().sendPasswordResetEmail(email: event.email);
       emit(
-        const AppStateLoggedOut(
+        AppStateLoggedOut(
           isLoading: false,
-          passwordResetSent: true,
+          passwordResetSent: resetSuccess,
         ),
       );
     } on FirebaseAuthException catch (e) {

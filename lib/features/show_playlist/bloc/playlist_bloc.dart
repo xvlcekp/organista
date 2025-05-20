@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
@@ -10,6 +9,7 @@ import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:organista/services/auth/auth_user.dart';
 
 part 'playlist_event.dart';
 part 'playlist_state.dart';
@@ -41,17 +41,17 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     // upload the file
     final MusicSheetFile file = event.file;
     final String fileName = event.fileName;
-    final User user = event.user;
+    final AuthUser user = event.user;
     final String repositoryId = event.repositoryId;
     try {
       final Reference? reference = await firebaseStorageRepository.uploadFile(
         file: file,
-        bucket: user.uid,
+        bucket: user.id,
       );
       if (reference != null) {
         await firebaseFirestoreRepository.uploadMusicSheetRecord(
           reference: reference,
-          userId: user.uid,
+          userId: user.id,
           fileName: fileName,
           mediaType: file.mediaType,
           repositoryId: repositoryId,

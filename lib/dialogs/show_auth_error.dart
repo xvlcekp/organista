@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' show BuildContext;
-import 'package:organista/auth/auth_error.dart';
+import 'package:organista/services/auth/auth_error.dart';
 import 'package:organista/dialogs/generic_dialog.dart';
 
 Future<void> showAuthError({

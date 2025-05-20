@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/firebase_options.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
-import 'package:organista/repositories/firebase_auth_repository.dart';
 import 'package:organista/models/repositories/repository_payload.dart';
 import 'package:organista/models/repositories/repository_key.dart';
+import 'package:organista/services/auth/auth_service.dart';
 
 import 'auth_utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await AuthService.firebase().initialize();
   runApp(const MyApp());
 }
 
@@ -41,7 +37,6 @@ class _MigrationScreen extends StatefulWidget {
 class _MigrationScreenState extends State<_MigrationScreen> {
   bool isMigrating = false;
   List<String> migratedDocs = [];
-  final FirebaseAuthRepository firebaseAuthRepository = FirebaseAuthRepository();
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> migrateMusicSheets() async {
@@ -60,7 +55,7 @@ class _MigrationScreenState extends State<_MigrationScreen> {
       final repoDocRef = firestore.collection(FirebaseCollectionName.repositories).doc();
       final repositoryPayload = RepositoryPayload(
         name: 'Main Repository',
-        userId: user.uid,
+        userId: user.id,
       );
       await repoDocRef.set(repositoryPayload);
 

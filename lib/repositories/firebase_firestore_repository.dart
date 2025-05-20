@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/extensions/string_extensions.dart';
@@ -20,6 +19,7 @@ import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/models/repositories/repository_key.dart';
+import 'package:organista/services/auth/auth_user.dart';
 
 class FirebaseFirestoreRepository {
   final instance = FirebaseFirestore.instance;
@@ -34,13 +34,13 @@ class FirebaseFirestoreRepository {
   // USER OPERATIONS
 
   Future<bool> uploadNewUser({
-    required User user,
+    required AuthUser user,
   }) async {
     try {
       final userPayload = UserInfoPayload(
-        userId: user.uid,
+        userId: user.id,
         displayName: '',
-        email: user.email!,
+        email: user.email,
       );
       await instance.collection(FirebaseCollectionName.users).add(userPayload);
       return true;
@@ -294,22 +294,27 @@ class FirebaseFirestoreRepository {
 
   // REPOSITORY OPERATIONS
 
-  Stream<Iterable<Repository>> getRepositoriesStream() {
-    return instance.collection(FirebaseCollectionName.repositories).snapshots(includeMetadataChanges: true).where((event) => !event.metadata.hasPendingWrites).map((snapshot) {
-      logger.i("Got repositories data");
-      final documents = snapshot.docs;
-      logger.i("New repositories length: ${documents.length}");
-      return documents.map((doc) => Repository(
-            json: {
-              ...doc.data(),
-              RepositoryKey.repositoryId: doc.id,
-            },
-          ));
-    }).handleError((error, stackTrace) {
-      logger.e('Error in getRepositoriesStream: $error');
-      FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in repositories stream');
-      return <Repository>[];
-    });
+  Stream<Iterable<Repository>> getRepositoriesStream({required String userId}) {
+    return instance
+        .collection(FirebaseCollectionName.repositories)
+        .where(RepositoryKey.userId, whereIn: [userId, ''])
+        .snapshots(includeMetadataChanges: true)
+        .where((event) => !event.metadata.hasPendingWrites)
+        .map((snapshot) {
+          final documents = snapshot.docs;
+          logger.i("Got repositories data with length: ${documents.length}");
+          return documents.map((doc) => Repository(
+                json: {
+                  ...doc.data(),
+                  RepositoryKey.repositoryId: doc.id,
+                },
+              ));
+        })
+        .handleError((error, stackTrace) {
+          logger.e('Error in getRepositoriesStream: $error');
+          FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in repositories stream');
+          return <Repository>[];
+        });
   }
 
   Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
@@ -334,8 +339,8 @@ class FirebaseFirestoreRepository {
     return _createRepository(userId: '', name: name);
   }
 
-  Future<bool> createUserRepository({required User user}) async {
-    return _createRepository(userId: user.uid, name: 'Custom repository - ${user.email ?? 'without email'}');
+  Future<bool> createUserRepository({required AuthUser user}) async {
+    return _createRepository(userId: user.id, name: 'Custom repository - ${user.email}');
   }
 
   Future<bool> _createRepository({
