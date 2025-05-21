@@ -22,8 +22,10 @@ class LoginView extends HookWidget {
       useEffect(() {
         void loadConfig() async {
           await Config.load();
-          emailController.text = Config.get('emailTesterUser') ?? '';
-          passwordController.text = Config.get('passwordTesterUser') ?? '';
+          if (context.mounted) {
+            emailController.text = Config.get('emailTesterUser') ?? '';
+            passwordController.text = Config.get('passwordTesterUser') ?? '';
+          }
         }
 
         loadConfig();
