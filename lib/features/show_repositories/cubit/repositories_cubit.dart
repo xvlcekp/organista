@@ -22,7 +22,12 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
 
   void startSubscribingRepositories({required String userId}) async {
     _streamSubscription = firebaseFirestoreRepository.getRepositoriesStream(userId: userId).listen((repositories) {
-      emit(RepositoriesLoadedState(repositories: repositories.toList()));
+      final publicRepos = repositories.where((repo) => repo.userId.isEmpty).toList();
+      final privateRepos = repositories.where((repo) => repo.userId == userId).toList();
+      emit(RepositoriesLoadedState(
+        publicRepositories: publicRepos,
+        privateRepositories: privateRepos,
+      ));
     });
   }
 

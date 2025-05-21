@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'package:organista/views/main_popup_menu_button.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
@@ -46,9 +45,6 @@ class RepositoriesViewContent extends HookWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('${localizations.repositories} 📁'),
-        actions: const [
-          MainPopupMenuButton(),
-        ],
       ),
       body: BlocBuilder<ShowRepositoriesCubit, ShowRepositoriesState>(
         builder: (context, state) {
@@ -60,9 +56,7 @@ class RepositoriesViewContent extends HookWidget {
   }
 
   Widget _buildRepositoryList(BuildContext context, ShowRepositoriesState state, String userId, int selectedTabIndex) {
-    final globalRepositories = state.repositories.where((repo) => repo.userId.isEmpty).toList();
-    final personalRepositories = state.repositories.where((repo) => repo.userId == userId).toList();
-    final currentRepositories = selectedTabIndex == 0 ? globalRepositories : personalRepositories;
+    final currentRepositories = selectedTabIndex == 0 ? state.publicRepositories : state.privateRepositories;
     final localizations = context.loc;
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
