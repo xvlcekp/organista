@@ -5,11 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/main.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/models/repositories/repository.dart';
-import 'package:organista/services/auth/auth_service.dart';
 import 'package:organista/services/auth/auth_user.dart';
 
 import 'auth_utils.dart';
@@ -18,8 +18,7 @@ final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firebaseStorageRepository = FirebaseStorageRepository();
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await AuthService.firebase().initialize();
+  await mainInitialize();
   runApp(const MyApp());
 }
 

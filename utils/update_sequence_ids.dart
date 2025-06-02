@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/main.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/services/auth/auth_service.dart';
 
 import 'auth_utils.dart';
 
@@ -79,8 +79,7 @@ Future<void> updateSequenceIds({
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await AuthService.firebase().initialize();
+  await mainInitialize();
   runApp(const MyApp());
 }
 

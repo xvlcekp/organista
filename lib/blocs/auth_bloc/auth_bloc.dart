@@ -1,18 +1,19 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseException, FirebaseAuthException;
 import 'package:organista/services/auth/auth_error.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
-import 'package:organista/services/auth/auth_service.dart';
 import 'package:organista/services/auth/auth_user.dart';
+import 'package:organista/services/auth/auth_provider.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
+    required this.authProvider,
     required this.firebaseFirestoreRepository,
     required this.firebaseStorageRepository,
   }) : super(const AuthStateLoggedOut(isLoading: false)) {
@@ -26,6 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventForgotPassword>(_authEventForgotPassword);
   }
 
+  final AuthProvider authProvider;
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
 
@@ -47,9 +49,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await firebaseFirestoreRepository.deleteUser(userId: user.id);
       await firebaseStorageRepository.deleteFolder(user.id);
       // delete the user
-      await AuthService.firebase().deleteUser();
+      await authProvider.deleteUser();
       // log the user out
-      await AuthService.firebase().logOut();
+      await authProvider.logOut();
       // log the user out in the UI as well
       emit(
         const AuthStateLoggedOut(
@@ -78,27 +80,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _authEventLogOut(event, emit) async {
     // start loading
     emit(
-      const AuthStateLoggedOut(
-        isLoading: true,
-      ),
+      const AuthStateLoggedOut(isLoading: true),
     );
     // log the user out
-    await AuthService.firebase().logOut();
+    await authProvider.logOut();
     // log the user out in the UI as well
     emit(
-      const AuthStateLoggedOut(
-        isLoading: false,
-      ),
+      const AuthStateLoggedOut(isLoading: false),
     );
   }
 
   void _authEventInitialize(event, emit) async {
-    final user = AuthService.firebase().currentUser;
+    await authProvider.initialize();
+    final user = authProvider.currentUser;
     if (user == null) {
       emit(
-        const AuthStateLoggedOut(
-          isLoading: false,
-        ),
+        const AuthStateLoggedOut(isLoading: false),
       );
     } else {
       emit(AuthStateLoggedIn(
@@ -119,7 +116,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final password = event.password;
     try {
       // create the user
-      final authUser = await AuthService.firebase().createUser(
+      final authUser = await authProvider.createUser(
         email: email,
         password: password,
       );
@@ -152,15 +149,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _authEventLogIn(event, emit) async {
     emit(
-      const AuthStateLoggedOut(
-        isLoading: true,
-      ),
+      const AuthStateLoggedOut(isLoading: true),
     );
     // log the user in
     try {
       final email = event.email;
       final password = event.password;
-      final authUser = await AuthService.firebase().logIn(
+      final authUser = await authProvider.logIn(
         email: email,
         password: password,
       );
@@ -196,7 +191,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ),
     );
     try {
-      final resetSuccess = await AuthService.firebase().sendPasswordResetEmail(email: event.email);
+      final resetSuccess = await authProvider.sendPasswordResetEmail(email: event.email);
       emit(
         AuthStateLoggedOut(
           isLoading: false,
