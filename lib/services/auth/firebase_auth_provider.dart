@@ -1,7 +1,8 @@
 import 'package:organista/services/auth/auth_provider.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_error.dart';
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException, GoogleAuthProvider;
+import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthProvider implements AuthProvider {
   @override
@@ -15,7 +16,7 @@ class FirebaseAuthProvider implements AuthProvider {
     required String password,
   }) async {
     try {
-      FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -65,10 +66,50 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
+  Future<AuthUser> signInWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      // Clear any previous account selection to force account picker
+      await googleSignIn.signOut();
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        throw const AuthGenericException();
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final user = currentUser;
+      if (user != null) {
+        return user;
+      } else {
+        throw AuthErrorUserNotLoggedIn();
+      }
+    } on FirebaseAuthException catch (e) {
+      throw AuthError.from(e);
+    } catch (_) {
+      throw const AuthGenericException();
+    }
+  }
+
+  @override
   Future<void> logOut() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await FirebaseAuth.instance.signOut();
+      // Sign out from both Firebase and Google
+      await Future.wait([
+        FirebaseAuth.instance.signOut(),
+        GoogleSignIn().signOut(),
+      ]);
     } else {
       throw AuthErrorUserNotLoggedIn();
     }
@@ -101,7 +142,20 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<void> deleteUser() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await user.delete();
+      try {
+        await user.delete();
+      } catch (e) {
+        // If user deletion fails, try to sign out first then delete
+        try {
+          await Future.wait([
+            FirebaseAuth.instance.signOut(),
+            GoogleSignIn().signOut(),
+          ]);
+        } catch (_) {
+          // Ignore sign-out errors during deletion
+        }
+        rethrow;
+      }
     } else {
       throw AuthErrorUserNotLoggedIn();
     }

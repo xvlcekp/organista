@@ -287,6 +287,12 @@ abstract class AppLocalizations {
   /// **'Prihlásiť sa'**
   String get login;
 
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prihlásiť sa pomocou Google'**
+  String get signInWithGoogle;
+
   /// No description provided for @register.
   ///
   /// In sk, this message translates to:

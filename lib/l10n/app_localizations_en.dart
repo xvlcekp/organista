@@ -105,6 +105,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get login => 'Login';
 
   @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
   String get register => 'Register';
 
   @override

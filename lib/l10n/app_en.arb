@@ -32,6 +32,7 @@
     "verifyPasswordRequired": "Please verify your password",
     "passwordsDoNotMatch": "Passwords do not match",
     "login": "Login",
+    "signInWithGoogle": "Sign in with Google",
     "register": "Register",
     "playlists": "Playlists",
     "repositories": "Repositories",

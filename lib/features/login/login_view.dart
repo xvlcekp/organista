@@ -118,6 +118,22 @@ class LoginView extends HookWidget {
                       child: Text(localizations.login),
                     ),
                     const SizedBox(height: 16),
+                    // Google Sign-In Button
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        context.read<AuthBloc>().add(
+                              const AuthEventSignInWithGoogle(),
+                            );
+                      },
+                      icon: const Icon(Icons.g_mobiledata),
+                      label: Text(localizations.signInWithGoogle),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.colorScheme.onSurface,
+                        side: BorderSide(color: theme.colorScheme.outline),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     // Register Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

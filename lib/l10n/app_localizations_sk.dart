@@ -105,6 +105,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get login => 'Prihlásiť sa';
 
   @override
+  String get signInWithGoogle => 'Prihlásiť sa pomocou Google';
+
+  @override
   String get register => 'Registrovať sa';
 
   @override

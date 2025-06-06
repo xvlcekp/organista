@@ -12,7 +12,28 @@
           "package_name": "sk.anickaapavol.organista"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "613500039629-in6l5hp07ebi7v2s6a8p5kctnlsvlr3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.anickaapavol.organista",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "613500039629-spu5i9dqg84e6h2js8decoobfqeggc46.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.anickaapavol.organista",
+            "certificate_hash": "c7ebc5d3f736516583c18b3fe4aaa01a3bac93a1"
+          }
+        },
+        {
+          "client_id": "613500039629-gcu0ejlq7ofcr6d5tmdsul2gussjdljk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAlY4D0adf0Z2LvJZOVtY_ziDdLUcJst9s"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613500039629-gcu0ejlq7ofcr6d5tmdsul2gussjdljk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "613500039629-53r67ad27vflravd77qnj9k8ag59pghs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "sk.anickaapavol.organista"
+              }
+            }
+          ]
         }
       }
     }

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseException, FirebaseAuthException;
+import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/services/auth/auth_error.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -19,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }) : super(const AuthStateLoggedOut(isLoading: false)) {
     on<AuthEventGoToRegistration>(_authEventGoToRegistration);
     on<AuthEventLogIn>(_authEventLogIn);
+    on<AuthEventSignInWithGoogle>(_authEventSignInWithGoogle);
     on<AuthEventGoToLogin>(_authEventGoToLogin);
     on<AuthEventRegister>(_authEventRegister);
     on<AuthEventInitialize>(_authEventInitialize);
@@ -30,6 +33,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthProvider authProvider;
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
+
+  /// Helper method to rollback Firebase Auth user creation with proper logging
+  Future<void> _rollbackAuthUser(String context) async {
+    logger.e('Failed to create user data in Firestore during $context');
+    try {
+      await authProvider.deleteUser();
+      logger.i('Successfully rolled back Firebase Auth user creation during $context');
+    } catch (deleteError) {
+      logger.e('Failed to rollback Firebase Auth user during $context: $deleteError');
+      // Continue execution - rollback failure shouldn't prevent showing original error
+    }
+  }
+
+  /// Helper method to check if an error indicates user already exists
+  bool _isUserAlreadyExistsError(Object error) {
+    final errorMessage = error.toString().toLowerCase();
+    return errorMessage.contains('already exists') || errorMessage.contains('document already exists') || errorMessage.contains('permission-denied');
+  }
 
   void _authEventDeleteAccount(event, emit) async {
     final user = state.user;
@@ -46,13 +67,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ),
     );
     try {
+      // First, sign out from Google Sign-In to prevent state issues
+      try {
+        await GoogleSignIn().signOut();
+      } catch (e) {
+        // Ignore if Google Sign-In fails - user might not be signed in via Google
+        logger.i('Google Sign-Out during account deletion: $e');
+      }
+
+      // Delete user data from Firestore and Storage
       await firebaseFirestoreRepository.deleteUser(userId: user.id);
       await firebaseStorageRepository.deleteFolder(user.id);
-      // delete the user
+
+      // Delete the Firebase user account
       await authProvider.deleteUser();
-      // log the user out
-      await authProvider.logOut();
-      // log the user out in the UI as well
+
+      // Emit logged out state immediately after successful deletion
       emit(
         const AuthStateLoggedOut(
           isLoading: false,
@@ -67,11 +97,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       );
     } on FirebaseException {
-      // we might not be able to delete the folder
-      // log the user out
+      // we might not be able to delete the folder, but user is deleted
+      // log the user out anyway
       emit(
         const AuthStateLoggedOut(
           isLoading: false,
+        ),
+      );
+    } catch (e) {
+      // Handle any other errors
+      logger.e('Error during account deletion: $e');
+      emit(
+        AuthStateLoggedIn(
+          isLoading: false,
+          user: user,
+          authError: const AuthGenericException(),
         ),
       );
     }
@@ -120,12 +160,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: email,
         password: password,
       );
-      await firebaseFirestoreRepository.uploadNewUser(
-        user: authUser,
-      );
-      await firebaseFirestoreRepository.createUserRepository(
-        user: authUser,
-      );
+
+      try {
+        await firebaseFirestoreRepository.uploadNewUser(
+          user: authUser,
+        );
+        await firebaseFirestoreRepository.createUserRepository(
+          user: authUser,
+        );
+      } catch (e) {
+        // Firestore operations failed - rollback the Firebase Auth user
+        await _rollbackAuthUser('registration');
+        rethrow; // Re-throw the original error
+      }
+
       emit(
         AuthStateLoggedIn(isLoading: false, user: authUser),
       );
@@ -134,6 +182,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AuthStateIsInRegistrationView(
           isLoading: false,
           authError: AuthError.from(e),
+        ),
+      );
+    } catch (e) {
+      // Handle any non-FirebaseAuth errors (including Firestore rollback errors)
+      emit(
+        AuthStateIsInRegistrationView(
+          isLoading: false,
+          authError: const AuthGenericException(),
         ),
       );
     }
@@ -203,6 +259,56 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AuthStateLoggedOut(
           isLoading: false,
           authError: AuthError.from(e),
+        ),
+      );
+    }
+  }
+
+  void _authEventSignInWithGoogle(event, emit) async {
+    emit(
+      const AuthStateLoggedOut(isLoading: true),
+    );
+    try {
+      final authUser = await authProvider.signInWithGoogle();
+
+      // Try to upload new user - if they already exist, this will fail but that's okay
+      try {
+        await firebaseFirestoreRepository.uploadNewUser(
+          user: authUser,
+        );
+        await firebaseFirestoreRepository.createUserRepository(
+          user: authUser,
+        );
+      } catch (e) {
+        // Check if this is a "user already exists" error or a real failure
+        if (_isUserAlreadyExistsError(e)) {
+          // User already exists, this is fine - continue with login
+          logger.i('User already exists in Firestore, continuing with Google Sign-In: $e');
+        } else {
+          // This is a real failure - rollback the Firebase Auth user
+          await _rollbackAuthUser('Google Sign-In');
+          rethrow; // Re-throw the original error
+        }
+      }
+
+      emit(
+        AuthStateLoggedIn(
+          isLoading: false,
+          user: authUser,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthError.from(e),
+        ),
+      );
+    } catch (e) {
+      emit(
+        const AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthGenericException(),
         ),
       );
     }

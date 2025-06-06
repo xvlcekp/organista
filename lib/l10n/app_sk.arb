@@ -32,6 +32,7 @@
     "verifyPasswordRequired": "Prosím, potvrďte svoje heslo",
     "passwordsDoNotMatch": "Heslá sa nezhodujú",
     "login": "Prihlásiť sa",
+    "signInWithGoogle": "Prihlásiť sa pomocou Google",
     "register": "Registrovať sa",
     "playlists": "Zoznamy skladieb",
     "repositories": "Repozitáre",
