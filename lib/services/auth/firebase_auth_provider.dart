@@ -1,7 +1,7 @@
 import 'package:organista/services/auth/auth_provider.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_error.dart';
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException, GoogleAuthProvider;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, GoogleAuthProvider;
 import 'package:google_sign_in/google_sign_in.dart';
 
 // TODO - fix error message when registering with email address that already exists
@@ -18,21 +18,15 @@ class FirebaseAuthProvider implements AuthProvider {
     required String email,
     required String password,
   }) async {
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      final user = currentUser;
-      if (user != null) {
-        return user;
-      } else {
-        throw AuthErrorUserNotLoggedIn();
-      }
-    } on FirebaseAuthException catch (e) {
-      throw AuthError.from(e);
-    } catch (_) {
-      throw const AuthGenericException();
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final user = currentUser;
+    if (user != null) {
+      return user;
+    } else {
+      throw AuthErrorUserNotLoggedIn();
     }
   }
 
@@ -50,63 +44,51 @@ class FirebaseAuthProvider implements AuthProvider {
     required String email,
     required String password,
   }) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      final user = currentUser;
-      if (user != null) {
-        return user;
-      } else {
-        throw AuthErrorUserNotLoggedIn();
-      }
-    } on FirebaseAuthException catch (e) {
-      throw AuthError.from(e);
-    } catch (_) {
-      throw const AuthGenericException();
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final user = currentUser;
+    if (user != null) {
+      return user;
+    } else {
+      throw AuthErrorUserNotLoggedIn();
     }
   }
 
   @override
   Future<AuthUser> signInWithGoogle() async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // Clear any previous account selection to force account picker
-      await googleSignIn.signOut();
+    // Clear any previous account selection to force account picker
+    await googleSignIn.signOut();
 
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      if (googleUser == null) {
-        throw const AuthGenericException();
-      }
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-
-      final user = currentUser;
-      if (user != null) {
-        return user;
-      } else {
-        throw AuthErrorUserNotLoggedIn();
-      }
-    } on FirebaseAuthException catch (e) {
-      throw AuthError.from(e);
-    } catch (_) {
+    if (googleUser == null) {
       throw const AuthGenericException();
+    }
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    final user = currentUser;
+    if (user != null) {
+      return user;
+    } else {
+      throw AuthErrorUserNotLoggedIn();
     }
   }
 
   @override
   Future<void> logOut() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = currentUser;
     if (user != null) {
       // Sign out from both Firebase and Google
       await Future.wait([
@@ -128,17 +110,10 @@ class FirebaseAuthProvider implements AuthProvider {
     }
   }
 
-  // TODO: AuthError.form, how to fix it?
   @override
   Future<bool> sendPasswordResetEmail({required String email}) async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      return true;
-    } on FirebaseAuthException catch (e) {
-      throw AuthError.from(e);
-    } catch (_) {
-      throw const AuthGenericException();
-    }
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    return true;
   }
 
   @override
