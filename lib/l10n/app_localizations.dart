@@ -860,7 +860,7 @@ abstract class AppLocalizations {
   /// No description provided for @authErrorRequiresRecentLoginTitle.
   ///
   /// In sk, this message translates to:
-  /// **'Vyžaduje sa nedávne prihlásenie'**
+  /// **'Vyžaduje sa prihlásenie znova'**
   String get authErrorRequiresRecentLoginTitle;
 
   /// No description provided for @authErrorRequiresRecentLoginText.
@@ -920,13 +920,13 @@ abstract class AppLocalizations {
   /// No description provided for @authErrorEmailAlreadyInUseTitle.
   ///
   /// In sk, this message translates to:
-  /// **'E-mail sa už používa'**
+  /// **'Užívateľ s daným emailom už existuje.'**
   String get authErrorEmailAlreadyInUseTitle;
 
   /// No description provided for @authErrorEmailAlreadyInUseText.
   ///
   /// In sk, this message translates to:
-  /// **'Prosím, vyberte iný e-mail na registráciu!'**
+  /// **'Prosím, použite iný e-mail na registráciu!'**
   String get authErrorEmailAlreadyInUseText;
 
   /// No description provided for @authErrorUserDisabledTitle.
@@ -950,7 +950,7 @@ abstract class AppLocalizations {
   /// No description provided for @authErrorInvalidCredentialText.
   ///
   /// In sk, this message translates to:
-  /// **'Zadané prihlasovacie údaje sú nesprávne, poškodené alebo vypršali.'**
+  /// **'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.'**
   String get authErrorInvalidCredentialText;
 }
 

@@ -396,7 +396,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authErrorUserNotLoggedInText => 'Žiadny používateľ nie je momentálne prihlásený!';
 
   @override
-  String get authErrorRequiresRecentLoginTitle => 'Vyžaduje sa nedávne prihlásenie';
+  String get authErrorRequiresRecentLoginTitle => 'Vyžaduje sa prihlásenie znova';
 
   @override
   String get authErrorRequiresRecentLoginText => 'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
@@ -426,10 +426,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authErrorInvalidEmailText => 'Prosím, skontrolujte svoj e-mail a skúste to znova!';
 
   @override
-  String get authErrorEmailAlreadyInUseTitle => 'E-mail sa už používa';
+  String get authErrorEmailAlreadyInUseTitle => 'Užívateľ s daným emailom už existuje.';
 
   @override
-  String get authErrorEmailAlreadyInUseText => 'Prosím, vyberte iný e-mail na registráciu!';
+  String get authErrorEmailAlreadyInUseText => 'Prosím, použite iný e-mail na registráciu!';
 
   @override
   String get authErrorUserDisabledTitle => 'Používateľský účet je deaktivovaný';
@@ -441,5 +441,5 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authErrorInvalidCredentialTitle => 'Neplatné prihlasovacie údaje';
 
   @override
-  String get authErrorInvalidCredentialText => 'Zadané prihlasovacie údaje sú nesprávne, poškodené alebo vypršali.';
+  String get authErrorInvalidCredentialText => 'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.';
 }

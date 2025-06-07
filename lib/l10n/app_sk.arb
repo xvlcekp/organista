@@ -131,7 +131,7 @@
     "authErrorUserNotLoggedInTitle": "Používateľ nie je prihlásený!",
     "authErrorUserNotLoggedInText": "Žiadny používateľ nie je momentálne prihlásený!",
     
-    "authErrorRequiresRecentLoginTitle": "Vyžaduje sa nedávne prihlásenie",
+    "authErrorRequiresRecentLoginTitle": "Vyžaduje sa prihlásenie znova",
     "authErrorRequiresRecentLoginText": "Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu",
     
     "authErrorOperationNotAllowedTitle": "Operácia nie je povolená",
@@ -146,12 +146,12 @@
     "authErrorInvalidEmailTitle": "Neplatný e-mail",
     "authErrorInvalidEmailText": "Prosím, skontrolujte svoj e-mail a skúste to znova!",
     
-    "authErrorEmailAlreadyInUseTitle": "E-mail sa už používa",
-    "authErrorEmailAlreadyInUseText": "Prosím, vyberte iný e-mail na registráciu!",
+    "authErrorEmailAlreadyInUseTitle": "Užívateľ s daným emailom už existuje.",
+    "authErrorEmailAlreadyInUseText": "Prosím, použite iný e-mail na registráciu!",
     
     "authErrorUserDisabledTitle": "Používateľský účet je deaktivovaný",
     "authErrorUserDisabledText": "Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.",
     
     "authErrorInvalidCredentialTitle": "Neplatné prihlasovacie údaje",
-    "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, poškodené alebo vypršali."
+    "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo."
 }
