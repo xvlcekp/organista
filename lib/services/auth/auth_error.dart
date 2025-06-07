@@ -16,13 +16,7 @@ const Map<String, AuthError> authErrorMapping = {
 
 @immutable
 abstract class AuthError {
-  final String dialogTitle;
-  final String dialogText;
-
-  const AuthError({
-    required this.dialogTitle,
-    required this.dialogText,
-  });
+  const AuthError();
 
   factory AuthError.from(FirebaseAuthException exception) {
     return authErrorMapping[exception.code.toLowerCase().trim()] ?? AuthErrorUnknown(exception: exception);
@@ -32,115 +26,71 @@ abstract class AuthError {
 @immutable
 class AuthErrorUnknown extends AuthError {
   final FirebaseAuthException exception;
-  AuthErrorUnknown({required this.exception})
-      : super(
-          dialogTitle: 'Authentication error',
-          dialogText: exception.message ?? 'Unknown error',
-        ) {
+  AuthErrorUnknown({required this.exception}) : super() {
     logger.e(exception);
   }
 }
 
 @immutable
 class AuthGenericException extends AuthError {
-  const AuthGenericException()
-      : super(
-          dialogTitle: 'Authentication error',
-          dialogText: 'An unknown error occurred',
-        );
+  const AuthGenericException() : super();
 }
 
 // auth/no-current-user
 
 @immutable
 class AuthErrorUserNotLoggedIn extends AuthError {
-  const AuthErrorUserNotLoggedIn()
-      : super(
-          dialogTitle: 'User not logged in!',
-          dialogText: 'No user is currently logged in!',
-        );
+  const AuthErrorUserNotLoggedIn() : super();
 }
 
 // auth/requires-recent-login
 
 @immutable
 class AuthErrorRequiresRecentLogin extends AuthError {
-  const AuthErrorRequiresRecentLogin()
-      : super(
-          dialogTitle: 'Requires recent login',
-          dialogText: 'You need to log out and log back in again in order to perform this operation',
-        );
+  const AuthErrorRequiresRecentLogin() : super();
 }
 
 // auth/operation-not-allowed
 
 @immutable
 class AuthErrorOperationNotAllowed extends AuthError {
-  const AuthErrorOperationNotAllowed()
-      : super(
-          dialogTitle: 'Operation not allowed',
-          dialogText: 'You cannot register using this method at this moment!',
-        );
+  const AuthErrorOperationNotAllowed() : super();
 }
 
 // auth/user-not-found
 
 @immutable
 class AuthErrorUserNotFound extends AuthError {
-  const AuthErrorUserNotFound()
-      : super(
-          dialogTitle: 'User not found',
-          dialogText: 'The given user was not found on the server!',
-        );
+  const AuthErrorUserNotFound() : super();
 }
 
 // auth/weak-password
 
 @immutable
 class AuthErrorWeakPassword extends AuthError {
-  const AuthErrorWeakPassword()
-      : super(
-          dialogTitle: 'Weak password',
-          dialogText: 'Please choose a stronger password consisting of more characters!',
-        );
+  const AuthErrorWeakPassword() : super();
 }
 
 // auth/invalid-email
 
 @immutable
 class AuthErrorInvalidEmail extends AuthError {
-  const AuthErrorInvalidEmail()
-      : super(
-          dialogTitle: 'Invalid email',
-          dialogText: 'Please double check your email and try again!',
-        );
+  const AuthErrorInvalidEmail() : super();
 }
 
 // auth/email-already-in-use
 
 @immutable
 class AuthErrorEmailAlreadyInUse extends AuthError {
-  const AuthErrorEmailAlreadyInUse()
-      : super(
-          dialogTitle: 'Email already in use',
-          dialogText: 'Please choose another email to register with!',
-        );
+  const AuthErrorEmailAlreadyInUse() : super();
 }
 
 @immutable
 class AuthErrorUserDisabled extends AuthError {
-  const AuthErrorUserDisabled()
-      : super(
-          dialogTitle: 'User is disabled',
-          dialogText: 'This user has been disabled. Please contact support for help.',
-        );
+  const AuthErrorUserDisabled() : super();
 }
 
 @immutable
 class AuthErrorInvalidCredential extends AuthError {
-  const AuthErrorInvalidCredential()
-      : super(
-          dialogTitle: 'Credential is invalid',
-          dialogText: 'The supplied auth credential is incorrect, malformed or has expired.',
-        );
+  const AuthErrorInvalidCredential() : super();
 }

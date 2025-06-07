@@ -820,6 +820,138 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Zobraziť navigačné šípky'**
   String get showNavigationArrows;
+
+  /// No description provided for @authErrorUnknownTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Chyba pri prihlásení'**
+  String get authErrorUnknownTitle;
+
+  /// No description provided for @authErrorUnknownText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Neznáma chyba'**
+  String get authErrorUnknownText;
+
+  /// No description provided for @authGenericExceptionTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Chyba pri prihlásení'**
+  String get authGenericExceptionTitle;
+
+  /// No description provided for @authGenericExceptionText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vyskytla sa neznáma chyba'**
+  String get authGenericExceptionText;
+
+  /// No description provided for @authErrorUserNotLoggedInTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Používateľ nie je prihlásený!'**
+  String get authErrorUserNotLoggedInTitle;
+
+  /// No description provided for @authErrorUserNotLoggedInText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Žiadny používateľ nie je momentálne prihlásený!'**
+  String get authErrorUserNotLoggedInText;
+
+  /// No description provided for @authErrorRequiresRecentLoginTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vyžaduje sa nedávne prihlásenie'**
+  String get authErrorRequiresRecentLoginTitle;
+
+  /// No description provided for @authErrorRequiresRecentLoginText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu'**
+  String get authErrorRequiresRecentLoginText;
+
+  /// No description provided for @authErrorOperationNotAllowedTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Operácia nie je povolená'**
+  String get authErrorOperationNotAllowedTitle;
+
+  /// No description provided for @authErrorOperationNotAllowedText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!'**
+  String get authErrorOperationNotAllowedText;
+
+  /// No description provided for @authErrorUserNotFoundTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Používateľ nebol nájdený'**
+  String get authErrorUserNotFoundTitle;
+
+  /// No description provided for @authErrorUserNotFoundText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zadaný používateľ nebol nájdený na serveri!'**
+  String get authErrorUserNotFoundText;
+
+  /// No description provided for @authErrorWeakPasswordTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Slabé heslo'**
+  String get authErrorWeakPasswordTitle;
+
+  /// No description provided for @authErrorWeakPasswordText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!'**
+  String get authErrorWeakPasswordText;
+
+  /// No description provided for @authErrorInvalidEmailTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Neplatný e-mail'**
+  String get authErrorInvalidEmailTitle;
+
+  /// No description provided for @authErrorInvalidEmailText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prosím, skontrolujte svoj e-mail a skúste to znova!'**
+  String get authErrorInvalidEmailText;
+
+  /// No description provided for @authErrorEmailAlreadyInUseTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'E-mail sa už používa'**
+  String get authErrorEmailAlreadyInUseTitle;
+
+  /// No description provided for @authErrorEmailAlreadyInUseText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prosím, vyberte iný e-mail na registráciu!'**
+  String get authErrorEmailAlreadyInUseText;
+
+  /// No description provided for @authErrorUserDisabledTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Používateľský účet je deaktivovaný'**
+  String get authErrorUserDisabledTitle;
+
+  /// No description provided for @authErrorUserDisabledText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.'**
+  String get authErrorUserDisabledText;
+
+  /// No description provided for @authErrorInvalidCredentialTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Neplatné prihlasovacie údaje'**
+  String get authErrorInvalidCredentialTitle;
+
+  /// No description provided for @authErrorInvalidCredentialText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zadané prihlasovacie údaje sú nesprávne, poškodené alebo vypršali.'**
+  String get authErrorInvalidCredentialText;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -120,5 +120,38 @@
     "errorOpeningUrl": "Error opening URL: {error}",
     "fileTooLarge": "File is too large. Maximum size is {maxSize}MB.",
     "anErrorHappened": "An error happened",
-    "showNavigationArrows": "Show navigation arrows"
+    "showNavigationArrows": "Show navigation arrows",
+
+    "authErrorUnknownTitle": "Authentication error",
+    "authErrorUnknownText": "Unknown error",
+    
+    "authGenericExceptionTitle": "Authentication error",
+    "authGenericExceptionText": "An unknown error occurred",
+    
+    "authErrorUserNotLoggedInTitle": "User not logged in!",
+    "authErrorUserNotLoggedInText": "No user is currently logged in!",
+    
+    "authErrorRequiresRecentLoginTitle": "Requires recent login",
+    "authErrorRequiresRecentLoginText": "You need to log out and log back in again in order to perform this operation",
+    
+    "authErrorOperationNotAllowedTitle": "Operation not allowed",
+    "authErrorOperationNotAllowedText": "You cannot register using this method at this moment!",
+    
+    "authErrorUserNotFoundTitle": "User not found",
+    "authErrorUserNotFoundText": "The given user was not found on the server!",
+    
+    "authErrorWeakPasswordTitle": "Weak password",
+    "authErrorWeakPasswordText": "Please choose a stronger password consisting of more characters!",
+    
+    "authErrorInvalidEmailTitle": "Invalid email",
+    "authErrorInvalidEmailText": "Please double check your email and try again!",
+    
+    "authErrorEmailAlreadyInUseTitle": "Email already in use",
+    "authErrorEmailAlreadyInUseText": "Please choose another email to register with!",
+    
+    "authErrorUserDisabledTitle": "User is disabled",
+    "authErrorUserDisabledText": "This user has been disabled. Please contact support for help.",
+    
+    "authErrorInvalidCredentialTitle": "Credential is invalid",
+    "authErrorInvalidCredentialText": "The supplied auth credential is incorrect, malformed or has expired."
 }

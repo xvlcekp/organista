@@ -120,5 +120,38 @@
     "errorOpeningUrl": "Chyba pri otváraní URL: {error}",
     "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
     "anErrorHappened": "Nastala chyba",
-    "showNavigationArrows": "Zobraziť navigačné šípky"
+    "showNavigationArrows": "Zobraziť navigačné šípky",
+
+    "authErrorUnknownTitle": "Chyba pri prihlásení",
+    "authErrorUnknownText": "Neznáma chyba",
+    
+    "authGenericExceptionTitle": "Chyba pri prihlásení",
+    "authGenericExceptionText": "Vyskytla sa neznáma chyba",
+    
+    "authErrorUserNotLoggedInTitle": "Používateľ nie je prihlásený!",
+    "authErrorUserNotLoggedInText": "Žiadny používateľ nie je momentálne prihlásený!",
+    
+    "authErrorRequiresRecentLoginTitle": "Vyžaduje sa nedávne prihlásenie",
+    "authErrorRequiresRecentLoginText": "Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu",
+    
+    "authErrorOperationNotAllowedTitle": "Operácia nie je povolená",
+    "authErrorOperationNotAllowedText": "Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!",
+    
+    "authErrorUserNotFoundTitle": "Používateľ nebol nájdený",
+    "authErrorUserNotFoundText": "Zadaný používateľ nebol nájdený na serveri!",
+    
+    "authErrorWeakPasswordTitle": "Slabé heslo",
+    "authErrorWeakPasswordText": "Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!",
+    
+    "authErrorInvalidEmailTitle": "Neplatný e-mail",
+    "authErrorInvalidEmailText": "Prosím, skontrolujte svoj e-mail a skúste to znova!",
+    
+    "authErrorEmailAlreadyInUseTitle": "E-mail sa už používa",
+    "authErrorEmailAlreadyInUseText": "Prosím, vyberte iný e-mail na registráciu!",
+    
+    "authErrorUserDisabledTitle": "Používateľský účet je deaktivovaný",
+    "authErrorUserDisabledText": "Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.",
+    
+    "authErrorInvalidCredentialTitle": "Neplatné prihlasovacie údaje",
+    "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, poškodené alebo vypršali."
 }
