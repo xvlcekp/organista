@@ -1,10 +1,10 @@
+import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/services/auth/auth_provider.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_error.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, GoogleAuthProvider;
 import 'package:google_sign_in/google_sign_in.dart';
 
-// TODO - fix error message when registering with email address that already exists
 // TODO - unify auth error messages in general, ideally do not throw custom errors (see how Vandad deals with that)
 
 class FirebaseAuthProvider implements AuthProvider {
@@ -130,7 +130,7 @@ class FirebaseAuthProvider implements AuthProvider {
             GoogleSignIn().signOut(),
           ]);
         } catch (_) {
-          // Ignore sign-out errors during deletion
+          logger.i('Ignoring sign-out errors during deletion');
         }
         rethrow;
       }
