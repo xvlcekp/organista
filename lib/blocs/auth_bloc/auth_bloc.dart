@@ -271,7 +271,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final authUser = await authProvider.signInWithGoogle();
 
-      // Try to upload new user - if they already exist, this will fail but that's okay
+      // we need to manually check if user/repository already exists in DB
       try {
         await firebaseFirestoreRepository.uploadNewUser(
           user: authUser,

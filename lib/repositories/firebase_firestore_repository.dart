@@ -37,12 +37,22 @@ class FirebaseFirestoreRepository {
     required AuthUser user,
   }) async {
     try {
+      // Check if user already exists
+      final existingUserQuery = await instance.collection(FirebaseCollectionName.users).where(UserInfoKey.userId, isEqualTo: user.id).limit(1).get();
+
+      if (existingUserQuery.docs.isNotEmpty) {
+        logger.i('User ${user.id} already exists in database, skipping creation');
+        return true; // User already exists, no need to create
+      }
+
+      // User doesn't exist, create new user
       final userPayload = UserInfoPayload(
         userId: user.id,
         displayName: '',
         email: user.email,
       );
       await instance.collection(FirebaseCollectionName.users).add(userPayload);
+      logger.i('Successfully created new user ${user.id} in database');
       return true;
     } catch (e, stackTrace) {
       logger.e('Error uploading new user: $e');
@@ -340,6 +350,15 @@ class FirebaseFirestoreRepository {
   }
 
   Future<bool> createUserRepository({required AuthUser user}) async {
+    // Check if user repository already exists
+    final existingRepoQuery = await instance.collection(FirebaseCollectionName.repositories).where(RepositoryKey.userId, isEqualTo: user.id).limit(1).get();
+
+    if (existingRepoQuery.docs.isNotEmpty) {
+      logger.i('User repository for ${user.id} already exists, skipping creation');
+      return true; // Repository already exists, no need to create
+    }
+
+    // Repository doesn't exist, create new user repository
     return _createRepository(userId: user.id, name: 'Custom repository - ${user.email}');
   }
 
