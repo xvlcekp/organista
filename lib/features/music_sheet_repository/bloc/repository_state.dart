@@ -1,26 +1,37 @@
-import 'package:equatable/equatable.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+part of 'repository_bloc.dart';
 
-sealed class MusicSheetRepositoryState extends Equatable {}
+@immutable
+abstract class MusicSheetRepositoryState extends Equatable {
+  const MusicSheetRepositoryState();
 
-class MusicSheetRepositoryLoading extends MusicSheetRepositoryState {
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
+
+class MusicSheetRepositoryInitial extends MusicSheetRepositoryState {}
+
+class MusicSheetRepositoryLoading extends MusicSheetRepositoryState {}
 
 class MusicSheetRepositoryLoaded extends MusicSheetRepositoryState {
   final List<MusicSheet> allMusicSheets;
   final List<MusicSheet> filteredMusicSheets;
-  MusicSheetRepositoryLoaded({required this.allMusicSheets, required this.filteredMusicSheets});
+  final String searchQuery;
+
+  const MusicSheetRepositoryLoaded({
+    required this.allMusicSheets,
+    required this.filteredMusicSheets,
+    this.searchQuery = '',
+  });
 
   @override
-  List<Object?> get props => [allMusicSheets, filteredMusicSheets];
+  List<Object> get props => [allMusicSheets, filteredMusicSheets, searchQuery];
 }
 
 class MusicSheetRepositoryError extends MusicSheetRepositoryState {
   final String message;
-  MusicSheetRepositoryError(this.message);
+
+  const MusicSheetRepositoryError(this.message);
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [message];
 }

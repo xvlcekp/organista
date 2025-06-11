@@ -7,7 +7,6 @@ import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.dart';
-import 'package:organista/features/music_sheet_repository/bloc/repository_event.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
