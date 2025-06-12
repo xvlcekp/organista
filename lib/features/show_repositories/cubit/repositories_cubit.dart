@@ -17,24 +17,14 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   }) : super(const InitRepositoryState());
 
   late final StreamSubscription<Iterable<Repository>> _streamSubscription;
-  String? _currentStreamIdentifier;
 
   void resetState() {
     emit(const InitRepositoryState());
   }
 
   void startSubscribingRepositories({required String userId}) {
-    final streamIdentifier = 'repositories_$userId';
-
-    // Only remove listener if we're switching to a different stream
-    if (_currentStreamIdentifier != null && _currentStreamIdentifier != streamIdentifier) {
-      StreamManager.instance.removeListener(_currentStreamIdentifier!);
-    }
-
-    _currentStreamIdentifier = streamIdentifier;
-
     final broadcastStream = StreamManager.instance.getBroadcastStream<Iterable<Repository>>(
-      streamIdentifier,
+      'repositories_$userId',
       () => firebaseFirestoreRepository.getRepositoriesStream(userId: userId),
     );
 
@@ -48,17 +38,15 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
       ));
     });
 
-    logger.d('Subscribed to broadcast stream for repositories of user: $userId');
+    logger.d('Subscribed to repositories stream for user: $userId');
   }
 
   @override
   Future<void> close() {
     // Cancel the subscription when leaving the page for optimization
     // Cached values will be available when returning
+    // Note: StreamManager handles removeListener automatically via onCancel
     _streamSubscription.cancel();
-    if (_currentStreamIdentifier != null) {
-      StreamManager.instance.removeListener(_currentStreamIdentifier!);
-    }
     return super.close();
   }
 }

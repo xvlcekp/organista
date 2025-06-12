@@ -16,7 +16,6 @@ part 'repository_state.dart';
 class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicSheetRepositoryState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   StreamSubscription<Iterable<MusicSheet>>? _musicSheetsSubscription;
-  String? _currentStreamIdentifier;
 
   MusicSheetRepositoryBloc({
     required this.firebaseFirestoreRepository,
@@ -61,18 +60,9 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   void _initMusicSheetsRepositoryEvent(InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) async {
     emit(MusicSheetRepositoryLoading());
 
-    final streamIdentifier = 'music_sheets_${event.repositoryId}';
-
-    // Only remove listener if we're switching to a different stream
-    if (_currentStreamIdentifier != null && _currentStreamIdentifier != streamIdentifier) {
-      StreamManager.instance.removeListener(_currentStreamIdentifier!);
-    }
-
     try {
-      _currentStreamIdentifier = streamIdentifier;
-
       final broadcastStream = StreamManager.instance.getBroadcastStream<Iterable<MusicSheet>>(
-        streamIdentifier,
+        'music_sheets_${event.repositoryId}',
         () => firebaseFirestoreRepository.getRepositoryMusicSheetsStream(event.repositoryId),
       );
 
@@ -87,7 +77,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
         },
       );
 
-      logger.d('Subscribed to broadcast stream for repository: ${event.repositoryId}');
+      logger.d('Subscribed to music sheets stream: ${event.repositoryId}');
     } catch (e) {
       logger.e('Error initializing music sheets stream: $e');
       emit(MusicSheetRepositoryError('Failed to load music sheets: $e'));
@@ -117,10 +107,8 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   Future<void> close() {
     // Cancel the subscription when leaving the page for optimization
     // Cached values will be available when returning
+    // Note: StreamManager handles removeListener automatically via onCancel
     _musicSheetsSubscription?.cancel();
-    if (_currentStreamIdentifier != null) {
-      StreamManager.instance.removeListener(_currentStreamIdentifier!);
-    }
     return super.close();
   }
 }

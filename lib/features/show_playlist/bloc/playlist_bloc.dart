@@ -20,7 +20,6 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
   StreamSubscription<Playlist>? _playlistSubscription;
-  String? _currentStreamIdentifier;
 
   PlaylistBloc({
     required this.firebaseFirestoreRepository,
@@ -117,18 +116,9 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       playlist: event.playlist,
     ));
 
-    final streamIdentifier = 'playlist_${event.playlist.playlistId}';
-
-    // Only remove listener if we're switching to a different stream
-    if (_currentStreamIdentifier != null && _currentStreamIdentifier != streamIdentifier) {
-      StreamManager.instance.removeListener(_currentStreamIdentifier!);
-    }
-
     try {
-      _currentStreamIdentifier = streamIdentifier;
-
       final broadcastStream = StreamManager.instance.getBroadcastStream<Playlist>(
-        streamIdentifier,
+        'playlist_${event.playlist.playlistId}',
         () => firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
       );
 
@@ -143,7 +133,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         },
       );
 
-      logger.d('Subscribed to broadcast stream for playlist: ${event.playlist.playlistId}');
+      logger.d('Subscribed to playlist stream: ${event.playlist.playlistId}');
     } catch (e) {
       logger.e('Error initializing playlist stream: $e');
       add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error initializing playlist"));
@@ -191,10 +181,8 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   Future<void> close() {
     // Cancel the subscription when leaving the page for optimization
     // Cached values will be available when returning
+    // Note: StreamManager handles removeListener automatically via onCancel
     _playlistSubscription?.cancel();
-    if (_currentStreamIdentifier != null) {
-      StreamManager.instance.removeListener(_currentStreamIdentifier!);
-    }
     return super.close();
   }
 }

@@ -23,6 +23,8 @@ class StreamManager {
 
     // Create a new stream controller for this request
     late StreamController<T> controller;
+    bool listenerAdded = false;
+
     controller = StreamController<T>(
       onListen: () async {
         // Immediately provide cached value if available
@@ -35,9 +37,13 @@ class StreamManager {
         // Start or reuse the underlying Firestore stream
         _ensureStreamExists<T>(identifier, createFirestoreStream);
 
-        // Subscribe to the underlying stream
+        // Subscribe to the underlying stream and increment listener count
         final streamController = _streamControllers[identifier]! as _CachedStreamController<T>;
-        streamController.listenerCount++;
+        if (!listenerAdded) {
+          streamController.listenerCount++;
+          listenerAdded = true;
+          logger.d('Listener added to $identifier. Total: ${streamController.listenerCount}');
+        }
 
         final subscription = streamController.controller.stream.listen(
           (data) {
@@ -60,7 +66,11 @@ class StreamManager {
         // Clean up when this controller is canceled
         controller.onCancel = () {
           subscription.cancel();
-          removeListener(identifier);
+          // Only remove listener if we added one
+          if (listenerAdded) {
+            _removeListenerInternal(identifier);
+            listenerAdded = false;
+          }
         };
       },
     );
@@ -110,10 +120,10 @@ class StreamManager {
     }
   }
 
-  /// Notify that a listener has stopped listening to a stream
-  void removeListener(String identifier) {
+  /// Internal method to remove listener with proper safeguards
+  void _removeListenerInternal(String identifier) {
     final streamController = _streamControllers[identifier];
-    if (streamController != null) {
+    if (streamController != null && streamController.listenerCount > 0) {
       streamController.listenerCount--;
       logger.d('Listener removed from $identifier. Remaining: ${streamController.listenerCount}');
 
@@ -126,7 +136,14 @@ class StreamManager {
           }
         });
       }
+    } else if (streamController != null) {
+      logger.w('Attempted to remove listener from $identifier but count is already ${streamController.listenerCount}');
     }
+  }
+
+  /// Public method for BLoCs to remove listeners (with safeguards)
+  void removeListener(String identifier) {
+    _removeListenerInternal(identifier);
   }
 
   /// Clean up a specific stream but keep cached value
