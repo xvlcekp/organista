@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_provider.dart';
+import 'package:organista/services/stream_manager.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 part 'auth_event.dart';
@@ -67,6 +68,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ),
     );
     try {
+      // Cancel all Firebase streams first to prevent permission errors
+      await StreamManager.instance.cancelAllStreams();
+
       // First, sign out from Google Sign-In to prevent state issues
       try {
         await GoogleSignIn().signOut();
@@ -122,6 +126,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(
       const AuthStateLoggedOut(isLoading: true),
     );
+
+    // Cancel all Firebase streams first to prevent permission errors
+    await StreamManager.instance.cancelAllStreams();
+
     // log the user out
     await authProvider.logOut();
     // log the user out in the UI as well

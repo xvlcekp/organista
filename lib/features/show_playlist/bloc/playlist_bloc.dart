@@ -10,11 +10,18 @@ import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:organista/services/auth/auth_user.dart';
+import 'package:organista/services/stream_manager.dart';
+import 'dart:async';
 
 part 'playlist_event.dart';
 part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
+  final FirebaseFirestoreRepository firebaseFirestoreRepository;
+  final FirebaseStorageRepository firebaseStorageRepository;
+  StreamSubscription<Playlist>? _playlistSubscription;
+  String? _currentStreamIdentifier;
+
   PlaylistBloc({
     required this.firebaseFirestoreRepository,
     required this.firebaseStorageRepository,
@@ -25,29 +32,26 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<RenameMusicSheetInPlaylistEvent>(_renameMusicSheetInPlaylistEvent);
     on<AddMusicSheetToPlaylistEvent>(_addMusicSheetToPlaylistEvent);
     on<InitPlaylistEvent>(_initPlaylistEvent);
+    on<UpdatePlaylistEvent>(_onUpdatePlaylist);
   }
 
-  final FirebaseFirestoreRepository firebaseFirestoreRepository;
-  final FirebaseStorageRepository firebaseStorageRepository;
-
   void _uploadNewMusicSheetEvent(event, emit) async {
-    // start the loading process
-    emit(
-      PlaylistLoadedState(
-        isLoading: true,
-        playlist: state.playlist,
-      ),
-    );
-    // upload the file
+    emit(PlaylistLoadedState(
+      isLoading: true,
+      playlist: state.playlist,
+    ));
+
     final MusicSheetFile file = event.file;
     final String fileName = event.fileName;
     final AuthUser user = event.user;
     final String repositoryId = event.repositoryId;
+
     try {
       final Reference? reference = await firebaseStorageRepository.uploadFile(
         file: file,
         bucket: user.id,
       );
+
       if (reference != null) {
         await firebaseFirestoreRepository.uploadMusicSheetRecord(
           reference: reference,
@@ -61,27 +65,23 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           playlist: state.playlist,
         ));
       } else {
-        throw Exception('Failed to upload image, not uploading MusicSheet record to Firestore');
+        throw Exception('Failed to upload file, not uploading MusicSheet record to Firestore');
       }
     } catch (e) {
-      logger.e('Failed to upload image: $e');
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: state.playlist,
-        ),
-      );
+      logger.e('Failed to upload file: $e');
+      emit(PlaylistLoadedState(
+        isLoading: false,
+        playlist: state.playlist,
+      ));
     }
   }
 
   void _deleteMusicSheetInPlaylistEvent(event, emit) async {
-    emit(
-      PlaylistLoadedState(
-        isLoading: true,
-        playlist: state.playlist,
-      ),
-    );
-    // remove the file
+    emit(PlaylistLoadedState(
+      isLoading: true,
+      playlist: state.playlist,
+    ));
+
     final MusicSheet musicSheetToDelete = event.musicSheet;
     final Playlist playlist = event.playlist;
 
@@ -117,14 +117,48 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       playlist: event.playlist,
     ));
 
-    await emit.forEach<Playlist>(
-      firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
-      onData: (Playlist playlist) => PlaylistLoadedState(
+    final streamIdentifier = 'playlist_${event.playlist.playlistId}';
+
+    // Only remove listener if we're switching to a different stream
+    if (_currentStreamIdentifier != null && _currentStreamIdentifier != streamIdentifier) {
+      StreamManager.instance.removeListener(_currentStreamIdentifier!);
+    }
+
+    try {
+      _currentStreamIdentifier = streamIdentifier;
+
+      final broadcastStream = StreamManager.instance.getBroadcastStream<Playlist>(
+        streamIdentifier,
+        () => firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
+      );
+
+      // Always subscribe to the broadcast stream (even if reusing existing stream)
+      _playlistSubscription = broadcastStream.listen(
+        (playlist) {
+          add(UpdatePlaylistEvent(playlist: playlist));
+        },
+        onError: (error) {
+          logger.e('Error in playlist stream: $error');
+          add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error on initialization"));
+        },
+      );
+
+      logger.d('Subscribed to broadcast stream for playlist: ${event.playlist.playlistId}');
+    } catch (e) {
+      logger.e('Error initializing playlist stream: $e');
+      add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error initializing playlist"));
+    }
+  }
+
+  void _onUpdatePlaylist(UpdatePlaylistEvent event, Emitter<PlaylistState> emit) {
+    if (event.errorMessage != null) {
+      emit(PlaylistErrorState(errorMessage: event.errorMessage!));
+    } else {
+      emit(PlaylistLoadedState(
         isLoading: false,
-        playlist: playlist,
-      ),
-      onError: (_, __) => PlaylistErrorState(errorMessage: "Error on initialization"),
-    );
+        playlist: event.playlist,
+      ));
+    }
   }
 
   void _addMusicSheetToPlaylistEvent(event, emit) async {
@@ -144,11 +178,22 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         musicSheet: customNamedMusicSheet,
       );
     } else {
+      // TODO: fix translations here, fix showing repositories after error message
       emit(PlaylistLoadedState(
         isLoading: false,
         playlist: state.playlist,
         errorMessage: 'Music sheet already exists in the playlist.',
       ));
     }
+  }
+
+  @override
+  Future<void> close() {
+    // Only remove the listener from StreamManager, never cancel subscriptions
+    // Streams will only be canceled on logout/user deletion via StreamManager.cancelAllStreams()
+    if (_currentStreamIdentifier != null) {
+      StreamManager.instance.removeListener(_currentStreamIdentifier!);
+    }
+    return super.close();
   }
 }

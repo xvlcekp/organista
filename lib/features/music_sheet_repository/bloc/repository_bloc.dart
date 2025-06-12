@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:organista/services/stream_manager.dart';
 
 part 'repository_event.dart';
 part 'repository_state.dart';
@@ -15,6 +16,7 @@ part 'repository_state.dart';
 class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicSheetRepositoryState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   StreamSubscription<Iterable<MusicSheet>>? _musicSheetsSubscription;
+  String? _currentStreamIdentifier;
 
   MusicSheetRepositoryBloc({
     required this.firebaseFirestoreRepository,
@@ -56,20 +58,40 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     );
   }
 
-  Future<void> _initMusicSheetsRepositoryEvent(event, emit) async {
-    final repositoryId = event.repositoryId;
-    logger.i("Init repository was called for repository: $repositoryId");
+  void _initMusicSheetsRepositoryEvent(InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) async {
     emit(MusicSheetRepositoryLoading());
-    // await _musicSheetsSubscription?.cancel();
-    _musicSheetsSubscription = firebaseFirestoreRepository.getRepositoryMusicSheetsStream(repositoryId).listen(
-      (musicSheets) {
-        add(UpdateMusicSheetsEvent(musicSheets));
-      },
-      onError: (error) {
-        logger.e("Failed to load music sheets", error: error);
-        emit(MusicSheetRepositoryError("Failed to load music sheets"));
-      },
-    );
+
+    final streamIdentifier = 'music_sheets_${event.repositoryId}';
+
+    // Only remove listener if we're switching to a different stream
+    if (_currentStreamIdentifier != null && _currentStreamIdentifier != streamIdentifier) {
+      StreamManager.instance.removeListener(_currentStreamIdentifier!);
+    }
+
+    try {
+      _currentStreamIdentifier = streamIdentifier;
+
+      final broadcastStream = StreamManager.instance.getBroadcastStream<Iterable<MusicSheet>>(
+        streamIdentifier,
+        () => firebaseFirestoreRepository.getRepositoryMusicSheetsStream(event.repositoryId),
+      );
+
+      // Always subscribe to the broadcast stream (even if reusing existing stream)
+      _musicSheetsSubscription = broadcastStream.listen(
+        (musicSheets) {
+          add(UpdateMusicSheetsEvent(musicSheets));
+        },
+        onError: (error) {
+          logger.e('Error in music sheets stream: $error');
+          add(UpdateMusicSheetsEvent([]));
+        },
+      );
+
+      logger.d('Subscribed to broadcast stream for repository: ${event.repositoryId}');
+    } catch (e) {
+      logger.e('Error initializing music sheets stream: $e');
+      emit(MusicSheetRepositoryError('Failed to load music sheets: $e'));
+    }
   }
 
   void _onUpdateMusicSheets(event, emit) {
@@ -93,7 +115,11 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
 
   @override
   Future<void> close() {
-    _musicSheetsSubscription?.cancel();
+    // Only remove the listener from StreamManager, never cancel subscriptions
+    // Streams will only be canceled on logout/user deletion via StreamManager.cancelAllStreams()
+    if (_currentStreamIdentifier != null) {
+      StreamManager.instance.removeListener(_currentStreamIdentifier!);
+    }
     return super.close();
   }
 }
