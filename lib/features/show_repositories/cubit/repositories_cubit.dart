@@ -53,8 +53,9 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
 
   @override
   Future<void> close() {
-    // Only remove the listener from StreamManager, never cancel subscriptions
-    // Streams will only be canceled on logout/user deletion via StreamManager.cancelAllStreams()
+    // Cancel the subscription when leaving the page for optimization
+    // Cached values will be available when returning
+    _streamSubscription.cancel();
     if (_currentStreamIdentifier != null) {
       StreamManager.instance.removeListener(_currentStreamIdentifier!);
     }

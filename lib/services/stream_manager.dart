@@ -1,36 +1,85 @@
 import 'dart:async';
 import 'package:organista/logger/custom_logger.dart';
 
-/// A singleton service to manage Firebase streams with proper broadcasting
-/// This ensures streams can be reused by multiple BLoCs without conflicts
-/// and new listeners immediately receive the last known value
+/// A singleton service to manage Firebase streams with caching
+/// Streams are closed when not needed but last values are cached
+/// for immediate display when returning to pages
 class StreamManager {
   StreamManager._();
   static final StreamManager _instance = StreamManager._();
   static StreamManager get instance => _instance;
 
-  final Map<String, _BroadcastStreamController> _streamControllers = {};
+  final Map<String, _CachedStreamController> _streamControllers = {};
+  final Map<String, dynamic> _cachedValues = {};
   final List<StreamSubscription> _allSubscriptions = [];
 
-  /// Get a broadcast stream for a specific resource
-  /// Multiple BLoCs can listen to the same underlying Firestore stream
-  /// New listeners immediately receive the last known value
+  /// Get a stream for a specific resource
+  /// Returns cached value immediately if available, then starts real stream
   Stream<T> getBroadcastStream<T>(
     String identifier,
     Stream<T> Function() createFirestoreStream,
   ) {
-    // Get or create stream controller for this identifier
+    logger.d('Getting stream for: $identifier');
+
+    // Create a new stream controller for this request
+    late StreamController<T> controller;
+    controller = StreamController<T>(
+      onListen: () async {
+        // Immediately provide cached value if available
+        if (_cachedValues.containsKey(identifier)) {
+          final cachedValue = _cachedValues[identifier] as T;
+          logger.d('Providing cached value for: $identifier');
+          controller.add(cachedValue);
+        }
+
+        // Start or reuse the underlying Firestore stream
+        _ensureStreamExists<T>(identifier, createFirestoreStream);
+
+        // Subscribe to the underlying stream
+        final streamController = _streamControllers[identifier]! as _CachedStreamController<T>;
+        streamController.listenerCount++;
+
+        final subscription = streamController.controller.stream.listen(
+          (data) {
+            if (!controller.isClosed) {
+              controller.add(data);
+            }
+          },
+          onError: (error) {
+            if (!controller.isClosed) {
+              controller.addError(error);
+            }
+          },
+          onDone: () {
+            if (!controller.isClosed) {
+              controller.close();
+            }
+          },
+        );
+
+        // Clean up when this controller is canceled
+        controller.onCancel = () {
+          subscription.cancel();
+          removeListener(identifier);
+        };
+      },
+    );
+
+    return controller.stream;
+  }
+
+  /// Ensure the underlying Firestore stream exists
+  void _ensureStreamExists<T>(String identifier, Stream<T> Function() createFirestoreStream) {
     if (!_streamControllers.containsKey(identifier)) {
-      logger.d('Creating new broadcast stream for: $identifier');
+      logger.d('Creating new Firestore stream for: $identifier');
 
       final controller = StreamController<T>.broadcast();
       late StreamSubscription firestoreSubscription;
-      T? lastValue;
 
       // Create the underlying Firestore stream
       firestoreSubscription = createFirestoreStream().listen(
         (data) {
-          lastValue = data; // Store the last value
+          _cachedValues[identifier] = data; // Cache the value
           if (!controller.isClosed) {
             controller.add(data);
           }
@@ -39,7 +88,7 @@ class StreamManager {
           if (!controller.isClosed) {
             controller.addError(error);
           }
-          logger.e('Error in broadcast stream $identifier: $error');
+          logger.e('Error in stream $identifier: $error');
         },
         onDone: () {
           logger.d('Firestore stream completed for: $identifier');
@@ -52,61 +101,13 @@ class StreamManager {
       );
 
       // Store the controller and subscription
-      _streamControllers[identifier] = _BroadcastStreamController<T>(
+      _streamControllers[identifier] = _CachedStreamController<T>(
         controller: controller,
         firestoreSubscription: firestoreSubscription,
         listenerCount: 0,
-        lastValue: () => lastValue,
       );
       _allSubscriptions.add(firestoreSubscription);
-    } else {
-      logger.d('Reusing existing broadcast stream for: $identifier');
     }
-
-    final streamController = _streamControllers[identifier]! as _BroadcastStreamController<T>;
-    streamController.listenerCount++;
-
-    logger.d('Active listeners for $identifier: ${streamController.listenerCount}');
-
-    // Create a stream that immediately provides the last value (if any) and then forwards future events
-    late StreamController<T> personalController;
-    personalController = StreamController<T>(
-      onListen: () {
-        // Immediately provide the last value if available
-        final lastValue = streamController.lastValue();
-        if (lastValue != null) {
-          logger.d('Providing last value to new listener for: $identifier');
-          personalController.add(lastValue);
-        }
-      },
-    );
-
-    // Forward all future events from the broadcast stream
-    late StreamSubscription broadcastSubscription;
-    broadcastSubscription = streamController.controller.stream.listen(
-      (data) {
-        if (!personalController.isClosed) {
-          personalController.add(data);
-        }
-      },
-      onError: (error) {
-        if (!personalController.isClosed) {
-          personalController.addError(error);
-        }
-      },
-      onDone: () {
-        if (!personalController.isClosed) {
-          personalController.close();
-        }
-      },
-    );
-
-    // Clean up when the personal stream is canceled
-    personalController.onCancel = () {
-      broadcastSubscription.cancel();
-    };
-
-    return personalController.stream;
   }
 
   /// Notify that a listener has stopped listening to a stream
@@ -116,11 +117,11 @@ class StreamManager {
       streamController.listenerCount--;
       logger.d('Listener removed from $identifier. Remaining: ${streamController.listenerCount}');
 
-      // If no more listeners, schedule cleanup
+      // If no more listeners, schedule cleanup (but keep cached value)
       if (streamController.listenerCount <= 0) {
-        Timer(const Duration(seconds: 5), () {
+        Timer(const Duration(seconds: 2), () {
           if (streamController.listenerCount <= 0 && _streamControllers.containsKey(identifier)) {
-            logger.d('Cleaning up unused stream: $identifier');
+            logger.d('Cleaning up unused stream: $identifier (keeping cached value)');
             _cleanupStream(identifier);
           }
         });
@@ -128,7 +129,7 @@ class StreamManager {
     }
   }
 
-  /// Clean up a specific stream
+  /// Clean up a specific stream but keep cached value
   void _cleanupStream(String identifier) {
     final streamController = _streamControllers[identifier];
     if (streamController != null) {
@@ -138,12 +139,13 @@ class StreamManager {
       }
       _streamControllers.remove(identifier);
       _allSubscriptions.remove(streamController.firestoreSubscription);
+      // Note: We keep the cached value in _cachedValues for future use
     }
   }
 
-  /// Cancel all streams (called on logout)
+  /// Cancel all streams and clear cache (called on logout)
   Future<void> cancelAllStreams() async {
-    logger.i('Canceling all Firebase streams (${_allSubscriptions.length} active)');
+    logger.i('Canceling all Firebase streams (${_allSubscriptions.length} active) and clearing cache');
 
     // Cancel all Firestore subscriptions
     final futures = _allSubscriptions.map((sub) => sub.cancel());
@@ -158,15 +160,18 @@ class StreamManager {
 
     _streamControllers.clear();
     _allSubscriptions.clear();
-    logger.i('All Firebase streams have been canceled');
+    _cachedValues.clear(); // Clear cached values on logout
+    logger.i('All Firebase streams have been canceled and cache cleared');
   }
 
-  /// Get statistics about active streams
+  /// Get statistics about active streams and cache
   Map<String, dynamic> getStats() {
     return {
       'activeStreams': _allSubscriptions.length,
-      'broadcastStreams': _streamControllers.length,
+      'streamControllers': _streamControllers.length,
+      'cachedValues': _cachedValues.length,
       'streamIdentifiers': _streamControllers.keys.toList(),
+      'cachedIdentifiers': _cachedValues.keys.toList(),
       'listenerCounts': _streamControllers.map(
         (key, value) => MapEntry(key, value.listenerCount),
       ),
@@ -175,16 +180,14 @@ class StreamManager {
 }
 
 /// Internal class to manage stream controller state
-class _BroadcastStreamController<T> {
+class _CachedStreamController<T> {
   final StreamController<T> controller;
   final StreamSubscription firestoreSubscription;
-  final T? Function() lastValue;
   int listenerCount;
 
-  _BroadcastStreamController({
+  _CachedStreamController({
     required this.controller,
     required this.firestoreSubscription,
-    required this.lastValue,
     required this.listenerCount,
   });
 }
