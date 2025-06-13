@@ -192,7 +192,9 @@ class UploadFolderScreen extends HookWidget {
           MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
           String fileNameToUse = _mapFileName(file.name, filenameMapping.value);
 
-          logger.i(filenameMapping.value.isEmpty ? "Using original filename: $fileNameToUse" : "Using mapped filename: $fileNameToUse, original file name was ${file.name}");
+          logger.i(filenameMapping.value.isEmpty
+              ? "Using original filename: $fileNameToUse"
+              : "Using mapped filename: $fileNameToUse, original file name was ${file.name}");
 
           final reference = await firebaseStorageRepository.uploadFile(
             file: musicSheetFile,

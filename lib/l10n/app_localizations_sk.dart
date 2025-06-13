@@ -135,7 +135,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get success => 'Úspech';
 
   @override
-  String get passwordResetEmailSent => 'E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.';
+  String get passwordResetEmailSent =>
+      'E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.';
 
   @override
   String get invalidEmail => 'Neplatný e-mail';
@@ -399,7 +400,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authErrorRequiresRecentLoginTitle => 'Vyžaduje sa prihlásenie znova';
 
   @override
-  String get authErrorRequiresRecentLoginText => 'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
+  String get authErrorRequiresRecentLoginText =>
+      'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
 
   @override
   String get authErrorOperationNotAllowedTitle => 'Operácia nie je povolená';
@@ -435,7 +437,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authErrorUserDisabledTitle => 'Používateľský účet je deaktivovaný';
 
   @override
-  String get authErrorUserDisabledText => 'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.';
+  String get authErrorUserDisabledText =>
+      'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.';
 
   @override
   String get authErrorInvalidCredentialTitle => 'Neplatné prihlasovacie údaje';

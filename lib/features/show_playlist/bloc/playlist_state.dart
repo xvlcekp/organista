@@ -35,7 +35,8 @@ class PlaylistLoadedState extends PlaylistState {
   });
 
   @override
-  String toString() => 'PlaylistLoadedState, images.length = ${playlist.musicSheets.length} and is loading = $isLoading';
+  String toString() =>
+      'PlaylistLoadedState, images.length = ${playlist.musicSheets.length} and is loading = $isLoading';
 
   @override
   List<Object?> get props => [isLoading, playlist, errorMessage];

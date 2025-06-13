@@ -57,7 +57,8 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     );
   }
 
-  void _initMusicSheetsRepositoryEvent(InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) async {
+  void _initMusicSheetsRepositoryEvent(
+      InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) async {
     emit(MusicSheetRepositoryLoading());
 
     try {

@@ -15,4 +15,4 @@ class FirebaseCollectionName {
 // Categories - multiple tags - JKS, Advent, Vianocne, Postne ...
 // Playlists - playlistName, isPublic, userId
 // Playlist content - playListId, musicSheetId, sequenceId
-// Music sheets - owner, fileUrl, 
+// Music sheets - owner, fileUrl,

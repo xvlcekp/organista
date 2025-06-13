@@ -50,7 +50,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   /// Helper method to check if an error indicates user already exists
   bool _isUserAlreadyExistsError(Object error) {
     final errorMessage = error.toString().toLowerCase();
-    return errorMessage.contains('already exists') || errorMessage.contains('document already exists') || errorMessage.contains('permission-denied');
+    return errorMessage.contains('already exists') ||
+        errorMessage.contains('document already exists') ||
+        errorMessage.contains('permission-denied');
   }
 
   void _authEventDeleteAccount(event, emit) async {

@@ -54,7 +54,8 @@ class AboutView extends HookWidget {
               },
               child: Text(
                 localizations.frequentlyAskedQuestions,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.primary),
+                style:
+                    Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
             ),
             const SizedBox(height: 20),

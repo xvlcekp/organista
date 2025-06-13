@@ -118,7 +118,8 @@ class PlaylistsView extends HookWidget {
                   child: InkWell(
                     onLongPress: () {
                       controller.text = playlist.name;
-                      showEditPlaylistDialog(context: context, controller: controller, playlist: state.playlists[index]);
+                      showEditPlaylistDialog(
+                          context: context, controller: controller, playlist: state.playlists[index]);
                     },
                     onTap: () {
                       context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));

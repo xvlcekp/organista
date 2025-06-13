@@ -399,7 +399,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authErrorRequiresRecentLoginTitle => 'Requires recent login';
 
   @override
-  String get authErrorRequiresRecentLoginText => 'You need to log out and log back in again in order to perform this operation';
+  String get authErrorRequiresRecentLoginText =>
+      'You need to log out and log back in again in order to perform this operation';
 
   @override
   String get authErrorOperationNotAllowedTitle => 'Operation not allowed';

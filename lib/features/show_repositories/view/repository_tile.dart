@@ -90,7 +90,8 @@ class RepositoryTile extends HookWidget {
   }
 
   Future<void> _loadMusicSheetsCount(BuildContext context, ValueNotifier<int> count) async {
-    final result = await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
+    final result =
+        await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
     count.value = result;
   }
 
