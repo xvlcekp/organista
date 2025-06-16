@@ -31,8 +31,10 @@ jobs:
       run: |
         find . -name "*.dart" -not -path "./lib/l10n/*" | xargs dart format --line-length=120 --output=none --set-exit-if-changed # -not -path "./.dart_tool/*"
     
-    - name: Analyze project source
-      run: flutter analyze
+    - name: Copy credentials and analyze
+      run: |
+        cp assets/config/credentials.example.json assets/config/credentials.json
+        flutter analyze
     
     - name: Run tests
       run: flutter test --coverage
