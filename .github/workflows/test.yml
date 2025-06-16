@@ -23,13 +23,10 @@ jobs:
     
     - name: Install dependencies
       run: flutter pub get
-
-    # - name: Generate localizations
-    #   run: flutter gen-l10n
     
     - name: Verify formatting
       run: |
-        find . -name "*.dart" -not -path "./lib/l10n/*" | xargs dart format --line-length=120 --output=none --set-exit-if-changed # -not -path "./.dart_tool/*"
+        find . -name "*.dart" -not -path "./lib/l10n/*" | xargs dart format --line-length=120 --output=none --set-exit-if-changed
     
     - name: Copy credentials and analyze
       run: |
