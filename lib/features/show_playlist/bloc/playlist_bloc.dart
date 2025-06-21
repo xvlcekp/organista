@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
+import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -168,11 +169,10 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         musicSheet: customNamedMusicSheet,
       );
     } else {
-      // TODO: fix translations here, fix showing repositories after error message
       emit(PlaylistLoadedState(
         isLoading: false,
         playlist: state.playlist,
-        errorMessage: 'Music sheet already exists in the playlist.',
+        error: MusicSheetAlreadyInPlaylistError(),
       ));
     }
   }

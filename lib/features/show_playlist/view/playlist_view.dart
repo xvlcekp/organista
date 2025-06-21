@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
+import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
@@ -73,8 +74,8 @@ class PlaylistView extends HookWidget {
           } else {
             LoadingScreen.instance().hide();
           }
-          if (appState.errorMessage.isNotEmpty) {
-            showErrorDialog(context, appState.errorMessage);
+          if (appState.error != null) {
+            _handleError(context, appState.error!);
           }
         },
         builder: (context, state) {
@@ -135,5 +136,19 @@ class PlaylistView extends HookWidget {
         },
       ),
     );
+  }
+
+  void _handleError(BuildContext context, PlaylistError error) {
+    final localizations = context.loc;
+    var message = '';
+    switch (error) {
+      case MusicSheetAlreadyInPlaylistError():
+        message = localizations.musicSheetAlreadyInPlaylist;
+      case InitializationError():
+        message = localizations.musicSheetInitializationError;
+      default:
+        message = localizations.errorUnknownText;
+    }
+    showErrorDialog(context, message);
   }
 }

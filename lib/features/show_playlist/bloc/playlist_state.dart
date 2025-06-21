@@ -4,12 +4,12 @@ part of 'playlist_bloc.dart';
 abstract class PlaylistState extends Equatable {
   final bool isLoading;
   final Playlist playlist;
-  final String errorMessage;
+  final PlaylistError? error;
 
   const PlaylistState({
     required this.isLoading,
     required this.playlist,
-    this.errorMessage = '',
+    this.error,
   });
 }
 
@@ -19,11 +19,11 @@ class PlaylistInitState extends PlaylistState {
       : super(
           isLoading: false,
           playlist: Playlist.empty(),
-          errorMessage: '',
+          error: null,
         );
 
   @override
-  List<Object?> get props => [isLoading, playlist, errorMessage];
+  List<Object?> get props => [isLoading, playlist, error];
 }
 
 @immutable
@@ -31,7 +31,7 @@ class PlaylistLoadedState extends PlaylistState {
   const PlaylistLoadedState({
     required super.isLoading,
     required super.playlist,
-    super.errorMessage,
+    super.error,
   });
 
   @override
@@ -39,7 +39,7 @@ class PlaylistLoadedState extends PlaylistState {
       'PlaylistLoadedState, images.length = ${playlist.musicSheets.length} and is loading = $isLoading';
 
   @override
-  List<Object?> get props => [isLoading, playlist, errorMessage];
+  List<Object?> get props => [isLoading, playlist, error];
 }
 
 @immutable
@@ -48,9 +48,9 @@ class PlaylistErrorState extends PlaylistState {
       : super(
           isLoading: false,
           playlist: Playlist.empty(),
-          errorMessage: "Error on initialization",
+          error: InitializationError(),
         );
 
   @override
-  List<Object?> get props => [isLoading, playlist, errorMessage];
+  List<Object?> get props => [isLoading, playlist, error];
 }

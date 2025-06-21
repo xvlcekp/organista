@@ -378,69 +378,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showNavigationArrows => 'Show navigation arrows';
 
   @override
-  String get authErrorUnknownTitle => 'Authentication error';
-
-  @override
-  String get authErrorUnknownText => 'Unknown error';
-
-  @override
-  String get authGenericExceptionTitle => 'Authentication error';
+  String get errorUnknownText => 'Unknown error';
 
   @override
   String get authGenericExceptionText => 'An unknown error occurred';
 
   @override
-  String get authErrorUserNotLoggedInTitle => 'User not logged in!';
-
-  @override
   String get authErrorUserNotLoggedInText => 'No user is currently logged in!';
 
   @override
-  String get authErrorRequiresRecentLoginTitle => 'Requires recent login';
-
-  @override
-  String get authErrorRequiresRecentLoginText =>
-      'You need to log out and log back in again in order to perform this operation';
-
-  @override
-  String get authErrorOperationNotAllowedTitle => 'Operation not allowed';
+  String get authErrorRequiresRecentLoginText => 'You need to log out and log back in again in order to perform this operation';
 
   @override
   String get authErrorOperationNotAllowedText => 'You cannot register using this method at this moment!';
 
   @override
-  String get authErrorUserNotFoundTitle => 'User not found';
-
-  @override
   String get authErrorUserNotFoundText => 'The given user was not found on the server!';
-
-  @override
-  String get authErrorWeakPasswordTitle => 'Weak password';
 
   @override
   String get authErrorWeakPasswordText => 'Please choose a stronger password consisting of more characters!';
 
   @override
-  String get authErrorInvalidEmailTitle => 'Invalid email';
-
-  @override
   String get authErrorInvalidEmailText => 'Please double check your email and try again!';
-
-  @override
-  String get authErrorEmailAlreadyInUseTitle => 'Email already in use';
 
   @override
   String get authErrorEmailAlreadyInUseText => 'Please choose another email to register with!';
 
   @override
-  String get authErrorUserDisabledTitle => 'User is disabled';
-
-  @override
   String get authErrorUserDisabledText => 'This user has been disabled. Please contact support for help.';
 
   @override
-  String get authErrorInvalidCredentialTitle => 'Credential is invalid';
+  String get authErrorInvalidCredentialText => 'The supplied auth credential is incorrect, malformed or has expired.';
 
   @override
-  String get authErrorInvalidCredentialText => 'The supplied auth credential is incorrect, malformed or has expired.';
+  String get musicSheetAlreadyInPlaylist => 'Music sheet already exists in the playlist.';
+
+  @override
+  String get musicSheetInitializationError => 'An error happened while initialization.';
 }

@@ -135,8 +135,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get success => 'Úspech';
 
   @override
-  String get passwordResetEmailSent =>
-      'E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.';
+  String get passwordResetEmailSent => 'E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.';
 
   @override
   String get invalidEmail => 'Neplatný e-mail';
@@ -379,70 +378,41 @@ class AppLocalizationsSk extends AppLocalizations {
   String get showNavigationArrows => 'Zobraziť navigačné šípky';
 
   @override
-  String get authErrorUnknownTitle => 'Chyba pri prihlásení';
-
-  @override
-  String get authErrorUnknownText => 'Neznáma chyba';
-
-  @override
-  String get authGenericExceptionTitle => 'Chyba pri prihlásení';
+  String get errorUnknownText => 'Neznáma chyba';
 
   @override
   String get authGenericExceptionText => 'Vyskytla sa neznáma chyba';
 
   @override
-  String get authErrorUserNotLoggedInTitle => 'Používateľ nie je prihlásený!';
-
-  @override
   String get authErrorUserNotLoggedInText => 'Žiadny používateľ nie je momentálne prihlásený!';
 
   @override
-  String get authErrorRequiresRecentLoginTitle => 'Vyžaduje sa prihlásenie znova';
-
-  @override
-  String get authErrorRequiresRecentLoginText =>
-      'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
-
-  @override
-  String get authErrorOperationNotAllowedTitle => 'Operácia nie je povolená';
+  String get authErrorRequiresRecentLoginText => 'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
 
   @override
   String get authErrorOperationNotAllowedText => 'Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!';
 
   @override
-  String get authErrorUserNotFoundTitle => 'Používateľ nebol nájdený';
-
-  @override
   String get authErrorUserNotFoundText => 'Zadaný používateľ nebol nájdený na serveri!';
-
-  @override
-  String get authErrorWeakPasswordTitle => 'Slabé heslo';
 
   @override
   String get authErrorWeakPasswordText => 'Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!';
 
   @override
-  String get authErrorInvalidEmailTitle => 'Neplatný e-mail';
-
-  @override
   String get authErrorInvalidEmailText => 'Prosím, skontrolujte svoj e-mail a skúste to znova!';
-
-  @override
-  String get authErrorEmailAlreadyInUseTitle => 'Užívateľ s daným emailom už existuje.';
 
   @override
   String get authErrorEmailAlreadyInUseText => 'Prosím, použite iný e-mail na registráciu!';
 
   @override
-  String get authErrorUserDisabledTitle => 'Používateľský účet je deaktivovaný';
-
-  @override
-  String get authErrorUserDisabledText =>
-      'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.';
-
-  @override
-  String get authErrorInvalidCredentialTitle => 'Neplatné prihlasovacie údaje';
+  String get authErrorUserDisabledText => 'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.';
 
   @override
   String get authErrorInvalidCredentialText => 'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.';
+
+  @override
+  String get musicSheetAlreadyInPlaylist => 'Notový záznam už existuje v zozname skladieb.';
+
+  @override
+  String get musicSheetInitializationError => 'Nastala chyba pri inicializácii.';
 }
