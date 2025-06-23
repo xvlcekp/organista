@@ -6,11 +6,12 @@ enum MediaType {
 
   static MediaType fromPath(String path) {
     final fileExtension = extension(path);
-    switch (fileExtension) {
+    switch (fileExtension.toLowerCase()) {
       case '.pdf':
         return MediaType.pdf;
       case '.png':
       case '.jpg':
+      case '.jpeg':
         return MediaType.image;
       default:
         throw UnsupportedFileExtensionException(fileExtension);

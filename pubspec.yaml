@@ -90,6 +90,7 @@ dev_dependencies:
   fake_cloud_firestore: ^3.1.0
   build_runner: ^2.4.13
   test: ^1.25.15
+  bloc_test: ^10.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

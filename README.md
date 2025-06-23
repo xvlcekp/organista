@@ -1,5 +1,7 @@
 # Organista
 
+Info about project for organists: https://sites.google.com/view/organista-app/domov 
+
 ## Google play release
 
 **Compile** - `flutter clean; flutter pub get; flutter build appbundle`
