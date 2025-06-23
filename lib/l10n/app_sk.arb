@@ -122,36 +122,28 @@
     "anErrorHappened": "Nastala chyba",
     "showNavigationArrows": "Zobraziť navigačné šípky",
 
-    "authErrorUnknownTitle": "Chyba pri prihlásení",
-    "authErrorUnknownText": "Neznáma chyba",
+    "errorUnknownText": "Neznáma chyba",
     
-    "authGenericExceptionTitle": "Chyba pri prihlásení",
     "authGenericExceptionText": "Vyskytla sa neznáma chyba",
     
-    "authErrorUserNotLoggedInTitle": "Používateľ nie je prihlásený!",
     "authErrorUserNotLoggedInText": "Žiadny používateľ nie je momentálne prihlásený!",
     
-    "authErrorRequiresRecentLoginTitle": "Vyžaduje sa prihlásenie znova",
     "authErrorRequiresRecentLoginText": "Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu",
     
-    "authErrorOperationNotAllowedTitle": "Operácia nie je povolená",
     "authErrorOperationNotAllowedText": "Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!",
     
-    "authErrorUserNotFoundTitle": "Používateľ nebol nájdený",
     "authErrorUserNotFoundText": "Zadaný používateľ nebol nájdený na serveri!",
     
-    "authErrorWeakPasswordTitle": "Slabé heslo",
     "authErrorWeakPasswordText": "Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!",
     
-    "authErrorInvalidEmailTitle": "Neplatný e-mail",
     "authErrorInvalidEmailText": "Prosím, skontrolujte svoj e-mail a skúste to znova!",
     
-    "authErrorEmailAlreadyInUseTitle": "Užívateľ s daným emailom už existuje.",
     "authErrorEmailAlreadyInUseText": "Prosím, použite iný e-mail na registráciu!",
     
-    "authErrorUserDisabledTitle": "Používateľský účet je deaktivovaný",
     "authErrorUserDisabledText": "Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.",
     
-    "authErrorInvalidCredentialTitle": "Neplatné prihlasovacie údaje",
-    "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo."
+    "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.",
+
+    "musicSheetAlreadyInPlaylist": "Notový záznam už existuje v zozname skladieb.",
+    "musicSheetInitializationError": "Nastala chyba pri inicializácii."
 }

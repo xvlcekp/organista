@@ -71,6 +71,5 @@ class UploadMusicSheetFragment extends StatelessWidget {
   }
 }
 
-
 // TODO: refactor code
 // TODO: handle errors

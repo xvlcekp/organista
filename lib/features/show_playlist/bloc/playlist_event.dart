@@ -1,19 +1,39 @@
 part of 'playlist_bloc.dart';
 
 @immutable
-abstract class PlaylistEvent {
+abstract class PlaylistEvent extends Equatable {
   const PlaylistEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 @immutable
-class InitPlaylistEvent implements PlaylistEvent {
+class InitPlaylistEvent extends PlaylistEvent {
   final AuthUser user;
   final Playlist playlist;
   const InitPlaylistEvent({required this.user, required this.playlist});
+
+  @override
+  List<Object?> get props => [user, playlist];
 }
 
 @immutable
-class UploadNewMusicSheetEvent implements PlaylistEvent {
+class UpdatePlaylistEvent extends PlaylistEvent {
+  final Playlist playlist;
+  final String? errorMessage;
+
+  const UpdatePlaylistEvent({
+    required this.playlist,
+    this.errorMessage,
+  });
+
+  @override
+  List<Object?> get props => [playlist, errorMessage];
+}
+
+@immutable
+class UploadNewMusicSheetEvent extends PlaylistEvent {
   final AuthUser user;
   final MusicSheetFile file;
   final String fileName;
@@ -25,10 +45,13 @@ class UploadNewMusicSheetEvent implements PlaylistEvent {
     required this.fileName,
     required this.repositoryId,
   });
+
+  @override
+  List<Object?> get props => [user, file, fileName, repositoryId];
 }
 
 @immutable
-class RenameMusicSheetInPlaylistEvent implements PlaylistEvent {
+class RenameMusicSheetInPlaylistEvent extends PlaylistEvent {
   final Playlist playlist;
   final MusicSheet musicSheet;
   final String fileName;
@@ -38,10 +61,13 @@ class RenameMusicSheetInPlaylistEvent implements PlaylistEvent {
     required this.musicSheet,
     required this.fileName,
   });
+
+  @override
+  List<Object?> get props => [playlist, musicSheet, fileName];
 }
 
 @immutable
-class DeleteMusicSheetInPlaylistEvent implements PlaylistEvent {
+class DeleteMusicSheetInPlaylistEvent extends PlaylistEvent {
   final MusicSheet musicSheet;
   final Playlist playlist;
 
@@ -49,19 +75,25 @@ class DeleteMusicSheetInPlaylistEvent implements PlaylistEvent {
     required this.musicSheet,
     required this.playlist,
   });
+
+  @override
+  List<Object?> get props => [musicSheet, playlist];
 }
 
 @immutable
-class ReorderMusicSheetEvent implements PlaylistEvent {
+class ReorderMusicSheetEvent extends PlaylistEvent {
   final Playlist playlist;
 
   const ReorderMusicSheetEvent({
     required this.playlist,
   });
+
+  @override
+  List<Object?> get props => [playlist];
 }
 
 @immutable
-class AddMusicSheetToPlaylistEvent implements PlaylistEvent {
+class AddMusicSheetToPlaylistEvent extends PlaylistEvent {
   final MusicSheet musicSheet;
   final String fileName;
   final Playlist playlist;
@@ -71,4 +103,7 @@ class AddMusicSheetToPlaylistEvent implements PlaylistEvent {
     required this.fileName,
     required this.playlist,
   });
+
+  @override
+  List<Object?> get props => [musicSheet, fileName, playlist];
 }

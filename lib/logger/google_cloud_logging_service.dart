@@ -15,7 +15,8 @@ const _serviceAccountCredentials = {
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/flutter-logger%40organista-project.iam.gserviceaccount.com",
+  "client_x509_cert_url":
+      "https://www.googleapis.com/robot/v1/metadata/x509/flutter-logger%40organista-project.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 };
 const _projectId = 'organista-project'; // Replace with your project ID from the JSON key file
@@ -63,7 +64,8 @@ class GoogleCloudLoggingService {
     const logName = 'projects/$_projectId/logs/$env'; // It should in the format projects/[PROJECT_ID]/logs/[LOG_ID]
 
     // Create a monitored resource
-    final resource = MonitoredResource()..type = 'global'; // A global resource type is used for logs that are not associated with a specific resource
+    final resource = MonitoredResource()
+      ..type = 'global'; // A global resource type is used for logs that are not associated with a specific resource
 
     // Map log levels to severity levels
     final severityFromLevel = switch (level) {
@@ -86,7 +88,8 @@ class GoogleCloudLoggingService {
         'level': level.name.toUpperCase(),
         'environment': env, // Optional but useful to filter logs by environment
         'user_id': 'your-app-user-id', // Useful to filter logs by userID
-        'app_instance_id': 'your-app-instance-id', // Useful to filter logs by app instance ID e.g device ID + app version (iPhone-12-ProMax-v1.0.0)
+        'app_instance_id':
+            'your-app-instance-id', // Useful to filter logs by app instance ID e.g device ID + app version (iPhone-12-ProMax-v1.0.0)
       };
 
     // Create a write log entries request

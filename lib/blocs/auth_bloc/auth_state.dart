@@ -38,7 +38,8 @@ class AuthStateLoggedOut extends AuthState {
   });
 
   @override
-  String toString() => 'AppStateLoggedOut, isLoading = $isLoading, authError = $authError, passwordResetSent = $passwordResetSent';
+  String toString() =>
+      'AppStateLoggedOut, isLoading = $isLoading, authError = $authError, passwordResetSent = $passwordResetSent';
 }
 
 @immutable

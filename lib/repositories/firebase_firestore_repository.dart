@@ -37,12 +37,26 @@ class FirebaseFirestoreRepository {
     required AuthUser user,
   }) async {
     try {
+      // Check if user already exists
+      final existingUserQuery = await instance
+          .collection(FirebaseCollectionName.users)
+          .where(UserInfoKey.userId, isEqualTo: user.id)
+          .limit(1)
+          .get();
+
+      if (existingUserQuery.docs.isNotEmpty) {
+        logger.i('User ${user.id} already exists in database, skipping creation');
+        return true; // User already exists, no need to create
+      }
+
+      // User doesn't exist, create new user
       final userPayload = UserInfoPayload(
         userId: user.id,
         displayName: '',
         email: user.email,
       );
       await instance.collection(FirebaseCollectionName.users).add(userPayload);
+      logger.i('Successfully created new user ${user.id} in database');
       return true;
     } catch (e, stackTrace) {
       logger.e('Error uploading new user: $e');
@@ -93,7 +107,11 @@ class FirebaseFirestoreRepository {
   // PLAYLIST OPERATIONS
 
   Stream<Playlist> getPlaylistStream(String playlistId) {
-    return instance.collection(FirebaseCollectionName.playlists).doc(playlistId).snapshots(includeMetadataChanges: true).map((snapshot) {
+    return instance
+        .collection(FirebaseCollectionName.playlists)
+        .doc(playlistId)
+        .snapshots(includeMetadataChanges: true)
+        .map((snapshot) {
       if (!snapshot.exists || snapshot.data() == null) {
         logger.w("Playlist document does not exist: $playlistId");
         return Playlist.empty();
@@ -187,7 +205,10 @@ class FirebaseFirestoreRepository {
     required String repositoryId,
   }) async {
     try {
-      final firestoreRef = instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
+      final firestoreRef = instance
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(FirebaseCollectionName.musicSheets);
 
       final musicSheetPayload = MusicSheetPayload(
         fileName: fileName,
@@ -281,9 +302,13 @@ class FirebaseFirestoreRepository {
     required String repositoryId,
   }) async {
     try {
-      final firestoreRef = instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets);
+      final firestoreRef = instance
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(FirebaseCollectionName.musicSheets);
       await firestoreRef.doc(musicSheet.musicSheetId).delete();
-      logger.i("Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId");
+      logger.i(
+          "Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId");
       return true;
     } catch (e, stackTrace) {
       logger.e('Error deleting music sheet from repository: $e');
@@ -340,6 +365,19 @@ class FirebaseFirestoreRepository {
   }
 
   Future<bool> createUserRepository({required AuthUser user}) async {
+    // Check if user repository already exists
+    final existingRepoQuery = await instance
+        .collection(FirebaseCollectionName.repositories)
+        .where(RepositoryKey.userId, isEqualTo: user.id)
+        .limit(1)
+        .get();
+
+    if (existingRepoQuery.docs.isNotEmpty) {
+      logger.i('User repository for ${user.id} already exists, skipping creation');
+      return true; // Repository already exists, no need to create
+    }
+
+    // Repository doesn't exist, create new user repository
     return _createRepository(userId: user.id, name: 'Custom repository - ${user.email}');
   }
 
@@ -363,7 +401,12 @@ class FirebaseFirestoreRepository {
 
   Future<int> getRepositoryMusicSheetsCount(String repositoryId) async {
     try {
-      final AggregateQuerySnapshot snapshot = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets).count().get();
+      final AggregateQuerySnapshot snapshot = await instance
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(FirebaseCollectionName.musicSheets)
+          .count()
+          .get();
       return snapshot.count ?? 0;
     } catch (e, stackTrace) {
       logger.e('Error getting music sheets count: $e');

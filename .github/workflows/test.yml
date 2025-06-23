@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.29.3'
+        channel: 'stable'
+        cache: true
+        cache-key: 'flutter-3.29.3-stable'
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Verify formatting
+      run: |
+        find . -name "*.dart" -not -path "./lib/l10n/*" | xargs dart format --line-length=120 --output=none --set-exit-if-changed
+    
+    - name: Copy credentials and analyze
+      run: |
+        cp assets/config/credentials.example.json assets/config/credentials.json
+        flutter analyze
+    
+    - name: Run tests
+      run: flutter test --coverage
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}

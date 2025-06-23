@@ -38,7 +38,11 @@ Future<void> updateSequenceIds({
       logger.i('Processing repository: $repositoryId');
 
       // Get all music sheets in this repository
-      final musicSheetsSnapshot = await fs.collection(FirebaseCollectionName.repositories).doc(repositoryId).collection(FirebaseCollectionName.musicSheets).get();
+      final musicSheetsSnapshot = await fs
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(FirebaseCollectionName.musicSheets)
+          .get();
 
       logger.i('Found ${musicSheetsSnapshot.docs.length} music sheets in repository $repositoryId');
 

@@ -7,45 +7,16 @@ Future<void> showAuthError({
   required AuthError authError,
   required BuildContext context,
 }) {
-  final title = getLocalizedTitle(authError, context);
   final message = getLocalizedMessage(authError, context);
 
   return showGenericDialog<void>(
     context: context,
-    title: title,
+    title: context.loc.error,
     content: message,
     optionsBuilder: () => {
       'OK': true,
     },
   );
-}
-
-String getLocalizedTitle(AuthError authError, BuildContext context) {
-  final loc = context.loc;
-
-  if (authError is AuthGenericException) {
-    return loc.authGenericExceptionTitle;
-  } else if (authError is AuthErrorUserNotLoggedIn) {
-    return loc.authErrorUserNotLoggedInTitle;
-  } else if (authError is AuthErrorRequiresRecentLogin) {
-    return loc.authErrorRequiresRecentLoginTitle;
-  } else if (authError is AuthErrorOperationNotAllowed) {
-    return loc.authErrorOperationNotAllowedTitle;
-  } else if (authError is AuthErrorUserNotFound) {
-    return loc.authErrorUserNotFoundTitle;
-  } else if (authError is AuthErrorWeakPassword) {
-    return loc.authErrorWeakPasswordTitle;
-  } else if (authError is AuthErrorInvalidEmail) {
-    return loc.authErrorInvalidEmailTitle;
-  } else if (authError is AuthErrorEmailAlreadyInUse) {
-    return loc.authErrorEmailAlreadyInUseTitle;
-  } else if (authError is AuthErrorUserDisabled) {
-    return loc.authErrorUserDisabledTitle;
-  } else if (authError is AuthErrorInvalidCredential) {
-    return loc.authErrorInvalidCredentialTitle;
-  }
-
-  return loc.authErrorUnknownTitle;
 }
 
 String getLocalizedMessage(AuthError authError, BuildContext context) {
@@ -73,5 +44,5 @@ String getLocalizedMessage(AuthError authError, BuildContext context) {
     return loc.authErrorInvalidCredentialText;
   }
 
-  return loc.authErrorUnknownText;
+  return loc.errorUnknownText;
 }
