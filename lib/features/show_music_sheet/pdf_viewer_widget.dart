@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,34 +33,76 @@ class PdfViewerWidget extends HookWidget {
     }
   }
 
+  /// Load PDF document asynchronously without blocking main thread
+  Future<PdfDocument> _loadPdfDocument() async {
+    if (kIsWeb) {
+      // Web version - process in chunks to avoid blocking
+      final response = await get(Uri.parse(musicSheet.fileUrl));
+      final document = await PdfDocument.openData(response.bodyBytes);
+
+      // Yield control back to UI thread after processing
+      await Future.delayed(Duration.zero);
+
+      return document;
+    } else {
+      // Mobile version - cache first, then process
+      final pdfFile = await _downloadAndCachePdf(musicSheet.fileUrl);
+
+      if (pdfFile == null) {
+        throw Exception('Failed to download or cache PDF file');
+      }
+
+      final document = await PdfDocument.openFile(pdfFile.path);
+
+      // Yield control back to UI thread after processing
+      await Future.delayed(Duration.zero);
+
+      return document;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final pdfController = useState<PdfController?>(null);
     final isLoading = useState(true);
+    final hasError = useState(false);
 
     useEffect(() {
-      Future(() async {
-        Future<PdfDocument>? document;
+      // Use a completer to handle the async operation properly
+      final completer = Completer<void>();
 
-        if (kIsWeb) {
-          final response = await get(Uri.parse(musicSheet.fileUrl));
-          document = PdfDocument.openData(response.bodyBytes);
-        } else {
-          final pdfFile = await _downloadAndCachePdf(musicSheet.fileUrl);
-          document = pdfFile != null ? PdfDocument.openFile(pdfFile.path) : null;
+      () async {
+        try {
+          final document = await _loadPdfDocument();
+
+          if (!completer.isCompleted) {
+            pdfController.value = PdfController(document: Future.value(document));
+            hasError.value = false;
+            isLoading.value = false;
+            completer.complete();
+          }
+        } catch (e) {
+          if (!completer.isCompleted) {
+            logger.e("Error loading PDF: $e");
+            hasError.value = true;
+            isLoading.value = false;
+            completer.complete();
+          }
         }
+      }();
 
-        pdfController.value = document != null ? PdfController(document: document) : null;
-        isLoading.value = false;
-      });
-
-      return null;
+      return () {
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
+      };
     }, [musicSheet.fileUrl]);
 
     if (isLoading.value) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (pdfController.value == null) {
+
+    if (hasError.value || pdfController.value == null) {
       return const Center(
         child: Icon(
           Icons.warning_rounded,

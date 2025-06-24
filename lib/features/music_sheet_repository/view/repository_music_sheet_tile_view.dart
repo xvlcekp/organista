@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
@@ -13,7 +12,7 @@ import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-class RepositoryMusicSheetTile extends HookWidget {
+class RepositoryMusicSheetTile extends StatelessWidget {
   final MusicSheet musicSheet;
   final String repositoryId;
   final TextEditingController searchBarController;
@@ -40,27 +39,12 @@ class RepositoryMusicSheetTile extends HookWidget {
     final userId = context.read<AuthBloc>().state.user!.id;
     final theme = Theme.of(context);
     final localizations = context.loc;
-    final isCached = useState<bool>(false);
-
-    useEffect(() {
-      _checkIfCached().then((cached) {
-        isCached.value = cached;
-      });
-      return null;
-    }, [musicSheet.fileUrl]);
 
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(
+        Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
-        ))
-            .then((_) {
-          // Check cache status after returning from the view
-          _checkIfCached().then((cached) {
-            isCached.value = cached;
-          });
-        });
+        ));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -84,11 +68,18 @@ class RepositoryMusicSheetTile extends HookWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (isCached.value)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                  ),
+                FutureBuilder<bool>(
+                  future: _checkIfCached(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done && snapshot.hasData && snapshot.data == true) {
+                      return const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 IconButton(
                   icon: Icon(
                     Icons.download_rounded,

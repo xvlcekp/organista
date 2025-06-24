@@ -1,13 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/logger/custom_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-class RepositoryTile extends HookWidget {
+class RepositoryTile extends StatelessWidget {
   final Repository repository;
   final int index;
 
@@ -19,13 +19,7 @@ class RepositoryTile extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final musicSheetsCount = useState(0);
     final localizations = context.loc;
-
-    useEffect(() {
-      _loadMusicSheetsCount(context, musicSheetsCount);
-      return null;
-    }, [repository.repositoryId]);
 
     return GestureDetector(
       onTap: () {
@@ -73,12 +67,31 @@ class RepositoryTile extends HookWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '${musicSheetsCount.value} ${localizations.sheets}',
-                    style: TextStyle(
-                      color: Colors.white.withAlpha(200),
-                      fontSize: 14,
-                    ),
+                  FutureBuilder<int>(
+                    future: _loadMusicSheetsCount(context),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white.withAlpha(200),
+                            ),
+                          ),
+                        );
+                      }
+
+                      final count = snapshot.data ?? 0;
+                      return Text(
+                        '$count ${localizations.sheets}',
+                        style: TextStyle(
+                          color: Colors.white.withAlpha(200),
+                          fontSize: 14,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -89,10 +102,13 @@ class RepositoryTile extends HookWidget {
     );
   }
 
-  Future<void> _loadMusicSheetsCount(BuildContext context, ValueNotifier<int> count) async {
-    final result =
-        await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
-    count.value = result;
+  Future<int> _loadMusicSheetsCount(BuildContext context) async {
+    try {
+      return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
+    } catch (e) {
+      logger.e("Error loading music sheets count: $e");
+      return 0;
+    }
   }
 
   Color _getFixedColor() {
