@@ -44,6 +44,11 @@ app.*.map.json
 
 assets/config/credentials.json
 
+# Firebase configuration files
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+
 # Music sheets
 content/
 # Files created after upgrade to flutter 3.29.3
