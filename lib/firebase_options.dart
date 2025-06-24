@@ -2,6 +2,8 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:organista/config/config_controller.dart';
+import 'dart:convert';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -14,7 +16,9 @@ import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, Tar
 /// );
 /// ```
 class DefaultFirebaseOptions {
-  static FirebaseOptions get currentPlatform {
+  static Future<FirebaseOptions> get currentPlatform async {
+    await Config.load();
+
     if (kIsWeb) {
       return web;
     }
@@ -48,20 +52,30 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAHnSqh2pEirWFomCZMqJzl6M0gLQ824lI',
-    appId: '1:613500039629:web:7213a0f92d44390c7fd484',
-    messagingSenderId: '613500039629',
-    projectId: 'organista-project',
-    authDomain: 'organista-project.firebaseapp.com',
-    storageBucket: 'organista-project.firebasestorage.app',
-  );
+  static FirebaseOptions get web {
+    final firebaseConfig = jsonDecode(Config.get('firebase') ?? '{}');
+    final webConfig = firebaseConfig['web'] ?? {};
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAlY4D0adf0Z2LvJZOVtY_ziDdLUcJst9s',
-    appId: '1:613500039629:android:8a1fda8cbbe165717fd484',
-    messagingSenderId: '613500039629',
-    projectId: 'organista-project',
-    storageBucket: 'organista-project.firebasestorage.app',
-  );
+    return FirebaseOptions(
+      apiKey: webConfig['apiKey'] ?? '',
+      appId: webConfig['appId'] ?? '',
+      messagingSenderId: webConfig['messagingSenderId'] ?? '',
+      projectId: webConfig['projectId'] ?? '',
+      authDomain: webConfig['authDomain'] ?? '',
+      storageBucket: webConfig['storageBucket'] ?? '',
+    );
+  }
+
+  static FirebaseOptions get android {
+    final firebaseConfig = jsonDecode(Config.get('firebase') ?? '{}');
+    final androidConfig = firebaseConfig['android'] ?? {};
+
+    return FirebaseOptions(
+      apiKey: androidConfig['apiKey'] ?? '',
+      appId: androidConfig['appId'] ?? '',
+      messagingSenderId: androidConfig['messagingSenderId'] ?? '',
+      projectId: androidConfig['projectId'] ?? '',
+      storageBucket: androidConfig['storageBucket'] ?? '',
+    );
+  }
 }

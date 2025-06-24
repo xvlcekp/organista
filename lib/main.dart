@@ -28,6 +28,6 @@ Future<void> mainInitialize() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Firebase.initializeApp must be called before using any Firebase services
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: await DefaultFirebaseOptions.currentPlatform,
   );
 }
