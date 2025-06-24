@@ -211,19 +211,22 @@ class PdfViewerWidget extends HookWidget {
                         return const SizedBox.shrink(); // Don't show buttons if only one page
                       }
 
+                      final currentPage = pdfController.value!.page;
+                      final canGoPrevious = currentPage > 1;
+                      final canGoNext = currentPage < pagesCount;
+
                       return Stack(
                         children: [
                           // Previous page touch area at the top
-                          if (pdfController.value!.page > 1)
+                          if (canGoPrevious)
                             Positioned(
                               top: 0,
                               left: 0,
                               right: 0,
                               height: MediaQuery.of(context).size.height * 0.2,
-                              child: GestureDetector(
-                                onTap: () {
-                                  pdfController.value!.jumpToPage(pdfController.value!.page - 1);
-                                },
+                              child: Listener(
+                                behavior: HitTestBehavior.opaque,
+                                onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage - 1),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -235,10 +238,10 @@ class PdfViewerWidget extends HookWidget {
                                       ],
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: const Icon(
+                                  child: const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Icon(
                                         Icons.arrow_upward,
                                         color: Colors.green,
                                         size: 20,
@@ -250,17 +253,15 @@ class PdfViewerWidget extends HookWidget {
                             ),
 
                           // Next page touch area at the bottom
-                          if (pdfController.value!.page < pagesCount)
+                          if (canGoNext)
                             Positioned(
                               bottom: 0,
                               left: 0,
                               right: 0,
                               height: MediaQuery.of(context).size.height * 0.2,
-                              child: GestureDetector(
-                                onTap: () {
-                                  pdfController.value!.jumpToPage(pdfController.value!.page + 1);
-                                  logger.i("Next page");
-                                },
+                              child: Listener(
+                                behavior: HitTestBehavior.opaque,
+                                onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage + 1),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
@@ -272,10 +273,10 @@ class PdfViewerWidget extends HookWidget {
                                       ],
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: const Icon(
+                                  child: const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Icon(
                                         Icons.arrow_downward,
                                         color: Colors.green,
                                         size: 20,
