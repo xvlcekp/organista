@@ -9,23 +9,46 @@ import 'package:organista/views/app_repository.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  await mainInitialize();
-  await logger.setup();
-  Bloc.observer = SimpleBlocObserver(logger: logger);
-  logger.i('App started');
+  WidgetsFlutterBinding.ensureInitialized();
 
-  final prefs = await SharedPreferences.getInstance();
+  // Parallelize critical initialization
+  final initFutures = await Future.wait([
+    mainInitialize(),
+    SharedPreferences.getInstance(),
+  ]);
+
+  final prefs = initFutures[1] as SharedPreferences;
+
+  // Set up BLoC observer immediately (no heavy work)
+  Bloc.observer = SimpleBlocObserver(logger: logger);
+
+  // Start the app immediately
   runApp(
     Provider<SharedPreferences>.value(
       value: prefs,
       child: const AppRepository(),
     ),
   );
+
+  // Setup logger asynchronously after app starts
+  _setupLoggerAsync();
+}
+
+/// Setup logger in background without blocking app startup
+void _setupLoggerAsync() {
+  Future.microtask(() async {
+    try {
+      await logger.setup();
+      logger.i('App started - logger initialized');
+    } catch (e) {
+      debugPrint('Logger setup failed: $e');
+      // Don't crash the app if logging fails
+    }
+  });
 }
 
 /// This function must be called before using any Firebase services also in tests
 Future<void> mainInitialize() async {
-  WidgetsFlutterBinding.ensureInitialized();
   // Firebase.initializeApp must be called before using any Firebase services
   await Firebase.initializeApp(
     options: await DefaultFirebaseOptions.currentPlatform,
