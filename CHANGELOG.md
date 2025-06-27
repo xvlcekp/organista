@@ -24,6 +24,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - 
+## [1.0.4] - 2025-06-
+### Added
+- Možnosť prihlásenia sa do aplikácie cez Google účet (Gmail)
+- Výrazné zrýchlenie prepínania strán
+- Pridané nastavenie, aby sa nezhasínala obrazovka
+- Neviditeľné zlepšenia v kóde, aktualizácie balíkov a iné
+- Pridaná CI/CD pipeline na automatické testy
+- Pridaná podpora pre JPEG obrázky
+### Fixed
+- Preklad chybových hlášok pri prihlasovaní
+- Pridané unit testy
+- Opravené preklady
+- Optimalizácia a zrýchlenie aplikácie
+### Security
+- Vylepšená bezpečnosť prístupu k repozitárom
+- Iné bezpečnostné zlepšenia
 
 ## [1.0.3] - 2025-05-11
 ### Added

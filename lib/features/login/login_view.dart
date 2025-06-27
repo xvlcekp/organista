@@ -125,11 +125,16 @@ class LoginView extends HookWidget {
                               const AuthEventSignInWithGoogle(),
                             );
                       },
-                      icon: const Icon(Icons.g_mobiledata),
+                      icon: Image.asset(
+                        'assets/images/gmail_icon.png',
+                        width: 30,
+                        height: 30,
+                      ),
                       label: Text(localizations.signInWithGoogle),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: theme.colorScheme.onSurface,
-                        side: BorderSide(color: theme.colorScheme.outline),
+                        backgroundColor: const Color(0xFFF2F2F2),
+                        side: BorderSide.none,
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                       ),
                     ),

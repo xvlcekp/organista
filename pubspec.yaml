@@ -111,6 +111,7 @@ flutter:
   assets:
       - assets/config/credentials.json
       - assets/images/organista_icon_200x200.png
+      - assets/images/gmail_icon.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
