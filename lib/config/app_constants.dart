@@ -17,4 +17,6 @@ class AppConstants {
   static const int maxCacheObjects = 5000;
 
   static const String contactEmail = 'rozpravaciaappka@gmail.com';
+
+  static const double nextPagetouchAreaHeight = 0.15;
 }

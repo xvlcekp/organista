@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/color.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
@@ -224,7 +225,7 @@ class PdfViewerWidget extends HookWidget {
                               top: 0,
                               left: 0,
                               right: 0,
-                              height: MediaQuery.of(context).size.height * 0.1,
+                              height: MediaQuery.of(context).size.height * AppConstants.nextPagetouchAreaHeight,
                               child: Listener(
                                 behavior: HitTestBehavior.opaque,
                                 onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage - 1),
@@ -276,7 +277,7 @@ class PdfViewerWidget extends HookWidget {
                               bottom: 0,
                               left: 0,
                               right: 0,
-                              height: MediaQuery.of(context).size.height * 0.1,
+                              height: MediaQuery.of(context).size.height * AppConstants.nextPagetouchAreaHeight,
                               child: Listener(
                                 behavior: HitTestBehavior.opaque,
                                 onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage + 1),
