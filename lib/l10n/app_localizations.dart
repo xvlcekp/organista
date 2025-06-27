@@ -821,6 +821,12 @@ abstract class AppLocalizations {
   /// **'Zobraziť navigačné šípky'**
   String get showNavigationArrows;
 
+  /// No description provided for @keepScreenOn.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nechať obrazovku zapnutú'**
+  String get keepScreenOn;
+
   /// No description provided for @errorUnknownText.
   ///
   /// In sk, this message translates to:

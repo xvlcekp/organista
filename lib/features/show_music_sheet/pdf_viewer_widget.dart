@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:organista/extensions/color.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
+import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -223,7 +224,7 @@ class PdfViewerWidget extends HookWidget {
                               top: 0,
                               left: 0,
                               right: 0,
-                              height: MediaQuery.of(context).size.height * 0.2,
+                              height: MediaQuery.of(context).size.height * 0.1,
                               child: Listener(
                                 behavior: HitTestBehavior.opaque,
                                 onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage - 1),
@@ -238,14 +239,31 @@ class PdfViewerWidget extends HookWidget {
                                       ],
                                     ),
                                   ),
-                                  child: const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Icon(
-                                        Icons.arrow_upward,
-                                        color: Colors.green,
-                                        size: 20,
-                                      ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(child: SizedBox()),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 16, bottom: 16),
+                                              child: Icon(
+                                                Icons.arrow_upward,
+                                                color: Colors.green,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          height: 1,
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.withAlpha(150),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -258,7 +276,7 @@ class PdfViewerWidget extends HookWidget {
                               bottom: 0,
                               left: 0,
                               right: 0,
-                              height: MediaQuery.of(context).size.height * 0.2,
+                              height: MediaQuery.of(context).size.height * 0.1,
                               child: Listener(
                                 behavior: HitTestBehavior.opaque,
                                 onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage + 1),
@@ -273,14 +291,31 @@ class PdfViewerWidget extends HookWidget {
                                       ],
                                     ),
                                   ),
-                                  child: const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Icon(
-                                        Icons.arrow_downward,
-                                        color: Colors.green,
-                                        size: 20,
-                                      ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 1,
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.withAlpha(150),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 16, top: 16),
+                                              child: Icon(
+                                                Icons.arrow_downward,
+                                                color: Colors.green,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Expanded(child: SizedBox()),
+                                      ],
                                     ),
                                   ),
                                 ),
