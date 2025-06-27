@@ -121,6 +121,7 @@
     "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
     "anErrorHappened": "Nastala chyba",
     "showNavigationArrows": "Zobraziť navigačné šípky",
+    "keepScreenOn": "Nechať obrazovku zapnutú",
 
     "errorUnknownText": "Neznáma chyba",
     

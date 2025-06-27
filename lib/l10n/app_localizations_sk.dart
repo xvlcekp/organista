@@ -378,6 +378,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get showNavigationArrows => 'Zobraziť navigačné šípky';
 
   @override
+  String get keepScreenOn => 'Nechať obrazovku zapnutú';
+
+  @override
   String get errorUnknownText => 'Neznáma chyba';
 
   @override

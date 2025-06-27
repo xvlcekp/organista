@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
+import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
 class SettingsView extends StatelessWidget {
@@ -81,6 +82,15 @@ class SettingsView extends StatelessWidget {
                   value: state.showNavigationArrows,
                   onChanged: (bool value) {
                     settingsCubit.changeShowNavigationArrows(value);
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(context.loc.keepScreenOn),
+                trailing: Switch(
+                  value: state.keepScreenOn,
+                  onChanged: (bool value) {
+                    settingsCubit.changeKeepScreenOn(value);
                   },
                 ),
               ),

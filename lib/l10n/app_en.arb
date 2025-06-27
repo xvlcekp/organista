@@ -121,6 +121,7 @@
     "fileTooLarge": "File is too large. Maximum size is {maxSize}MB.",
     "anErrorHappened": "An error happened",
     "showNavigationArrows": "Show navigation arrows",
+    "keepScreenOn": "Keep screen on",
 
     "errorUnknownText": "Unknown error",
     

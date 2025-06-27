@@ -378,6 +378,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showNavigationArrows => 'Show navigation arrows';
 
   @override
+  String get keepScreenOn => 'Keep screen on';
+
+  @override
   String get errorUnknownText => 'Unknown error';
 
   @override
