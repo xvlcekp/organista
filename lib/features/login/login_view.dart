@@ -132,7 +132,7 @@ class LoginView extends HookWidget {
                       ),
                       label: Text(localizations.signInWithGoogle),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: theme.colorScheme.onSurface,
+                        foregroundColor: Colors.black,
                         backgroundColor: const Color(0xFFF2F2F2),
                         side: BorderSide.none,
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
