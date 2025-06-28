@@ -144,6 +144,8 @@
     "authErrorUserDisabledText": "Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.",
     
     "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.",
+    
+    "authErrorGoogleSignInFailedText": "Prihlásenie cez Google zlyhalo. Skúste to znova.",
 
     "musicSheetAlreadyInPlaylist": "Notový záznam už existuje v zozname skladieb.",
     "musicSheetInitializationError": "Nastala chyba pri inicializácii."

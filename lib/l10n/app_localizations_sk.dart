@@ -414,6 +414,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authErrorInvalidCredentialText => 'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.';
 
   @override
+  String get authErrorGoogleSignInFailedText => 'Prihlásenie cez Google zlyhalo. Skúste to znova.';
+
+  @override
   String get musicSheetAlreadyInPlaylist => 'Notový záznam už existuje v zozname skladieb.';
 
   @override

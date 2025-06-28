@@ -893,6 +893,12 @@ abstract class AppLocalizations {
   /// **'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.'**
   String get authErrorInvalidCredentialText;
 
+  /// No description provided for @authErrorGoogleSignInFailedText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prihlásenie cez Google zlyhalo. Skúste to znova.'**
+  String get authErrorGoogleSignInFailedText;
+
   /// No description provided for @musicSheetAlreadyInPlaylist.
   ///
   /// In sk, this message translates to:

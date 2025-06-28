@@ -42,6 +42,8 @@ String getLocalizedMessage(AuthError authError, BuildContext context) {
     return loc.authErrorUserDisabledText;
   } else if (authError is AuthErrorInvalidCredential) {
     return loc.authErrorInvalidCredentialText;
+  } else if (authError is AuthErrorGoogleSignInFailed) {
+    return loc.authErrorGoogleSignInFailedText;
   }
 
   return loc.errorUnknownText;

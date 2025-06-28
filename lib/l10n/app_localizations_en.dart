@@ -414,6 +414,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authErrorInvalidCredentialText => 'The supplied auth credential is incorrect, malformed or has expired.';
 
   @override
+  String get authErrorGoogleSignInFailedText => 'Google Sign-In failed. Please try again.';
+
+  @override
   String get musicSheetAlreadyInPlaylist => 'Music sheet already exists in the playlist.';
 
   @override
