@@ -3,7 +3,7 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
-### Version 1.0.4
+### Version 1.0.4 - 28.6.2025
 <table>
 <tr>
 <th width="33.33%">Zrýchlené posúvanie strán</th>
@@ -22,7 +22,7 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 </tr>
 </table>
 
-### Version 1.0.3
+### Version 1.0.3 - 11.5.2025
 <table>
 <tr>
 <th width="33.33%">Posúvanie strán dotykom</th>
@@ -44,15 +44,12 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 
 
-## Google play release
-
-**Compile** - `flutter clean; flutter pub get; flutter build appbundle`
-
-**import debug symbols** - 
-/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib
-
-- Napísanie Changelogu
-- vytvorenie release branche
+## Releasing a new version
+1. **write changelog**
+2. **increase app version** + bundle
+3. **compile** - `flutter clean; flutter pub get; flutter build appbundle`
+4. **import debug symbols** - `/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib`
+5. **create a release branch**
 
 https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
 
