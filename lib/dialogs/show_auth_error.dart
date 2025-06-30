@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' show BuildContext;
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 import 'package:organista/services/auth/auth_error.dart';
-import 'package:organista/dialogs/generic_dialog.dart';
 
 Future<void> showAuthError({
   required AuthError authError,
@@ -9,14 +9,7 @@ Future<void> showAuthError({
 }) {
   final message = getLocalizedMessage(authError, context);
 
-  return showGenericDialog<void>(
-    context: context,
-    title: context.loc.error,
-    content: message,
-    optionsBuilder: () => {
-      'OK': true,
-    },
-  );
+  return showErrorDialog(context, message);
 }
 
 String getLocalizedMessage(AuthError authError, BuildContext context) {

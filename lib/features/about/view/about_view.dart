@@ -37,7 +37,7 @@ class AboutView extends HookWidget {
             const SizedBox(height: 24),
             InkWell(
               onTap: () async {
-                final Uri url = Uri.parse('https://sites.google.com/view/organista-app/casto-kladene-otazky');
+                final Uri url = Uri.parse(AppConstants.faqUrl);
                 try {
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -65,7 +65,7 @@ class AboutView extends HookWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              '© 2025 Organista',
+              '2025 Organista',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
