@@ -53,6 +53,18 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
 
+## Flutter upgrade 
+- Go to folder where flutter is installed
+### To latest stable version (prefered)
+- `flutter upgrade`
+
+### To specific version
+- `git fetch`
+- `git checkout 3.32.5` (before it was 3.29.3)
+
+
+
+
 ## Firebase
 
 **deleteStorageFilesOnDocDelete** - automation on firebase using Firebase Functions. When musicSheet document is deleted, also musicSheet file is deleted in Firebase Storage.  

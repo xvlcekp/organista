@@ -5,7 +5,7 @@ import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-showEditPlaylistDialog(
+void showEditPlaylistDialog(
     {required BuildContext context, required TextEditingController controller, required Playlist playlist}) {
   final localizations = context.loc;
 

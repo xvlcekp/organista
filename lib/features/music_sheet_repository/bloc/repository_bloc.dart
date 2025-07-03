@@ -85,7 +85,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     }
   }
 
-  void _onUpdateMusicSheets(event, emit) {
+  void _onUpdateMusicSheets(UpdateMusicSheetsEvent event, Emitter<MusicSheetRepositoryState> emit) {
     final sortedMusicSheets = _sortMusicSheetsByAlphabet(event.musicSheets.toList());
     if (state is MusicSheetRepositoryLoaded) {
       final currentState = state as MusicSheetRepositoryLoaded;

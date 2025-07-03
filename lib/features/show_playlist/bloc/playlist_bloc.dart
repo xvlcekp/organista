@@ -35,7 +35,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<UpdatePlaylistEvent>(_onUpdatePlaylist);
   }
 
-  void _uploadNewMusicSheetEvent(event, emit) async {
+  void _uploadNewMusicSheetEvent(UploadNewMusicSheetEvent event, Emitter<PlaylistState> emit) async {
     emit(PlaylistLoadedState(
       isLoading: true,
       playlist: state.playlist,
@@ -76,7 +76,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     }
   }
 
-  void _deleteMusicSheetInPlaylistEvent(event, emit) async {
+  void _deleteMusicSheetInPlaylistEvent(DeleteMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
     emit(PlaylistLoadedState(
       isLoading: true,
       playlist: state.playlist,
@@ -91,7 +91,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
   }
 
-  void _reorderMusicSheetEvent(event, emit) async {
+  void _reorderMusicSheetEvent(ReorderMusicSheetEvent event, Emitter<PlaylistState> emit) async {
     emit(PlaylistLoadedState(
       isLoading: true,
       playlist: state.playlist,
@@ -99,7 +99,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     await firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
   }
 
-  void _renameMusicSheetInPlaylistEvent(event, emit) async {
+  void _renameMusicSheetInPlaylistEvent(RenameMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
     final musicSheet = event.musicSheet;
     final fileName = event.fileName;
     final playlist = event.playlist;
@@ -110,7 +110,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
   }
 
-  void _initPlaylistEvent(event, emit) async {
+  void _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
     logger.i("Init playlist was called");
     emit(PlaylistLoadedState(
       isLoading: true,
@@ -152,7 +152,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     }
   }
 
-  void _addMusicSheetToPlaylistEvent(event, emit) async {
+  void _addMusicSheetToPlaylistEvent(AddMusicSheetToPlaylistEvent event, Emitter<PlaylistState> emit) async {
     final Playlist playlist = event.playlist;
     final MusicSheet musicSheet = event.musicSheet;
     final String fileName = event.fileName;
