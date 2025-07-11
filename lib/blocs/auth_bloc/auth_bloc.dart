@@ -9,7 +9,6 @@ import 'package:equatable/equatable.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_provider.dart';
 import 'package:organista/services/stream_manager.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -35,27 +34,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseFirestoreRepository firebaseFirestoreRepository;
   final FirebaseStorageRepository firebaseStorageRepository;
 
-  /// Helper method to rollback Firebase Auth user creation with proper logging
-  Future<void> _rollbackAuthUser(String context) async {
-    logger.e('Failed to create user data in Firestore during $context');
-    try {
-      await authProvider.deleteUser();
-      logger.i('Successfully rolled back Firebase Auth user creation during $context');
-    } catch (deleteError) {
-      logger.e('Failed to rollback Firebase Auth user during $context: $deleteError');
-      // Continue execution - rollback failure shouldn't prevent showing original error
-    }
+  /// Helper method to check if an error indicates the user already exists
+  bool _isUserAlreadyExistsError(dynamic error) {
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('already exists') ||
+        errorString.contains('document already exists') ||
+        errorString.contains('already in use');
   }
 
-  /// Helper method to check if an error indicates user already exists
-  bool _isUserAlreadyExistsError(Object error) {
-    final errorMessage = error.toString().toLowerCase();
-    return errorMessage.contains('already exists') ||
-        errorMessage.contains('document already exists') ||
-        errorMessage.contains('permission-denied');
-  }
-
-  void _authEventDeleteAccount(event, emit) async {
+  void _authEventDeleteAccount(AuthEventDeleteAccount event, Emitter<AuthState> emit) async {
     final user = state.user;
     // log the user out if we don't have a current user
     if (user == null) {
@@ -72,14 +59,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       // Cancel all Firebase streams first to prevent permission errors
       await StreamManager.instance.cancelAllStreams();
-
-      // First, sign out from Google Sign-In to prevent state issues
-      try {
-        await GoogleSignIn().signOut();
-      } catch (e) {
-        // Ignore if Google Sign-In fails - user might not be signed in via Google
-        logger.i('Google Sign-Out during account deletion: $e');
-      }
 
       // Delete user data from Firestore and Storage
       await firebaseFirestoreRepository.deleteUser(userId: user.id);
@@ -123,24 +102,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _authEventLogOut(event, emit) async {
-    // start loading
-    emit(
-      const AuthStateLoggedOut(isLoading: true),
-    );
+  void _authEventLogOut(AuthEventLogOut event, Emitter<AuthState> emit) async {
+    try {
+      emit(const AuthStateLoggedOut(isLoading: true));
 
-    // Cancel all Firebase streams first to prevent permission errors
-    await StreamManager.instance.cancelAllStreams();
+      // Cancel all Firebase streams first to prevent permission errors
+      await StreamManager.instance.cancelAllStreams();
 
-    // log the user out
-    await authProvider.logOut();
-    // log the user out in the UI as well
-    emit(
-      const AuthStateLoggedOut(isLoading: false),
-    );
+      await authProvider.logOut();
+      emit(
+        const AuthStateLoggedOut(isLoading: false),
+      );
+    } on FirebaseAuthException catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthError.from(e),
+        ),
+      );
+    } catch (e) {
+      // Even if logout fails, we should clear the state
+      emit(
+        const AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthGenericException(),
+        ),
+      );
+    }
   }
 
-  void _authEventInitialize(event, emit) async {
+  void _authEventInitialize(AuthEventInitialize event, Emitter<AuthState> emit) async {
     await authProvider.initialize();
     final user = authProvider.currentUser;
     if (user == null) {
@@ -155,22 +146,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _authEventRegister(event, emit) async {
-    // start loading
+  void _authEventRegister(AuthEventRegister event, Emitter<AuthState> emit) async {
     emit(
-      const AuthStateIsInRegistrationView(
-        isLoading: true,
-      ),
+      const AuthStateLoggedOut(isLoading: true),
     );
-    final email = event.email;
-    final password = event.password;
     try {
-      // create the user
       final authUser = await authProvider.createUser(
-        email: email,
-        password: password,
+        email: event.email,
+        password: event.password,
       );
 
+      // we need to manually upload the user to DB after successful registration
       try {
         await firebaseFirestoreRepository.uploadNewUser(
           user: authUser,
@@ -179,57 +165,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: authUser,
         );
       } catch (e) {
-        // Firestore operations failed - rollback the Firebase Auth user
-        await _rollbackAuthUser('registration');
-        rethrow; // Re-throw the original error
+        // Check if this is a "user already exists" error or a real failure
+        if (_isUserAlreadyExistsError(e)) {
+          // User already exists, this is fine - continue with registration
+          logger.i('User already exists in Firestore, continuing with registration: $e');
+        } else {
+          logger.e('Error during registration: $e');
+          rethrow; // Re-throw the original error
+        }
       }
 
       emit(
-        AuthStateLoggedIn(isLoading: false, user: authUser),
-      );
-    } on FirebaseAuthException catch (e) {
-      emit(
-        AuthStateIsInRegistrationView(
-          isLoading: false,
-          authError: AuthError.from(e),
-        ),
-      );
-    } catch (e) {
-      // Handle any non-FirebaseAuth errors (including Firestore rollback errors)
-      emit(
-        AuthStateIsInRegistrationView(
-          isLoading: false,
-          authError: const AuthGenericException(),
-        ),
-      );
-    }
-  }
-
-  void _authEventGoToLogin(event, emit) {
-    emit(
-      const AuthStateLoggedOut(
-        isLoading: false,
-      ),
-    );
-  }
-
-  void _authEventLogIn(event, emit) async {
-    emit(
-      const AuthStateLoggedOut(isLoading: true),
-    );
-    // log the user in
-    try {
-      final email = event.email;
-      final password = event.password;
-      final authUser = await authProvider.logIn(
-        email: email,
-        password: password,
-      );
-      final user = authUser;
-      emit(
         AuthStateLoggedIn(
           isLoading: false,
-          user: user,
+          user: authUser,
         ),
       );
     } on FirebaseAuthException catch (e) {
@@ -239,22 +188,63 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           authError: AuthError.from(e),
         ),
       );
+    } catch (e) {
+      emit(
+        const AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthGenericException(),
+        ),
+      );
     }
   }
 
-  void _authEventGoToRegistration(event, emit) {
+  void _authEventGoToLogin(AuthEventGoToLogin event, Emitter<AuthState> emit) {
     emit(
-      const AuthStateIsInRegistrationView(
-        isLoading: false,
-      ),
+      const AuthStateLoggedOut(isLoading: false),
     );
   }
 
-  void _authEventForgotPassword(event, emit) async {
+  void _authEventGoToRegistration(AuthEventGoToRegistration event, Emitter<AuthState> emit) {
     emit(
-      const AuthStateLoggedOut(
-        isLoading: true,
-      ),
+      const AuthStateIsInRegistrationView(isLoading: false),
+    );
+  }
+
+  void _authEventLogIn(AuthEventLogIn event, Emitter<AuthState> emit) async {
+    emit(
+      const AuthStateLoggedOut(isLoading: true),
+    );
+    try {
+      final authUser = await authProvider.logIn(
+        email: event.email,
+        password: event.password,
+      );
+      emit(
+        AuthStateLoggedIn(
+          isLoading: false,
+          user: authUser,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthError.from(e),
+        ),
+      );
+    } catch (e) {
+      emit(
+        const AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthGenericException(),
+        ),
+      );
+    }
+  }
+
+  void _authEventForgotPassword(AuthEventForgotPassword event, Emitter<AuthState> emit) async {
+    emit(
+      const AuthStateLoggedOut(isLoading: true),
     );
     try {
       final resetSuccess = await authProvider.sendPasswordResetEmail(email: event.email);
@@ -269,12 +259,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AuthStateLoggedOut(
           isLoading: false,
           authError: AuthError.from(e),
+          passwordResetSent: false,
+        ),
+      );
+    } catch (e) {
+      emit(
+        const AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthGenericException(),
+          passwordResetSent: false,
         ),
       );
     }
   }
 
-  void _authEventSignInWithGoogle(event, emit) async {
+  void _authEventSignInWithGoogle(AuthEventSignInWithGoogle event, Emitter<AuthState> emit) async {
     emit(
       const AuthStateLoggedOut(isLoading: true),
     );
@@ -296,7 +295,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           logger.i('User already exists in Firestore, continuing with Google Sign-In: $e');
         } else {
           // This is a real failure - rollback the Firebase Auth user
-          await _rollbackAuthUser('Google Sign-In');
+          logger.e('Error during Google Sign-In: $e');
           rethrow; // Re-throw the original error
         }
       }
