@@ -50,9 +50,9 @@ class UploadMusicSheetFragment extends StatelessWidget {
 
                     if (context.mounted) {
                       context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
-                            file: musicSheetFile,
-                            repositoryId: repositoryId,
-                          );
+                        file: musicSheetFile,
+                        repositoryId: repositoryId,
+                      );
                       Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                     }
                   } on UnsupportedFileExtensionException {

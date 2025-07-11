@@ -113,8 +113,8 @@ class SettingsView extends StatelessWidget {
                   final shouldDeleteAccount = await showDeleteAccountDialog(context);
                   if (shouldDeleteAccount && context.mounted) {
                     context.read<AuthBloc>().add(
-                          const AuthEventDeleteAccount(),
-                        );
+                      const AuthEventDeleteAccount(),
+                    );
                   }
                 },
               ),

@@ -22,8 +22,8 @@ class MainPopupMenuButton extends StatelessWidget {
             final shouldLogOut = await showLogOutDialog(context);
             if (shouldLogOut && context.mounted) {
               context.read<AuthBloc>().add(
-                    const AuthEventLogOut(),
-                  );
+                const AuthEventLogOut(),
+              );
             }
             break;
           case MenuAction.settings:

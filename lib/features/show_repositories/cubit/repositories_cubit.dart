@@ -32,10 +32,12 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     _streamSubscription = broadcastStream.listen((repositories) {
       final publicRepos = repositories.where((repo) => repo.userId.isEmpty).toList();
       final privateRepos = repositories.where((repo) => repo.userId == userId).toList();
-      emit(RepositoriesLoadedState(
-        publicRepositories: publicRepos,
-        privateRepositories: privateRepos,
-      ));
+      emit(
+        RepositoriesLoadedState(
+          publicRepositories: publicRepos,
+          privateRepositories: privateRepos,
+        ),
+      );
     });
 
     logger.d('Subscribed to repositories stream for user: $userId');

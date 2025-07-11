@@ -28,13 +28,14 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(
-            authProvider: AuthService.firebase(),
-            firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
-            firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
-          )..add(
-              const AuthEventInitialize(),
-            ),
+          create: (context) =>
+              AuthBloc(
+                authProvider: AuthService.firebase(),
+                firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
+                firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
+              )..add(
+                const AuthEventInitialize(),
+              ),
         ),
         BlocProvider<AddEditMusicSheetCubit>(
           create: (context) => AddEditMusicSheetCubit(),

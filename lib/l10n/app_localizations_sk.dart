@@ -30,7 +30,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get noMusicSheetsYet => 'Zatiaľ žiadne notové záznamy';
 
   @override
-  String get addYourFirstMusicSheet => 'Pridajte svoj prvý notový záznam a začnite';
+  String get addYourFirstMusicSheet =>
+      'Pridajte svoj prvý notový záznam a začnite';
 
   @override
   String get selectImageFirst => 'Najprv musíte vybrať obrázok';
@@ -60,7 +61,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get deleteImage => 'Vymazať obrázok';
 
   @override
-  String get deleteImageMessage => 'Ste si istý, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!';
+  String get deleteImageMessage =>
+      'Ste si istý, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!';
 
   @override
   String get logout => 'Odhlásiť sa';
@@ -72,7 +74,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get deleteAccount => 'Odstrániť účet';
 
   @override
-  String get deleteAccountMessage => 'Ste si istý, že chcete vymazať svoj účet? Táto akcia sa nedá vrátiť späť.';
+  String get deleteAccountMessage =>
+      'Ste si istý, že chcete vymazať svoj účet? Táto akcia sa nedá vrátiť späť.';
 
   @override
   String get forgotPassword => 'Zabudli ste heslo';
@@ -135,7 +138,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get success => 'Úspech';
 
   @override
-  String get passwordResetEmailSent => 'E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.';
+  String get passwordResetEmailSent =>
+      'E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.';
 
   @override
   String get invalidEmail => 'Neplatný e-mail';
@@ -266,10 +270,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get noMusicSheetsFound => 'Nenašli sa žiadne noty';
 
   @override
-  String get noGlobalRepositories => 'Žiadne globálne repozitáre nie sú k dispozícii.';
+  String get noGlobalRepositories =>
+      'Žiadne globálne repozitáre nie sú k dispozícii.';
 
   @override
-  String get noPersonalRepositories => 'Žiadne osobné repozitáre nie sú k dispozícii.';
+  String get noPersonalRepositories =>
+      'Žiadne osobné repozitáre nie sú k dispozícii.';
 
   @override
   String get global => 'Globálne';
@@ -296,7 +302,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get add => 'Pridať';
 
   @override
-  String get resetPasswordMessage => 'Zadajte svoju e-mailovú adresu a my vám pošleme odkaz na obnovenie hesla.';
+  String get resetPasswordMessage =>
+      'Zadajte svoju e-mailovú adresu a my vám pošleme odkaz na obnovenie hesla.';
 
   @override
   String get enterEmail => 'Zadajte svoj e-mail';
@@ -308,7 +315,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get pleaseEnterEmail => 'Prosím, zadajte svoj e-mail';
 
   @override
-  String get passwordResetLinkSent => 'Odkaz na obnovenie hesla bol odoslaný na váš e-mail';
+  String get passwordResetLinkSent =>
+      'Odkaz na obnovenie hesla bol odoslaný na váš e-mail';
 
   @override
   String get playlistName => 'Názov zoznamu';
@@ -338,13 +346,15 @@ class AppLocalizationsSk extends AppLocalizations {
   String get deletePlaylist => 'Vymazať zoznam skladieb';
 
   @override
-  String get deletePlaylistMessage => 'Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!';
+  String get deletePlaylistMessage =>
+      'Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!';
 
   @override
   String get about => 'O aplikácii';
 
   @override
-  String get aboutMessage => 'Aplikácia na správu notových záznamov\nVytvoril Pavol Vlček';
+  String get aboutMessage =>
+      'Aplikácia na správu notových záznamov\nVytvoril Pavol Vlček';
 
   @override
   String get appSettings => 'Nastavenia aplikácie';
@@ -387,38 +397,50 @@ class AppLocalizationsSk extends AppLocalizations {
   String get authGenericExceptionText => 'Vyskytla sa neznáma chyba';
 
   @override
-  String get authErrorUserNotLoggedInText => 'Žiadny používateľ nie je momentálne prihlásený!';
+  String get authErrorUserNotLoggedInText =>
+      'Žiadny používateľ nie je momentálne prihlásený!';
 
   @override
-  String get authErrorRequiresRecentLoginText => 'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
+  String get authErrorRequiresRecentLoginText =>
+      'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
 
   @override
-  String get authErrorOperationNotAllowedText => 'Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!';
+  String get authErrorOperationNotAllowedText =>
+      'Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!';
 
   @override
-  String get authErrorUserNotFoundText => 'Zadaný používateľ nebol nájdený na serveri!';
+  String get authErrorUserNotFoundText =>
+      'Zadaný používateľ nebol nájdený na serveri!';
 
   @override
-  String get authErrorWeakPasswordText => 'Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!';
+  String get authErrorWeakPasswordText =>
+      'Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!';
 
   @override
-  String get authErrorInvalidEmailText => 'Prosím, skontrolujte svoj e-mail a skúste to znova!';
+  String get authErrorInvalidEmailText =>
+      'Prosím, skontrolujte svoj e-mail a skúste to znova!';
 
   @override
-  String get authErrorEmailAlreadyInUseText => 'Prosím, použite iný e-mail na registráciu!';
+  String get authErrorEmailAlreadyInUseText =>
+      'Prosím, použite iný e-mail na registráciu!';
 
   @override
-  String get authErrorUserDisabledText => 'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.';
+  String get authErrorUserDisabledText =>
+      'Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.';
 
   @override
-  String get authErrorInvalidCredentialText => 'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.';
+  String get authErrorInvalidCredentialText =>
+      'Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.';
 
   @override
-  String get authErrorGoogleSignInFailedText => 'Prihlásenie cez Google zlyhalo. Skúste to znova.';
+  String get authErrorGoogleSignInFailedText =>
+      'Prihlásenie cez Google zlyhalo. Skúste to znova.';
 
   @override
-  String get musicSheetAlreadyInPlaylist => 'Notový záznam už existuje v zozname skladieb.';
+  String get musicSheetAlreadyInPlaylist =>
+      'Notový záznam už existuje v zozname skladieb.';
 
   @override
-  String get musicSheetInitializationError => 'Nastala chyba pri inicializácii.';
+  String get musicSheetInitializationError =>
+      'Nastala chyba pri inicializácii.';
 }

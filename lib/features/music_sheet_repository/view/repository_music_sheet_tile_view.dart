@@ -52,15 +52,17 @@ class RepositoryMusicSheetTile extends HookWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(
-          builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
-        ))
+            .push(
+              MaterialPageRoute(
+                builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
+              ),
+            )
             .then((_) {
-          // Check cache status after returning from the view
-          _checkIfCached().then((cached) {
-            isCached.value = cached;
-          });
-        });
+              // Check cache status after returning from the view
+              _checkIfCached().then((cached) {
+                isCached.value = cached;
+              });
+            });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -110,10 +112,12 @@ class RepositoryMusicSheetTile extends HookWidget {
                     onPressed: () async {
                       final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
                       if (shouldDeleteMusicSheet && context.mounted) {
-                        context.read<MusicSheetRepositoryBloc>().add(DeleteMusicSheet(
-                              musicSheet: musicSheet,
-                              repositoryId: repositoryId,
-                            ));
+                        context.read<MusicSheetRepositoryBloc>().add(
+                          DeleteMusicSheet(
+                            musicSheet: musicSheet,
+                            repositoryId: repositoryId,
+                          ),
+                        );
                         searchBarController.text = '';
                       }
                     },

@@ -9,10 +9,10 @@ class RepositoryPayload extends MapView<String, dynamic> {
     required String name,
     required String userId,
   }) : super(
-          {
-            RepositoryKey.name: name,
-            RepositoryKey.userId: userId,
-            RepositoryKey.createdAt: FieldValue.serverTimestamp(),
-          },
-        );
+         {
+           RepositoryKey.name: name,
+           RepositoryKey.userId: userId,
+           RepositoryKey.createdAt: FieldValue.serverTimestamp(),
+         },
+       );
 }

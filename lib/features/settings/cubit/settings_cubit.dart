@@ -17,13 +17,15 @@ class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit(
     this._prefs, {
     WakelockService? wakelockService,
-  })  : _wakelockService = wakelockService ?? WakelockPlusService(),
-        super(SettingsState(
-          themeMode: ThemeMode.values[_prefs.getInt(_themeKey) ?? 0],
-          locale: Locale(_prefs.getString(_languageKey) ?? 'sk'),
-          showNavigationArrows: _prefs.getBool(_showNavigationArrowsKey) ?? true,
-          keepScreenOn: _prefs.getBool(_keepScreenOnKey) ?? false,
-        )) {
+  }) : _wakelockService = wakelockService ?? WakelockPlusService(),
+       super(
+         SettingsState(
+           themeMode: ThemeMode.values[_prefs.getInt(_themeKey) ?? 0],
+           locale: Locale(_prefs.getString(_languageKey) ?? 'sk'),
+           showNavigationArrows: _prefs.getBool(_showNavigationArrowsKey) ?? true,
+           keepScreenOn: _prefs.getBool(_keepScreenOnKey) ?? false,
+         ),
+       ) {
     // Initialize wakelock based on saved preference
     _initializeWakelock();
   }

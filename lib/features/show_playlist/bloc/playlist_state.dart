@@ -16,11 +16,11 @@ abstract class PlaylistState extends Equatable {
 @immutable
 class PlaylistInitState extends PlaylistState {
   PlaylistInitState()
-      : super(
-          isLoading: false,
-          playlist: Playlist.empty(),
-          error: null,
-        );
+    : super(
+        isLoading: false,
+        playlist: Playlist.empty(),
+        error: null,
+      );
 
   @override
   List<Object?> get props => [isLoading, playlist, error];
@@ -45,11 +45,11 @@ class PlaylistLoadedState extends PlaylistState {
 @immutable
 class PlaylistErrorState extends PlaylistState {
   PlaylistErrorState({required String errorMessage})
-      : super(
-          isLoading: false,
-          playlist: Playlist.empty(),
-          error: InitializationError(),
-        );
+    : super(
+        isLoading: false,
+        playlist: Playlist.empty(),
+        error: InitializationError(),
+      );
 
   @override
   List<Object?> get props => [isLoading, playlist, error];

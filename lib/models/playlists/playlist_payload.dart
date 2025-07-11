@@ -11,11 +11,11 @@ class PlaylistPayload extends MapView<String, dynamic> {
     required String name,
     required List<MusicSheet> musicSheets,
   }) : super(
-          {
-            PlaylistKey.userId: userId,
-            PlaylistKey.name: name,
-            PlaylistKey.createdAt: FieldValue.serverTimestamp(),
-            PlaylistKey.musicSheets: musicSheets.map((musicSheet) => musicSheet.toJson()),
-          },
-        );
+         {
+           PlaylistKey.userId: userId,
+           PlaylistKey.name: name,
+           PlaylistKey.createdAt: FieldValue.serverTimestamp(),
+           PlaylistKey.musicSheets: musicSheets.map((musicSheet) => musicSheet.toJson()),
+         },
+       );
 }

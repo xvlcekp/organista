@@ -11,7 +11,7 @@ class FirebaseStorageRepository {
 
   /// Lists all items in a folder
   Future<ListResult> listFolderContents(String path) {
-    return _storage.ref(path).listAll();
+    return getReference(path).listAll();
   }
 
   /// Recursively deletes a folder and all its contents
@@ -33,22 +33,9 @@ class FirebaseStorageRepository {
       for (final folder in folderContents.prefixes) {
         await deleteFolder(folder.fullPath);
       }
-
-      // Delete the folder itself
-      await deletePath(path);
     } catch (e, stackTrace) {
       logger.e("Error deleting folder $path: $e");
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage folder');
-    }
-  }
-
-  /// Deletes a specific path from storage
-  Future<void> deletePath(String path) async {
-    try {
-      await _storage.ref(path).delete();
-    } catch (e, stackTrace) {
-      logger.e("Error deleting path $path: $e");
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage path');
     }
   }
 
@@ -64,7 +51,7 @@ class FirebaseStorageRepository {
   }) async {
     try {
       final String uuid = const Uuid().v4();
-      final Reference ref = _storage.ref(bucket).child(uuid);
+      final Reference ref = getReference(bucket).child(uuid);
       final String? mimeType = lookupMimeType(file.name);
 
       logger.i('Uploading file ${file.name} with mime type ${mimeType ?? 'unknown'}');

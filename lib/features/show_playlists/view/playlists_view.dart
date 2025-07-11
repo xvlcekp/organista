@@ -110,8 +110,8 @@ class PlaylistsView extends HookWidget {
                     final shouldDeletePlaylist = await showDeletePlaylistDialog(context);
                     if (shouldDeletePlaylist && context.mounted) {
                       context.read<ShowPlaylistsCubit>().deletePlaylist(
-                            playlist: playlist,
-                          );
+                        playlist: playlist,
+                      );
                     }
                     return;
                   },
@@ -119,7 +119,10 @@ class PlaylistsView extends HookWidget {
                     onLongPress: () {
                       controller.text = playlist.name;
                       showEditPlaylistDialog(
-                          context: context, controller: controller, playlist: state.playlists[index]);
+                        context: context,
+                        controller: controller,
+                        playlist: state.playlists[index],
+                      );
                     },
                     onTap: () {
                       context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));

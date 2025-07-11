@@ -10,17 +10,18 @@ CustomLogger get logger => CustomLogger.instance;
 class CustomLogger extends Logger {
   final _googleCloudLoggingService = GoogleCloudLoggingService();
   CustomLogger._()
-      : super(
-          filter: CustomFilter(),
-          printer: CustomPrettyPrinter(),
-        ) {
+    : super(
+        filter: CustomFilter(),
+        printer: CustomPrettyPrinter(),
+      ) {
     Logger.addOutputListener((event) {
       if (kReleaseMode) {
         // Only write logs to Cloud Logging in release mode
         _googleCloudLoggingService.writeLog(
           level: event.level,
-          message:
-              event.lines.join('\n'), // Join the log lines with a new line, so that it is written as a single message
+          message: event.lines.join(
+            '\n',
+          ), // Join the log lines with a new line, so that it is written as a single message
         );
         debugPrint('App will log output to Cloud Logging');
       }

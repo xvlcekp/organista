@@ -15,14 +15,14 @@ class MusicSheetPayload extends MapView<String, dynamic> {
     required MediaType mediaType,
     required int sequenceId,
   }) : super(
-          {
-            MusicSheetKey.fileName: fileName,
-            MusicSheetKey.fileUrl: fileUrl,
-            MusicSheetKey.originalFileStorageId: originalFileStorageId,
-            MusicSheetKey.createdAt: FieldValue.serverTimestamp(),
-            MusicSheetKey.userId: userId,
-            MusicSheetKey.mediaType: mediaType.name,
-            MusicSheetKey.sequenceId: fileName.sequenceId,
-          },
-        );
+         {
+           MusicSheetKey.fileName: fileName,
+           MusicSheetKey.fileUrl: fileUrl,
+           MusicSheetKey.originalFileStorageId: originalFileStorageId,
+           MusicSheetKey.createdAt: FieldValue.serverTimestamp(),
+           MusicSheetKey.userId: userId,
+           MusicSheetKey.mediaType: mediaType.name,
+           MusicSheetKey.sequenceId: fileName.sequenceId,
+         },
+       );
 }

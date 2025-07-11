@@ -21,9 +21,10 @@ class MockAuthUtils extends Mock implements AuthUtils {
   @override
   Future<AuthUser?> checkUserAuth() async {
     return super.noSuchMethod(
-      Invocation.method(#checkUserAuth, []),
-      returnValue: Future<AuthUser?>.value(null),
-    ) as Future<AuthUser?>;
+          Invocation.method(#checkUserAuth, []),
+          returnValue: Future<AuthUser?>.value(null),
+        )
+        as Future<AuthUser?>;
   }
 }
 

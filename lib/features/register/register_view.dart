@@ -116,11 +116,11 @@ class RegisterView extends HookWidget {
                       }
 
                       context.read<AuthBloc>().add(
-                            AuthEventRegister(
-                              email: email,
-                              password: password,
-                            ),
-                          );
+                        AuthEventRegister(
+                          email: email,
+                          password: password,
+                        ),
+                      );
                     },
                     style: theme.elevatedButtonTheme.style,
                     child: Text(
@@ -139,8 +139,8 @@ class RegisterView extends HookWidget {
                       TextButton(
                         onPressed: () {
                           context.read<AuthBloc>().add(
-                                const AuthEventGoToLogin(),
-                              );
+                            const AuthEventGoToLogin(),
+                          );
                         },
                         child: Text(
                           localizations.login,

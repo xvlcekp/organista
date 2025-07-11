@@ -7,7 +7,7 @@ class EmailTextField extends CustomTextField {
     required super.controller,
     required super.hintText,
   }) : super(
-          prefixIcon: Icons.email_outlined,
-          keyboardType: TextInputType.emailAddress,
-        );
+         prefixIcon: Icons.email_outlined,
+         keyboardType: TextInputType.emailAddress,
+       );
 }

@@ -93,10 +93,12 @@ class FirebaseFirestoreRepository {
   Future<void> _deleteDocuments(String collectionName, String userKey, String userId) async {
     try {
       final snapshot = await instance.collection(collectionName).where(userKey, isEqualTo: userId).get();
-      await Future.wait(snapshot.docs.map((doc) async {
-        await doc.reference.delete();
-        logger.i('$collectionName document ${doc.id} with user id $userId was deleted.');
-      }));
+      await Future.wait(
+        snapshot.docs.map((doc) async {
+          await doc.reference.delete();
+          logger.i('$collectionName document ${doc.id} with user id $userId was deleted.');
+        }),
+      );
     } catch (e, stackTrace) {
       logger.e('Error deleting documents from $collectionName: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting documents');
@@ -112,17 +114,18 @@ class FirebaseFirestoreRepository {
         .doc(playlistId)
         .snapshots(includeMetadataChanges: true)
         .map((snapshot) {
-      if (!snapshot.exists || snapshot.data() == null) {
-        logger.w("Playlist document does not exist: $playlistId");
-        return Playlist.empty();
-      }
-      logger.i("Got new update for playlist $playlistId");
-      return Playlist(playlistId: playlistId, json: snapshot.data()!);
-    }).handleError((error, stackTrace) {
-      logger.e('Error in getPlaylistStream: $error');
-      FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in playlist stream');
-      return Playlist.empty();
-    });
+          if (!snapshot.exists || snapshot.data() == null) {
+            logger.w("Playlist document does not exist: $playlistId");
+            return Playlist.empty();
+          }
+          logger.i("Got new update for playlist $playlistId");
+          return Playlist(playlistId: playlistId, json: snapshot.data()!);
+        })
+        .handleError((error, stackTrace) {
+          logger.e('Error in getPlaylistStream: $error');
+          FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in playlist stream');
+          return Playlist.empty();
+        });
   }
 
   Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
@@ -133,17 +136,20 @@ class FirebaseFirestoreRepository {
         .snapshots(includeMetadataChanges: true)
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
-      final documents = snapshot.docs;
-      logger.i("Got new playlist data with length: ${documents.length}");
-      return documents.map((doc) => Playlist(
-            playlistId: doc.id,
-            json: doc.data(),
-          ));
-    }).handleError((error, stackTrace) {
-      logger.e('Error in getPlaylistsStream: $error');
-      FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in playlists stream');
-      return <Playlist>[];
-    });
+          final documents = snapshot.docs;
+          logger.i("Got new playlist data with length: ${documents.length}");
+          return documents.map(
+            (doc) => Playlist(
+              playlistId: doc.id,
+              json: doc.data(),
+            ),
+          );
+        })
+        .handleError((error, stackTrace) {
+          logger.e('Error in getPlaylistsStream: $error');
+          FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in playlists stream');
+          return <Playlist>[];
+        });
   }
 
   Future<bool> addNewPlaylist({
@@ -308,7 +314,8 @@ class FirebaseFirestoreRepository {
           .collection(FirebaseCollectionName.musicSheets);
       await firestoreRef.doc(musicSheet.musicSheetId).delete();
       logger.i(
-          "Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId");
+        "Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId",
+      );
       return true;
     } catch (e, stackTrace) {
       logger.e('Error deleting music sheet from repository: $e');
@@ -328,12 +335,14 @@ class FirebaseFirestoreRepository {
         .map((snapshot) {
           final documents = snapshot.docs;
           logger.i("Got repositories data with length: ${documents.length}");
-          return documents.map((doc) => Repository(
-                json: {
-                  ...doc.data(),
-                  RepositoryKey.repositoryId: doc.id,
-                },
-              ));
+          return documents.map(
+            (doc) => Repository(
+              json: {
+                ...doc.data(),
+                RepositoryKey.repositoryId: doc.id,
+              },
+            ),
+          );
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getRepositoriesStream: $error');
@@ -350,14 +359,19 @@ class FirebaseFirestoreRepository {
         .snapshots(includeMetadataChanges: true)
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
-      final documents = snapshot.docs;
-      logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
-      return documents.map((doc) => MusicSheet(json: doc.data()));
-    }).handleError((error, stackTrace) {
-      logger.e('Error in getRepositoryMusicSheetsStream: $error');
-      FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in repository music sheets stream');
-      return <MusicSheet>[];
-    });
+          final documents = snapshot.docs;
+          logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
+          return documents.map((doc) => MusicSheet(json: doc.data()));
+        })
+        .handleError((error, stackTrace) {
+          logger.e('Error in getRepositoryMusicSheetsStream: $error');
+          FirebaseCrashlytics.instance.recordError(
+            error,
+            stackTrace,
+            reason: 'Error in repository music sheets stream',
+          );
+          return <MusicSheet>[];
+        });
   }
 
   Future<bool> createGlobalRepository({required String name}) async {

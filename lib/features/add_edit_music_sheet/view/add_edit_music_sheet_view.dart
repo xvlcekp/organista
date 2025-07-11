@@ -35,19 +35,20 @@ class AddEditMusicSheetView extends HookWidget {
             child: Column(
               children: [
                 Expanded(
-                    flex: 2,
-                    child: switch (state) {
-                      InitMusicSheetState() => const AddImageControllersView(),
-                      UploadMusicSheetState() => UploadedMusicSheetFileView(file: state.file),
-                      EditMusicSheetState() => MusicSheetView(
-                          musicSheet: state.musicSheet,
-                          mode: MusicSheetViewMode.preview,
-                        ),
-                      AddMusicSheetToPlaylistState() => MusicSheetView(
-                          musicSheet: state.musicSheet,
-                          mode: MusicSheetViewMode.preview,
-                        ),
-                    }),
+                  flex: 2,
+                  child: switch (state) {
+                    InitMusicSheetState() => const AddImageControllersView(),
+                    UploadMusicSheetState() => UploadedMusicSheetFileView(file: state.file),
+                    EditMusicSheetState() => MusicSheetView(
+                      musicSheet: state.musicSheet,
+                      mode: MusicSheetViewMode.preview,
+                    ),
+                    AddMusicSheetToPlaylistState() => MusicSheetView(
+                      musicSheet: state.musicSheet,
+                      mode: MusicSheetViewMode.preview,
+                    ),
+                  },
+                ),
                 Expanded(
                   flex: 3,
                   child: Padding(
@@ -95,30 +96,32 @@ class AddEditMusicSheetView extends HookWidget {
                                 logger.e(localizations.selectImageFirst);
                               case UploadMusicSheetState():
                                 context.read<PlaylistBloc>().add(
-                                      UploadNewMusicSheetEvent(
-                                        file: state.file,
-                                        fileName: musicSheetNameController.text,
-                                        user: context.read<AuthBloc>().state.user!,
-                                        repositoryId: state.repositoryId,
-                                      ),
-                                    );
+                                  UploadNewMusicSheetEvent(
+                                    file: state.file,
+                                    fileName: musicSheetNameController.text,
+                                    user: context.read<AuthBloc>().state.user!,
+                                    repositoryId: state.repositoryId,
+                                  ),
+                                );
                                 resetMusicSheetCubitAndPop(context);
                               case EditMusicSheetState():
                                 context.read<PlaylistBloc>().add(
-                                      RenameMusicSheetInPlaylistEvent(
-                                        playlist: state.playlist,
-                                        musicSheet: state.musicSheet,
-                                        fileName: musicSheetNameController.text,
-                                      ),
-                                    );
+                                  RenameMusicSheetInPlaylistEvent(
+                                    playlist: state.playlist,
+                                    musicSheet: state.musicSheet,
+                                    fileName: musicSheetNameController.text,
+                                  ),
+                                );
                                 resetMusicSheetCubitAndShowPlaylist(context);
                               case AddMusicSheetToPlaylistState():
                                 final playlist = context.read<PlaylistBloc>().state.playlist;
-                                context.read<PlaylistBloc>().add(AddMusicSheetToPlaylistEvent(
-                                      musicSheet: state.musicSheet,
-                                      fileName: musicSheetNameController.text,
-                                      playlist: playlist,
-                                    ));
+                                context.read<PlaylistBloc>().add(
+                                  AddMusicSheetToPlaylistEvent(
+                                    musicSheet: state.musicSheet,
+                                    fileName: musicSheetNameController.text,
+                                    playlist: playlist,
+                                  ),
+                                );
                                 resetMusicSheetCubitAndShowPlaylist(context);
                             }
                           },

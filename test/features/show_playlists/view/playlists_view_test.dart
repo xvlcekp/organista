@@ -99,10 +99,12 @@ void main() {
       );
 
       // Register fallback values for mocktail
-      registerFallbackValue(InitPlaylistEvent(
-        user: const AuthUser(id: '', email: '', isEmailVerified: false),
-        playlist: Playlist.empty(),
-      ));
+      registerFallbackValue(
+        InitPlaylistEvent(
+          user: const AuthUser(id: '', email: '', isEmailVerified: false),
+          playlist: Playlist.empty(),
+        ),
+      );
       registerFallbackValue(testPlaylist1);
     });
 
@@ -148,9 +150,11 @@ void main() {
 
     group('Empty State', () {
       testWidgets('should display empty state when no playlists exist', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: const PlaylistsLoadedState(playlists: []),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: const PlaylistsLoadedState(playlists: []),
+          ),
+        );
 
         expect(find.byIcon(Icons.music_off), findsOneWidget);
         expect(find.text('No playlists yet'), findsOneWidget);
@@ -161,9 +165,11 @@ void main() {
 
     group('Populated State', () {
       testWidgets('should display list of playlists when playlists exist', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: PlaylistsLoadedState(playlists: [testPlaylist1, testPlaylist2]),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1, testPlaylist2]),
+          ),
+        );
 
         expect(find.byType(ListView), findsOneWidget);
         expect(find.text('Sunday Service'), findsOneWidget);
@@ -176,9 +182,11 @@ void main() {
       });
 
       testWidgets('should display chevron right icon for navigation', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
+          ),
+        );
 
         expect(find.byIcon(Icons.chevron_right), findsOneWidget);
       });
@@ -188,17 +196,21 @@ void main() {
       testWidgets('should call startSubscribingPlaylists on initialization', (tester) async {
         await tester.pumpWidget(createTestWidget());
 
-        verify(() => mockShowPlaylistsCubit.startSubscribingPlaylists(
-              userId: testUser.id,
-            )).called(1);
+        verify(
+          () => mockShowPlaylistsCubit.startSubscribingPlaylists(
+            userId: testUser.id,
+          ),
+        ).called(1);
       });
     });
 
     group('Basic Interactions', () {
       testWidgets('should show dismissible widget for playlist deletion', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
+          ),
+        );
 
         final dismissible = find.byType(Dismissible);
         expect(dismissible, findsOneWidget);
@@ -212,9 +224,11 @@ void main() {
       });
 
       testWidgets('should have proper widget hierarchy', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
+          ),
+        );
 
         // Verify the basic widget tree structure
         expect(find.byType(Scaffold), findsOneWidget);
@@ -230,20 +244,23 @@ void main() {
     group('Multiple Playlists', () {
       testWidgets('should handle multiple playlists correctly', (tester) async {
         final manyPlaylists = List.generate(
-            3,
-            (index) => Playlist(
-                  playlistId: 'playlist-$index',
-                  json: {
-                    PlaylistKey.userId: 'test-user-123',
-                    PlaylistKey.createdAt: testTimestamp,
-                    PlaylistKey.name: 'Playlist $index',
-                    PlaylistKey.musicSheets: [],
-                  },
-                ));
+          3,
+          (index) => Playlist(
+            playlistId: 'playlist-$index',
+            json: {
+              PlaylistKey.userId: 'test-user-123',
+              PlaylistKey.createdAt: testTimestamp,
+              PlaylistKey.name: 'Playlist $index',
+              PlaylistKey.musicSheets: [],
+            },
+          ),
+        );
 
-        await tester.pumpWidget(createTestWidget(
-          initialState: PlaylistsLoadedState(playlists: manyPlaylists),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: manyPlaylists),
+          ),
+        );
 
         expect(find.byType(ListView), findsOneWidget);
         expect(find.text('Playlist 0'), findsOneWidget);
@@ -254,9 +271,11 @@ void main() {
 
     group('State Management', () {
       testWidgets('should handle loading state', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: const InitPlaylistState(),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: const InitPlaylistState(),
+          ),
+        );
 
         // Should not crash and should display the scaffold
         expect(find.byType(Scaffold), findsOneWidget);
@@ -264,9 +283,11 @@ void main() {
       });
 
       testWidgets('should handle empty playlists state', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: const PlaylistsLoadedState(playlists: []),
-        ));
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: const PlaylistsLoadedState(playlists: []),
+          ),
+        );
 
         expect(find.text('No playlists yet'), findsOneWidget);
         expect(find.text('Create your first playlist'), findsOneWidget);

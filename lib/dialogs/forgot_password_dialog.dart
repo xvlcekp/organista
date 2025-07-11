@@ -66,8 +66,8 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
             }
 
             context.read<AuthBloc>().add(
-                  AuthEventForgotPassword(email: email),
-                );
+              AuthEventForgotPassword(email: email),
+            );
             Navigator.of(context).pop();
 
             ScaffoldMessenger.of(context).showSnackBar(

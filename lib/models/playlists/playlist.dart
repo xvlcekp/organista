@@ -20,12 +20,12 @@ class Playlist extends Equatable {
   Playlist({
     required this.playlistId,
     required Map<String, dynamic> json,
-  })  : userId = json[PlaylistKey.userId] ?? '',
-        createdAt = ((json[PlaylistKey.createdAt] ?? Timestamp(0, 0)) as Timestamp).toDate(),
-        name = json[PlaylistKey.name] ?? '',
-        musicSheets = ((json[PlaylistKey.musicSheets] ?? []) as List<dynamic>)
-            .map((record) => MusicSheet(json: record as Map<String, dynamic>))
-            .toList();
+  }) : userId = json[PlaylistKey.userId] ?? '',
+       createdAt = ((json[PlaylistKey.createdAt] ?? Timestamp(0, 0)) as Timestamp).toDate(),
+       name = json[PlaylistKey.name] ?? '',
+       musicSheets = ((json[PlaylistKey.musicSheets] ?? []) as List<dynamic>)
+           .map((record) => MusicSheet(json: record as Map<String, dynamic>))
+           .toList();
 
   @override
   String toString() => 'Playlist, id = $playlistId, createdAt = $createdAt';

@@ -14,10 +14,10 @@ class Repository extends Equatable {
 
   Repository({
     required Map<String, dynamic> json,
-  })  : repositoryId = json[RepositoryKey.repositoryId] ?? const Uuid().v4(),
-        name = json[RepositoryKey.name] ?? '',
-        userId = json[RepositoryKey.userId] ?? '',
-        createdAt = (json[RepositoryKey.createdAt] as Timestamp).toDate();
+  }) : repositoryId = json[RepositoryKey.repositoryId] ?? const Uuid().v4(),
+       name = json[RepositoryKey.name] ?? '',
+       userId = json[RepositoryKey.userId] ?? '',
+       createdAt = (json[RepositoryKey.createdAt] as Timestamp).toDate();
 
   Map<String, dynamic> toJson() {
     return {
@@ -49,9 +49,9 @@ class Repository extends Equatable {
 
   @override
   List<Object?> get props => [
-        repositoryId,
-        name,
-        userId,
-        createdAt,
-      ];
+    repositoryId,
+    name,
+    userId,
+    createdAt,
+  ];
 }

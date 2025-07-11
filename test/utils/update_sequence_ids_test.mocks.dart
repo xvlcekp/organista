@@ -30,26 +30,32 @@ class MockAuthUser extends _i1.Mock implements _i2.AuthUser {
   }
 
   @override
-  String get id => (super.noSuchMethod(
-        Invocation.getter(#id),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#id),
-        ),
-      ) as String);
+  String get id =>
+      (super.noSuchMethod(
+            Invocation.getter(#id),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#id),
+            ),
+          )
+          as String);
 
   @override
-  String get email => (super.noSuchMethod(
-        Invocation.getter(#email),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#email),
-        ),
-      ) as String);
+  String get email =>
+      (super.noSuchMethod(
+            Invocation.getter(#email),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#email),
+            ),
+          )
+          as String);
 
   @override
-  bool get isEmailVerified => (super.noSuchMethod(
-        Invocation.getter(#isEmailVerified),
-        returnValue: false,
-      ) as bool);
+  bool get isEmailVerified =>
+      (super.noSuchMethod(
+            Invocation.getter(#isEmailVerified),
+            returnValue: false,
+          )
+          as bool);
 }

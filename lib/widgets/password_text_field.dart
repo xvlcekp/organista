@@ -9,13 +9,13 @@ class PasswordTextField extends CustomTextField {
     required super.obscureText,
     required VoidCallback onToggleVisibility,
   }) : super(
-          prefixIcon: Icons.lock_outline,
-          suffixIcon: IconButton(
-            icon: Icon(
-              obscureText ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,
-            ),
-            onPressed: onToggleVisibility,
-          ),
-        );
+         prefixIcon: Icons.lock_outline,
+         suffixIcon: IconButton(
+           icon: Icon(
+             obscureText ? Icons.visibility_off : Icons.visibility,
+             color: Colors.grey,
+           ),
+           onPressed: onToggleVisibility,
+         ),
+       );
 }

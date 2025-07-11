@@ -4,8 +4,11 @@ import 'package:organista/dialogs/playlists/playlist_dialog_generic.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-showAddPlaylistDialog(
-    {required BuildContext context, required TextEditingController controller, required String userId}) {
+void showAddPlaylistDialog({
+  required BuildContext context,
+  required TextEditingController controller,
+  required String userId,
+}) {
   final localizations = context.loc;
   controller.text = '';
   showPlaylistDialog(
@@ -15,9 +18,9 @@ showAddPlaylistDialog(
     actionLabel: localizations.add,
     onConfirm: () {
       context.read<ShowPlaylistsCubit>().addPlaylist(
-            playlistName: controller.text.trim(),
-            userId: userId,
-          );
+        playlistName: controller.text.trim(),
+        userId: userId,
+      );
     },
   );
 }

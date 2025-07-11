@@ -77,9 +77,9 @@ class MusicSheetListTile extends HookWidget {
                       onPressed: () async {
                         if (context.mounted) {
                           context.read<AddEditMusicSheetCubit>().editMusicSheetInPlaylist(
-                                playlist: playlist,
-                                musicSheet: musicSheet,
-                              );
+                            playlist: playlist,
+                            musicSheet: musicSheet,
+                          );
                           Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                         }
                       },
@@ -96,11 +96,11 @@ class MusicSheetListTile extends HookWidget {
                         final shouldDeleteImage = await showDeleteImageDialog(context);
                         if (shouldDeleteImage && context.mounted) {
                           context.read<PlaylistBloc>().add(
-                                DeleteMusicSheetInPlaylistEvent(
-                                  musicSheet: musicSheet,
-                                  playlist: playlist,
-                                ),
-                              );
+                            DeleteMusicSheetInPlaylistEvent(
+                              musicSheet: musicSheet,
+                              playlist: playlist,
+                            ),
+                          );
                         }
                         return;
                       },

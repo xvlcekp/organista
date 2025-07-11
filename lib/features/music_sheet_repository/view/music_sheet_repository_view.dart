@@ -21,12 +21,13 @@ class MusicSheetRepositoryView extends HookWidget {
     required Repository repository,
   }) {
     return MaterialPageRoute<void>(
-        builder: (_) => BlocProvider(
-              create: (context) => MusicSheetRepositoryBloc(
-                firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
-              )..add(InitMusicSheetsRepositoryEvent(repositoryId: repository.repositoryId)),
-              child: MusicSheetRepositoryView(repository: repository),
-            ));
+      builder: (_) => BlocProvider(
+        create: (context) => MusicSheetRepositoryBloc(
+          firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
+        )..add(InitMusicSheetsRepositoryEvent(repositoryId: repository.repositoryId)),
+        child: MusicSheetRepositoryView(repository: repository),
+      ),
+    );
   }
 
   @override
@@ -51,8 +52,8 @@ class MusicSheetRepositoryView extends HookWidget {
             searchBarController: searchBarController,
             onSearch: (query) {
               context.read<MusicSheetRepositoryBloc>().add(
-                    SearchMusicSheets(query: query),
-                  );
+                SearchMusicSheets(query: query),
+              );
             },
           ),
           Expanded(

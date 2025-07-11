@@ -88,10 +88,12 @@ void main() {
     test('should support equality comparison', () {
       final musicSheet1 = MusicSheet(json: sampleJson);
       final musicSheet2 = MusicSheet(json: sampleJson);
-      final differentSheet = MusicSheet(json: {
-        ...sampleJson,
-        MusicSheetKey.fileName: 'Different Name.pdf',
-      });
+      final differentSheet = MusicSheet(
+        json: {
+          ...sampleJson,
+          MusicSheetKey.fileName: 'Different Name.pdf',
+        },
+      );
 
       expect(musicSheet1, equals(musicSheet2));
       expect(musicSheet1, isNot(equals(differentSheet)));
