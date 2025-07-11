@@ -36,10 +36,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   }
 
   void _uploadNewMusicSheetEvent(UploadNewMusicSheetEvent event, Emitter<PlaylistState> emit) async {
-    emit(PlaylistLoadedState(
-      isLoading: true,
-      playlist: state.playlist,
-    ));
+    emit(
+      PlaylistLoadedState(
+        isLoading: true,
+        playlist: state.playlist,
+      ),
+    );
 
     final MusicSheetFile file = event.file;
     final String fileName = event.fileName;
@@ -60,27 +62,33 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           mediaType: file.mediaType,
           repositoryId: repositoryId,
         );
-        emit(PlaylistLoadedState(
-          isLoading: false,
-          playlist: state.playlist,
-        ));
+        emit(
+          PlaylistLoadedState(
+            isLoading: false,
+            playlist: state.playlist,
+          ),
+        );
       } else {
         throw Exception('Failed to upload file, not uploading MusicSheet record to Firestore');
       }
     } catch (e) {
       logger.e('Failed to upload file: $e');
-      emit(PlaylistLoadedState(
-        isLoading: false,
-        playlist: state.playlist,
-      ));
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: state.playlist,
+        ),
+      );
     }
   }
 
   void _deleteMusicSheetInPlaylistEvent(DeleteMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
-    emit(PlaylistLoadedState(
-      isLoading: true,
-      playlist: state.playlist,
-    ));
+    emit(
+      PlaylistLoadedState(
+        isLoading: true,
+        playlist: state.playlist,
+      ),
+    );
 
     final MusicSheet musicSheetToDelete = event.musicSheet;
     final Playlist playlist = event.playlist;
@@ -92,10 +100,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   }
 
   void _reorderMusicSheetEvent(ReorderMusicSheetEvent event, Emitter<PlaylistState> emit) async {
-    emit(PlaylistLoadedState(
-      isLoading: true,
-      playlist: state.playlist,
-    ));
+    emit(
+      PlaylistLoadedState(
+        isLoading: true,
+        playlist: state.playlist,
+      ),
+    );
     await firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
   }
 
@@ -112,10 +122,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
   void _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
     logger.i("Init playlist was called");
-    emit(PlaylistLoadedState(
-      isLoading: true,
-      playlist: event.playlist,
-    ));
+    emit(
+      PlaylistLoadedState(
+        isLoading: true,
+        playlist: event.playlist,
+      ),
+    );
 
     try {
       final broadcastStream = StreamManager.instance.getBroadcastStream<Playlist>(
@@ -145,10 +157,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     if (event.errorMessage != null) {
       emit(PlaylistErrorState(errorMessage: event.errorMessage!));
     } else {
-      emit(PlaylistLoadedState(
-        isLoading: false,
-        playlist: event.playlist,
-      ));
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: event.playlist,
+        ),
+      );
     }
   }
 
@@ -157,10 +171,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final MusicSheet musicSheet = event.musicSheet;
     final String fileName = event.fileName;
 
-    emit(PlaylistLoadedState(
-      isLoading: true,
-      playlist: state.playlist,
-    ));
+    emit(
+      PlaylistLoadedState(
+        isLoading: true,
+        playlist: state.playlist,
+      ),
+    );
 
     if (!state.playlist.musicSheets.any((sheet) => sheet.musicSheetId == musicSheet.musicSheetId)) {
       MusicSheet customNamedMusicSheet = musicSheet.copyWith(fileName: fileName);
@@ -169,11 +185,13 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         musicSheet: customNamedMusicSheet,
       );
     } else {
-      emit(PlaylistLoadedState(
-        isLoading: false,
-        playlist: state.playlist,
-        error: MusicSheetAlreadyInPlaylistError(),
-      ));
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: state.playlist,
+          error: MusicSheetAlreadyInPlaylistError(),
+        ),
+      );
     }
   }
 

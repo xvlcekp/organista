@@ -67,16 +67,18 @@ void main() {
 
     test('editMusicSheetInPlaylist should emit EditMusicSheetState with correct data', () {
       final mockPlaylist = Playlist.empty();
-      final mockMusicSheet = MusicSheet(json: {
-        MusicSheetKey.musicSheetId: 'sheet-123',
-        MusicSheetKey.userId: 'user-123',
-        MusicSheetKey.createdAt: Timestamp.fromDate(DateTime.now()),
-        MusicSheetKey.fileUrl: 'https://example.com/sheet.pdf',
-        MusicSheetKey.fileName: 'test.pdf',
-        MusicSheetKey.originalFileStorageId: 'storage-123',
-        MusicSheetKey.mediaType: 'pdf',
-        MusicSheetKey.sequenceId: 1,
-      });
+      final mockMusicSheet = MusicSheet(
+        json: {
+          MusicSheetKey.musicSheetId: 'sheet-123',
+          MusicSheetKey.userId: 'user-123',
+          MusicSheetKey.createdAt: Timestamp.fromDate(DateTime.now()),
+          MusicSheetKey.fileUrl: 'https://example.com/sheet.pdf',
+          MusicSheetKey.fileName: 'test.pdf',
+          MusicSheetKey.originalFileStorageId: 'storage-123',
+          MusicSheetKey.mediaType: 'pdf',
+          MusicSheetKey.sequenceId: 1,
+        },
+      );
 
       cubit.editMusicSheetInPlaylist(
         playlist: mockPlaylist,
@@ -90,16 +92,18 @@ void main() {
     });
 
     test('addMusicSheetToPlaylist should emit AddMusicSheetToPlaylistState with correct data', () {
-      final mockMusicSheet = MusicSheet(json: {
-        MusicSheetKey.musicSheetId: 'sheet-456',
-        MusicSheetKey.userId: 'user-123',
-        MusicSheetKey.createdAt: Timestamp.fromDate(DateTime.now()),
-        MusicSheetKey.fileUrl: 'https://example.com/sheet2.pdf',
-        MusicSheetKey.fileName: 'test2.pdf',
-        MusicSheetKey.originalFileStorageId: 'storage-456',
-        MusicSheetKey.mediaType: 'pdf',
-        MusicSheetKey.sequenceId: 2,
-      });
+      final mockMusicSheet = MusicSheet(
+        json: {
+          MusicSheetKey.musicSheetId: 'sheet-456',
+          MusicSheetKey.userId: 'user-123',
+          MusicSheetKey.createdAt: Timestamp.fromDate(DateTime.now()),
+          MusicSheetKey.fileUrl: 'https://example.com/sheet2.pdf',
+          MusicSheetKey.fileName: 'test2.pdf',
+          MusicSheetKey.originalFileStorageId: 'storage-456',
+          MusicSheetKey.mediaType: 'pdf',
+          MusicSheetKey.sequenceId: 2,
+        },
+      );
 
       cubit.addMusicSheetToPlaylist(musicSheet: mockMusicSheet);
 
@@ -130,16 +134,18 @@ void main() {
       expect(cubit.state, const InitMusicSheetState());
 
       // Transition to add to playlist state
-      final mockMusicSheet = MusicSheet(json: {
-        MusicSheetKey.musicSheetId: 'sheet-789',
-        MusicSheetKey.userId: 'user-123',
-        MusicSheetKey.createdAt: Timestamp.fromDate(DateTime.now()),
-        MusicSheetKey.fileUrl: 'https://example.com/sheet3.pdf',
-        MusicSheetKey.fileName: 'test3.pdf',
-        MusicSheetKey.originalFileStorageId: 'storage-789',
-        MusicSheetKey.mediaType: 'pdf',
-        MusicSheetKey.sequenceId: 3,
-      });
+      final mockMusicSheet = MusicSheet(
+        json: {
+          MusicSheetKey.musicSheetId: 'sheet-789',
+          MusicSheetKey.userId: 'user-123',
+          MusicSheetKey.createdAt: Timestamp.fromDate(DateTime.now()),
+          MusicSheetKey.fileUrl: 'https://example.com/sheet3.pdf',
+          MusicSheetKey.fileName: 'test3.pdf',
+          MusicSheetKey.originalFileStorageId: 'storage-789',
+          MusicSheetKey.mediaType: 'pdf',
+          MusicSheetKey.sequenceId: 3,
+        },
+      );
       cubit.addMusicSheetToPlaylist(musicSheet: mockMusicSheet);
       expect(cubit.state, isA<AddMusicSheetToPlaylistState>());
     });

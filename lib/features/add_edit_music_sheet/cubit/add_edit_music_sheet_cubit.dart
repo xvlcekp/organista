@@ -19,22 +19,28 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
     required MusicSheetFile file,
     required String repositoryId,
   }) {
-    emit(UploadMusicSheetState(
-      file: file,
-      repositoryId: repositoryId,
-    ));
+    emit(
+      UploadMusicSheetState(
+        file: file,
+        repositoryId: repositoryId,
+      ),
+    );
   }
 
   void editMusicSheetInPlaylist({required Playlist playlist, required MusicSheet musicSheet}) {
-    emit(EditMusicSheetState(
-      playlist: playlist,
-      musicSheet: musicSheet,
-    ));
+    emit(
+      EditMusicSheetState(
+        playlist: playlist,
+        musicSheet: musicSheet,
+      ),
+    );
   }
 
   void addMusicSheetToPlaylist({required MusicSheet musicSheet}) {
-    emit(AddMusicSheetToPlaylistState(
-      musicSheet: musicSheet,
-    ));
+    emit(
+      AddMusicSheetToPlaylistState(
+        musicSheet: musicSheet,
+      ),
+    );
   }
 }

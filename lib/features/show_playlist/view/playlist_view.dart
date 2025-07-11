@@ -121,8 +121,8 @@ class PlaylistView extends HookWidget {
               final musicSheet = playlist.musicSheets.removeAt(oldIndex);
               playlist.musicSheets.insert(newIndex, musicSheet);
               context.read<PlaylistBloc>().add(
-                    ReorderMusicSheetEvent(playlist: playlist),
-                  );
+                ReorderMusicSheetEvent(playlist: playlist),
+              );
             },
             itemBuilder: (context, index) {
               return MusicSheetListTile(

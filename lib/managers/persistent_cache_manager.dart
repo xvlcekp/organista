@@ -9,11 +9,13 @@ class PersistentCacheManager extends CacheManager with ImageCacheManager {
   }
 
   PersistentCacheManager._()
-      : super(Config(
+    : super(
+        Config(
           AppConstants.cacheKey,
           stalePeriod: AppConstants.cacheStalePeriod,
           maxNrOfCacheObjects: AppConstants.maxCacheObjects,
           repo: JsonCacheInfoRepository(databaseName: AppConstants.cacheKey),
           fileService: HttpFileService(),
-        ));
+        ),
+      );
 }

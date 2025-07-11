@@ -9,10 +9,10 @@ class UserInfoPayload extends MapView<String, String> {
     required String? displayName,
     required String? email,
   }) : super(
-          {
-            UserInfoKey.userId: userId,
-            UserInfoKey.displayName: displayName ?? '',
-            UserInfoKey.email: email ?? '',
-          },
-        );
+         {
+           UserInfoKey.userId: userId,
+           UserInfoKey.displayName: displayName ?? '',
+           UserInfoKey.email: email ?? '',
+         },
+       );
 }

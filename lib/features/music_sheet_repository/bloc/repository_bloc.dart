@@ -58,7 +58,9 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   }
 
   void _initMusicSheetsRepositoryEvent(
-      InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) async {
+    InitMusicSheetsRepositoryEvent event,
+    Emitter<MusicSheetRepositoryState> emit,
+  ) async {
     emit(MusicSheetRepositoryLoading());
 
     try {
@@ -91,16 +93,20 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
       final currentState = state as MusicSheetRepositoryLoaded;
       final query = currentState.searchQuery;
       final filteredSheets = _filterMusicSheets(sortedMusicSheets, query);
-      emit(MusicSheetRepositoryLoaded(
-        allMusicSheets: sortedMusicSheets,
-        filteredMusicSheets: filteredSheets,
-        searchQuery: query,
-      ));
+      emit(
+        MusicSheetRepositoryLoaded(
+          allMusicSheets: sortedMusicSheets,
+          filteredMusicSheets: filteredSheets,
+          searchQuery: query,
+        ),
+      );
     } else {
-      emit(MusicSheetRepositoryLoaded(
-        allMusicSheets: sortedMusicSheets,
-        filteredMusicSheets: sortedMusicSheets,
-      ));
+      emit(
+        MusicSheetRepositoryLoaded(
+          allMusicSheets: sortedMusicSheets,
+          filteredMusicSheets: sortedMusicSheets,
+        ),
+      );
     }
   }
 

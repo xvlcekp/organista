@@ -139,10 +139,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         const AuthStateLoggedOut(isLoading: false),
       );
     } else {
-      emit(AuthStateLoggedIn(
-        isLoading: false,
-        user: user,
-      ));
+      emit(
+        AuthStateLoggedIn(
+          isLoading: false,
+          user: user,
+        ),
+      );
     }
   }
 
