@@ -192,9 +192,11 @@ class UploadFolderScreen extends HookWidget {
           MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
           String fileNameToUse = _mapFileName(file.name, filenameMapping.value);
 
-          logger.i(filenameMapping.value.isEmpty
-              ? "Using original filename: $fileNameToUse"
-              : "Using mapped filename: $fileNameToUse, original file name was ${file.name}");
+          logger.i(
+            filenameMapping.value.isEmpty
+                ? "Using original filename: $fileNameToUse"
+                : "Using mapped filename: $fileNameToUse, original file name was ${file.name}",
+          );
 
           final reference = await firebaseStorageRepository.uploadFile(
             file: musicSheetFile,
@@ -281,9 +283,11 @@ class UploadFolderScreen extends HookWidget {
             child: const Text("Pick JSON Mapping File (Optional)"),
           ),
           const SizedBox(height: 10),
-          Text(filenameMapping.value.isNotEmpty
-              ? "JSON Loaded: ${filenameMapping.value.length} mappings - Only mapped files will be uploaded"
-              : "No JSON file selected - all files will be uploaded with original filenames"),
+          Text(
+            filenameMapping.value.isNotEmpty
+                ? "JSON Loaded: ${filenameMapping.value.length} mappings - Only mapped files will be uploaded"
+                : "No JSON file selected - all files will be uploaded with original filenames",
+          ),
           const SizedBox(height: 20),
           ElevatedButton(
             style: theme.elevatedButtonTheme.style,

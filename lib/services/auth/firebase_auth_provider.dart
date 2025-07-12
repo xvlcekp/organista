@@ -4,13 +4,18 @@ import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_error.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException, GoogleAuthProvider;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:async';
 
 // TODO - unify auth error messages in general, ideally do not throw custom errors (see how Vandad deals with that)
 
 class FirebaseAuthProvider implements AuthProvider {
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+
   @override
   Future<void> initialize() async {
-    return;
+    return _googleSignIn.initialize().then((_) {
+      logger.d('Google Sign-In initialized for authentication');
+    });
   }
 
   @override
@@ -61,79 +66,52 @@ class FirebaseAuthProvider implements AuthProvider {
     logger.i('Starting Google Sign-In process');
 
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
       // Clear any previous account selection to force account picker
       try {
-        await googleSignIn.signOut();
+        await _googleSignIn.signOut();
         logger.d('Cleared previous Google Sign-In session');
       } catch (e) {
         logger.w('Failed to clear previous Google session: $e');
         // Continue anyway as this is not critical
       }
 
-      // Step 1: Google account selection
-      logger.d('Requesting Google account selection');
-      GoogleSignInAccount? googleUser;
+      // Check if authenticate method is supported
+      logger.d('Checking if authenticate method is supported');
+      if (!_googleSignIn.supportsAuthenticate()) {
+        logger.e('Authenticate method not supported on this platform');
+        throw const AuthErrorGoogleSignInFailed();
+      }
+
+      // Use authenticate method for authentication only (no authorization scopes needed)
+      logger.d('Starting Google authentication');
+      GoogleSignInAccount googleUser;
       try {
-        googleUser = await googleSignIn.signIn();
+        googleUser = await _googleSignIn.authenticate();
+      } on GoogleSignInException catch (e) {
+        logger.e('Google authentication failed: ${e.code} - ${e.description}');
+        throw const AuthErrorGoogleSignInFailed();
       } catch (e) {
-        logger.e('Google account selection failed: $e');
+        logger.e('Google authentication failed: $e');
         throw const AuthErrorGoogleSignInFailed();
       }
 
-      if (googleUser == null) {
-        logger.w('Google Sign-In cancelled by user');
-        throw const AuthErrorGoogleSignInFailed();
-      }
+      logger.d('Google account authenticated: ${googleUser.email}');
 
-      logger.d('Google account selected: ${googleUser.email}');
+      // Get authentication tokens (ID token for authentication)
+      logger.d('Getting Google authentication tokens');
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
-      // Step 2: Get authentication tokens
-      logger.d('Retrieving Google authentication tokens');
-      GoogleSignInAuthentication googleAuth;
-      try {
-        googleAuth = await googleUser.authentication;
-      } catch (e) {
-        logger.e('Failed to retrieve Google authentication tokens: $e');
-        throw const AuthErrorGoogleSignInFailed();
-      }
-
-      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        logger.e('Google authentication tokens are null');
+      if (googleAuth.idToken == null) {
+        logger.e('Google ID token is null');
         throw const AuthErrorGoogleSignInFailed();
       }
 
       logger.d('Google authentication tokens retrieved successfully');
 
-      // Step 3: Create Firebase credential
-      logger.d('Creating Firebase credential');
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      // Create Firebase credential and sign in (we only need ID token for authentication)
+      return await _signInToFirebaseWithGoogleCredential(
+        googleAuth.idToken!,
       );
-
-      // Step 4: Sign in to Firebase
-      logger.d('Signing in to Firebase with Google credential');
-      try {
-        await FirebaseAuth.instance.signInWithCredential(credential);
-      } on FirebaseAuthException catch (e) {
-        logger.e('Firebase sign-in failed: ${e.code} - ${e.message}');
-        throw AuthError.from(e);
-      } catch (e) {
-        logger.e('Firebase sign-in failed with unexpected error: $e');
-        throw const AuthErrorGoogleSignInFailed();
-      }
-
-      // Step 5: Verify user is signed in
-      final user = currentUser;
-      if (user != null) {
-        logger.i('Google Sign-In completed successfully for user: ${user.email}');
-        return user;
-      } else {
-        logger.e('User is null after successful Firebase sign-in');
-        throw AuthErrorUserNotLoggedIn();
-      }
     } catch (e) {
       // If it's already an AuthError, rethrow it
       if (e is AuthError) {
@@ -146,15 +124,44 @@ class FirebaseAuthProvider implements AuthProvider {
     }
   }
 
+  /// Signs in to Firebase using Google credentials
+  Future<AuthUser> _signInToFirebaseWithGoogleCredential(String idToken) async {
+    // Create Firebase credential
+    logger.d('Creating Firebase credential');
+    final credential = GoogleAuthProvider.credential(
+      idToken: idToken, // Required for authentication
+    );
+
+    // Sign in to Firebase
+    logger.d('Signing in to Firebase with Google credential');
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      logger.e('Firebase sign-in failed: ${e.code} - ${e.message}');
+      throw AuthError.from(e);
+    } catch (e) {
+      logger.e('Firebase sign-in failed with unexpected error: $e');
+      throw const AuthErrorGoogleSignInFailed();
+    }
+
+    // Verify user is signed in
+    final user = currentUser;
+    if (user != null) {
+      logger.i('Google Sign-In completed successfully for user: ${user.email}');
+      return user;
+    } else {
+      logger.e('User is null after successful Firebase sign-in');
+      throw AuthErrorUserNotLoggedIn();
+    }
+  }
+
   @override
   Future<void> logOut() async {
     final user = currentUser;
     if (user != null) {
-      // Sign out from both Firebase and Google
-      await Future.wait([
-        FirebaseAuth.instance.signOut(),
-        GoogleSignIn().signOut(),
-      ]);
+      // Sign out from both Firebase and Google (fire and forget for instant UI response)
+      await FirebaseAuth.instance.signOut();
+      unawaited(_googleSignIn.signOut());
     } else {
       throw AuthErrorUserNotLoggedIn();
     }
@@ -185,10 +192,7 @@ class FirebaseAuthProvider implements AuthProvider {
       } catch (e) {
         // If user deletion fails, try to sign out first then delete
         try {
-          await Future.wait([
-            FirebaseAuth.instance.signOut(),
-            GoogleSignIn().signOut(),
-          ]);
+          await _googleSignIn.signOut();
         } catch (_) {
           logger.i('Ignoring sign-out errors during deletion');
         }

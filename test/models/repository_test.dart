@@ -55,10 +55,12 @@ void main() {
     test('should support equality comparison', () {
       final repository1 = Repository(json: sampleRepositoryJson);
       final repository2 = Repository(json: sampleRepositoryJson);
-      final differentRepository = Repository(json: {
-        ...sampleRepositoryJson,
-        RepositoryKey.name: 'Different Name',
-      });
+      final differentRepository = Repository(
+        json: {
+          ...sampleRepositoryJson,
+          RepositoryKey.name: 'Different Name',
+        },
+      );
 
       expect(repository1, equals(repository2));
       expect(repository1, isNot(equals(differentRepository)));

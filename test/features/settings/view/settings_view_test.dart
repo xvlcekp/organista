@@ -69,7 +69,8 @@ void main() {
     });
 
     Widget createTestWidget({SettingsState? initialState}) {
-      final state = initialState ??
+      final state =
+          initialState ??
           SettingsState(
             themeMode: ThemeMode.system,
             locale: const Locale('en'),
@@ -133,14 +134,16 @@ void main() {
       });
 
       testWidgets('should display switch in OFF state when keepScreenOn is false', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: SettingsState(
-            themeMode: ThemeMode.system,
-            locale: const Locale('en'),
-            showNavigationArrows: true,
-            keepScreenOn: false,
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: SettingsState(
+              themeMode: ThemeMode.system,
+              locale: const Locale('en'),
+              showNavigationArrows: true,
+              keepScreenOn: false,
+            ),
           ),
-        ));
+        );
 
         // Find the switch in the keep screen on setting
         final switches = find.byType(Switch);
@@ -161,14 +164,16 @@ void main() {
       });
 
       testWidgets('should display switch in ON state when keepScreenOn is true', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: SettingsState(
-            themeMode: ThemeMode.system,
-            locale: const Locale('en'),
-            showNavigationArrows: true,
-            keepScreenOn: true,
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: SettingsState(
+              themeMode: ThemeMode.system,
+              locale: const Locale('en'),
+              showNavigationArrows: true,
+              keepScreenOn: true,
+            ),
           ),
-        ));
+        );
 
         // Find the keep screen on switch specifically
         final keepScreenOnTile = find.ancestor(
@@ -206,14 +211,16 @@ void main() {
       });
 
       testWidgets('should call changeKeepScreenOn with false when turning off', (tester) async {
-        await tester.pumpWidget(createTestWidget(
-          initialState: SettingsState(
-            themeMode: ThemeMode.system,
-            locale: const Locale('en'),
-            showNavigationArrows: true,
-            keepScreenOn: true,
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: SettingsState(
+              themeMode: ThemeMode.system,
+              locale: const Locale('en'),
+              showNavigationArrows: true,
+              keepScreenOn: true,
+            ),
           ),
-        ));
+        );
 
         // Find the keep screen on switch
         final keepScreenOnTile = find.ancestor(

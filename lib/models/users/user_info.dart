@@ -11,8 +11,8 @@ class UserInfo with EquatableMixin {
   UserInfo({
     required this.userId,
     required Map<String, dynamic> json,
-  })  : displayName = json[UserInfoKey.displayName] ?? '',
-        email = json[UserInfoKey.email] ?? '';
+  }) : displayName = json[UserInfoKey.displayName] ?? '',
+       email = json[UserInfoKey.email] ?? '';
 
   @override
   List<Object?> get props {

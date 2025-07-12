@@ -108,11 +108,11 @@ class LoginView extends HookWidget {
                         final email = emailController.text;
                         final password = passwordController.text;
                         context.read<AuthBloc>().add(
-                              AuthEventLogIn(
-                                email: email,
-                                password: password,
-                              ),
-                            );
+                          AuthEventLogIn(
+                            email: email,
+                            password: password,
+                          ),
+                        );
                       },
                       style: theme.elevatedButtonTheme.style,
                       child: Text(localizations.login),
@@ -122,8 +122,8 @@ class LoginView extends HookWidget {
                     OutlinedButton.icon(
                       onPressed: () {
                         context.read<AuthBloc>().add(
-                              const AuthEventSignInWithGoogle(),
-                            );
+                          const AuthEventSignInWithGoogle(),
+                        );
                       },
                       icon: Image.asset(
                         'assets/images/gmail_icon.png',
@@ -150,8 +150,8 @@ class LoginView extends HookWidget {
                         TextButton(
                           onPressed: () {
                             context.read<AuthBloc>().add(
-                                  const AuthEventGoToRegistration(),
-                                );
+                              const AuthEventGoToRegistration(),
+                            );
                           },
                           child: Text(
                             localizations.register,

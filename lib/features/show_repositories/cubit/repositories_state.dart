@@ -14,10 +14,10 @@ sealed class ShowRepositoriesState extends Equatable {
 @immutable
 class InitRepositoryState extends ShowRepositoriesState {
   const InitRepositoryState()
-      : super(
-          publicRepositories: const [],
-          privateRepositories: const [],
-        );
+    : super(
+        publicRepositories: const [],
+        privateRepositories: const [],
+      );
 
   @override
   List<Object?> get props => [publicRepositories, privateRepositories];
