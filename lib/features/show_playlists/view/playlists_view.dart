@@ -84,86 +84,89 @@ class PlaylistsView extends HookWidget {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: state.playlists.length,
-            itemBuilder: (context, index) {
-              Playlist playlist = state.playlists[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: Dismissible(
-                  key: ValueKey(playlist.playlistId),
-                  direction: DismissDirection.endToStart,
-                  background: Container(
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.error,
+          return SafeArea(
+            child: ListView.builder(
+              itemCount: state.playlists.length,
+              itemBuilder: (context, index) {
+                Playlist playlist = state.playlists[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Dismissible(
+                    key: ValueKey(playlist.playlistId),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.error,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 24),
+                      child: Icon(
+                        Icons.delete,
+                        color: theme.colorScheme.onError,
+                      ),
+                    ),
+                    confirmDismiss: (DismissDirection direction) async {
+                      final shouldDeletePlaylist = await showDeletePlaylistDialog(context);
+                      if (shouldDeletePlaylist && context.mounted) {
+                        context.read<ShowPlaylistsCubit>().deletePlaylist(
+                          playlist: playlist,
+                        );
+                      }
+                      return;
+                    },
+                    child: InkWell(
+                      onLongPress: () {
+                        controller.text = playlist.name;
+                        showEditPlaylistDialog(
+                          context: context,
+                          controller: controller,
+                          playlist: state.playlists[index],
+                        );
+                      },
+                      onTap: () {
+                        context.read<PlaylistBloc>().add(
+                          InitPlaylistEvent(playlist: state.playlists[index], user: user),
+                        );
+                        Navigator.of(context).push<void>(PlaylistView.route());
+                      },
                       borderRadius: BorderRadius.circular(12),
-                    ),
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 24),
-                    child: Icon(
-                      Icons.delete,
-                      color: theme.colorScheme.onError,
-                    ),
-                  ),
-                  confirmDismiss: (DismissDirection direction) async {
-                    final shouldDeletePlaylist = await showDeletePlaylistDialog(context);
-                    if (shouldDeletePlaylist && context.mounted) {
-                      context.read<ShowPlaylistsCubit>().deletePlaylist(
-                        playlist: playlist,
-                      );
-                    }
-                    return;
-                  },
-                  child: InkWell(
-                    onLongPress: () {
-                      controller.text = playlist.name;
-                      showEditPlaylistDialog(
-                        context: context,
-                        controller: controller,
-                        playlist: state.playlists[index],
-                      );
-                    },
-                    onTap: () {
-                      context.read<PlaylistBloc>().add(InitPlaylistEvent(playlist: state.playlists[index], user: user));
-                      Navigator.of(context).push<void>(PlaylistView.route());
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  playlist.name,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    playlist.name,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "${localizations.musicSheets}: ${playlist.musicSheets.length}",
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "${localizations.musicSheets}: ${playlist.musicSheets.length}",
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ],
+                            Icon(
+                              Icons.chevron_right,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ),

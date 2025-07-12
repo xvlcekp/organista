@@ -85,16 +85,18 @@ class MusicSheetRepositoryView extends HookWidget {
                   }
                 }
                 if (state is MusicSheetRepositoryLoaded) {
-                  return ListView.builder(
-                    itemCount: state.filteredMusicSheets.length,
-                    itemBuilder: (context, index) {
-                      final musicSheet = state.filteredMusicSheets[index];
-                      return RepositoryMusicSheetTile(
-                        musicSheet: musicSheet,
-                        searchBarController: searchBarController,
-                        repositoryId: repositoryId,
-                      );
-                    },
+                  return SafeArea(
+                    child: ListView.builder(
+                      itemCount: state.filteredMusicSheets.length,
+                      itemBuilder: (context, index) {
+                        final musicSheet = state.filteredMusicSheets[index];
+                        return RepositoryMusicSheetTile(
+                          musicSheet: musicSheet,
+                          searchBarController: searchBarController,
+                          repositoryId: repositoryId,
+                        );
+                      },
+                    ),
                   );
                 }
 

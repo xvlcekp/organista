@@ -111,27 +111,29 @@ class PlaylistView extends HookWidget {
             );
           }
 
-          return ReorderableListView.builder(
-            itemCount: playlist.musicSheets.length,
-            onReorderStart: (_) => HapticFeedback.heavyImpact(),
-            onReorder: (oldIndex, newIndex) {
-              if (oldIndex < newIndex) {
-                newIndex -= 1;
-              }
-              final musicSheet = playlist.musicSheets.removeAt(oldIndex);
-              playlist.musicSheets.insert(newIndex, musicSheet);
-              context.read<PlaylistBloc>().add(
-                ReorderMusicSheetEvent(playlist: playlist),
-              );
-            },
-            itemBuilder: (context, index) {
-              return MusicSheetListTile(
-                key: ValueKey(playlist.musicSheets[index].musicSheetId),
-                index: index,
-                playlist: playlist,
-                isEditMode: isEditMode.value,
-              );
-            },
+          return SafeArea(
+            child: ReorderableListView.builder(
+              itemCount: playlist.musicSheets.length,
+              onReorderStart: (_) => HapticFeedback.heavyImpact(),
+              onReorder: (oldIndex, newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final musicSheet = playlist.musicSheets.removeAt(oldIndex);
+                playlist.musicSheets.insert(newIndex, musicSheet);
+                context.read<PlaylistBloc>().add(
+                  ReorderMusicSheetEvent(playlist: playlist),
+                );
+              },
+              itemBuilder: (context, index) {
+                return MusicSheetListTile(
+                  key: ValueKey(playlist.musicSheets[index].musicSheetId),
+                  index: index,
+                  playlist: playlist,
+                  isEditMode: isEditMode.value,
+                );
+              },
+            ),
           );
         },
       ),
