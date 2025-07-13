@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/repositories/repository.dart';
@@ -11,10 +11,11 @@ import 'package:organista/services/stream_manager.dart';
 part 'repositories_state.dart';
 
 class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
-  final FirebaseFirestoreRepository firebaseFirestoreRepository;
+  final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   ShowRepositoriesCubit({
-    required this.firebaseFirestoreRepository,
-  }) : super(const InitRepositoryState());
+    required FirebaseFirestoreRepository firebaseFirestoreRepository,
+  }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
+       super(const InitRepositoryState());
 
   late final StreamSubscription<Iterable<Repository>> _streamSubscription;
 
@@ -25,7 +26,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   void startSubscribingRepositories({required String userId}) {
     final broadcastStream = StreamManager.instance.getBroadcastStream<Iterable<Repository>>(
       'repositories_$userId',
-      () => firebaseFirestoreRepository.getRepositoriesStream(userId: userId),
+      () => _firebaseFirestoreRepository.getRepositoriesStream(userId: userId),
     );
 
     // Always subscribe to the broadcast stream (even if reusing existing stream)

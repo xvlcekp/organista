@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/playlists/playlist.dart';
@@ -11,10 +11,11 @@ import 'package:organista/services/stream_manager.dart';
 part 'playlists_state.dart';
 
 class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
-  final FirebaseFirestoreRepository firebaseFirestoreRepository;
+  final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   ShowPlaylistsCubit({
-    required this.firebaseFirestoreRepository,
-  }) : super(const InitPlaylistState());
+    required FirebaseFirestoreRepository firebaseFirestoreRepository,
+  }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
+       super(const InitPlaylistState());
 
   late final StreamSubscription<Iterable<Playlist>> _streamSubscription;
 
@@ -25,7 +26,7 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   void startSubscribingPlaylists({required String userId}) {
     final broadcastStream = StreamManager.instance.getBroadcastStream<Iterable<Playlist>>(
       'playlists_$userId',
-      () => firebaseFirestoreRepository.getPlaylistsStream(userId),
+      () => _firebaseFirestoreRepository.getPlaylistsStream(userId),
     );
 
     // Always subscribe to the broadcast stream (even if reusing existing stream)
@@ -46,14 +47,14 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   }
 
   void addPlaylist({required String playlistName, required String userId}) async {
-    await firebaseFirestoreRepository.addNewPlaylist(playlistName: playlistName, userId: userId);
+    await _firebaseFirestoreRepository.addNewPlaylist(playlistName: playlistName, userId: userId);
   }
 
   void editPlaylistName({required String newPlaylistName, required Playlist playlist}) async {
-    await firebaseFirestoreRepository.renamePlaylist(newPlaylistName: newPlaylistName, playlist: playlist);
+    await _firebaseFirestoreRepository.renamePlaylist(newPlaylistName: newPlaylistName, playlist: playlist);
   }
 
   void deletePlaylist({required Playlist playlist}) async {
-    await firebaseFirestoreRepository.deletePlaylist(playlist: playlist);
+    await _firebaseFirestoreRepository.deletePlaylist(playlist: playlist);
   }
 }

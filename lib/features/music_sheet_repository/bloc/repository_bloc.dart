@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:diacritic/diacritic.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart' show immutable;
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -14,12 +14,13 @@ part 'repository_event.dart';
 part 'repository_state.dart';
 
 class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicSheetRepositoryState> {
-  final FirebaseFirestoreRepository firebaseFirestoreRepository;
+  final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   StreamSubscription<Iterable<MusicSheet>>? _musicSheetsSubscription;
 
   MusicSheetRepositoryBloc({
-    required this.firebaseFirestoreRepository,
-  }) : super(MusicSheetRepositoryInitial()) {
+    required FirebaseFirestoreRepository firebaseFirestoreRepository,
+  }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
+       super(MusicSheetRepositoryInitial()) {
     on<InitMusicSheetsRepositoryEvent>(_initMusicSheetsRepositoryEvent);
     on<UpdateMusicSheetsEvent>(_onUpdateMusicSheets);
     on<SearchMusicSheets>(_onSearchMusicSheets);
@@ -51,7 +52,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
   Future<void> _onDeleteMusicSheet(DeleteMusicSheet event, Emitter<MusicSheetRepositoryState> emit) async {
     final musicSheetToDelete = event.musicSheet;
     final repositoryId = event.repositoryId;
-    await firebaseFirestoreRepository.deleteMusicSheetFromRepository(
+    await _firebaseFirestoreRepository.deleteMusicSheetFromRepository(
       musicSheet: musicSheetToDelete,
       repositoryId: repositoryId,
     );
@@ -66,7 +67,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     try {
       final broadcastStream = StreamManager.instance.getBroadcastStream<Iterable<MusicSheet>>(
         'music_sheets_${event.repositoryId}',
-        () => firebaseFirestoreRepository.getRepositoryMusicSheetsStream(event.repositoryId),
+        () => _firebaseFirestoreRepository.getRepositoryMusicSheetsStream(event.repositoryId),
       );
 
       // Always subscribe to the broadcast stream (even if reusing existing stream)

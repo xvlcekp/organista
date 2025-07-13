@@ -4,7 +4,7 @@ import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/services/auth/auth_error.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_provider.dart';
@@ -15,10 +15,13 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
-    required this.authProvider,
-    required this.firebaseFirestoreRepository,
-    required this.firebaseStorageRepository,
-  }) : super(const AuthStateLoggedOut(isLoading: false)) {
+    required AuthProvider authProvider,
+    required FirebaseFirestoreRepository firebaseFirestoreRepository,
+    required FirebaseStorageRepository firebaseStorageRepository,
+  }) : _firebaseStorageRepository = firebaseStorageRepository,
+       _firebaseFirestoreRepository = firebaseFirestoreRepository,
+       _authProvider = authProvider,
+       super(const AuthStateLoggedOut(isLoading: false)) {
     on<AuthEventGoToRegistration>(_authEventGoToRegistration);
     on<AuthEventLogIn>(_authEventLogIn);
     on<AuthEventSignInWithGoogle>(_authEventSignInWithGoogle);
@@ -30,9 +33,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventForgotPassword>(_authEventForgotPassword);
   }
 
-  final AuthProvider authProvider;
-  final FirebaseFirestoreRepository firebaseFirestoreRepository;
-  final FirebaseStorageRepository firebaseStorageRepository;
+  final AuthProvider _authProvider;
+  final FirebaseFirestoreRepository _firebaseFirestoreRepository;
+  final FirebaseStorageRepository _firebaseStorageRepository;
 
   /// Helper method to check if an error indicates the user already exists
   bool _isUserAlreadyExistsError(dynamic error) {
@@ -61,11 +64,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await StreamManager.instance.cancelAllStreams();
 
       // Delete user data from Firestore and Storage
-      await firebaseFirestoreRepository.deleteUser(userId: user.id);
-      await firebaseStorageRepository.deleteFolder(user.id);
+      await _firebaseFirestoreRepository.deleteUser(userId: user.id);
+      await _firebaseStorageRepository.deleteFolder(user.id);
 
       // Delete the Firebase user account
-      await authProvider.deleteUser();
+      await _authProvider.deleteUser();
 
       // Emit logged out state immediately after successful deletion
       emit(
@@ -109,7 +112,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Cancel all Firebase streams first to prevent permission errors
       await StreamManager.instance.cancelAllStreams();
 
-      await authProvider.logOut();
+      await _authProvider.logOut();
       emit(
         const AuthStateLoggedOut(isLoading: false),
       );
@@ -132,8 +135,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _authEventInitialize(AuthEventInitialize event, Emitter<AuthState> emit) async {
-    await authProvider.initialize();
-    final user = authProvider.currentUser;
+    await _authProvider.initialize();
+    final user = _authProvider.currentUser;
     if (user == null) {
       emit(
         const AuthStateLoggedOut(isLoading: false),
@@ -153,17 +156,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       const AuthStateLoggedOut(isLoading: true),
     );
     try {
-      final authUser = await authProvider.createUser(
+      final authUser = await _authProvider.createUser(
         email: event.email,
         password: event.password,
       );
 
       // we need to manually upload the user to DB after successful registration
       try {
-        await firebaseFirestoreRepository.uploadNewUser(
+        await _firebaseFirestoreRepository.uploadNewUser(
           user: authUser,
         );
-        await firebaseFirestoreRepository.createUserRepository(
+        await _firebaseFirestoreRepository.createUserRepository(
           user: authUser,
         );
       } catch (e) {
@@ -217,7 +220,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       const AuthStateLoggedOut(isLoading: true),
     );
     try {
-      final authUser = await authProvider.logIn(
+      final authUser = await _authProvider.logIn(
         email: event.email,
         password: event.password,
       );
@@ -249,7 +252,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       const AuthStateLoggedOut(isLoading: true),
     );
     try {
-      final resetSuccess = await authProvider.sendPasswordResetEmail(email: event.email);
+      final resetSuccess = await _authProvider.sendPasswordResetEmail(email: event.email);
       emit(
         AuthStateLoggedOut(
           isLoading: false,
@@ -280,14 +283,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       const AuthStateLoggedOut(isLoading: true),
     );
     try {
-      final authUser = await authProvider.signInWithGoogle();
+      final authUser = await _authProvider.signInWithGoogle();
 
       // we need to manually check if user/repository already exists in DB
       try {
-        await firebaseFirestoreRepository.uploadNewUser(
+        await _firebaseFirestoreRepository.uploadNewUser(
           user: authUser,
         );
-        await firebaseFirestoreRepository.createUserRepository(
+        await _firebaseFirestoreRepository.createUserRepository(
           user: authUser,
         );
       } catch (e) {
