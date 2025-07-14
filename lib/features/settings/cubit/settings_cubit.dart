@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
-  final SharedPreferences _prefs;
+  final SharedPreferencesWithCache _prefs;
   final WakelockService _wakelockService;
 
   static const String _themeKey = 'theme_mode';
@@ -76,7 +76,7 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   // Getters for testing
   @visibleForTesting
-  SharedPreferences get prefs => _prefs;
+  SharedPreferencesWithCache get prefs => _prefs;
 
   @visibleForTesting
   WakelockService get wakelockService => _wakelockService;

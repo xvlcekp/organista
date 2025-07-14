@@ -8,7 +8,7 @@ import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/services/wakelock/wakelock_service.dart';
 
 // Mock classes
-class MockSharedPreferences extends Mock implements SharedPreferences {}
+class MockSharedPreferences extends Mock implements SharedPreferencesWithCache {}
 
 class MockWakelockService extends Mock implements WakelockService {}
 

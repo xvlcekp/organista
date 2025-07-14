@@ -47,7 +47,7 @@ class App extends StatelessWidget {
           ),
         ),
         BlocProvider<SettingsCubit>(
-          create: (context) => SettingsCubit(context.read<SharedPreferences>()),
+          create: (context) => SettingsCubit(context.read<SharedPreferencesWithCache>()),
         ),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(

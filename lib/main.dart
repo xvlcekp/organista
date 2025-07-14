@@ -14,9 +14,12 @@ void main() async {
   Bloc.observer = SimpleBlocObserver(logger: logger);
   logger.i('App started');
 
-  final prefs = await SharedPreferences.getInstance();
+  // TODO: think how to avoid passing shared preferences as provider, when it is used only in settings cubit
+  final SharedPreferencesWithCache prefs = await SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(),
+  );
   runApp(
-    Provider<SharedPreferences>.value(
+    Provider<SharedPreferencesWithCache>.value(
       value: prefs,
       child: const AppRepository(),
     ),
