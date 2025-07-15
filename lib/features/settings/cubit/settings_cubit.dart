@@ -38,6 +38,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         await _wakelockService.disable();
       }
     } catch (e) {
+      logger.i("Wakelock initialization failed $e");
       // Handle wakelock errors gracefully (e.g., in tests or unsupported platforms)
     }
   }

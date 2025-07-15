@@ -13,6 +13,7 @@ import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/login/login_view.dart';
 import 'package:organista/features/register/register_view.dart';
+import 'package:organista/logger/custom_logger.dart' show logger;
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/services/auth/auth_service.dart';
@@ -89,6 +90,7 @@ class App extends StatelessWidget {
                   return const RegisterView();
                 } else {
                   // this should never happen test
+                  logger.e('Unknown auth state: $authState');
                   return Container();
                 }
               },

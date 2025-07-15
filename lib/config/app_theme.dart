@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
@@ -21,6 +22,15 @@ class AppTheme {
     );
   }
 
+  static Brightness reverseBrightness(Brightness brightness) {
+    switch (brightness) {
+      case Brightness.light:
+        return Brightness.dark;
+      case Brightness.dark:
+        return Brightness.light;
+    }
+  }
+
   static ThemeData _buildTheme({
     required Brightness brightness,
     required Color surfaceColor,
@@ -38,9 +48,16 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: colorScheme.surface,
+          statusBarIconBrightness: reverseBrightness(colorScheme.brightness),
+          statusBarBrightness: reverseBrightness(colorScheme.brightness),
+          systemNavigationBarColor: colorScheme.surface,
+          systemNavigationBarIconBrightness: reverseBrightness(colorScheme.brightness),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
