@@ -83,14 +83,13 @@ class PlaylistsView extends HookWidget {
               ),
             );
           }
-
           return SafeArea(
             child: ListView.builder(
+              padding: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
               itemCount: state.playlists.length,
               itemBuilder: (context, index) {
                 Playlist playlist = state.playlists[index];
                 return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
                   child: Dismissible(
                     key: ValueKey(playlist.playlistId),
                     direction: DismissDirection.endToStart,

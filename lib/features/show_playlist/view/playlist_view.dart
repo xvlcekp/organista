@@ -113,6 +113,7 @@ class PlaylistView extends HookWidget {
 
           return SafeArea(
             child: ReorderableListView.builder(
+              padding: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
               itemCount: playlist.musicSheets.length,
               onReorderStart: (_) => HapticFeedback.heavyImpact(),
               onReorder: (oldIndex, newIndex) {
