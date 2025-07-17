@@ -85,21 +85,22 @@ class RepositoriesViewContent extends HookWidget {
 
   Widget _buildBottomNavBar(BuildContext context, ValueNotifier<int> selectedTabIndex) {
     final localizations = context.loc;
-    return BottomNavigationBar(
-      currentIndex: selectedTabIndex.value,
-      onTap: (index) {
+    return NavigationBar(
+      selectedIndex: selectedTabIndex.value,
+      onDestinationSelected: (index) {
         selectedTabIndex.value = index;
       },
-      items: [
-        BottomNavigationBarItem(
+      destinations: [
+        NavigationDestination(
           icon: const Icon(Icons.public),
           label: localizations.global,
         ),
-        BottomNavigationBarItem(
+        NavigationDestination(
           icon: const Icon(Icons.person),
           label: localizations.personal,
         ),
       ],
+      height: 60,
     );
   }
 }
