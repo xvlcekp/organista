@@ -63,12 +63,13 @@ https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains
 - `git checkout 3.32.5` (before it was 3.29.3)
 
 
-
-
 ## Firebase
 
 **deleteStorageFilesOnDocDelete** - automation on firebase using Firebase Functions. When musicSheet document is deleted, also musicSheet file is deleted in Firebase Storage.  
 *After every deployment, artifacts needs to be removed in Google Artifact Repository!*
+
+## Utils
+Tool for croping PDFs https://smallpdf.com/crop-pdf (if limit exceeded, use incognito mode in browser)
 
 ### Cors issue
 https://stackoverflow.com/questions/65849071/flutter-firebase-storage-cors-issue
