@@ -53,3 +53,7 @@ lib/firebase_options.dart
 content/
 # Files created after upgrade to flutter 3.29.3
 /android/app/.cxx
+
+# Environment variables and keystore files
+.env
+/android/app/keystore/

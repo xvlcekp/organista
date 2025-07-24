@@ -1,0 +1,106 @@
+name: 🚀 Release APK
+
+on:
+  workflow_run:
+    workflows: ["Tests"]
+    types:
+      - completed
+    branches:
+      - main
+  push:
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+    inputs:
+        name:
+          description: "Release-Build-Android"
+          default: "Generate release build for Android"
+
+permissions:
+  contents: write   # allow creating/updating Releases & uploading assets
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      with:
+          path: app
+
+      - name: Setup Java (Temurin 17)
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extract Flutter version
+        id: flutter_version
+        run: |
+          # Extract Flutter version from pubspec.yaml
+          FLUTTER_VERSION=$(grep -o 'flutter:.*' pubspec.yaml | head -1 | sed 's/flutter://' | tr -d ' ')
+          if [ -z "$FLUTTER_VERSION" ]; then
+            echo "Error: Flutter version not specified in pubspec.yaml"
+            echo "Please add flutter version constraint to your pubspec.yaml dependencies"
+            exit 1
+          fi
+          echo "flutter_version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
+          echo "Using Flutter version: $FLUTTER_VERSION"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.flutter_version.outputs.flutter_version }}
+          channel: stable
+
+      - name: Get dependencies
+        working-directory: ./app
+        run: flutter pub get
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.GOOGLE_KEYSTORE_BASE_64 }}
+        working-directory: ./app
+        run: echo $ENCODED_STRING | base64 -d > release_keystore.jks
+
+      - name: Build Google Play .aab
+        env:
+          ANDROID_KEYSTORE_FILE: ../../release_keystore.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.GOOGLE_RELEASE_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.GOOGLE_RELEASE_KEYSTORE_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.GOOGLE_RELEASE_KEY_PASSWORD }}
+        working-directory: ./app
+        run: flutter build appbundle --release
+
+      - name: Build Android .apk
+        env:
+          ANDROID_KEYSTORE_FILE: ../../release_keystore.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.GOOGLE_RELEASE_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.GOOGLE_RELEASE_KEYSTORE_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.GOOGLE_RELEASE_KEY_PASSWORD }}
+        working-directory: ./app
+        run: flutter build apk --release
+
+      - name: Upload .aab Build to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+           name: release-artifacts_${{ github.run_id }}.aab
+           path: ./app/build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload .apk Build to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts_${{ github.run_id }}.apk
+          path: ./app/build/app/outputs/apk/release/app-release.apk
+
+      - name: Create release if tag pushed
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: true
+          prerelease: true
+          files: |
+            ./app/build/app/outputs/bundle/release/app-release.aab
+            ./app/build/app/outputs/apk/release/app-release.apk

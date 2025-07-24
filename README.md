@@ -53,6 +53,11 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
 
+## Release from pipeline
+For encoding, we will make use of the popular Base64 encoding scheme. Base64 doesn’t stand for specific but various encoding schemes that allow you to convert binary data into a text representation. We need to upload Keystore certificate to Github workflow in STRING format.
+Encoding keystore cert:
+`openssl base64 < your_signing_keystore.jks | tr -d '\n' | tee your_signing_keystore_base64_encoded.txt`
+
 ## Flutter upgrade 
 - Go to folder where flutter is installed
 ### To latest stable version (prefered)
