@@ -87,7 +87,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.blue, width: 2),
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -95,7 +95,7 @@ class AppTheme {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
       textTheme: const TextTheme(

@@ -77,7 +77,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
         },
         onError: (error) {
           logger.e('Error in music sheets stream: $error');
-          add(UpdateMusicSheetsEvent([]));
+          add(const UpdateMusicSheetsEvent([]));
         },
       );
 

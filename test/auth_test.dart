@@ -213,7 +213,7 @@ class MockAuthProvider implements AuthProvider {
   @override
   Future<void> deleteUser() async {
     if (!isInitialized) throw NotInitializedException();
-    if (_user == null) throw AuthErrorUserNotFound();
+    if (_user == null) throw const AuthErrorUserNotFound();
     await Future.delayed(const Duration(seconds: 1));
     // Simulate user deletion by setting user to null
     _user = null;
@@ -231,8 +231,8 @@ class MockAuthProvider implements AuthProvider {
     required String password,
   }) {
     if (!isInitialized) throw NotInitializedException();
-    if (email == 'foo@bar.com') throw AuthErrorUserNotFound();
-    if (password == 'foobar') throw AuthErrorInvalidCredential();
+    if (email == 'foo@bar.com') throw const AuthErrorUserNotFound();
+    if (password == 'foobar') throw const AuthErrorInvalidCredential();
     const user = AuthUser(isEmailVerified: false, id: '123', email: 'foo@bar.com');
     _user = user;
     return Future.value(user);
@@ -267,7 +267,7 @@ class MockAuthProvider implements AuthProvider {
   @override
   Future<void> logOut() async {
     if (!isInitialized) throw NotInitializedException();
-    if (_user == null) throw AuthErrorUserNotFound();
+    if (_user == null) throw const AuthErrorUserNotFound();
 
     // Simulate signing out from both Firebase and Google
     _googleSignOutCallCount++;
@@ -280,7 +280,7 @@ class MockAuthProvider implements AuthProvider {
   Future<void> sendEmailVerification() async {
     if (!isInitialized) throw NotInitializedException();
     final user = _user;
-    if (user == null) throw AuthErrorUserNotFound();
+    if (user == null) throw const AuthErrorUserNotFound();
     var newUser = AuthUser(id: user.id, email: user.email, isEmailVerified: true);
     _user = newUser;
   }
@@ -288,7 +288,7 @@ class MockAuthProvider implements AuthProvider {
   @override
   Future<bool> sendPasswordResetEmail({required String email}) async {
     if (!isInitialized) throw NotInitializedException();
-    if (email == 'invalid@email.com') throw AuthErrorInvalidEmail();
+    if (email == 'invalid@email.com') throw const AuthErrorInvalidEmail();
     return Future.value(true);
   }
 }

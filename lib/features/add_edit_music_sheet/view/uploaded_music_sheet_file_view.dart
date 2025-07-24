@@ -52,7 +52,7 @@ class UploadedMusicSheetFileView extends StatelessWidget {
         ),
         IconButton(
           onPressed: () => context.read<AddEditMusicSheetCubit>().resetState(),
-          icon: Icon(Icons.change_circle),
+          icon: const Icon(Icons.change_circle),
         ),
       ],
     );

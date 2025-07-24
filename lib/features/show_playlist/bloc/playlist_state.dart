@@ -48,7 +48,7 @@ class PlaylistErrorState extends PlaylistState {
     : super(
         isLoading: false,
         playlist: Playlist.empty(),
-        error: InitializationError(),
+        error: const InitializationError(),
       );
 
   @override

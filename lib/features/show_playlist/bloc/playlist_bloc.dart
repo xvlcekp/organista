@@ -190,7 +190,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         PlaylistLoadedState(
           isLoading: false,
           playlist: state.playlist,
-          error: MusicSheetAlreadyInPlaylistError(),
+          error: const MusicSheetAlreadyInPlaylistError(),
         ),
       );
     }

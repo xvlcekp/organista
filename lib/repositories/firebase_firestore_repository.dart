@@ -160,7 +160,7 @@ class FirebaseFirestoreRepository {
       final playlistPayload = PlaylistPayload(
         userId: userId,
         name: playlistName,
-        musicSheets: [],
+        musicSheets: const [],
       );
       await instance.collection(FirebaseCollectionName.playlists).add(playlistPayload);
       logger.i("Uploading new playlist");

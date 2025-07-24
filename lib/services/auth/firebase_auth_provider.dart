@@ -31,7 +31,7 @@ class FirebaseAuthProvider implements AuthProvider {
     if (user != null) {
       return user;
     } else {
-      throw AuthErrorUserNotLoggedIn();
+      throw const AuthErrorUserNotLoggedIn();
     }
   }
 
@@ -57,7 +57,7 @@ class FirebaseAuthProvider implements AuthProvider {
     if (user != null) {
       return user;
     } else {
-      throw AuthErrorUserNotLoggedIn();
+      throw const AuthErrorUserNotLoggedIn();
     }
   }
 
@@ -151,7 +151,7 @@ class FirebaseAuthProvider implements AuthProvider {
       return user;
     } else {
       logger.e('User is null after successful Firebase sign-in');
-      throw AuthErrorUserNotLoggedIn();
+      throw const AuthErrorUserNotLoggedIn();
     }
   }
 
@@ -163,7 +163,7 @@ class FirebaseAuthProvider implements AuthProvider {
       await FirebaseAuth.instance.signOut();
       unawaited(_googleSignIn.signOut());
     } else {
-      throw AuthErrorUserNotLoggedIn();
+      throw const AuthErrorUserNotLoggedIn();
     }
   }
 
@@ -173,7 +173,7 @@ class FirebaseAuthProvider implements AuthProvider {
     if (user != null) {
       await user.sendEmailVerification();
     } else {
-      throw AuthErrorUserNotLoggedIn();
+      throw const AuthErrorUserNotLoggedIn();
     }
   }
 
@@ -199,7 +199,7 @@ class FirebaseAuthProvider implements AuthProvider {
         rethrow;
       }
     } else {
-      throw AuthErrorUserNotLoggedIn();
+      throw const AuthErrorUserNotLoggedIn();
     }
   }
 }

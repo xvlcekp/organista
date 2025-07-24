@@ -14,7 +14,7 @@ class Playlist extends Equatable {
 
   // Empty Constructor
   factory Playlist.empty() {
-    return Playlist(playlistId: '1', json: {});
+    return Playlist(playlistId: '1', json: const {});
   }
 
   Playlist({

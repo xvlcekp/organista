@@ -19,7 +19,7 @@ class MusicSheet extends Equatable {
   // TODO:  Uuid().v4() should be probably removed, because we want to use IDs generated from Firebase
   MusicSheet({
     required Map<String, dynamic> json,
-  }) : musicSheetId = json[MusicSheetKey.musicSheetId] ?? Uuid().v4(),
+  }) : musicSheetId = json[MusicSheetKey.musicSheetId] ?? const Uuid().v4(),
        userId = json[MusicSheetKey.userId] ?? '',
        createdAt = (json[MusicSheetKey.createdAt] as Timestamp).toDate(),
        fileUrl = json[MusicSheetKey.fileUrl],

@@ -25,7 +25,7 @@ void main() {
     late MockAuthBloc mockAuthBloc;
 
     // Test data
-    final testUser = const AuthUser(
+    const testUser = AuthUser(
       id: 'test-user-123',
       email: 'test@example.com',
       isEmailVerified: true,
@@ -37,27 +37,27 @@ void main() {
 
       // Setup default states and streams
       when(() => mockAuthBloc.state).thenReturn(
-        AuthStateLoggedIn(isLoading: false, user: testUser),
+        const AuthStateLoggedIn(isLoading: false, user: testUser),
       );
       when(() => mockAuthBloc.stream).thenAnswer(
         (_) => Stream.fromIterable([
-          AuthStateLoggedIn(isLoading: false, user: testUser),
+          const AuthStateLoggedIn(isLoading: false, user: testUser),
         ]),
       );
 
       when(() => mockSettingsCubit.state).thenReturn(
-        SettingsState(
+        const SettingsState(
           themeMode: ThemeMode.system,
-          locale: const Locale('en'),
+          locale: Locale('en'),
           showNavigationArrows: true,
           keepScreenOn: false,
         ),
       );
       when(() => mockSettingsCubit.stream).thenAnswer(
         (_) => Stream.fromIterable([
-          SettingsState(
+          const SettingsState(
             themeMode: ThemeMode.system,
-            locale: const Locale('en'),
+            locale: Locale('en'),
             showNavigationArrows: true,
             keepScreenOn: false,
           ),
@@ -76,9 +76,9 @@ void main() {
     Widget createTestWidget({SettingsState? initialState, bool withNavigatorObserver = false}) {
       final state =
           initialState ??
-          SettingsState(
+          const SettingsState(
             themeMode: ThemeMode.system,
-            locale: const Locale('en'),
+            locale: Locale('en'),
             showNavigationArrows: true,
             keepScreenOn: false,
           );
@@ -215,9 +215,9 @@ void main() {
       testWidgets('should display switch in OFF state when keepScreenOn is false', (tester) async {
         await tester.pumpWidget(
           createTestWidget(
-            initialState: SettingsState(
+            initialState: const SettingsState(
               themeMode: ThemeMode.system,
-              locale: const Locale('en'),
+              locale: Locale('en'),
               showNavigationArrows: true,
               keepScreenOn: false,
             ),
@@ -245,9 +245,9 @@ void main() {
       testWidgets('should display switch in ON state when keepScreenOn is true', (tester) async {
         await tester.pumpWidget(
           createTestWidget(
-            initialState: SettingsState(
+            initialState: const SettingsState(
               themeMode: ThemeMode.system,
-              locale: const Locale('en'),
+              locale: Locale('en'),
               showNavigationArrows: true,
               keepScreenOn: true,
             ),
@@ -292,9 +292,9 @@ void main() {
       testWidgets('should call changeKeepScreenOn with false when turning off', (tester) async {
         await tester.pumpWidget(
           createTestWidget(
-            initialState: SettingsState(
+            initialState: const SettingsState(
               themeMode: ThemeMode.system,
-              locale: const Locale('en'),
+              locale: Locale('en'),
               showNavigationArrows: true,
               keepScreenOn: true,
             ),

@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const _MigrationScreen(),
+      home: _MigrationScreen(),
     );
   }
 }
@@ -110,7 +110,7 @@ class _MigrationScreenState extends State<_MigrationScreen> {
           ),
           const SizedBox(height: 20),
           if (migratedDocs.isNotEmpty) ...[
-            Text("Migrated Documents:", style: const TextStyle(fontWeight: FontWeight.bold)),
+            const Text("Migrated Documents:", style: TextStyle(fontWeight: FontWeight.bold)),
             Expanded(
               child: SizedBox(
                 height: 300,

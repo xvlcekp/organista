@@ -171,7 +171,7 @@ class PdfViewerWidget extends HookWidget {
                     child: GestureDetector(
                       onTap: () => showTitle.value = false,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.black.withAlpha(153),
                           borderRadius: BorderRadius.circular(6),
@@ -189,7 +189,7 @@ class PdfViewerWidget extends HookWidget {
                   bottom: 16,
                   right: 16,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.black.withAlpha(153),
                       borderRadius: BorderRadius.circular(8),
@@ -244,8 +244,8 @@ class PdfViewerWidget extends HookWidget {
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        Expanded(child: SizedBox()),
-                                        Row(
+                                        const Expanded(child: SizedBox()),
+                                        const Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Padding(
@@ -302,7 +302,7 @@ class PdfViewerWidget extends HookWidget {
                                             color: Colors.green.withAlpha(150),
                                           ),
                                         ),
-                                        Row(
+                                        const Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Padding(
@@ -315,7 +315,7 @@ class PdfViewerWidget extends HookWidget {
                                             ),
                                           ],
                                         ),
-                                        Expanded(child: SizedBox()),
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                   ),

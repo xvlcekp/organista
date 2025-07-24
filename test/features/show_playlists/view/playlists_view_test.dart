@@ -29,7 +29,7 @@ void main() {
     late MockPlaylistBloc mockPlaylistBloc;
 
     // Test data
-    final testUser = const AuthUser(
+    const testUser = AuthUser(
       id: 'test-user-123',
       email: 'test@example.com',
       isEmailVerified: true,
@@ -65,7 +65,7 @@ void main() {
         PlaylistKey.userId: 'test-user-123',
         PlaylistKey.createdAt: testTimestamp,
         PlaylistKey.name: 'Christmas Songs',
-        PlaylistKey.musicSheets: [],
+        PlaylistKey.musicSheets: const [],
       },
     );
 
@@ -76,11 +76,11 @@ void main() {
 
       // Setup default states and streams
       when(() => mockAuthBloc.state).thenReturn(
-        AuthStateLoggedIn(isLoading: false, user: testUser),
+        const AuthStateLoggedIn(isLoading: false, user: testUser),
       );
       when(() => mockAuthBloc.stream).thenAnswer(
         (_) => Stream.fromIterable([
-          AuthStateLoggedIn(isLoading: false, user: testUser),
+          const AuthStateLoggedIn(isLoading: false, user: testUser),
         ]),
       );
 
@@ -251,7 +251,7 @@ void main() {
               PlaylistKey.userId: 'test-user-123',
               PlaylistKey.createdAt: testTimestamp,
               PlaylistKey.name: 'Playlist $index',
-              PlaylistKey.musicSheets: [],
+              PlaylistKey.musicSheets: const [],
             },
           ),
         );

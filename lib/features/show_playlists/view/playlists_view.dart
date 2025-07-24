@@ -42,8 +42,8 @@ class PlaylistsView extends HookWidget {
             ),
           ],
         ),
-        actions: [
-          const MainPopupMenuButton(),
+        actions: const [
+          MainPopupMenuButton(),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

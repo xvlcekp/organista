@@ -16,7 +16,7 @@ class PlaylistView extends HookWidget {
   const PlaylistView({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (context) => PlaylistView());
+    return MaterialPageRoute<void>(builder: (context) => const PlaylistView());
   }
 
   @override
