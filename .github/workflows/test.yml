@@ -14,25 +14,23 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Extract Flutter version
-    id: flutter_version
-    run: |
-      # Extract Flutter version from pubspec.yaml
-      FLUTTER_VERSION=$(grep -o 'flutter:.*' pubspec.yaml | head -1 | sed 's/flutter://' | tr -d ' ')
-      if [ -z "$FLUTTER_VERSION" ]; then
-        echo "Error: Flutter version not specified in pubspec.yaml"
-        echo "Please add flutter version constraint to your pubspec.yaml dependencies"
-        exit 1
-      fi
-      echo "flutter_version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
-      echo "Using Flutter version: $FLUTTER_VERSION"
+      id: flutter_version
+      run: |
+        # Extract Flutter version from pubspec.yaml
+        FLUTTER_VERSION=$(grep -o 'flutter:.*' pubspec.yaml | head -1 | sed 's/flutter://' | tr -d ' ')
+        if [ -z "$FLUTTER_VERSION" ]; then
+          echo "Error: Flutter version not specified in pubspec.yaml"
+          echo "Please add flutter version constraint to your pubspec.yaml dependencies"
+          exit 1
+        fi
+        echo "flutter_version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
+        echo "Using Flutter version: $FLUTTER_VERSION"
 
-  - name: Setup Flutter
-    uses: subosito/flutter-action@v2
-    with:
-      flutter-version: ${{ steps.flutter_version.outputs.flutter_version }}
-      channel: stable
-      cache: true
-      cache-key: 'flutter-${{ steps.flutter_version.outputs.flutter_version }}-stable'
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ steps.flutter_version.outputs.flutter_version }}
+        channel: stable
     
     - name: Install dependencies
       run: flutter pub get
