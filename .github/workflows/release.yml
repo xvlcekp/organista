@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      with:
+        with:
           path: app
 
       - name: Setup Java (Temurin 17)
@@ -52,10 +52,20 @@ jobs:
         with:
           flutter-version: ${{ steps.flutter_version.outputs.flutter_version }}
           channel: stable
+          cache: true
+          cache-key: 'flutter-${{ steps.flutter_version.outputs.flutter_version }}-stable'
 
       - name: Get dependencies
         working-directory: ./app
         run: flutter pub get
+
+      - name: Decode Credentials
+        env:
+          ENCODED_STRING: ${{ secrets.CREDENTIALS_JSON_BASE64 }}
+        working-directory: ./app
+        run: |
+          mkdir -p assets/config
+          echo $ENCODED_STRING | base64 -d > assets/config/credentials.json
 
       - name: Decode Keystore
         env:
@@ -92,6 +102,29 @@ jobs:
         with:
           name: release-artifacts_${{ github.run_id }}.apk
           path: ./app/build/app/outputs/apk/release/app-release.apk
+
+      - name: Create Debug Symbols Zip
+        id: debug_symbols
+        working-directory: ./app
+        run: |
+          # Check if the debug symbols directory exists
+          if [ -d "build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib" ]; then
+            # Create a zip file with all debug symbols
+            cd build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out
+            zip -r ./app/debug-symbols.zip lib/
+            echo "Debug symbols zipped successfully"
+            echo "symbols_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "Debug symbols directory not found, skipping zip creation"
+            echo "symbols_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload Debug Symbols Artifact
+        if: steps.debug_symbols.outputs.symbols_found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-symbols_${{ github.run_id }}
+          path: ./app/debug-symbols.zip
 
       - name: Create release if tag pushed
         uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844

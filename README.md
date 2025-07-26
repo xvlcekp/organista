@@ -47,6 +47,8 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 ## Releasing a new version
 1. **write changelog**
 2. **increase app version** + bundle
+   Next steps can be omitted if release process in workflow works. 
+   TODO: remove after testing
 3. **compile** - `flutter clean; flutter pub get; flutter build appbundle`
 4. **import debug symbols** - `/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib`
 5. **create a release branch**
@@ -57,6 +59,11 @@ https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains
 For encoding, we will make use of the popular Base64 encoding scheme. Base64 doesn’t stand for specific but various encoding schemes that allow you to convert binary data into a text representation. We need to upload Keystore certificate to Github workflow in STRING format.
 Encoding keystore cert:
 `openssl base64 < your_signing_keystore.jks | tr -d '\n' | tee your_signing_keystore_base64_encoded.txt`
+
+If you modify `assets/config/credentials.json`, you need to change it also in the pipeline.
+1. Generate new encoded credentials.json file
+  `openssl base64 < credentials.json | tr -d '\n' | tee credentials_base64.txt`
+2. Upload the key to `CREDENTIALS_JSON_BASE64` repository secret to github.
 
 ## Flutter upgrade 
 - Go to folder where flutter is installed

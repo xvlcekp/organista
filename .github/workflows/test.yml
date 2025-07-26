@@ -31,6 +31,8 @@ jobs:
       with:
         flutter-version: ${{ steps.flutter_version.outputs.flutter_version }}
         channel: stable
+        cache: true
+        cache-key: 'flutter-${{ steps.flutter_version.outputs.flutter_version }}-stable'
     
     - name: Install dependencies
       run: flutter pub get
