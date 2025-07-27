@@ -62,8 +62,13 @@ Encoding keystore cert:
 
 If you modify `assets/config/credentials.json`, you need to change it also in the pipeline.
 1. Generate new encoded credentials.json file
-  `openssl base64 < credentials.json | tr -d '\n' | tee credentials_base64.txt`
-2. Upload the key to `CREDENTIALS_JSON_BASE64` repository secret to github.
+  `cd assets/config/ && openssl base64 < credentials.json | tr -d '\n' | tee`
+1. Upload the key to `CREDENTIALS_JSON_BASE64` repository secret to github.
+
+If you modify `android/app/google_services.json`, you need to change it also in the pipeline.
+1. Generate new encoded google_services.json file
+  `cd android/app/ && openssl base64 < google-services.json | tr -d '\n' | tee`
+2. Upload the key to `GOOGLE_SERVICES_JSON_BASE64` repository secret to github.
 
 ## Flutter upgrade 
 - Go to folder where flutter is installed

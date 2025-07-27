@@ -68,6 +68,14 @@ jobs:
           mkdir -p assets/config
           echo $ENCODED_STRING | base64 -d > assets/config/credentials.json
 
+      - name: Decode Google Services
+        env:
+          ENCODED_STRING: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        working-directory: ./app
+        run: |
+          mkdir -p android/app
+          echo $ENCODED_STRING | base64 -d > android/app/google-services.json
+
       - name: Decode Keystore
         env:
           ENCODED_STRING: ${{ secrets.GOOGLE_KEYSTORE_BASE_64 }}
