@@ -35,7 +35,7 @@ jobs:
           java-version: '17'
 
       - name: Extract Flutter version
-        working-directory: /
+        working-directory: ./app
         id: flutter_version
         run: |
           # Extract Flutter version from pubspec.yaml
