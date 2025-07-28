@@ -113,9 +113,10 @@ jobs:
           # Check if the debug symbols directory exists
           ls -al
           pwd
-          if [ -d "./app/build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib" ]; then
+          if [ -d "build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib" ]; then
             # Create a zip file with all debug symbols
-            cd ./app/build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out
+            cd build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out
+            ls -al
             zip -r ./app/debug-symbols.zip lib/
             echo "Debug symbols zipped successfully"
             echo "symbols_found=true" >> $GITHUB_OUTPUT
