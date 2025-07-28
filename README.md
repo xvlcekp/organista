@@ -50,7 +50,7 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
    Next steps can be omitted if release process in workflow works. 
    TODO: remove after testing
 3. **compile** - `flutter clean; flutter pub get; flutter build appbundle`
-4. **import debug symbols** - `/app/build/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib`
+4. **import debug symbols** - `/build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib`
 5. **create a release branch**
 
 https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
