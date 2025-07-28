@@ -3,6 +3,18 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
+## Version 1.0.5 - 2025-07-28
+### Pridané
+- Pridané noty s Mariánskou kyticou a ďalšie svadobné
+- Automatizácia procesu vydávania aplikácie
+### Opravené
+- Oprava chyby - po odstránení konta sa prejde na prihlasovaciu stránku
+- Pri viacerých skladbách sa nedala otvoriť posledná položka v zozname kvôli blokujúcemu elementu
+- Systémový panel vo farbe témy a nie stále biely
+### Bezpečnosť
+- Aktualizované knižnice
+- Aktualizácia Flutteru na novšiu verziu
+  
 ### Version 1.0.4 - 28.6.2025
 <table>
 <tr>

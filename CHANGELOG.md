@@ -25,17 +25,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - 
 
-## [1.0.5] - 2025-07-
+## [1.0.5] - 2025-07-28
 ### Added
 - Pridané noty s Mariánskou kyticou a ďalšie svadobné
 - Automatizácia procesu vydávania aplikácie
 ### Fixed
 - Oprava chyby - po odstránení konta sa prejde na prihlasovaciu stránku
 - Pri viacerých skladbách sa nedala otvoriť posledná položka v zozname kvôli blokujúcemu elementu
+- Systémový panel vo farbe témy a nie stále biely
 ### Security
 - Aktualizované knižnice
 - Aktualizácia Flutteru na novšiu verziu
-- Systémový panel vo farbe témy a nie stále biely
 
 ## [1.0.4] - 2025-06-28
 ### Added
