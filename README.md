@@ -3,7 +3,7 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
-## Version 1.0.5 - 2025-07-28
+## Version 1.0.5 - 2025-07-29
 ### Pridané
 - Pridané noty s Mariánskou kyticou a ďalšie svadobné
 - Automatizácia procesu vydávania aplikácie

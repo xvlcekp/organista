@@ -117,7 +117,8 @@ jobs:
             # Create a zip file with all debug symbols
             cd build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out
             ls -al
-            zip -r ./app/debug-symbols.zip lib/
+            pwd
+            zip -r ../../../../../../../../../debug-symbols.zip lib/
             echo "Debug symbols zipped successfully"
             echo "symbols_found=true" >> $GITHUB_OUTPUT
           else
