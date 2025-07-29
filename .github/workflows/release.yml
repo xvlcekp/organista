@@ -114,11 +114,14 @@ jobs:
           ls -al
           pwd
           if [ -d "build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib" ]; then
+            # Store the current app directory path
+            APP_DIR=$(pwd)
             # Create a zip file with all debug symbols
             cd build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out
             ls -al
             pwd
-            zip -r ../../../../../../../../../debug-symbols.zip lib/
+            # Create zip in the app directory using stored path
+            zip -r "$APP_DIR/debug-symbols.zip" lib/
             echo "Debug symbols zipped successfully"
             echo "symbols_found=true" >> $GITHUB_OUTPUT
           else
