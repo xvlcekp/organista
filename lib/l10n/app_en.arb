@@ -147,6 +147,19 @@
     
     "authErrorGoogleSignInFailedText": "Google Sign-In failed. Please try again.",
 
-    "musicSheetAlreadyInPlaylist": "Music sheet already exists in the playlist.",
+    "musicSheetAlreadyInPlaylist": "Music sheet '{musicSheetName}' already exists in playlist '{playlistName}'.",
+    "@musicSheetAlreadyInPlaylist": {
+        "description": "Error message when trying to add a music sheet that already exists in a playlist",
+        "placeholders": {
+            "musicSheetName": {
+                "type": "String",
+                "description": "The name of the music sheet file"
+            },
+            "playlistName": {
+                "type": "String", 
+                "description": "The name of the playlist"
+            }
+        }
+    },
     "musicSheetInitializationError": "An error happened while initialization."
 }

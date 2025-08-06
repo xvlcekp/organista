@@ -437,8 +437,12 @@ class AppLocalizationsSk extends AppLocalizations {
       'Prihlásenie cez Google zlyhalo. Skúste to znova.';
 
   @override
-  String get musicSheetAlreadyInPlaylist =>
-      'Notový záznam už existuje v zozname skladieb.';
+  String musicSheetAlreadyInPlaylist(
+    String musicSheetName,
+    String playlistName,
+  ) {
+    return 'Notový záznam \'$musicSheetName\' už existuje v zozname skladieb \'$playlistName\'.';
+  }
 
   @override
   String get musicSheetInitializationError =>
