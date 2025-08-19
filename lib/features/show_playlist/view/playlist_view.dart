@@ -152,6 +152,6 @@ class PlaylistView extends HookWidget {
       default:
         message = localizations.errorUnknownText;
     }
-    showErrorDialog(context, message);
+    showErrorDialog(context: context, text: message);
   }
 }

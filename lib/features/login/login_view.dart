@@ -40,7 +40,7 @@ class LoginView extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.passwordResetSent == true) {
-          showErrorDialog(context, localizations.passwordResetEmailSent);
+          showErrorDialog(context: context, text: localizations.passwordResetEmailSent);
         }
       },
       child: Scaffold(

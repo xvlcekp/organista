@@ -96,22 +96,22 @@ class RegisterView extends HookWidget {
 
                       // Validate fields
                       if (email.isEmpty) {
-                        showErrorDialog(context, localizations.emailRequired);
+                        showErrorDialog(context: context, text: localizations.emailRequired);
                         return;
                       }
 
                       if (password.isEmpty) {
-                        showErrorDialog(context, localizations.passwordRequired);
+                        showErrorDialog(context: context, text: localizations.passwordRequired);
                         return;
                       }
 
                       if (verifyPassword.isEmpty) {
-                        showErrorDialog(context, localizations.verifyPasswordRequired);
+                        showErrorDialog(context: context, text: localizations.verifyPasswordRequired);
                         return;
                       }
 
                       if (password != verifyPassword) {
-                        showErrorDialog(context, localizations.passwordsDoNotMatch);
+                        showErrorDialog(context: context, text: localizations.passwordsDoNotMatch);
                         return;
                       }
 

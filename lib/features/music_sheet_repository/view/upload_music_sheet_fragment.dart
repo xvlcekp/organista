@@ -43,7 +43,10 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     // Check file size
                     if (file.size > AppConstants.maxFileSizeBytes) {
                       if (context.mounted) {
-                        showErrorDialog(context, localizations.fileTooLarge(AppConstants.maxFileSizeMB.toString()));
+                        showErrorDialog(
+                          context: context,
+                          text: localizations.fileTooLarge(AppConstants.maxFileSizeMB.toString()),
+                        );
                       }
                       return;
                     }
@@ -57,7 +60,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                     }
                   } on UnsupportedFileExtensionException {
                     if (context.mounted) {
-                      showErrorDialog(context, localizations.unsupportedFileExtension);
+                      showErrorDialog(context: context, text: localizations.unsupportedFileExtension);
                     }
                   }
                 }

@@ -61,7 +61,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
           onPressed: () {
             final email = resetPasswordEmailController.text.trim();
             if (email.isEmpty) {
-              showErrorDialog(context, localizations.pleaseEnterEmail);
+              showErrorDialog(context: context, text: localizations.pleaseEnterEmail);
               return;
             }
 

@@ -96,7 +96,7 @@ class UploadFolderScreen extends HookWidget {
     Future<void> createNewRepository() async {
       if (newRepositoryNameController.text.trim().isEmpty) {
         if (context.mounted) {
-          showErrorDialog(context, "Repository name cannot be empty");
+          showErrorDialog(context: context, text: "Repository name cannot be empty");
         }
         return;
       }
@@ -105,7 +105,7 @@ class UploadFolderScreen extends HookWidget {
         authenticatedUser.value = await authUtils.checkUserAuth();
         if (authenticatedUser.value == null) {
           if (context.mounted) {
-            showErrorDialog(context, "Authentication failed. Please restart the app.");
+            showErrorDialog(context: context, text: "Authentication failed. Please restart the app.");
           }
           return;
         }
@@ -117,14 +117,14 @@ class UploadFolderScreen extends HookWidget {
         );
 
         if (context.mounted) {
-          showErrorDialog(context, "Repository created successfully");
+          showErrorDialog(context: context, text: "Repository created successfully");
         }
 
         newRepositoryNameController.clear();
       } catch (e) {
         logger.e("Error creating repository", error: e);
         if (context.mounted) {
-          showErrorDialog(context, "Failed to create repository: ${e.toString()}");
+          showErrorDialog(context: context, text: "Failed to create repository: ${e.toString()}");
         }
       }
     }
@@ -153,7 +153,7 @@ class UploadFolderScreen extends HookWidget {
     Future<void> uploadFolder() async {
       if (selectedRepository.value == null) {
         if (context.mounted) {
-          showErrorDialog(context, "Please select a repository first");
+          showErrorDialog(context: context, text: "Please select a repository first");
         }
         return;
       }
@@ -179,7 +179,7 @@ class UploadFolderScreen extends HookWidget {
         if (authenticatedUser.value == null) {
           isUploading.value = false;
           if (context.mounted) {
-            showErrorDialog(context, "Authentication failed. Please restart the app.");
+            showErrorDialog(context: context, text: "Authentication failed. Please restart the app.");
           }
           return;
         }

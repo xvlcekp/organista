@@ -9,7 +9,7 @@ Future<void> showAuthError({
 }) {
   final message = getLocalizedMessage(authError, context);
 
-  return showErrorDialog(context, message);
+  return showErrorDialog(context: context, text: message);
 }
 
 String getLocalizedMessage(AuthError authError, BuildContext context) {
