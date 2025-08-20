@@ -444,4 +444,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get musicSheetInitializationError =>
       'An error happened while initialization.';
+
+  @override
+  String get selectAll => 'Select all';
+
+  @override
+  String get unselectAll => 'Unselect all';
 }

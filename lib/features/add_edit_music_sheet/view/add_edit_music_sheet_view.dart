@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/discard_changes_uploaded_music_sheet_dialog.dart';
+import 'package:organista/extensions/navigation/navigation_extensions.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_image_controllers_view.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
@@ -141,13 +142,7 @@ class AddEditMusicSheetView extends HookWidget {
 
   void resetMusicSheetCubitAndShowPlaylist(BuildContext context) {
     context.read<AddEditMusicSheetCubit>().resetState();
-
-    Navigator.of(context).popUntil((route) {
-      if (route is MaterialPageRoute) {
-        return route.builder(context) is PlaylistView;
-      }
-      return false;
-    });
+    Navigator.of(context).popUntilRoute<PlaylistView>(context);
   }
 
   void resetMusicSheetCubitAndPop(BuildContext context) {

@@ -161,5 +161,7 @@
             }
         }
     },
-    "musicSheetInitializationError": "An error happened while initialization."
+    "musicSheetInitializationError": "An error happened while initialization.",
+    "selectAll": "Select all",
+    "unselectAll": "Unselect all"
 }

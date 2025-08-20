@@ -916,6 +916,18 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Nastala chyba pri inicializácii.'**
   String get musicSheetInitializationError;
+
+  /// No description provided for @selectAll.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vybrať všetko'**
+  String get selectAll;
+
+  /// No description provided for @unselectAll.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zrušiť výber'**
+  String get unselectAll;
 }
 
 class _AppLocalizationsDelegate

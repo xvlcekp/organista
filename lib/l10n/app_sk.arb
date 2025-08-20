@@ -161,5 +161,7 @@
             }
         }
     },
-    "musicSheetInitializationError": "Nastala chyba pri inicializácii."
+    "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
+    "selectAll": "Vybrať všetko",
+    "unselectAll": "Zrušiť výber"
 }

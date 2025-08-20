@@ -447,4 +447,10 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get musicSheetInitializationError =>
       'Nastala chyba pri inicializácii.';
+
+  @override
+  String get selectAll => 'Vybrať všetko';
+
+  @override
+  String get unselectAll => 'Zrušiť výber';
 }
