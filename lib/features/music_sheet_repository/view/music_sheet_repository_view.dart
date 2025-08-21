@@ -129,13 +129,13 @@ class MusicSheetRepositoryView extends HookWidget {
       exitSelectionMode();
     }
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope<Object?>(
+      canPop: !isSelectionMode.value,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
         if (isSelectionMode.value) {
           exitSelectionMode();
-          return false;
         }
-        return true;
       },
       child: Scaffold(
         appBar: AppBar(
