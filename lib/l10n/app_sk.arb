@@ -147,6 +147,21 @@
     
     "authErrorGoogleSignInFailedText": "Prihlásenie cez Google zlyhalo. Skúste to znova.",
 
-    "musicSheetAlreadyInPlaylist": "Notový záznam už existuje v zozname skladieb.",
-    "musicSheetInitializationError": "Nastala chyba pri inicializácii."
+    "musicSheetAlreadyInPlaylist": "Notový záznam '{musicSheetName}' už existuje v zozname skladieb '{playlistName}'.",
+    "@musicSheetAlreadyInPlaylist": {
+        "description": "Error message when trying to add a music sheet that already exists in a playlist",
+        "placeholders": {
+            "musicSheetName": {
+                "type": "String",
+                "description": "The name of the music sheet file"
+            },
+            "playlistName": {
+                "type": "String", 
+                "description": "The name of the playlist"
+            }
+        }
+    },
+    "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
+    "selectAll": "Vybrať všetko",
+    "unselectAll": "Zrušiť výber"
 }

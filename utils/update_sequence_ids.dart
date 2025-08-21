@@ -132,8 +132,8 @@ class _SequenceUpdaterScreenState extends State<_SequenceUpdaterScreen> {
           status = 'Sequence update failed: ${e.toString()}';
         });
         showErrorDialog(
-          context,
-          'Sequence update failed: ${e.toString()}',
+          context: context,
+          text: 'Sequence update failed: ${e.toString()}',
         );
       }
     } finally {

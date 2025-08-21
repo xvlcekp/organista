@@ -17,12 +17,20 @@ class RepositoryMusicSheetTile extends HookWidget {
   final MusicSheet musicSheet;
   final String repositoryId;
   final TextEditingController searchBarController;
+  final bool isSelectionMode;
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const RepositoryMusicSheetTile({
     super.key,
     required this.musicSheet,
     required this.searchBarController,
     required this.repositoryId,
+    this.isSelectionMode = false,
+    this.isSelected = false,
+    this.onTap,
+    this.onLongPress,
   });
 
   Future<bool> _checkIfCached() async {
@@ -50,23 +58,27 @@ class RepositoryMusicSheetTile extends HookWidget {
     }, [musicSheet.fileUrl]);
 
     return InkWell(
-      onTap: () {
-        Navigator.of(context)
-            .push(
-              MaterialPageRoute(
-                builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
-              ),
-            )
-            .then((_) {
-              // Check cache status after returning from the view
-              _checkIfCached().then((cached) {
-                isCached.value = cached;
-              });
-            });
-      },
+      onTap: isSelectionMode
+          ? onTap
+          : () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                      builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
+                    ),
+                  )
+                  .then((_) {
+                    // Check cache status after returning from the view
+                    _checkIfCached().then((cached) {
+                      isCached.value = cached;
+                    });
+                  });
+            },
+      onLongPress: isSelectionMode ? null : onLongPress,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary.withAlpha(50) : null,
           border: Border(
             bottom: BorderSide(
               color: theme.dividerColor.withAlpha(25),
@@ -83,47 +95,53 @@ class RepositoryMusicSheetTile extends HookWidget {
                 maxLines: 2,
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isCached.value)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                  ),
-                IconButton(
-                  icon: Icon(
-                    Icons.download_rounded,
-                    color: theme.colorScheme.primary,
-                  ),
-                  tooltip: localizations.downloadTooltip,
-                  onPressed: () {
-                    context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
-                    Navigator.of(context).push<void>(AddEditMusicSheetView.route());
-                  },
-                ),
-                if (musicSheet.userId == userId)
+            if (isSelectionMode)
+              Checkbox(
+                value: isSelected,
+                onChanged: (bool? value) => onTap?.call(),
+              )
+            else
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isCached.value)
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                    ),
                   IconButton(
                     icon: Icon(
-                      Icons.delete_outline_rounded,
-                      color: theme.colorScheme.error,
+                      Icons.download_rounded,
+                      color: theme.colorScheme.primary,
                     ),
-                    tooltip: localizations.deleteTooltip,
-                    onPressed: () async {
-                      final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
-                      if (shouldDeleteMusicSheet && context.mounted) {
-                        context.read<MusicSheetRepositoryBloc>().add(
-                          DeleteMusicSheet(
-                            musicSheet: musicSheet,
-                            repositoryId: repositoryId,
-                          ),
-                        );
-                        searchBarController.text = '';
-                      }
+                    tooltip: localizations.downloadTooltip,
+                    onPressed: () {
+                      context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
+                      Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                     },
                   ),
-              ],
-            ),
+                  if (musicSheet.userId == userId)
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: theme.colorScheme.error,
+                      ),
+                      tooltip: localizations.deleteTooltip,
+                      onPressed: () async {
+                        final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
+                        if (shouldDeleteMusicSheet && context.mounted) {
+                          context.read<MusicSheetRepositoryBloc>().add(
+                            DeleteMusicSheet(
+                              musicSheet: musicSheet,
+                              repositoryId: repositoryId,
+                            ),
+                          );
+                          searchBarController.text = '';
+                        }
+                      },
+                    ),
+                ],
+              ),
           ],
         ),
       ),

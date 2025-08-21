@@ -43,12 +43,12 @@ class AboutView extends HookWidget {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
                   } else {
                     if (context.mounted) {
-                      showErrorDialog(context, localizations.couldNotOpenUrl);
+                      showErrorDialog(context: context, text: localizations.couldNotOpenUrl);
                     }
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    showErrorDialog(context, '${localizations.errorOpeningUrl}: ${e.toString()}');
+                    showErrorDialog(context: context, text: '${localizations.errorOpeningUrl}: ${e.toString()}');
                   }
                 }
               },

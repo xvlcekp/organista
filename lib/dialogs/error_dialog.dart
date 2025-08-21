@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:organista/dialogs/generic_dialog.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-Future<void> showErrorDialog(
-  BuildContext context,
-  String text,
-) {
+Future<void> showErrorDialog({
+  required BuildContext context,
+  required String text,
+}) {
   final localizations = context.loc;
   return showGenericDialog<void>(
     context: context,

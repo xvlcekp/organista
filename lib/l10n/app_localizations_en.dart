@@ -434,10 +434,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Google Sign-In failed. Please try again.';
 
   @override
-  String get musicSheetAlreadyInPlaylist =>
-      'Music sheet already exists in the playlist.';
+  String musicSheetAlreadyInPlaylist(
+    String musicSheetName,
+    String playlistName,
+  ) {
+    return 'Music sheet \'$musicSheetName\' already exists in playlist \'$playlistName\'.';
+  }
 
   @override
   String get musicSheetInitializationError =>
       'An error happened while initialization.';
+
+  @override
+  String get selectAll => 'Select all';
+
+  @override
+  String get unselectAll => 'Unselect all';
 }

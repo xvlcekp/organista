@@ -86,7 +86,7 @@ class _MigrationScreenState extends State<_MigrationScreen> {
     } catch (e) {
       logger.e('Migration failed', error: e);
       if (mounted) {
-        showErrorDialog(context, 'Migration failed: ${e.toString()}');
+        showErrorDialog(context: context, text: 'Migration failed: ${e.toString()}');
       }
     } finally {
       setState(() {

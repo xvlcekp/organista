@@ -39,7 +39,7 @@ Future<dynamic> showPlaylistDialog({
                 controller.clear();
                 Navigator.of(context).pop(); // Close the dialog
               } else {
-                showErrorDialog(context, localizations.playlistNameEmpty);
+                showErrorDialog(context: context, text: localizations.playlistNameEmpty);
               }
             },
             child: Text(actionLabel),

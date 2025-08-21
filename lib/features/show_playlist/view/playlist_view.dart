@@ -146,12 +146,12 @@ class PlaylistView extends HookWidget {
     var message = '';
     switch (error) {
       case MusicSheetAlreadyInPlaylistError():
-        message = localizations.musicSheetAlreadyInPlaylist;
+        message = localizations.musicSheetAlreadyInPlaylist(error.musicSheetName, error.playlistName);
       case InitializationError():
         message = localizations.musicSheetInitializationError;
       default:
         message = localizations.errorUnknownText;
     }
-    showErrorDialog(context, message);
+    showErrorDialog(context: context, text: message);
   }
 }

@@ -902,17 +902,32 @@ abstract class AppLocalizations {
   /// **'Prihlásenie cez Google zlyhalo. Skúste to znova.'**
   String get authErrorGoogleSignInFailedText;
 
-  /// No description provided for @musicSheetAlreadyInPlaylist.
+  /// Error message when trying to add a music sheet that already exists in a playlist
   ///
   /// In sk, this message translates to:
-  /// **'Notový záznam už existuje v zozname skladieb.'**
-  String get musicSheetAlreadyInPlaylist;
+  /// **'Notový záznam \'{musicSheetName}\' už existuje v zozname skladieb \'{playlistName}\'.'**
+  String musicSheetAlreadyInPlaylist(
+    String musicSheetName,
+    String playlistName,
+  );
 
   /// No description provided for @musicSheetInitializationError.
   ///
   /// In sk, this message translates to:
   /// **'Nastala chyba pri inicializácii.'**
   String get musicSheetInitializationError;
+
+  /// No description provided for @selectAll.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vybrať všetko'**
+  String get selectAll;
+
+  /// No description provided for @unselectAll.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zrušiť výber'**
+  String get unselectAll;
 }
 
 class _AppLocalizationsDelegate
