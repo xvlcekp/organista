@@ -18,7 +18,6 @@ class PlaylistsView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = useTextEditingController();
     final AuthUser user = context.read<AuthBloc>().state.user!;
     final String userId = user.id;
     final theme = Theme.of(context);
@@ -47,7 +46,7 @@ class PlaylistsView extends HookWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showAddPlaylistDialog(context: context, controller: controller, userId: userId),
+        onPressed: () => showAddPlaylistDialog(context: context, userId: userId),
         icon: const Icon(Icons.add),
         label: Text(localizations.newPlaylist),
         backgroundColor: theme.colorScheme.primary,
@@ -116,10 +115,8 @@ class PlaylistsView extends HookWidget {
                     },
                     child: InkWell(
                       onLongPress: () {
-                        controller.text = playlist.name;
                         showEditPlaylistDialog(
                           context: context,
-                          controller: controller,
                           playlist: state.playlists[index],
                         );
                       },
