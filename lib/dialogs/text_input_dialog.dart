@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/buildcontext/loc.dart';
 
-Future<dynamic> showTextInputDialog({
+Future<String?> showTextInputDialog({
   required BuildContext context,
-  required TextEditingController controller,
   required String title, // Dialog title
   required String actionLabel, // Button label
-  required VoidCallback onConfirm, // Action to perform when confirmed
   required String labelText,
   required String hintText,
+  String initialText = '',
 }) {
   final localizations = context.loc;
   final theme = Theme.of(context);
-  return showDialog(
+  final TextEditingController textController = TextEditingController(text: initialText);
+
+  return showDialog<String>(
     context: context,
     builder: (_) {
       return AlertDialog(
         title: Text(title),
         content: TextField(
-          controller: controller,
+          controller: textController,
           decoration: InputDecoration(
             labelText: labelText,
             hintText: hintText,
@@ -35,13 +36,15 @@ Future<dynamic> showTextInputDialog({
           ElevatedButton(
             style: theme.elevatedButtonTheme.style,
             onPressed: () {
-              final input = controller.text.trim();
-              if (input.isNotEmpty) {
-                onConfirm(); // Execute passed function
-                controller.clear();
-                Navigator.of(context).pop(); // Close the dialog
-              } else {
+              final input = textController.text.trim();
+              if (input.isEmpty) {
                 showErrorDialog(context: context, text: localizations.inputCannotBeEmpty);
+                return; // Stop execution here
+              } else if (input == initialText) {
+                showErrorDialog(context: context, text: localizations.inputCannotBeSameAsCurrent);
+                return; // Stop execution here
+              } else {
+                Navigator.of(context).pop(input); // Close the dialog
               }
             },
             child: Text(actionLabel),

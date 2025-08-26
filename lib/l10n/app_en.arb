@@ -102,7 +102,8 @@
     "passwordResetLinkSent": "Password reset link sent to your email",
     "playlistName": "Playlist name",
     "enterPlaylistName": "Enter playlist name",
-    "playlistNameEmpty": "Playlist name cannot be empty",
+    "inputCannotBeEmpty": "Input cannot be empty",
+    "inputCannotBeSameAsCurrent": "Input cannot be the same as the current name",
     "theme": "Theme",
     "darkTheme": "Dark theme",
     "lightTheme": "Light theme",
@@ -163,5 +164,22 @@
     },
     "musicSheetInitializationError": "An error happened while initialization.",
     "selectAll": "Select all",
-    "unselectAll": "Unselect all"
+    "unselectAll": "Unselect all",
+    "repositoryName": "Repository name",
+    "enterRepositoryName": "Enter repository name",
+    "newRepository": "New repository",
+    "renameRepository": "Rename repository",
+    "deleteRepository": "Delete repository",
+    "deleteRepositoryMessage": "Are you sure you want to delete repository '{repositoryName}'? This will also delete all music sheets in it. This action cannot be undone!",
+    "@deleteRepositoryMessage": {
+        "description": "Confirmation message when deleting a repository",
+        "placeholders": {
+            "repositoryName": {
+                "type": "String",
+                "description": "The name of the repository"
+            }
+        }
+    },
+    "cannotRenamePublicRepositories": "Cannot rename public repositories",
+    "canOnlyRenameOwnRepositories": "You can only rename your own repositories"
 }

@@ -323,7 +323,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterPlaylistName => 'Enter playlist name';
 
   @override
-  String get playlistNameEmpty => 'Playlist name cannot be empty';
+  String get inputCannotBeEmpty => 'Input cannot be empty';
+
+  @override
+  String get inputCannotBeSameAsCurrent =>
+      'Input cannot be the same as the current name';
 
   @override
   String get theme => 'Theme';
@@ -450,4 +454,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unselectAll => 'Unselect all';
+
+  @override
+  String get repositoryName => 'Repository name';
+
+  @override
+  String get enterRepositoryName => 'Enter repository name';
+
+  @override
+  String get newRepository => 'New repository';
+
+  @override
+  String get renameRepository => 'Rename repository';
+
+  @override
+  String get deleteRepository => 'Delete repository';
+
+  @override
+  String deleteRepositoryMessage(String repositoryName) {
+    return 'Are you sure you want to delete repository \'$repositoryName\'? This will also delete all music sheets in it. This action cannot be undone!';
+  }
+
+  @override
+  String get cannotRenamePublicRepositories =>
+      'Cannot rename public repositories';
+
+  @override
+  String get canOnlyRenameOwnRepositories =>
+      'You can only rename your own repositories';
 }

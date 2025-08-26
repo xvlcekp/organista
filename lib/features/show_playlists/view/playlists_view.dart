@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/delete_playlist_dialog.dart';
-import 'package:organista/dialogs/playlists/edit_playlist_dialog.dart';
+import 'package:organista/dialogs/playlists/rename_playlist_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
@@ -46,7 +46,15 @@ class PlaylistsView extends HookWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showAddPlaylistDialog(context: context, userId: userId),
+        onPressed: () async {
+          final playlistName = await showAddPlaylistDialog(context: context);
+          if (playlistName != null && context.mounted) {
+            context.read<ShowPlaylistsCubit>().addPlaylist(
+              playlistName: playlistName,
+              userId: userId,
+            );
+          }
+        },
         icon: const Icon(Icons.add),
         label: Text(localizations.newPlaylist),
         backgroundColor: theme.colorScheme.primary,
@@ -114,11 +122,17 @@ class PlaylistsView extends HookWidget {
                       return;
                     },
                     child: InkWell(
-                      onLongPress: () {
-                        showEditPlaylistDialog(
+                      onLongPress: () async {
+                        final newPlaylistName = await showEditPlaylistDialog(
                           context: context,
-                          playlist: state.playlists[index],
+                          playlistName: playlist.name,
                         );
+                        if (newPlaylistName != null && context.mounted) {
+                          context.read<ShowPlaylistsCubit>().editPlaylistName(
+                            newPlaylistName: newPlaylistName,
+                            playlist: playlist,
+                          );
+                        }
                       },
                       onTap: () {
                         context.read<PlaylistBloc>().add(

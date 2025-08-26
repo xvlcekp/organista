@@ -1,5 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/dialogs/customRepositories/delete_repository_dialog.dart';
+import 'package:organista/dialogs/customRepositories/rename_repository_dialog.dart';
+import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+
 import 'package:organista/logger/custom_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
@@ -20,6 +26,7 @@ class RepositoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = context.loc;
+    final currentUserId = context.read<AuthBloc>().state.user?.id ?? '';
 
     return GestureDetector(
       onTap: () {
@@ -28,6 +35,9 @@ class RepositoryTile extends StatelessWidget {
             repository: repository,
           ),
         );
+      },
+      onLongPress: () {
+        _showRepositoryContextMenu(context, currentUserId);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -109,6 +119,69 @@ class RepositoryTile extends StatelessWidget {
       logger.e("Error loading music sheets count: $e");
       return 0;
     }
+  }
+
+  void _showRepositoryContextMenu(BuildContext context, String currentUserId) {
+    final localizations = context.loc;
+    final repositoriesCubit = context.read<ShowRepositoriesCubit>();
+
+    // Only show menu for user's own repositories
+    if (repository.userId.isEmpty || repository.userId != currentUserId) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizations.canOnlyRenameOwnRepositories),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text(localizations.renameRepository),
+                onTap: () async {
+                  Navigator.of(bottomSheetContext).pop();
+                  final newName = await showRenameRepositoryDialog(
+                    context: context,
+                    repositoryName: repository.name,
+                  );
+                  if (newName != null) {
+                    repositoriesCubit.renameRepository(
+                      repositoryId: repository.repositoryId,
+                      newName: newName,
+                      currentUserId: currentUserId,
+                    );
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: Text(
+                  localizations.deleteRepository,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                onTap: () async {
+                  Navigator.of(bottomSheetContext).pop();
+                  final shouldDelete = await showDeleteRepositoryDialog(context: context, repository: repository);
+                  if (shouldDelete) {
+                    repositoriesCubit.deleteRepository(
+                      repositoryId: repository.repositoryId,
+                      currentUserId: currentUserId,
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Color _getFixedColor() {
