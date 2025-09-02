@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:pdfx/pdfx.dart';
@@ -38,21 +36,18 @@ class UploadedMusicSheetFileView extends StatelessWidget {
         );
     }
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        GestureDetector(
-          child: child,
-          onTap: () {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => MusicSheetFullScreenView(musicSheet: musicSheet),
-            //   ),
-            // );
-          },
-        ),
-        IconButton(
-          onPressed: () => context.read<AddEditMusicSheetCubit>().resetState(),
-          icon: const Icon(Icons.change_circle),
+        Expanded(
+          child: GestureDetector(
+            child: child,
+            onTap: () {
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => MusicSheetFullScreenView(musicSheet: musicSheet),
+              //   ),
+              // );
+            },
+          ),
         ),
       ],
     );
