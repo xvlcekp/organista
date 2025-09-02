@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/customRepositories/delete_repository_dialog.dart';
 import 'package:organista/dialogs/customRepositories/rename_repository_dialog.dart';
+import 'package:organista/dialogs/show_repositories_error.dart';
 import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+import 'package:organista/features/show_repositories/models/repository_error.dart';
 
 import 'package:organista/logger/custom_logger.dart';
 import 'package:provider/provider.dart';
@@ -127,11 +129,9 @@ class RepositoryTile extends StatelessWidget {
 
     // Only show menu for user's own repositories
     if (repository.userId.isEmpty || repository.userId != currentUserId) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(localizations.canOnlyRenameOwnRepositories),
-          backgroundColor: Colors.orange,
-        ),
+      showRepositoriesError(
+        repositoryError: const RepositoryCannotModifyPublic(),
+        context: context,
       );
       return;
     }

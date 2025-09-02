@@ -971,17 +971,29 @@ abstract class AppLocalizations {
   /// **'Ste si istý, že chcete vymazať repozitár \'{repositoryName}\'? Týmto sa vymažú aj všetky notové záznamy v ňom. Táto akcia sa nedá vrátiť späť!'**
   String deleteRepositoryMessage(String repositoryName);
 
-  /// No description provided for @cannotRenamePublicRepositories.
+  /// No description provided for @repositoryGenericError.
   ///
   /// In sk, this message translates to:
-  /// **'Verejné repozitáre nie je možné premenovať'**
-  String get cannotRenamePublicRepositories;
+  /// **'Pri vykonávaní operácie s repozitárom došlo k chybe'**
+  String get repositoryGenericError;
 
-  /// No description provided for @canOnlyRenameOwnRepositories.
+  /// No description provided for @repositoryNotFoundError.
   ///
   /// In sk, this message translates to:
-  /// **'Môžete premenovať len vlastné repozitáre'**
-  String get canOnlyRenameOwnRepositories;
+  /// **'Repozitár nebol nájdený'**
+  String get repositoryNotFoundError;
+
+  /// No description provided for @repositoryCannotModifyPublicError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Verejné repozitáre nie je možné upravovať'**
+  String get repositoryCannotModifyPublicError;
+
+  /// No description provided for @repositoryCannotModifyOtherUsersError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Môžete upravovať len vlastné repozitáre'**
+  String get repositoryCannotModifyOtherUsersError;
 }
 
 class _AppLocalizationsDelegate

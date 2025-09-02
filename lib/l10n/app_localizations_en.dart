@@ -476,10 +476,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get cannotRenamePublicRepositories =>
-      'Cannot rename public repositories';
+  String get repositoryGenericError =>
+      'An error occurred while performing the repository operation';
 
   @override
-  String get canOnlyRenameOwnRepositories =>
-      'You can only rename your own repositories';
+  String get repositoryNotFoundError => 'Repository not found';
+
+  @override
+  String get repositoryCannotModifyPublicError =>
+      'Cannot modify public repositories';
+
+  @override
+  String get repositoryCannotModifyOtherUsersError =>
+      'You can only modify your own repositories';
 }

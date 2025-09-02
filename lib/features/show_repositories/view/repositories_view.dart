@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/dialogs/customRepositories/add_custom_repository_dialog.dart';
+import 'package:organista/dialogs/show_repositories_error.dart';
 import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+import 'package:organista/features/show_repositories/models/repository_tab_type.dart';
+import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
@@ -33,8 +37,9 @@ class RepositoriesViewContent extends HookWidget {
   Widget build(BuildContext context) {
     final AuthUser user = context.read<AuthBloc>().state.user!;
     final String userId = user.id;
-    final selectedTabIndex = useState(0); // 0 for Global, 1 for Personal
+    final selectedTab = useState(RepositoryTabType.global);
     final localizations = context.loc;
+    final theme = Theme.of(context);
 
     useEffect(() {
       // initialize stream only once on first creation
@@ -46,23 +51,65 @@ class RepositoriesViewContent extends HookWidget {
       appBar: AppBar(
         title: Text('${localizations.repositories} 📁'),
       ),
-      body: BlocBuilder<ShowRepositoriesCubit, ShowRepositoriesState>(
+      body: BlocConsumer<ShowRepositoriesCubit, ShowRepositoriesState>(
+        listener: (context, repositoryState) {
+          if (repositoryState.isLoading) {
+            LoadingScreen.instance().show(
+              context: context,
+              text: context.loc.loading,
+            );
+          } else {
+            LoadingScreen.instance().hide();
+          }
+
+          final repositoryError = repositoryState.error;
+          if (repositoryError != null) {
+            showRepositoriesError(
+              repositoryError: repositoryError,
+              context: context,
+            );
+          }
+        },
         builder: (context, state) {
-          return _buildRepositoryList(context, state, userId, selectedTabIndex.value);
+          return _buildRepositoryList(context, state, userId, selectedTab.value);
         },
       ),
-      bottomNavigationBar: _buildBottomNavBar(context, selectedTabIndex),
+      bottomNavigationBar: _buildBottomNavBar(context, selectedTab),
+      floatingActionButton: selectedTab.value.isPersonal
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                final repositoryName = await showAddCustomRepositoryDialog(context: context);
+                if (repositoryName != null && context.mounted) {
+                  context.read<ShowRepositoriesCubit>().createRepository(
+                    repositoryName: repositoryName,
+                    userId: userId,
+                  );
+                }
+              },
+              icon: const Icon(Icons.add),
+              label: Text(localizations.newRepository),
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+            )
+          : null,
     );
   }
 
-  Widget _buildRepositoryList(BuildContext context, ShowRepositoriesState state, String userId, int selectedTabIndex) {
-    final currentRepositories = selectedTabIndex == 0 ? state.publicRepositories : state.privateRepositories;
+  Widget _buildRepositoryList(
+    BuildContext context,
+    ShowRepositoriesState state,
+    String userId,
+    RepositoryTabType selectedTab,
+  ) {
+    final currentRepositories = selectedTab.isGlobal ? state.publicRepositories : state.privateRepositories;
     final localizations = context.loc;
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     if (currentRepositories.isEmpty) {
       return Center(
-        child: Text(selectedTabIndex == 0 ? localizations.noGlobalRepositories : localizations.noPersonalRepositories),
+        child: Text(
+          selectedTab.isGlobal ? localizations.noGlobalRepositories : localizations.noPersonalRepositories,
+        ),
       );
     }
 
@@ -83,12 +130,12 @@ class RepositoriesViewContent extends HookWidget {
     );
   }
 
-  Widget _buildBottomNavBar(BuildContext context, ValueNotifier<int> selectedTabIndex) {
+  Widget _buildBottomNavBar(BuildContext context, ValueNotifier<RepositoryTabType> selectedTab) {
     final localizations = context.loc;
     return NavigationBar(
-      selectedIndex: selectedTabIndex.value,
+      selectedIndex: selectedTab.value.index,
       onDestinationSelected: (index) {
-        selectedTabIndex.value = index;
+        selectedTab.value = RepositoryTabType.fromIndex(index);
       },
       destinations: [
         NavigationDestination(

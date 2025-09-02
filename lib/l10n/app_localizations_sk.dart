@@ -479,10 +479,17 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
-  String get cannotRenamePublicRepositories =>
-      'Verejné repozitáre nie je možné premenovať';
+  String get repositoryGenericError =>
+      'Pri vykonávaní operácie s repozitárom došlo k chybe';
 
   @override
-  String get canOnlyRenameOwnRepositories =>
-      'Môžete premenovať len vlastné repozitáre';
+  String get repositoryNotFoundError => 'Repozitár nebol nájdený';
+
+  @override
+  String get repositoryCannotModifyPublicError =>
+      'Verejné repozitáre nie je možné upravovať';
+
+  @override
+  String get repositoryCannotModifyOtherUsersError =>
+      'Môžete upravovať len vlastné repozitáre';
 }

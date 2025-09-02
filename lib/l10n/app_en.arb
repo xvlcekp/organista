@@ -180,6 +180,8 @@
             }
         }
     },
-    "cannotRenamePublicRepositories": "Cannot rename public repositories",
-    "canOnlyRenameOwnRepositories": "You can only rename your own repositories"
+    "repositoryGenericError": "An error occurred while performing the repository operation",
+    "repositoryNotFoundError": "Repository not found",
+    "repositoryCannotModifyPublicError": "Cannot modify public repositories",
+    "repositoryCannotModifyOtherUsersError": "You can only modify your own repositories"
 }
