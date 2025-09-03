@@ -166,9 +166,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _firebaseFirestoreRepository.uploadNewUser(
           user: authUser,
         );
-        await _firebaseFirestoreRepository.createUserRepository(
-          user: authUser,
-        );
       } catch (e) {
         // Check if this is a "user already exists" error or a real failure
         if (_isUserAlreadyExistsError(e)) {
@@ -288,9 +285,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // we need to manually check if user/repository already exists in DB
       try {
         await _firebaseFirestoreRepository.uploadNewUser(
-          user: authUser,
-        );
-        await _firebaseFirestoreRepository.createUserRepository(
           user: authUser,
         );
       } catch (e) {
