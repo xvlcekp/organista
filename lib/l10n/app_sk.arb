@@ -183,5 +183,15 @@
     "repositoryGenericError": "Pri vykonávaní operácie s repozitárom došlo k chybe",
     "repositoryNotFoundError": "Repozitár nebol nájdený",
     "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať",
-    "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre"
+    "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre",
+    "maximumRepositoriesCountExceededError": "Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.",
+    "@maximumRepositoriesCountExceededError": {
+        "description": "Error message when user tries to create more repositories than allowed",
+        "placeholders": {
+            "maximumRepositoriesCount": {
+                "type": "int",
+                "description": "The maximum number of repositories allowed"
+            }
+        }
+    }
 }

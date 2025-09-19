@@ -183,5 +183,15 @@
     "repositoryGenericError": "An error occurred while performing the repository operation",
     "repositoryNotFoundError": "Repository not found",
     "repositoryCannotModifyPublicError": "Cannot modify public repositories",
-    "repositoryCannotModifyOtherUsersError": "You can only modify your own repositories"
+    "repositoryCannotModifyOtherUsersError": "You can only modify your own repositories",
+    "maximumRepositoriesCountExceededError": "You have reached the maximum number of repositories ({maximumRepositoriesCount}). Please delete some repositories before creating new ones.",
+    "@maximumRepositoriesCountExceededError": {
+        "description": "Error message when user tries to create more repositories than allowed",
+        "placeholders": {
+            "maximumRepositoriesCount": {
+                "type": "int",
+                "description": "The maximum number of repositories allowed"
+            }
+        }
+    }
 }

@@ -994,6 +994,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Môžete upravovať len vlastné repozitáre'**
   String get repositoryCannotModifyOtherUsersError;
+
+  /// Error message when user tries to create more repositories than allowed
+  ///
+  /// In sk, this message translates to:
+  /// **'Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.'**
+  String maximumRepositoriesCountExceededError(int maximumRepositoriesCount);
 }
 
 class _AppLocalizationsDelegate

@@ -21,4 +21,5 @@ class AppConstants {
   // App info
   static const String contactEmail = 'rozpravaciaappka@gmail.com';
   static const String faqUrl = 'https://sites.google.com/view/organista-app/casto-kladene-otazky';
+  static const int maximumRepositoriesCount = 5;
 }

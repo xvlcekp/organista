@@ -492,4 +492,9 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get repositoryCannotModifyOtherUsersError =>
       'Môžete upravovať len vlastné repozitáre';
+
+  @override
+  String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
+    return 'Dosiahli ste maximálny počet repozitárov ($maximumRepositoriesCount). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.';
+  }
 }

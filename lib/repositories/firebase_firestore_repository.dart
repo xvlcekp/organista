@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/logger/custom_logger.dart';
@@ -379,27 +380,26 @@ class FirebaseFirestoreRepository {
     return _createRepository(userId: '', name: name);
   }
 
-  Future<bool> createUserRepository({required AuthUser user}) async {
-    // Check if user repository already exists
-    final existingRepoQuery = await instance
+  // TODO: cover with tests
+  Future<int> getUserRepositoriesCount({required String userId}) async {
+    final snapshot = await instance
         .collection(FirebaseCollectionName.repositories)
-        .where(RepositoryKey.userId, isEqualTo: user.id)
-        .limit(1)
+        .where(RepositoryKey.userId, isEqualTo: userId)
+        .count()
         .get();
-
-    if (existingRepoQuery.docs.isNotEmpty) {
-      logger.i('User repository for ${user.id} already exists, skipping creation');
-      return true; // Repository already exists, no need to create
-    }
-
-    // Repository doesn't exist, create new user repository
-    return _createRepository(userId: user.id, name: 'Custom repository - ${user.email}');
+    return snapshot.count ?? 0;
   }
 
-  Future<bool> createUserRepositoryWithName({
+  Future<bool> createUserRepository({
     required String userId,
     required String name,
   }) async {
+    final count = await getUserRepositoriesCount(userId: userId);
+    const maximumRepositoriesCount = AppConstants.maximumRepositoriesCount;
+    if (count >= maximumRepositoriesCount) {
+      logger.i('User $userId already has $maximumRepositoriesCount repositories, skipping creation');
+      throw const MaximumRepositoriesCounExceeded(maximumRepositoriesCount: maximumRepositoriesCount);
+    }
     return _createRepository(userId: userId, name: name);
   }
 

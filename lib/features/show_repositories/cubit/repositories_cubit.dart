@@ -18,7 +18,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
        super(const InitRepositoryState());
 
-  late final StreamSubscription<Iterable<Repository>> _streamSubscription;
+  StreamSubscription<Iterable<Repository>>? _streamSubscription;
 
   void resetState() {
     emit(const InitRepositoryState());
@@ -38,7 +38,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     );
 
     try {
-      final success = await _firebaseFirestoreRepository.createUserRepositoryWithName(
+      final success = await _firebaseFirestoreRepository.createUserRepository(
         userId: userId,
         name: repositoryName,
       );
@@ -174,7 +174,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     // Cancel the subscription when leaving the page for optimization
     // Cached values will be available when returning
     // Note: StreamManager handles removeListener automatically via onCancel
-    _streamSubscription.cancel();
+    _streamSubscription?.cancel();
     return super.close();
   }
 }
