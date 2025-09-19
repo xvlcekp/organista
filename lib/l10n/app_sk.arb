@@ -102,7 +102,8 @@
     "passwordResetLinkSent": "Odkaz na obnovenie hesla bol odoslaný na váš e-mail",
     "playlistName": "Názov zoznamu",
     "enterPlaylistName": "Zadajte názov zoznamu",
-    "playlistNameEmpty": "Názov zoznamu nemôže byť prázdny",
+    "inputCannotBeEmpty": "Názov nemôže byť prázdny",
+    "inputCannotBeSameAsCurrent": "Vstup nemôže byť rovnaký ako aktuálny",
     "theme": "Téma",
     "darkTheme": "Tmavá téma",
     "lightTheme": "Svetlá téma",
@@ -163,5 +164,34 @@
     },
     "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
     "selectAll": "Vybrať všetko",
-    "unselectAll": "Zrušiť výber"
+    "unselectAll": "Zrušiť výber",
+    "repositoryName": "Názov repozitára",
+    "enterRepositoryName": "Zadajte názov repozitára",
+    "newRepository": "Nový repozitár",
+    "renameRepository": "Premenovať repozitár",
+    "deleteRepository": "Vymazať repozitár",
+    "deleteRepositoryMessage": "Ste si istý, že chcete vymazať repozitár '{repositoryName}'? Týmto sa vymažú aj všetky notové záznamy v ňom. Táto akcia sa nedá vrátiť späť!",
+    "@deleteRepositoryMessage": {
+        "description": "Confirmation message when deleting a repository",
+        "placeholders": {
+            "repositoryName": {
+                "type": "String",
+                "description": "The name of the repository"
+            }
+        }
+    },
+    "repositoryGenericError": "Pri vykonávaní operácie s repozitárom došlo k chybe",
+    "repositoryNotFoundError": "Repozitár nebol nájdený",
+    "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať",
+    "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre",
+    "maximumRepositoriesCountExceededError": "Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.",
+    "@maximumRepositoriesCountExceededError": {
+        "description": "Error message when user tries to create more repositories than allowed",
+        "placeholders": {
+            "maximumRepositoriesCount": {
+                "type": "int",
+                "description": "The maximum number of repositories allowed"
+            }
+        }
+    }
 }

@@ -710,11 +710,17 @@ abstract class AppLocalizations {
   /// **'Zadajte názov zoznamu'**
   String get enterPlaylistName;
 
-  /// No description provided for @playlistNameEmpty.
+  /// No description provided for @inputCannotBeEmpty.
   ///
   /// In sk, this message translates to:
-  /// **'Názov zoznamu nemôže byť prázdny'**
-  String get playlistNameEmpty;
+  /// **'Názov nemôže byť prázdny'**
+  String get inputCannotBeEmpty;
+
+  /// No description provided for @inputCannotBeSameAsCurrent.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vstup nemôže byť rovnaký ako aktuálny'**
+  String get inputCannotBeSameAsCurrent;
 
   /// No description provided for @theme.
   ///
@@ -928,6 +934,72 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Zrušiť výber'**
   String get unselectAll;
+
+  /// No description provided for @repositoryName.
+  ///
+  /// In sk, this message translates to:
+  /// **'Názov repozitára'**
+  String get repositoryName;
+
+  /// No description provided for @enterRepositoryName.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zadajte názov repozitára'**
+  String get enterRepositoryName;
+
+  /// No description provided for @newRepository.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nový repozitár'**
+  String get newRepository;
+
+  /// No description provided for @renameRepository.
+  ///
+  /// In sk, this message translates to:
+  /// **'Premenovať repozitár'**
+  String get renameRepository;
+
+  /// No description provided for @deleteRepository.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vymazať repozitár'**
+  String get deleteRepository;
+
+  /// Confirmation message when deleting a repository
+  ///
+  /// In sk, this message translates to:
+  /// **'Ste si istý, že chcete vymazať repozitár \'{repositoryName}\'? Týmto sa vymažú aj všetky notové záznamy v ňom. Táto akcia sa nedá vrátiť späť!'**
+  String deleteRepositoryMessage(String repositoryName);
+
+  /// No description provided for @repositoryGenericError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Pri vykonávaní operácie s repozitárom došlo k chybe'**
+  String get repositoryGenericError;
+
+  /// No description provided for @repositoryNotFoundError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Repozitár nebol nájdený'**
+  String get repositoryNotFoundError;
+
+  /// No description provided for @repositoryCannotModifyPublicError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Verejné repozitáre nie je možné upravovať'**
+  String get repositoryCannotModifyPublicError;
+
+  /// No description provided for @repositoryCannotModifyOtherUsersError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Môžete upravovať len vlastné repozitáre'**
+  String get repositoryCannotModifyOtherUsersError;
+
+  /// Error message when user tries to create more repositories than allowed
+  ///
+  /// In sk, this message translates to:
+  /// **'Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.'**
+  String maximumRepositoriesCountExceededError(int maximumRepositoriesCount);
 }
 
 class _AppLocalizationsDelegate

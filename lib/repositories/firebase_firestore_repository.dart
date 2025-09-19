@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/string_extensions.dart';
+import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/list_music_sheet_extension.dart';
@@ -378,21 +380,27 @@ class FirebaseFirestoreRepository {
     return _createRepository(userId: '', name: name);
   }
 
-  Future<bool> createUserRepository({required AuthUser user}) async {
-    // Check if user repository already exists
-    final existingRepoQuery = await instance
+  // TODO: cover with tests
+  Future<int> getUserRepositoriesCount({required String userId}) async {
+    final snapshot = await instance
         .collection(FirebaseCollectionName.repositories)
-        .where(RepositoryKey.userId, isEqualTo: user.id)
-        .limit(1)
+        .where(RepositoryKey.userId, isEqualTo: userId)
+        .count()
         .get();
+    return snapshot.count ?? 0;
+  }
 
-    if (existingRepoQuery.docs.isNotEmpty) {
-      logger.i('User repository for ${user.id} already exists, skipping creation');
-      return true; // Repository already exists, no need to create
+  Future<bool> createUserRepository({
+    required String userId,
+    required String name,
+  }) async {
+    final count = await getUserRepositoriesCount(userId: userId);
+    const maximumRepositoriesCount = AppConstants.maximumRepositoriesCount;
+    if (count >= maximumRepositoriesCount) {
+      logger.i('User $userId already has $maximumRepositoriesCount repositories, skipping creation');
+      throw const MaximumRepositoriesCounExceeded(maximumRepositoriesCount: maximumRepositoriesCount);
     }
-
-    // Repository doesn't exist, create new user repository
-    return _createRepository(userId: user.id, name: 'Custom repository - ${user.email}');
+    return _createRepository(userId: userId, name: name);
   }
 
   Future<bool> _createRepository({
@@ -410,6 +418,102 @@ class FirebaseFirestoreRepository {
       logger.e('Error creating repository: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating repository');
       return false;
+    }
+  }
+
+  Future<bool> renameRepository({
+    required String repositoryId,
+    required String newName,
+    required String currentUserId,
+  }) async {
+    try {
+      // First, get the repository to verify ownership
+      final repositoryDoc = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).get();
+
+      if (!repositoryDoc.exists) {
+        logger.w('Repository $repositoryId not found');
+        throw const RepositoryNotFound();
+      }
+
+      final repositoryData = repositoryDoc.data()!;
+      final repositoryUserId = repositoryData[RepositoryKey.userId] as String;
+
+      // Security check: only allow renaming if repository belongs to the current user
+      if (repositoryUserId.isEmpty) {
+        logger.w('Attempt to rename public repository $repositoryId by user $currentUserId');
+        throw const RepositoryCannotModifyPublic();
+      }
+
+      if (repositoryUserId != currentUserId) {
+        logger.w(
+          'Unauthorized attempt to rename repository $repositoryId by user $currentUserId (owner: $repositoryUserId)',
+        );
+        throw const RepositoryCannotModifyOtherUsers();
+      }
+
+      // Proceed with rename if validation passes
+      await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).update({
+        RepositoryKey.name: newName,
+      });
+      logger.i("Renaming repository $repositoryId to $newName by user $currentUserId");
+      return true;
+    } catch (e, stackTrace) {
+      logger.e('Error renaming repository: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error renaming repository');
+      throw const RepositoryGenericException();
+    }
+  }
+
+  Future<bool> deleteRepository({
+    required String repositoryId,
+    required String currentUserId,
+  }) async {
+    try {
+      // First, get the repository to verify ownership
+      final repositoryDoc = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).get();
+
+      if (!repositoryDoc.exists) {
+        logger.w('Repository $repositoryId not found');
+        throw const RepositoryNotFound();
+      }
+
+      final repositoryData = repositoryDoc.data()!;
+      final repositoryUserId = repositoryData[RepositoryKey.userId] as String;
+
+      // Security check: only allow deleting if repository belongs to the current user
+      if (repositoryUserId.isEmpty) {
+        logger.w('Attempt to delete public repository $repositoryId by user $currentUserId');
+        throw const RepositoryCannotModifyPublic();
+      }
+
+      if (repositoryUserId != currentUserId) {
+        logger.w(
+          'Unauthorized attempt to delete repository $repositoryId by user $currentUserId (owner: $repositoryUserId)',
+        );
+        throw const RepositoryCannotModifyOtherUsers();
+      }
+
+      // Delete all music sheets in the repository first
+      final musicSheetsQuery = await instance
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(FirebaseCollectionName.musicSheets)
+          .get();
+
+      // Delete all music sheet documents
+      for (final doc in musicSheetsQuery.docs) {
+        await doc.reference.delete();
+      }
+
+      // Finally, delete the repository itself
+      await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).delete();
+
+      logger.i("Deleting repository $repositoryId by user $currentUserId");
+      return true;
+    } catch (e, stackTrace) {
+      logger.e('Error deleting repository: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting repository');
+      throw const RepositoryGenericException();
     }
   }
 

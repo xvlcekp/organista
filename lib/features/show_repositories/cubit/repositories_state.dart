@@ -2,13 +2,17 @@ part of 'repositories_cubit.dart';
 
 @immutable
 sealed class ShowRepositoriesState extends Equatable {
+  final List<Repository> publicRepositories;
+  final List<Repository> privateRepositories;
+  final RepositoryError? error;
+  final bool isLoading;
+
   const ShowRepositoriesState({
     required this.publicRepositories,
     required this.privateRepositories,
+    this.error,
+    this.isLoading = false,
   });
-
-  final List<Repository> publicRepositories;
-  final List<Repository> privateRepositories;
 }
 
 @immutable
@@ -24,12 +28,14 @@ class InitRepositoryState extends ShowRepositoriesState {
 }
 
 @immutable
-class RepositoriesLoadedState extends ShowRepositoriesState {
-  const RepositoriesLoadedState({
+class RepositoriesState extends ShowRepositoriesState {
+  const RepositoriesState({
     required super.publicRepositories,
     required super.privateRepositories,
+    super.error,
+    super.isLoading,
   });
 
   @override
-  List<Object?> get props => [publicRepositories, privateRepositories];
+  List<Object?> get props => [publicRepositories, privateRepositories, error, isLoading];
 }

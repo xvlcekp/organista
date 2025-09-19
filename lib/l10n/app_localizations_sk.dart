@@ -325,7 +325,11 @@ class AppLocalizationsSk extends AppLocalizations {
   String get enterPlaylistName => 'Zadajte názov zoznamu';
 
   @override
-  String get playlistNameEmpty => 'Názov zoznamu nemôže byť prázdny';
+  String get inputCannotBeEmpty => 'Názov nemôže byť prázdny';
+
+  @override
+  String get inputCannotBeSameAsCurrent =>
+      'Vstup nemôže byť rovnaký ako aktuálny';
 
   @override
   String get theme => 'Téma';
@@ -453,4 +457,44 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get unselectAll => 'Zrušiť výber';
+
+  @override
+  String get repositoryName => 'Názov repozitára';
+
+  @override
+  String get enterRepositoryName => 'Zadajte názov repozitára';
+
+  @override
+  String get newRepository => 'Nový repozitár';
+
+  @override
+  String get renameRepository => 'Premenovať repozitár';
+
+  @override
+  String get deleteRepository => 'Vymazať repozitár';
+
+  @override
+  String deleteRepositoryMessage(String repositoryName) {
+    return 'Ste si istý, že chcete vymazať repozitár \'$repositoryName\'? Týmto sa vymažú aj všetky notové záznamy v ňom. Táto akcia sa nedá vrátiť späť!';
+  }
+
+  @override
+  String get repositoryGenericError =>
+      'Pri vykonávaní operácie s repozitárom došlo k chybe';
+
+  @override
+  String get repositoryNotFoundError => 'Repozitár nebol nájdený';
+
+  @override
+  String get repositoryCannotModifyPublicError =>
+      'Verejné repozitáre nie je možné upravovať';
+
+  @override
+  String get repositoryCannotModifyOtherUsersError =>
+      'Môžete upravovať len vlastné repozitáre';
+
+  @override
+  String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
+    return 'Dosiahli ste maximálny počet repozitárov ($maximumRepositoriesCount). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.';
+  }
 }
