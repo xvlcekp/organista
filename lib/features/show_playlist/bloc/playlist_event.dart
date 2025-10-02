@@ -93,17 +93,15 @@ class ReorderMusicSheetEvent extends PlaylistEvent {
 }
 
 @immutable
-class AddMusicSheetToPlaylistEvent extends PlaylistEvent {
-  final MusicSheet musicSheet;
-  final String fileName;
+class AddMusicSheetsToPlaylistEvent extends PlaylistEvent {
+  final List<MusicSheet> musicSheets;
   final Playlist playlist;
 
-  const AddMusicSheetToPlaylistEvent({
-    required this.musicSheet,
-    required this.fileName,
+  const AddMusicSheetsToPlaylistEvent({
+    required this.musicSheets,
     required this.playlist,
   });
 
   @override
-  List<Object?> get props => [musicSheet, fileName, playlist];
+  List<Object?> get props => [musicSheets, playlist];
 }

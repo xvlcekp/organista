@@ -3,7 +3,26 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
-## Version 1.0.5 - 2025-07-29
+### Version 1.0.6 - 2.10.2025
+<table>
+<tr>
+<th width="33.33%">Aktualizované Loretánske litánia</th>
+<th width="33.33%"></th>
+<th width="33.33%"></th>
+</tr>
+<tr>
+<td width="33.33%"><img src="docs/1.0.4/TODO.gif" alt="Version 1.0.4 Col 1"></td>
+<td width="33.33%"><img src="docs/1.0.4/TODO.gif" alt="Version 1.0.4 Col 2"></td>
+<td width="33.33%"><img src="docs/1.0.4/TODO.jpg" alt="Version 1.0.4 Col 3"></td>
+</tr>
+<tr>
+<td width="33.33%">Aktualizované Loretánske litánia podľa hudba.kbs.sk. Optimalizované pre hranie z tabletu (noty aj na druhej strane).</td>
+<td width="33.33%"></td>
+<td width="33.33%"></td>
+</tr>
+</table>
+
+## Version 1.0.5 - 29.7.2025
 ### Pridané
 - Pridané noty s Mariánskou kyticou a ďalšie svadobné
 - Automatizácia procesu vydávania aplikácie

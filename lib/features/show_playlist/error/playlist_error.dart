@@ -11,10 +11,11 @@ class PlaylistErrorUnknown extends PlaylistError {
 }
 
 @immutable
-class MusicSheetAlreadyInPlaylistError extends PlaylistError {
-  final String musicSheetName;
+class MusicSheetsAlreadyInPlaylistError extends PlaylistError {
+  final List<String> duplicateMusicSheetNames;
   final String playlistName;
-  const MusicSheetAlreadyInPlaylistError({required this.musicSheetName, required this.playlistName}) : super();
+  const MusicSheetsAlreadyInPlaylistError({required this.duplicateMusicSheetNames, required this.playlistName})
+    : super();
 }
 
 @immutable

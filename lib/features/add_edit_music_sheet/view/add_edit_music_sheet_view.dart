@@ -117,9 +117,8 @@ class AddEditMusicSheetView extends HookWidget {
                               case AddMusicSheetToPlaylistState():
                                 final playlist = context.read<PlaylistBloc>().state.playlist;
                                 context.read<PlaylistBloc>().add(
-                                  AddMusicSheetToPlaylistEvent(
-                                    musicSheet: state.musicSheet,
-                                    fileName: musicSheetNameController.text,
+                                  AddMusicSheetsToPlaylistEvent(
+                                    musicSheets: [state.musicSheet.copyWith(fileName: musicSheetNameController.text)],
                                     playlist: playlist,
                                   ),
                                 );

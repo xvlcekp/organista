@@ -917,6 +917,15 @@ abstract class AppLocalizations {
     String playlistName,
   );
 
+  /// Error message when trying to add multiple music sheets that already exist in a playlist
+  ///
+  /// In sk, this message translates to:
+  /// **'Nasledujúce notové záznamy už existujú v zozname skladieb \'{playlistName}\': {musicSheetNames}'**
+  String multipleMusicSheetsAlreadyInPlaylist(
+    String musicSheetNames,
+    String playlistName,
+  );
+
   /// No description provided for @musicSheetInitializationError.
   ///
   /// In sk, this message translates to:

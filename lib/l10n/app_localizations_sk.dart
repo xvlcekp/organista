@@ -449,6 +449,14 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
+  String multipleMusicSheetsAlreadyInPlaylist(
+    String musicSheetNames,
+    String playlistName,
+  ) {
+    return 'Nasledujúce notové záznamy už existujú v zozname skladieb \'$playlistName\': $musicSheetNames';
+  }
+
+  @override
   String get musicSheetInitializationError =>
       'Nastala chyba pri inicializácii.';
 

@@ -162,6 +162,20 @@
             }
         }
     },
+    "multipleMusicSheetsAlreadyInPlaylist": "Nasledujúce notové záznamy už existujú v zozname skladieb '{playlistName}': {musicSheetNames}",
+    "@multipleMusicSheetsAlreadyInPlaylist": {
+        "description": "Error message when trying to add multiple music sheets that already exist in a playlist",
+        "placeholders": {
+            "musicSheetNames": {
+                "type": "String",
+                "description": "Comma-separated list of music sheet names"
+            },
+            "playlistName": {
+                "type": "String", 
+                "description": "The name of the playlist"
+            }
+        }
+    },
     "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
     "selectAll": "Vybrať všetko",
     "unselectAll": "Zrušiť výber",

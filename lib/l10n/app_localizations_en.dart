@@ -446,6 +446,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String multipleMusicSheetsAlreadyInPlaylist(
+    String musicSheetNames,
+    String playlistName,
+  ) {
+    return 'The following music sheets already exist in playlist \'$playlistName\': $musicSheetNames';
+  }
+
+  @override
   String get musicSheetInitializationError =>
       'An error happened while initialization.';
 

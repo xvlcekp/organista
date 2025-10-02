@@ -106,15 +106,12 @@ class MusicSheetRepositoryView extends HookWidget {
     }
 
     Future<void> addSelectedToPlaylist(BuildContext context, Playlist playlist, List<MusicSheet> musicSheets) async {
-      for (final musicSheet in musicSheets) {
-        context.read<PlaylistBloc>().add(
-          AddMusicSheetToPlaylistEvent(
-            musicSheet: musicSheet,
-            fileName: musicSheet.fileName,
-            playlist: playlist,
-          ),
-        );
-      }
+      context.read<PlaylistBloc>().add(
+        AddMusicSheetsToPlaylistEvent(
+          musicSheets: musicSheets,
+          playlist: playlist,
+        ),
+      );
       Navigator.of(context).popUntilRoute<PlaylistView>(context);
     }
 

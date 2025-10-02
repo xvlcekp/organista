@@ -239,19 +239,26 @@ class FirebaseFirestoreRepository {
     }
   }
 
-  Future<bool> addMusicSheetToPlaylist({
+  Future<bool> addMultipleMusicSheetsToPlaylist({
     required Playlist playlist,
-    required MusicSheet musicSheet,
+    required List<MusicSheet> musicSheets,
   }) async {
     try {
-      playlist.musicSheets.add(musicSheet);
+      // Create a copy of the current music sheets list to avoid mutating the original
+      final updatedMusicSheets = List<MusicSheet>.from(playlist.musicSheets);
+
+      // Add all new music sheets to the copy
+      updatedMusicSheets.addAll(musicSheets);
+
+      // Update Firestore with the complete list in a single atomic operation
       await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
-        PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
+        PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
+
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error adding music sheet to playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error adding music sheet to playlist');
+      logger.e('Error adding multiple music sheets to playlist: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error adding multiple music sheets to playlist');
       return false;
     }
   }
