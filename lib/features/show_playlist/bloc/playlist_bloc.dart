@@ -196,12 +196,23 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       }
     }
 
-    // Add new music sheets if any
+    // Add new music sheets if any (repository will validate capacity)
     if (newMusicSheets.isNotEmpty) {
-      await _firebaseFirestoreRepository.addMultipleMusicSheetsToPlaylist(
-        playlist: playlist,
-        musicSheets: newMusicSheets,
-      );
+      try {
+        await _firebaseFirestoreRepository.addMusicSheetsToPlaylist(
+          playlist: playlist,
+          musicSheets: newMusicSheets,
+        );
+      } on PlaylistCapacityExceededError catch (error) {
+        emit(
+          PlaylistLoadedState(
+            isLoading: false,
+            playlist: state.playlist,
+            error: error,
+          ),
+        );
+        return;
+      }
     }
 
     // Handle duplicates feedback

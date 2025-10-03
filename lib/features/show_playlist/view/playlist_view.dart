@@ -148,6 +148,13 @@ class PlaylistView extends HookWidget {
       case MusicSheetsAlreadyInPlaylistError():
         final duplicateNames = error.duplicateMusicSheetNames.join(', ');
         message = localizations.multipleMusicSheetsAlreadyInPlaylist(duplicateNames, error.playlistName);
+      case PlaylistCapacityExceededError():
+        message = localizations.playlistCapacityExceeded(
+          error.attemptedToAdd,
+          error.playlist.name,
+          error.playlist.musicSheets.length,
+          error.maxCapacity,
+        );
       case InitializationError():
         message = localizations.musicSheetInitializationError;
       default:

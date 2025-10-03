@@ -176,6 +176,28 @@
             }
         }
     },
+    "playlistCapacityExceeded": "Nie je možné pridať {attemptedToAdd} notových záznamov do zoznamu skladieb '{playlistName}'. Zoznam skladieb má momentálne {currentCount}/{maxCapacity} notových záznamov. Maximálna kapacita je {maxCapacity} notových záznamov.",
+    "@playlistCapacityExceeded": {
+        "description": "Error message when trying to add music sheets that would exceed playlist capacity",
+        "placeholders": {
+            "attemptedToAdd": {
+                "type": "int",
+                "description": "Number of music sheets attempted to add"
+            },
+            "playlistName": {
+                "type": "String",
+                "description": "The name of the playlist"
+            },
+            "currentCount": {
+                "type": "int",
+                "description": "Current number of music sheets in playlist"
+            },
+            "maxCapacity": {
+                "type": "int",
+                "description": "Maximum allowed music sheets in playlist"
+            }
+        }
+    },
     "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
     "selectAll": "Vybrať všetko",
     "unselectAll": "Zrušiť výber",

@@ -926,6 +926,17 @@ abstract class AppLocalizations {
     String playlistName,
   );
 
+  /// Error message when trying to add music sheets that would exceed playlist capacity
+  ///
+  /// In sk, this message translates to:
+  /// **'Nie je možné pridať {attemptedToAdd} notových záznamov do zoznamu skladieb \'{playlistName}\'. Zoznam skladieb má momentálne {currentCount}/{maxCapacity} notových záznamov. Maximálna kapacita je {maxCapacity} notových záznamov.'**
+  String playlistCapacityExceeded(
+    int attemptedToAdd,
+    String playlistName,
+    int currentCount,
+    int maxCapacity,
+  );
+
   /// No description provided for @musicSheetInitializationError.
   ///
   /// In sk, this message translates to:
