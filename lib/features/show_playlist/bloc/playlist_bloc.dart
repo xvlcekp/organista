@@ -31,7 +31,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<DeleteMusicSheetInPlaylistEvent>(_deleteMusicSheetInPlaylistEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
     on<RenameMusicSheetInPlaylistEvent>(_renameMusicSheetInPlaylistEvent);
-    on<AddMusicSheetToPlaylistEvent>(_addMusicSheetToPlaylistEvent);
+    on<AddMusicSheetsToPlaylistEvent>(_addMusicSheetsToPlaylistEvent);
     on<InitPlaylistEvent>(_initPlaylistEvent);
     on<UpdatePlaylistEvent>(_onUpdatePlaylist);
   }
@@ -167,10 +167,12 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     }
   }
 
-  void _addMusicSheetToPlaylistEvent(AddMusicSheetToPlaylistEvent event, Emitter<PlaylistState> emit) async {
+  void _addMusicSheetsToPlaylistEvent(
+    AddMusicSheetsToPlaylistEvent event,
+    Emitter<PlaylistState> emit,
+  ) async {
     final Playlist playlist = event.playlist;
-    final MusicSheet musicSheet = event.musicSheet;
-    final String fileName = event.fileName;
+    final List<MusicSheet> musicSheets = event.musicSheets;
 
     emit(
       PlaylistLoadedState(
@@ -179,18 +181,52 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       ),
     );
 
-    if (!state.playlist.musicSheets.any((sheet) => sheet.musicSheetId == musicSheet.musicSheetId)) {
-      MusicSheet customNamedMusicSheet = musicSheet.copyWith(fileName: fileName);
-      await _firebaseFirestoreRepository.addMusicSheetToPlaylist(
-        playlist: playlist,
-        musicSheet: customNamedMusicSheet,
+    // Separate new music sheets from duplicates
+    final duplicates = <MusicSheet>[];
+    final newMusicSheets = <MusicSheet>[];
+
+    // Create a Set of existing music sheet IDs for O(1) lookup
+    final existingMusicSheetIds = state.playlist.musicSheets.map((sheet) => sheet.musicSheetId).toSet();
+
+    for (final musicSheet in musicSheets) {
+      if (existingMusicSheetIds.contains(musicSheet.musicSheetId)) {
+        duplicates.add(musicSheet);
+      } else {
+        newMusicSheets.add(musicSheet);
+      }
+    }
+
+    // Add new music sheets if any (repository will validate capacity)
+    if (newMusicSheets.isNotEmpty) {
+      try {
+        await _firebaseFirestoreRepository.addMusicSheetsToPlaylist(
+          playlist: playlist,
+          musicSheets: newMusicSheets,
+        );
+      } on PlaylistCapacityExceededError catch (error) {
+        emit(
+          PlaylistLoadedState(
+            isLoading: false,
+            playlist: state.playlist,
+            error: error,
+          ),
+        );
+        return;
+      }
+    }
+
+    // Handle duplicates feedback
+    if (duplicates.isNotEmpty) {
+      final error = MusicSheetsAlreadyInPlaylistError(
+        duplicateMusicSheetNames: duplicates.map((sheet) => sheet.fileName).toList(),
+        playlistName: playlist.name,
       );
-    } else {
+
       emit(
         PlaylistLoadedState(
           isLoading: false,
           playlist: state.playlist,
-          error: MusicSheetAlreadyInPlaylistError(musicSheetName: fileName, playlistName: playlist.name),
+          error: error,
         ),
       );
     }

@@ -162,6 +162,42 @@
             }
         }
     },
+    "multipleMusicSheetsAlreadyInPlaylist": "The following music sheets already exist in playlist '{playlistName}': {musicSheetNames}",
+    "@multipleMusicSheetsAlreadyInPlaylist": {
+        "description": "Error message when trying to add multiple music sheets that already exist in a playlist",
+        "placeholders": {
+            "musicSheetNames": {
+                "type": "String",
+                "description": "Comma-separated list of music sheet names"
+            },
+            "playlistName": {
+                "type": "String", 
+                "description": "The name of the playlist"
+            }
+        }
+    },
+    "playlistCapacityExceeded": "Cannot add {attemptedToAdd} music sheets to playlist '{playlistName}'. Playlist currently has {currentCount}/{maxCapacity} music sheets. Maximum capacity is {maxCapacity} music sheets.",
+    "@playlistCapacityExceeded": {
+        "description": "Error message when trying to add music sheets that would exceed playlist capacity",
+        "placeholders": {
+            "attemptedToAdd": {
+                "type": "int",
+                "description": "Number of music sheets attempted to add"
+            },
+            "playlistName": {
+                "type": "String",
+                "description": "The name of the playlist"
+            },
+            "currentCount": {
+                "type": "int",
+                "description": "Current number of music sheets in playlist"
+            },
+            "maxCapacity": {
+                "type": "int",
+                "description": "Maximum allowed music sheets in playlist"
+            }
+        }
+    },
     "musicSheetInitializationError": "An error happened while initialization.",
     "selectAll": "Select all",
     "unselectAll": "Unselect all",

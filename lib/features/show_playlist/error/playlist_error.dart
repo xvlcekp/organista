@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:organista/models/playlists/playlist.dart';
 
 @immutable
 abstract class PlaylistError {
@@ -11,10 +12,24 @@ class PlaylistErrorUnknown extends PlaylistError {
 }
 
 @immutable
-class MusicSheetAlreadyInPlaylistError extends PlaylistError {
-  final String musicSheetName;
+class MusicSheetsAlreadyInPlaylistError extends PlaylistError {
+  final List<String> duplicateMusicSheetNames;
   final String playlistName;
-  const MusicSheetAlreadyInPlaylistError({required this.musicSheetName, required this.playlistName}) : super();
+  const MusicSheetsAlreadyInPlaylistError({required this.duplicateMusicSheetNames, required this.playlistName})
+    : super();
+}
+
+@immutable
+class PlaylistCapacityExceededError extends PlaylistError {
+  final Playlist playlist;
+  final int attemptedToAdd;
+  final int maxCapacity;
+
+  const PlaylistCapacityExceededError({
+    required this.playlist,
+    required this.attemptedToAdd,
+    required this.maxCapacity,
+  }) : super();
 }
 
 @immutable

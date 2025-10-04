@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/string_extensions.dart';
+import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
@@ -239,19 +240,32 @@ class FirebaseFirestoreRepository {
     }
   }
 
-  Future<bool> addMusicSheetToPlaylist({
+  Future<bool> addMusicSheetsToPlaylist({
     required Playlist playlist,
-    required MusicSheet musicSheet,
+    required List<MusicSheet> musicSheets,
   }) async {
     try {
-      playlist.musicSheets.add(musicSheet);
+      // ENFORCE VALIDATION: Always validate capacity before any operation
+      playlist.validateCapacityForAdding(musicSheets.length);
+
+      // Create a copy of the current music sheets list to avoid mutating the original
+      final updatedMusicSheets = List<MusicSheet>.from(playlist.musicSheets);
+
+      // Add all new music sheets to the copy
+      updatedMusicSheets.addAll(musicSheets);
+
+      // Update Firestore with the complete list in a single atomic operation
       await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
-        PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
+        PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
+
       return true;
+    } on PlaylistCapacityExceededError {
+      // Re-throw validation errors so they can be handled by the caller
+      rethrow;
     } catch (e, stackTrace) {
-      logger.e('Error adding music sheet to playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error adding music sheet to playlist');
+      logger.e('Error adding multiple music sheets to playlist: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error adding multiple music sheets to playlist');
       return false;
     }
   }

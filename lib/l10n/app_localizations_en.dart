@@ -446,6 +446,24 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String multipleMusicSheetsAlreadyInPlaylist(
+    String musicSheetNames,
+    String playlistName,
+  ) {
+    return 'The following music sheets already exist in playlist \'$playlistName\': $musicSheetNames';
+  }
+
+  @override
+  String playlistCapacityExceeded(
+    int attemptedToAdd,
+    String playlistName,
+    int currentCount,
+    int maxCapacity,
+  ) {
+    return 'Cannot add $attemptedToAdd music sheets to playlist \'$playlistName\'. Playlist currently has $currentCount/$maxCapacity music sheets. Maximum capacity is $maxCapacity music sheets.';
+  }
+
+  @override
   String get musicSheetInitializationError =>
       'An error happened while initialization.';
 

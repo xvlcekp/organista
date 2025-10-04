@@ -28,9 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.6] - 
 ### Added
 - Pridávanie viacerých skladieb z repozitára naraz do playlistu
+- Možnosť pridať vlastných repozitárov ako zložiek
+- Zlepšenie chybových hlášok
 ### Fixed
 - Opravená JKS 372 -> 371 
-
+- Opravené náhľady piesní pri pridávaní nových
+### Security
+- Aktualizované knižnice na Firebase Functions
 
 ## [1.0.5] - 2025-07-29
 ### Added

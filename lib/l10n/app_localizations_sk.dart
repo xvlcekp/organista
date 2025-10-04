@@ -449,6 +449,24 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
+  String multipleMusicSheetsAlreadyInPlaylist(
+    String musicSheetNames,
+    String playlistName,
+  ) {
+    return 'Nasledujúce notové záznamy už existujú v zozname skladieb \'$playlistName\': $musicSheetNames';
+  }
+
+  @override
+  String playlistCapacityExceeded(
+    int attemptedToAdd,
+    String playlistName,
+    int currentCount,
+    int maxCapacity,
+  ) {
+    return 'Nie je možné pridať $attemptedToAdd notových záznamov do zoznamu skladieb \'$playlistName\'. Zoznam skladieb má momentálne $currentCount/$maxCapacity notových záznamov. Maximálna kapacita je $maxCapacity notových záznamov.';
+  }
+
+  @override
   String get musicSheetInitializationError =>
       'Nastala chyba pri inicializácii.';
 
