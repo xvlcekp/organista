@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - 
 
-## [1.0.6] - 
+## [1.0.6] - 2025-10-04
 ### Added
 - Pridávanie viacerých skladieb z repozitára naraz do playlistu
 - Možnosť pridať vlastných repozitárov ako zložiek

@@ -3,24 +3,30 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
-### Version 1.0.6 - 2.10.2025
+### Version 1.0.6 - 4.10.2025
 <table>
 <tr>
-<th width="33.33%">Aktualizované Loretánske litánia</th>
-<th width="33.33%"></th>
-<th width="33.33%"></th>
+<th width="33.33%">Vlastné repozitáre</th>
+<th width="33.33%">Viaceré skladby do playlistu</th>
+<th width="33.33%">Predohry JKS - advent</th>
 </tr>
 <tr>
-<td width="33.33%"><img src="docs/1.0.4/TODO.gif" alt="Version 1.0.4 Col 1"></td>
-<td width="33.33%"><img src="docs/1.0.4/TODO.gif" alt="Version 1.0.4 Col 2"></td>
-<td width="33.33%"><img src="docs/1.0.4/TODO.jpg" alt="Version 1.0.4 Col 3"></td>
+<td width="33.33%"><img src="docs/1.0.6/custom_repositories.gif"></td>
+<td width="33.33%"><img src="docs/1.0.6/multi_add_to_repository.gif"></td>
+<td width="33.33%"><img src="docs/1.0.6/predohry_jks_advent.jpg"></td>
 </tr>
 <tr>
-<td width="33.33%">Aktualizované Loretánske litánia podľa hudba.kbs.sk. Optimalizované pre hranie z tabletu (noty aj na druhej strane).</td>
-<td width="33.33%"></td>
-<td width="33.33%"></td>
+<td width="33.33%">Možnosť pridať vlastných repozitárov ako zložiek.</td>
+<td width="33.33%">Pridávanie viacerých skladieb z repozitára naraz do playlistu.</td>
+<td width="33.33%">Pridaný repozitár s predohrami JKS - advent</td>
 </tr>
 </table>
+
+#### Ďalšie zmeny
+- Zlepšenie chybových hlášok
+- Opravená JKS 372 -> 371 
+- Opravené náhľady piesní pri pridávaní nových
+- Aktualizované knižnice na Firebase Functions
 
 ## Version 1.0.5 - 29.7.2025
 ### Pridané
