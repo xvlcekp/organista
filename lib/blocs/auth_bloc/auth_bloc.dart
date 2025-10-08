@@ -37,14 +37,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   final FirebaseStorageRepository _firebaseStorageRepository;
 
-  /// Helper method to check if an error indicates the user already exists
-  bool _isUserAlreadyExistsError(dynamic error) {
-    final errorString = error.toString().toLowerCase();
-    return errorString.contains('already exists') ||
-        errorString.contains('document already exists') ||
-        errorString.contains('already in use');
-  }
-
   void _authEventDeleteAccount(AuthEventDeleteAccount event, Emitter<AuthState> emit) async {
     final user = state.user;
     // log the user out if we don't have a current user
@@ -161,21 +153,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
       );
 
-      // we need to manually upload the user to DB after successful registration
-      try {
-        await _firebaseFirestoreRepository.uploadNewUser(
-          user: authUser,
-        );
-      } catch (e) {
-        // Check if this is a "user already exists" error or a real failure
-        if (_isUserAlreadyExistsError(e)) {
-          // User already exists, this is fine - continue with registration
-          logger.i('User already exists in Firestore, continuing with registration: $e');
-        } else {
-          logger.e('Error during registration: $e');
-          rethrow; // Re-throw the original error
-        }
-      }
+      // Create user document in Firestore
+      await _firebaseFirestoreRepository.createUserDocument(
+        user: authUser,
+      );
 
       emit(
         AuthStateLoggedIn(
@@ -282,22 +263,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final authUser = await _authProvider.signInWithGoogle();
 
-      // we need to manually check if user/repository already exists in DB
-      try {
-        await _firebaseFirestoreRepository.uploadNewUser(
-          user: authUser,
-        );
-      } catch (e) {
-        // Check if this is a "user already exists" error or a real failure
-        if (_isUserAlreadyExistsError(e)) {
-          // User already exists, this is fine - continue with login
-          logger.i('User already exists in Firestore, continuing with Google Sign-In: $e');
-        } else {
-          // This is a real failure - rollback the Firebase Auth user
-          logger.e('Error during Google Sign-In: $e');
-          rethrow; // Re-throw the original error
-        }
-      }
+      // Create user document in Firestore if it doesn't exist
+      await _firebaseFirestoreRepository.createUserDocument(
+        user: authUser,
+      );
 
       emit(
         AuthStateLoggedIn(

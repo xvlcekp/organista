@@ -36,35 +36,40 @@ class FirebaseFirestoreRepository {
 
   // USER OPERATIONS
 
-  Future<bool> uploadNewUser({
+  /// Creates a new user document in Firestore.
+  /// Uses Firebase Auth user ID as document ID to ensure uniqueness.
+  /// If user already exists, this will fail silently (Firestore handles duplicates).
+  Future<void> createUserDocument({
     required AuthUser user,
   }) async {
     try {
-      // Check if user already exists
-      final existingUserQuery = await instance
-          .collection(FirebaseCollectionName.users)
-          .where(UserInfoKey.userId, isEqualTo: user.id)
-          .limit(1)
-          .get();
-
-      if (existingUserQuery.docs.isNotEmpty) {
-        logger.i('User ${user.id} already exists in database, skipping creation');
-        return true; // User already exists, no need to create
-      }
-
-      // User doesn't exist, create new user
       final userPayload = UserInfoPayload(
         userId: user.id,
         displayName: '',
         email: user.email,
       );
-      await instance.collection(FirebaseCollectionName.users).add(userPayload);
-      logger.i('Successfully created new user ${user.id} in database');
-      return true;
+
+      // Use set with merge: false to create only if doesn't exist
+      // This is more efficient than checking existence first
+      await instance
+          .collection(FirebaseCollectionName.users)
+          .doc(user.id) // Use user ID as document ID for uniqueness
+          .set(userPayload, SetOptions(merge: false));
+
+      logger.i('Successfully created user document for ${user.id}');
+    } on FirebaseException catch (e) {
+      if (e.code == 'already-exists') {
+        // User document already exists, this is fine
+        logger.i('User document ${user.id} already exists, skipping creation');
+      } else {
+        // Re-throw other Firebase exceptions
+        logger.e('Firebase error creating user document: $e');
+        rethrow;
+      }
     } catch (e, stackTrace) {
-      logger.e('Error uploading new user: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error uploading new user');
-      return false;
+      logger.e('Error creating user document: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating user document');
+      rethrow;
     }
   }
 

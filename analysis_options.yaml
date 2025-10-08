@@ -13,8 +13,58 @@ include:
 
 # Dart formatter configuration
 dart_code_metrics:
+  exclude:
+    rules:
+      - test/**
+  extends:
+    - recommended
   rules:
-    - lines_longer_than_80_chars
+    - avoid-assignments-as-conditions
+    - avoid-cascade-after-if-null
+    - avoid-casting-to-extension-type
+    - avoid-collection-methods-with-unrelated-types
+    - avoid-commented-out-code
+    - avoid-conditions-with-boolean-literals
+    - avoid-double-slash-imports
+    - avoid-duplicate-exports
+    - avoid-duplicate-mixins
+    - avoid-duplicate-named-imports
+    - avoid-duplicate-test-assertions
+    - avoid-dynamic
+    - avoid-empty-spread
+    - avoid-generics-shadowing
+    - avoid-global-state
+    - avoid-late-keyword
+    - avoid-missed-calls
+    - avoid-misused-set-literals
+    - avoid-non-null-assertion
+    - avoid-nullable-tostring
+    - avoid-passing-async-when-sync-expected
+    - avoid-passing-self-as-argument
+    - avoid-redundant-async
+    - avoid-self-assignment
+    - avoid-self-compare
+    - avoid-substring
+    - avoid-throw-in-catch-block
+    - avoid-top-level-members-in-tests
+    - avoid-unnecessary-type-assertions
+    - avoid-unnecessary-type-casts
+    - avoid-unrelated-type-assertions
+    - avoid-unused-parameters
+    - missing-test-assertion
+    - no-empty-block
+    - no-equal-then-else
+    - no-magic-number
+    - prefer-commenting-analyzer-ignores
+    - prefer-correct-test-file-name
+    - prefer-iterable-of
+    - prefer-match-file-name
+    - prefer-moving-to-variable
+
+dcm:
+  exclude:
+    rules:
+      - test/**
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -28,7 +78,6 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
     lines_longer_than_80_chars: false  # Disable 80-char limit since we use 120
     prefer_const_constructors: true
