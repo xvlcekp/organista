@@ -6,12 +6,14 @@ import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/config_controller.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/widgets/email_text_field.dart';
+import 'package:organista/widgets/organista_logo.dart';
 import 'package:organista/widgets/password_text_field.dart';
 
 class LoginView extends HookWidget {
   const LoginView({super.key});
+  final googleSsoIconSize = 30.0;
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +23,10 @@ class LoginView extends HookWidget {
     if (kDebugMode) {
       useEffect(() {
         void loadConfig() async {
-          await Config.load();
+          await ConfigController.load();
           if (context.mounted) {
-            emailController.text = Config.get('emailTesterUser') ?? '';
-            passwordController.text = Config.get('passwordTesterUser') ?? '';
+            emailController.text = ConfigController.get('emailTesterUser') ?? '';
+            passwordController.text = ConfigController.get('passwordTesterUser') ?? '';
           }
         }
 
@@ -54,11 +56,7 @@ class LoginView extends HookWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Logo or App Name
-                    Image.asset(
-                      'assets/images/organista_icon_200x200.png',
-                      width: 80,
-                      height: 80,
-                    ),
+                    const OrganistaLogo(),
                     const SizedBox(height: 24),
                     Text(
                       localizations.welcomeBack,
@@ -127,8 +125,8 @@ class LoginView extends HookWidget {
                       },
                       icon: Image.asset(
                         'assets/images/gmail_icon.png',
-                        width: 30,
-                        height: 30,
+                        width: googleSsoIconSize,
+                        height: googleSsoIconSize,
                       ),
                       label: Text(localizations.signInWithGoogle),
                       style: OutlinedButton.styleFrom(

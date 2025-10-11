@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/delete_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/rename_playlist_dialog.dart';
@@ -11,7 +12,7 @@ import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class PlaylistsView extends HookWidget {
   const PlaylistsView({super.key});
@@ -103,7 +104,7 @@ class PlaylistsView extends HookWidget {
                     background: Container(
                       decoration: BoxDecoration(
                         color: theme.colorScheme.error,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
                       ),
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 24),
@@ -140,7 +141,6 @@ class PlaylistsView extends HookWidget {
                         );
                         Navigator.of(context).push<void>(PlaylistView.route());
                       },
-                      borderRadius: BorderRadius.circular(12),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Row(
@@ -151,9 +151,7 @@ class PlaylistsView extends HookWidget {
                                 children: [
                                   Text(
                                     playlist.name,
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: theme.textTheme.titleMedium,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(

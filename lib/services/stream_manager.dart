@@ -26,7 +26,7 @@ class StreamManager {
     bool listenerAdded = false;
 
     controller = StreamController<T>(
-      onListen: () async {
+      onListen: () {
         // Immediately provide cached value if available
         if (_cachedValues.containsKey(identifier)) {
           final cachedValue = _cachedValues[identifier] as T;

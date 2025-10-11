@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class RepositoryTile extends StatelessWidget {
   final Repository repository;
@@ -186,14 +186,14 @@ class RepositoryTile extends StatelessWidget {
 
   Color _getFixedColor() {
     final List<Color> colors = [
-      Colors.blue[400]!,
-      Colors.red[400]!,
-      Colors.green[400]!,
-      Colors.orange[400]!,
-      Colors.purple[400]!,
-      Colors.teal[400]!,
-      Colors.pink[400]!,
-      Colors.indigo[400]!,
+      Colors.blue.shade400,
+      Colors.red.shade400,
+      Colors.green.shade400,
+      Colors.orange.shade400,
+      Colors.purple.shade400,
+      Colors.teal.shade400,
+      Colors.pink.shade400,
+      Colors.indigo.shade400,
     ];
     // Use the index attribute to select a color, wrapping around if necessary
     return colors[index % colors.length];

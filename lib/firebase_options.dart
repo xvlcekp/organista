@@ -17,7 +17,7 @@ import 'dart:convert';
 /// ```
 class DefaultFirebaseOptions {
   static Future<FirebaseOptions> get currentPlatform async {
-    await Config.load();
+    await ConfigController.load();
 
     if (kIsWeb) {
       return web;
@@ -53,7 +53,7 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions get web {
-    final firebaseConfig = jsonDecode(Config.get('firebase') ?? '{}');
+    final firebaseConfig = jsonDecode(ConfigController.get('firebase') ?? '{}');
     final webConfig = firebaseConfig['web'] ?? {};
 
     return FirebaseOptions(
@@ -67,7 +67,7 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions get android {
-    final firebaseConfig = jsonDecode(Config.get('firebase') ?? '{}');
+    final firebaseConfig = jsonDecode(ConfigController.get('firebase') ?? '{}');
     final androidConfig = firebaseConfig['android'] ?? {};
 
     return FirebaseOptions(

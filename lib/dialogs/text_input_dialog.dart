@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 Future<String?> showTextInputDialog({
   required BuildContext context,

@@ -4,7 +4,7 @@ import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/features/settings/view/settings_view.dart';
 import 'package:organista/features/about/view/about_view.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 enum MenuAction { logout, settings, about }
 

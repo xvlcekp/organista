@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:organista/dialogs/text_input_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 Future<String?> showEditPlaylistDialog({
   required BuildContext context,

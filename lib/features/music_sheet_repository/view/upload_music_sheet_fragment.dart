@@ -7,7 +7,7 @@ import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_she
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class UploadMusicSheetFragment extends StatelessWidget {
   final String repositoryId;

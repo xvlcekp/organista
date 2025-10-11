@@ -11,7 +11,7 @@ import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_shee
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class AddEditMusicSheetView extends HookWidget {
   const AddEditMusicSheetView({super.key});
@@ -115,8 +115,9 @@ class AddEditMusicSheetView extends HookWidget {
                                 );
                                 resetMusicSheetCubitAndShowPlaylist(context);
                               case AddMusicSheetToPlaylistState():
-                                final playlist = context.read<PlaylistBloc>().state.playlist;
-                                context.read<PlaylistBloc>().add(
+                                final playlistBloc = context.read<PlaylistBloc>();
+                                final playlist = playlistBloc.state.playlist;
+                                playlistBloc.add(
                                   AddMusicSheetsToPlaylistEvent(
                                     musicSheets: [state.musicSheet.copyWith(fileName: musicSheetNameController.text)],
                                     playlist: playlist,

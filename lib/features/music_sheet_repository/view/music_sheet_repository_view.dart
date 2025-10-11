@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/extensions/navigation/navigation_extensions.dart';
 import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.dart';
-import 'package:organista/features/music_sheet_repository/view/repository_music_sheet_tile_view.dart';
-import 'package:organista/features/music_sheet_repository/view/searchbar.dart';
+import 'package:organista/features/music_sheet_repository/view/repository_music_sheet_tile.dart';
+import 'package:organista/features/music_sheet_repository/view/repository_searchbar.dart';
 import 'package:organista/features/music_sheet_repository/view/upload_music_sheet_fragment.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
@@ -12,7 +12,7 @@ import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class MusicSheetRepositoryView extends HookWidget {
   final Repository repository;
@@ -54,7 +54,7 @@ class MusicSheetRepositoryView extends HookWidget {
     void toggleSelection(String musicSheetId) {
       if (!isSelectionMode.value) return;
 
-      final newSelected = Set<String>.from(selectedMusicSheetIds.value);
+      final newSelected = Set<String>.of(selectedMusicSheetIds.value);
       if (newSelected.contains(musicSheetId)) {
         newSelected.remove(musicSheetId);
       } else {
@@ -72,7 +72,7 @@ class MusicSheetRepositoryView extends HookWidget {
       final currentVisible = selectedMusicSheetIds.value.where((id) => allMusicSheetIds.contains(id)).toSet();
       final allVisibleSelected = currentVisible.length == allMusicSheetIds.length && allMusicSheetIds.isNotEmpty;
 
-      final newSelected = Set<String>.from(selectedMusicSheetIds.value);
+      final newSelected = Set<String>.of(selectedMusicSheetIds.value);
 
       if (allVisibleSelected) {
         // Unselect all visible items

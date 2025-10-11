@@ -10,7 +10,7 @@ import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class RepositoriesView extends HookWidget {
   const RepositoriesView({super.key});

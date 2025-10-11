@@ -11,7 +11,7 @@ import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class RepositoryMusicSheetTile extends HookWidget {
   final MusicSheet musicSheet;

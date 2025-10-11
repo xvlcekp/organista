@@ -86,10 +86,7 @@ class LoadingScreen {
                             return Text(
                               snapshot.data as String,
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: colorScheme.onSurface,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: theme.textTheme.titleMedium,
                             );
                           } else {
                             return Container();

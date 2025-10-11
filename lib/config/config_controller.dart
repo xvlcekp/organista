@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 
-class Config {
+class ConfigController {
   static Map<String, dynamic>? _config;
 
   static Future<void> load() async {

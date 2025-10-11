@@ -16,6 +16,7 @@ dart_code_metrics:
   exclude:
     rules:
       - test/**
+      - lib/config/app_theme.dart
   extends:
     - recommended
   rules:

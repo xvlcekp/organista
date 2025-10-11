@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:organista/config/app_constants.dart';
-import 'package:organista/extensions/color.dart';
+import 'package:organista/extensions/hex_color.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';

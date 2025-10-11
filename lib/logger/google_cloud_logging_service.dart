@@ -16,8 +16,8 @@ class GoogleCloudLoggingService {
     if (_isSetup) return;
 
     try {
-      await Config.load();
-      final serviceAccountCredentials = jsonDecode(Config.get('googleLoggingToken') ?? '{}');
+      await ConfigController.load();
+      final serviceAccountCredentials = jsonDecode(ConfigController.get('googleLoggingToken') ?? '{}');
       _projectId = serviceAccountCredentials['project_id'] ?? '';
       // Create credentials using ServiceAccountCredentials
       final credentials = ServiceAccountCredentials.fromJson(

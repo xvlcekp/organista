@@ -122,12 +122,13 @@ class FirebaseFirestoreRepository {
         .doc(playlistId)
         .snapshots(includeMetadataChanges: true)
         .map((snapshot) {
-          if (!snapshot.exists || snapshot.data() == null) {
+          final data = snapshot.data();
+          if (!snapshot.exists || data == null) {
             logger.w("Playlist document does not exist: $playlistId");
             return Playlist.empty();
           }
           logger.i("Got new update for playlist $playlistId");
-          return Playlist(playlistId: playlistId, json: snapshot.data()!);
+          return Playlist(playlistId: playlistId, json: data);
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getPlaylistStream: $error');
@@ -254,7 +255,7 @@ class FirebaseFirestoreRepository {
       playlist.validateCapacityForAdding(musicSheets.length);
 
       // Create a copy of the current music sheets list to avoid mutating the original
-      final updatedMusicSheets = List<MusicSheet>.from(playlist.musicSheets);
+      final updatedMusicSheets = List<MusicSheet>.of(playlist.musicSheets);
 
       // Add all new music sheets to the copy
       updatedMusicSheets.addAll(musicSheets);
@@ -395,7 +396,7 @@ class FirebaseFirestoreRepository {
         });
   }
 
-  Future<bool> createGlobalRepository({required String name}) async {
+  Future<bool> createGlobalRepository({required String name}) {
     return _createRepository(userId: '', name: name);
   }
 
@@ -447,7 +448,8 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       // First, get the repository to verify ownership
-      final repositoryDoc = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).get();
+      final repositoriesCollection = instance.collection(FirebaseCollectionName.repositories);
+      final repositoryDoc = await repositoriesCollection.doc(repositoryId).get();
 
       if (!repositoryDoc.exists) {
         logger.w('Repository $repositoryId not found');
@@ -471,7 +473,7 @@ class FirebaseFirestoreRepository {
       }
 
       // Proceed with rename if validation passes
-      await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).update({
+      await repositoriesCollection.doc(repositoryId).update({
         RepositoryKey.name: newName,
       });
       logger.i("Renaming repository $repositoryId to $newName by user $currentUserId");
@@ -479,7 +481,7 @@ class FirebaseFirestoreRepository {
     } catch (e, stackTrace) {
       logger.e('Error renaming repository: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error renaming repository');
-      throw const RepositoryGenericException();
+      Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
 
@@ -489,7 +491,8 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       // First, get the repository to verify ownership
-      final repositoryDoc = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).get();
+      final repositoriesCollection = instance.collection(FirebaseCollectionName.repositories);
+      final repositoryDoc = await repositoriesCollection.doc(repositoryId).get();
 
       if (!repositoryDoc.exists) {
         logger.w('Repository $repositoryId not found');
@@ -513,8 +516,7 @@ class FirebaseFirestoreRepository {
       }
 
       // Delete all music sheets in the repository first
-      final musicSheetsQuery = await instance
-          .collection(FirebaseCollectionName.repositories)
+      final musicSheetsQuery = await repositoriesCollection
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets)
           .get();
@@ -525,14 +527,14 @@ class FirebaseFirestoreRepository {
       }
 
       // Finally, delete the repository itself
-      await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).delete();
+      await repositoriesCollection.doc(repositoryId).delete();
 
       logger.i("Deleting repository $repositoryId by user $currentUserId");
       return true;
     } catch (e, stackTrace) {
       logger.e('Error deleting repository: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting repository');
-      throw const RepositoryGenericException();
+      Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
 

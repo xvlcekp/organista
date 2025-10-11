@@ -12,7 +12,7 @@ class FirebaseAuthProvider implements AuthProvider {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   @override
-  Future<void> initialize() async {
+  Future<void> initialize() {
     return _googleSignIn.initialize().then((_) {
       logger.d('Google Sign-In initialized for authentication');
     });
@@ -87,12 +87,12 @@ class FirebaseAuthProvider implements AuthProvider {
       GoogleSignInAccount googleUser;
       try {
         googleUser = await _googleSignIn.authenticate();
-      } on GoogleSignInException catch (e) {
+      } on GoogleSignInException catch (e, stackTrace) {
         logger.e('Google authentication failed: ${e.code} - ${e.description}');
-        throw const AuthErrorGoogleSignInFailed();
-      } catch (e) {
+        Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
+      } catch (e, stackTrace) {
         logger.e('Google authentication failed: $e');
-        throw const AuthErrorGoogleSignInFailed();
+        Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
       }
 
       logger.d('Google account authenticated: ${googleUser.email}');
@@ -101,7 +101,8 @@ class FirebaseAuthProvider implements AuthProvider {
       logger.d('Getting Google authentication tokens');
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
-      if (googleAuth.idToken == null) {
+      final String? idToken = googleAuth.idToken;
+      if (idToken == null) {
         logger.e('Google ID token is null');
         throw const AuthErrorGoogleSignInFailed();
       }
@@ -109,9 +110,7 @@ class FirebaseAuthProvider implements AuthProvider {
       logger.d('Google authentication tokens retrieved successfully');
 
       // Create Firebase credential and sign in (we only need ID token for authentication)
-      return await _signInToFirebaseWithGoogleCredential(
-        googleAuth.idToken!,
-      );
+      return await _signInToFirebaseWithGoogleCredential(idToken);
     } catch (e) {
       // If it's already an AuthError, rethrow it
       if (e is AuthError) {
