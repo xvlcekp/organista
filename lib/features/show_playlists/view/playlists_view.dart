@@ -64,6 +64,7 @@ class PlaylistsView extends HookWidget {
       body: BlocBuilder<ShowPlaylistsCubit, ShowPlaylistsState>(
         builder: (context, state) {
           if (state.playlists.isEmpty) {
+            final surfaceVariantColor = theme.colorScheme.onSurfaceVariant;
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -71,20 +72,20 @@ class PlaylistsView extends HookWidget {
                   Icon(
                     Icons.music_off,
                     size: 64,
-                    color: theme.colorScheme.primary.withAlpha(130),
+                    color: surfaceVariantColor,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     localizations.noPlaylistsYet,
                     style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: surfaceVariantColor,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     localizations.createFirstPlaylist,
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: surfaceVariantColor,
                     ),
                   ),
                 ],

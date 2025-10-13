@@ -103,27 +103,6 @@ class AppTheme {
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
-      textTheme: const TextTheme(
-        // TODO: fix text styles (probably remove them here and remove allso ballast in code, to compare use text_theme.dart)
-        headlineLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-        ),
-        headlineMedium: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        titleLarge: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-        ),
-      ),
       dialogTheme: DialogThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(dialogBorderRadius),

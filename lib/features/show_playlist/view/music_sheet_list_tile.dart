@@ -62,9 +62,7 @@ class MusicSheetListTile extends HookWidget {
               Expanded(
                 child: Text(
                   musicSheet.fileName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: theme.textTheme.bodyMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

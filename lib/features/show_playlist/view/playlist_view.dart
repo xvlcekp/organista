@@ -35,9 +35,7 @@ class PlaylistView extends HookWidget {
             Expanded(
               child: Text(
                 playlist.name,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.textTheme.titleLarge,
               ),
             ),
           ],
@@ -83,6 +81,7 @@ class PlaylistView extends HookWidget {
           logger.i("Item count is ${playlist.musicSheets.length}");
 
           if (playlist.musicSheets.isEmpty) {
+            final surfaceVariantColor = theme.colorScheme.onSurfaceVariant;
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -90,20 +89,20 @@ class PlaylistView extends HookWidget {
                   Icon(
                     Icons.music_off,
                     size: 64,
-                    color: theme.colorScheme.primary.withAlpha(130),
+                    color: surfaceVariantColor,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     localizations.noMusicSheetsYet,
                     style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary.withAlpha(130),
+                      color: surfaceVariantColor,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     localizations.addYourFirstMusicSheet,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary.withAlpha(130),
+                      color: surfaceVariantColor,
                     ),
                   ),
                 ],
