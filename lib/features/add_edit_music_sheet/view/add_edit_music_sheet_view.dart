@@ -22,120 +22,121 @@ class AddEditMusicSheetView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    const previewFlex = 2;
+    const inputFlex = 3;
+    const buttonsFlex = 1;
+    const defaultPadding = 8.0;
+
     final musicSheetNameController = useTextEditingController();
     final theme = Theme.of(context);
     final localizations = context.loc;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(localizations.modifyMusicSheet)),
-      body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
-        builder: (context, state) {
-          musicSheetNameController.text = state.fileName;
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: switch (state) {
-                    InitMusicSheetState() => const AddImageControllersView(),
-                    UploadMusicSheetState() => UploadedMusicSheetFileView(file: state.file),
-                    EditMusicSheetState() => MusicSheetView(
-                      musicSheet: state.musicSheet,
-                      mode: MusicSheetViewMode.preview,
-                    ),
-                    AddMusicSheetToPlaylistState() => MusicSheetView(
-                      musicSheet: state.musicSheet,
-                      mode: MusicSheetViewMode.preview,
-                    ),
-                  },
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: musicSheetNameController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.colorScheme.onSurface, width: 0.0),
-                        ),
-                        hintText: localizations.musicSheetName,
-                        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(153)),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: Text(localizations.modifyMusicSheet)),
+        body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
+          builder: (context, state) {
+            musicSheetNameController.text = state.fileName;
+            return Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: previewFlex,
+                    child: switch (state) {
+                      InitMusicSheetState() => const AddImageControllersView(),
+                      UploadMusicSheetState() => UploadedMusicSheetFileView(file: state.file),
+                      EditMusicSheetState() => MusicSheetView(
+                        musicSheet: state.musicSheet,
+                        mode: MusicSheetViewMode.preview,
                       ),
-                      style: TextStyle(color: theme.colorScheme.onSurface),
-                      onChanged: (query) {},
+                      AddMusicSheetToPlaylistState() => MusicSheetView(
+                        musicSheet: state.musicSheet,
+                        mode: MusicSheetViewMode.preview,
+                      ),
+                    },
+                  ),
+                  Expanded(
+                    flex: inputFlex,
+                    child: Padding(
+                      padding: const EdgeInsets.all(defaultPadding),
+                      child: TextField(
+                        controller: musicSheetNameController,
+                        decoration: InputDecoration(
+                          hintText: localizations.musicSheetName,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
-                            if (shouldDiscardChanges && context.mounted) {
-                              resetMusicSheetCubitAndShowPlaylist(context);
-                            }
-                          },
-                          style: theme.elevatedButtonTheme.style?.copyWith(
-                            backgroundColor: WidgetStateProperty.all(theme.colorScheme.secondary),
-                            foregroundColor: WidgetStateProperty.all(theme.colorScheme.onSecondary),
+                  Expanded(
+                    flex: buttonsFlex,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
+                              if (shouldDiscardChanges && context.mounted) {
+                                resetMusicSheetCubitAndShowPlaylist(context);
+                              }
+                            },
+                            style: theme.elevatedButtonTheme.style?.copyWith(
+                              backgroundColor: WidgetStateProperty.all(theme.colorScheme.secondary),
+                              foregroundColor: WidgetStateProperty.all(theme.colorScheme.onSecondary),
+                            ),
+                            child: Text(localizations.discard),
                           ),
-                          child: Text(localizations.discard),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: theme.elevatedButtonTheme.style,
-                          onPressed: () {
-                            switch (state) {
-                              case InitMusicSheetState():
-                                logger.e(localizations.selectImageFirst);
-                              case UploadMusicSheetState():
-                                context.read<PlaylistBloc>().add(
-                                  UploadNewMusicSheetEvent(
-                                    file: state.file,
-                                    fileName: musicSheetNameController.text,
-                                    user: context.read<AuthBloc>().state.user!,
-                                    repositoryId: state.repositoryId,
-                                  ),
-                                );
-                                resetMusicSheetCubitAndPop(context);
-                              case EditMusicSheetState():
-                                context.read<PlaylistBloc>().add(
-                                  RenameMusicSheetInPlaylistEvent(
-                                    playlist: state.playlist,
-                                    musicSheet: state.musicSheet,
-                                    fileName: musicSheetNameController.text,
-                                  ),
-                                );
-                                resetMusicSheetCubitAndShowPlaylist(context);
-                              case AddMusicSheetToPlaylistState():
-                                final playlistBloc = context.read<PlaylistBloc>();
-                                final playlist = playlistBloc.state.playlist;
-                                playlistBloc.add(
-                                  AddMusicSheetsToPlaylistEvent(
-                                    musicSheets: [state.musicSheet.copyWith(fileName: musicSheetNameController.text)],
-                                    playlist: playlist,
-                                  ),
-                                );
-                                resetMusicSheetCubitAndShowPlaylist(context);
-                            }
-                          },
-                          child: Text(localizations.save),
+                        const SizedBox(width: defaultPadding),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: theme.elevatedButtonTheme.style,
+                            onPressed: () {
+                              switch (state) {
+                                case InitMusicSheetState():
+                                  logger.e(localizations.selectImageFirst);
+                                case UploadMusicSheetState():
+                                  context.read<PlaylistBloc>().add(
+                                    UploadNewMusicSheetEvent(
+                                      file: state.file,
+                                      fileName: musicSheetNameController.text,
+                                      user: context.read<AuthBloc>().state.user!,
+                                      repositoryId: state.repositoryId,
+                                    ),
+                                  );
+                                  resetMusicSheetCubitAndPop(context);
+                                case EditMusicSheetState():
+                                  context.read<PlaylistBloc>().add(
+                                    RenameMusicSheetInPlaylistEvent(
+                                      playlist: state.playlist,
+                                      musicSheet: state.musicSheet,
+                                      fileName: musicSheetNameController.text,
+                                    ),
+                                  );
+                                  resetMusicSheetCubitAndShowPlaylist(context);
+                                case AddMusicSheetToPlaylistState():
+                                  final playlistBloc = context.read<PlaylistBloc>();
+                                  final playlist = playlistBloc.state.playlist;
+                                  playlistBloc.add(
+                                    AddMusicSheetsToPlaylistEvent(
+                                      musicSheets: [state.musicSheet.copyWith(fileName: musicSheetNameController.text)],
+                                      playlist: playlist,
+                                    ),
+                                  );
+                                  resetMusicSheetCubitAndShowPlaylist(context);
+                              }
+                            },
+                            child: Text(localizations.save),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -806,17 +806,17 @@ abstract class AppLocalizations {
   /// **'Nepodarilo sa otvoriť URL'**
   String get couldNotOpenUrl;
 
-  /// No description provided for @errorOpeningUrl.
+  /// Error message when failing to open a URL
   ///
   /// In sk, this message translates to:
-  /// **'Chyba pri otváraní URL: {error}'**
-  String errorOpeningUrl(Object error);
+  /// **'Chyba pri otváraní URL: {url}'**
+  String errorOpeningUrl(String url);
 
-  /// No description provided for @fileTooLarge.
+  /// Error message when a file exceeds the maximum allowed size
   ///
   /// In sk, this message translates to:
   /// **'Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.'**
-  String fileTooLarge(Object maxSize);
+  String fileTooLarge(int maxSize);
 
   /// No description provided for @anErrorHappened.
   ///
@@ -1020,6 +1020,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.'**
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount);
+
+  /// No description provided for @noFileDataAvailable.
+  ///
+  /// In sk, this message translates to:
+  /// **'Súbor je poškodený'**
+  String get noFileDataAvailable;
 }
 
 class _AppLocalizationsDelegate

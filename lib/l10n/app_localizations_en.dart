@@ -374,12 +374,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get couldNotOpenUrl => 'Could not open the URL';
 
   @override
-  String errorOpeningUrl(Object error) {
-    return 'Error opening URL: $error';
+  String errorOpeningUrl(String url) {
+    return 'Error opening URL: $url';
   }
 
   @override
-  String fileTooLarge(Object maxSize) {
+  String fileTooLarge(int maxSize) {
     return 'File is too large. Maximum size is ${maxSize}MB.';
   }
 
@@ -512,4 +512,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
     return 'You have reached the maximum number of repositories ($maximumRepositoriesCount). Please delete some repositories before creating new ones.';
   }
+
+  @override
+  String get noFileDataAvailable => 'No file data available';
 }

@@ -45,7 +45,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                       if (context.mounted) {
                         showErrorDialog(
                           context: context,
-                          text: localizations.fileTooLarge(AppConstants.maxFileSizeMB.toString()),
+                          text: localizations.fileTooLarge(AppConstants.maxFileSizeMB),
                         );
                       }
                       return;

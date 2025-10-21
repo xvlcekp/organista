@@ -39,19 +39,16 @@ class AboutView extends HookWidget {
             ),
             const SizedBox(height: 24),
             InkWell(
-              onTap: () async {
+              onTap: () {
                 final Uri url = Uri.parse(AppConstants.faqUrl);
                 try {
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  } else {
-                    if (context.mounted) {
-                      showErrorDialog(context: context, text: localizations.couldNotOpenUrl);
-                    }
-                  }
+                  launchUrl(url, mode: LaunchMode.externalApplication);
                 } catch (e) {
                   if (context.mounted) {
-                    showErrorDialog(context: context, text: '${localizations.errorOpeningUrl}: ${e.toString()}');
+                    showErrorDialog(
+                      context: context,
+                      text: '${localizations.errorOpeningUrl(AppConstants.faqUrl)}: ${e.toString()}',
+                    );
                   }
                 }
               },

@@ -118,8 +118,26 @@
     "version": "Verzia",
     "frequentlyAskedQuestions": "Často kladené otázky",
     "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",
-    "errorOpeningUrl": "Chyba pri otváraní URL: {error}",
+    "errorOpeningUrl": "Chyba pri otváraní URL: {url}",
+    "@errorOpeningUrl": {
+        "description": "Error message when failing to open a URL",
+        "placeholders": {
+            "url": {
+                "type": "String",
+                "description": "The URL that failed to open"
+            }
+        }
+    },
     "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
+    "@fileTooLarge": {
+        "description": "Error message when a file exceeds the maximum allowed size",
+        "placeholders": {
+            "maxSize": {
+                "type": "int",
+                "description": "The maximum allowed file size in megabytes"
+            }
+        }
+    },
     "anErrorHappened": "Nastala chyba",
     "showNavigationArrows": "Zobraziť navigačné šípky",
     "keepScreenOn": "Nechať obrazovku zapnutú",
@@ -229,5 +247,6 @@
                 "description": "The maximum number of repositories allowed"
             }
         }
-    }
+    },
+    "noFileDataAvailable": "Súbor je poškodený"
 }

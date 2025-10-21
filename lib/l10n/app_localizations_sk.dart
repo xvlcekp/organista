@@ -376,12 +376,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get couldNotOpenUrl => 'Nepodarilo sa otvoriť URL';
 
   @override
-  String errorOpeningUrl(Object error) {
-    return 'Chyba pri otváraní URL: $error';
+  String errorOpeningUrl(String url) {
+    return 'Chyba pri otváraní URL: $url';
   }
 
   @override
-  String fileTooLarge(Object maxSize) {
+  String fileTooLarge(int maxSize) {
     return 'Súbor je príliš veľký. Maximálna veľkosť je ${maxSize}MB.';
   }
 
@@ -515,4 +515,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
     return 'Dosiahli ste maximálny počet repozitárov ($maximumRepositoriesCount). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.';
   }
+
+  @override
+  String get noFileDataAvailable => 'Súbor je poškodený';
 }
