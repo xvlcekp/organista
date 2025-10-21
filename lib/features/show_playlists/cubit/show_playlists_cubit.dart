@@ -8,7 +8,7 @@ import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/stream_manager.dart';
 
-part 'playlists_state.dart';
+part 'show_playlists_state.dart';
 
 class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;

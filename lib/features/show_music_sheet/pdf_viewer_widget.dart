@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
-import 'package:organista/config/app_constants.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/extensions/hex_color.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
+import 'package:organista/features/show_music_sheet/zoomable_music_sheet_viewer.dart';
+import 'package:organista/features/show_music_sheet/pdf_navigation_touch_area.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -65,7 +67,7 @@ class PdfViewerWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pdfController = useState<PdfController?>(null);
+    final pdfControllerFuture = useState<PdfController?>(null);
     final isLoading = useState(true);
     final hasError = useState(false);
 
@@ -78,7 +80,7 @@ class PdfViewerWidget extends HookWidget {
           final document = await _loadPdfDocument();
 
           if (!completer.isCompleted) {
-            pdfController.value = PdfController(document: Future.value(document));
+            pdfControllerFuture.value = PdfController(document: Future.value(document));
             hasError.value = false;
             isLoading.value = false;
             completer.complete();
@@ -104,7 +106,7 @@ class PdfViewerWidget extends HookWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (hasError.value || pdfController.value == null) {
+    if (hasError.value || pdfControllerFuture.value == null) {
       return const Center(
         child: Icon(
           Icons.warning_rounded,
@@ -112,6 +114,7 @@ class PdfViewerWidget extends HookWidget {
         ),
       );
     }
+    final pdfController = pdfControllerFuture.value!;
 
     return switch (mode) {
       MusicSheetViewMode.full => getPdfFullView(pdfController),
@@ -120,45 +123,49 @@ class PdfViewerWidget extends HookWidget {
     };
   }
 
-  PdfView getPdfPreview(ValueNotifier<PdfController?> pdfController) {
+  PdfView getPdfPreview(PdfController pdfController) {
+    const double pdfRenderScale = 0.5;
     return PdfView(
-      controller: pdfController.value!,
+      controller: pdfController,
       renderer: (PdfPage page) => page.render(
-        width: page.width * 0.5,
-        height: page.height * 0.5,
+        width: page.width * pdfRenderScale,
+        height: page.height * pdfRenderScale,
         backgroundColor: backgroundColor.toHex(),
       ),
     );
   }
 
-  PdfView getPdfThumbnailView(ValueNotifier<PdfController?> pdfController) {
+  PdfView getPdfThumbnailView(PdfController pdfController) {
+    const double pdfRenderScale = 0.25;
     return PdfView(
-      controller: pdfController.value!,
+      controller: pdfController,
       renderer: (PdfPage page) => page.render(
-        width: page.width * 0.25,
-        height: page.height * 0.25,
+        width: page.width * pdfRenderScale,
+        height: page.height * pdfRenderScale,
         backgroundColor: backgroundColor.toHex(),
       ),
     );
   }
 
-  Widget getPdfFullView(ValueNotifier<PdfController?> pdfController) {
+  Widget getPdfFullView(PdfController pdfController) {
     final showTitle = useState(true);
+    final boxDecoration = BoxDecoration(
+      color: AppTheme.lightTheme.colorScheme.onSurface,
+      borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+    );
+    const symetricPosition = 16.0;
 
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, settingsState) {
         return SafeArea(
           // needed to use SafeArea because after update to new flutter, it overlays bottom navigation bar
-          child: PhotoView.customChild(
-            minScale: PhotoViewComputedScale.contained * 1.0,
-            maxScale: PhotoViewComputedScale.contained * 3.0,
-            initialScale: PhotoViewComputedScale.contained * 1.0,
+          child: ZoomableMusicSheetViewer(
             child: Stack(
               children: [
                 /// PDF Viewer as the base layer
                 Positioned.fill(
                   child: PdfView(
-                    controller: pdfController.value!,
+                    controller: pdfController,
                     scrollDirection: Axis.vertical,
                   ),
                 ),
@@ -166,19 +173,16 @@ class PdfViewerWidget extends HookWidget {
                 /// Music sheet name at the bottom-left
                 if (showTitle.value)
                   Positioned(
-                    bottom: 16,
-                    left: 16,
+                    bottom: symetricPosition,
+                    left: symetricPosition,
                     child: GestureDetector(
                       onTap: () => showTitle.value = false,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withAlpha(153),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: DefaultTextStyle(
-                          style: const TextStyle(fontSize: 12, color: Colors.white),
-                          child: Text(musicSheet.fileName),
+                        decoration: boxDecoration,
+                        child: Text(
+                          musicSheet.fileName,
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -186,19 +190,16 @@ class PdfViewerWidget extends HookWidget {
 
                 /// Page number overlay at the bottom-right
                 Positioned(
-                  bottom: 16,
-                  right: 16,
+                  bottom: symetricPosition,
+                  right: symetricPosition,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withAlpha(153),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    decoration: boxDecoration,
                     child: PdfPageNumber(
-                      controller: pdfController.value!,
+                      controller: pdfController,
                       builder: (_, state, loadingState, pagesCount) => DefaultTextStyle(
                         style: const TextStyle(fontSize: 18, color: Colors.white),
-                        child: Text('${pdfController.value!.page}/${pagesCount ?? 0}'),
+                        child: Text('${pdfController.page}/${pagesCount ?? 0}'),
                       ),
                     ),
                   ),
@@ -207,13 +208,13 @@ class PdfViewerWidget extends HookWidget {
                 /// Navigation buttons
                 if (settingsState.showNavigationArrows)
                   PdfPageNumber(
-                    controller: pdfController.value!,
+                    controller: pdfController,
                     builder: (_, state, loadingState, pagesCount) {
                       if (pagesCount == null || pagesCount <= 1) {
                         return const SizedBox.shrink(); // Don't show buttons if only one page
                       }
 
-                      final currentPage = pdfController.value!.page;
+                      final currentPage = pdfController.page;
                       final canGoPrevious = currentPage > 1;
                       final canGoNext = currentPage < pagesCount;
 
@@ -221,106 +222,16 @@ class PdfViewerWidget extends HookWidget {
                         children: [
                           // Previous page touch area at the top
                           if (canGoPrevious)
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              height: MediaQuery.of(context).size.height * AppConstants.nextPagetouchAreaHeight,
-                              child: Listener(
-                                behavior: HitTestBehavior.opaque,
-                                onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage - 1),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        Colors.white.withAlpha(0),
-                                        Colors.green.withAlpha(100),
-                                      ],
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        const Expanded(child: SizedBox()),
-                                        const Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 16, bottom: 16),
-                                              child: Icon(
-                                                Icons.arrow_upward,
-                                                color: Colors.green,
-                                                size: 20,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          height: 1,
-                                          decoration: BoxDecoration(
-                                            color: Colors.green.withAlpha(150),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            PdfNavigationTouchArea(
+                              direction: NavigationDirection.top,
+                              onTap: () => pdfController.jumpToPage(currentPage - 1),
                             ),
 
                           // Next page touch area at the bottom
                           if (canGoNext)
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              height: MediaQuery.of(context).size.height * AppConstants.nextPagetouchAreaHeight,
-                              child: Listener(
-                                behavior: HitTestBehavior.opaque,
-                                onPointerDown: (_) => pdfController.value!.jumpToPage(currentPage + 1),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.white.withAlpha(0),
-                                        Colors.green.withAlpha(100),
-                                      ],
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 1,
-                                          decoration: BoxDecoration(
-                                            color: Colors.green.withAlpha(150),
-                                          ),
-                                        ),
-                                        const Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 16, top: 16),
-                                              child: Icon(
-                                                Icons.arrow_downward,
-                                                color: Colors.green,
-                                                size: 20,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Expanded(child: SizedBox()),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            PdfNavigationTouchArea(
+                              direction: NavigationDirection.bottom,
+                              onTap: () => pdfController.jumpToPage(currentPage + 1),
                             ),
                         ],
                       );

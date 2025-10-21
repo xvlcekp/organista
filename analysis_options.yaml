@@ -38,7 +38,8 @@ dart_code_metrics:
     - avoid-late-keyword
     - avoid-missed-calls
     - avoid-misused-set-literals
-    - avoid-non-null-assertion
+    - avoid-non-null-assertion:
+        skip-checked-fields: true
     - avoid-nullable-tostring
     - avoid-passing-async-when-sync-expected
     - avoid-passing-self-as-argument

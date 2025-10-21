@@ -93,10 +93,7 @@ class LoginView extends HookWidget {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: () => showForgotPasswordDialog(context, emailController),
-                        child: Text(
-                          localizations.forgotPassword,
-                          style: TextStyle(color: theme.colorScheme.primary),
-                        ),
+                        child: Text(localizations.forgotPassword),
                       ),
                     ),
                     const SizedBox(height: 24),

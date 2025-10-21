@@ -13,6 +13,18 @@ import 'auth_utils.dart';
 
 // Used only once on 6.5.2025 to add sequence_id for all music sheets
 
+class UpdateSequenceIds extends StatelessWidget {
+  const UpdateSequenceIds({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: _SequenceUpdaterScreen(),
+    );
+  }
+}
+
 final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firestore = FirebaseFirestore.instance;
 
@@ -28,9 +40,10 @@ Future<void> updateSequenceIds({
     }
 
     final fs = firestoreInstance ?? firestore;
+    final repositoriesCollection = fs.collection(FirebaseCollectionName.repositories);
 
     // Get all repositories
-    final repositoriesSnapshot = await fs.collection(FirebaseCollectionName.repositories).get();
+    final repositoriesSnapshot = await repositoriesCollection.get();
     logger.i('Found ${repositoriesSnapshot.docs.length} repositories to process');
 
     for (var repoDoc in repositoriesSnapshot.docs) {
@@ -38,8 +51,7 @@ Future<void> updateSequenceIds({
       logger.i('Processing repository: $repositoryId');
 
       // Get all music sheets in this repository
-      final musicSheetsSnapshot = await fs
-          .collection(FirebaseCollectionName.repositories)
+      final musicSheetsSnapshot = await repositoriesCollection
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets)
           .get();
@@ -84,19 +96,7 @@ Future<void> updateSequenceIds({
 
 void main() async {
   await mainInitialize();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: _SequenceUpdaterScreen(),
-    );
-  }
+  runApp(const UpdateSequenceIds());
 }
 
 class _SequenceUpdaterScreen extends StatefulWidget {

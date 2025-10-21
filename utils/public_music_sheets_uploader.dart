@@ -53,6 +53,8 @@ class UploadFolderScreen extends HookWidget {
         // Sort by length to get the longest matching key
         matchingKeys.sort((a, b) => b.length.compareTo(a.length));
         String baseName = mapping[matchingKeys.first]!;
+        // It makes sense to ignore it here, because it is straightforward and not a security issue.
+        // ignore: avoid-substring
         String remainingName = fileNameWithoutExt.substring(matchingKeys.first.length).trim();
         remainingName = remainingName.replaceAll('__', '');
 

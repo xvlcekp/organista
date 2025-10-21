@@ -46,10 +46,7 @@ class PlaylistView extends HookWidget {
               onPressed: () {
                 Navigator.of(context).push<void>(RepositoriesView.route());
               },
-              icon: Icon(
-                Icons.add,
-                color: theme.colorScheme.primary,
-              ),
+              icon: const Icon(Icons.add),
             ),
           IconButton(
             onPressed: () {
@@ -57,7 +54,6 @@ class PlaylistView extends HookWidget {
             },
             icon: Icon(
               isEditMode.value ? Icons.check : Icons.edit,
-              color: theme.colorScheme.primary,
             ),
           ),
         ],

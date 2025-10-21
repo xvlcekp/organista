@@ -8,7 +8,7 @@ import 'package:organista/dialogs/playlists/delete_playlist_dialog.dart';
 import 'package:organista/dialogs/playlists/rename_playlist_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
-import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
+import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/views/main_popup_menu_button.dart';

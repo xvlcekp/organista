@@ -4,8 +4,6 @@ import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/features/show_music_sheet/pdf_viewer_widget.dart';
 
-enum MusicSheetViewMode { thumbnail, preview, full }
-
 class MusicSheetView extends StatelessWidget {
   const MusicSheetView({
     super.key,
@@ -24,3 +22,5 @@ class MusicSheetView extends StatelessWidget {
     };
   }
 }
+
+enum MusicSheetViewMode { thumbnail, preview, full }

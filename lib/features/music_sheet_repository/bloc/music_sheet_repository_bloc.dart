@@ -10,8 +10,8 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/stream_manager.dart';
 
-part 'repository_event.dart';
-part 'repository_state.dart';
+part 'music_sheet_repository_event.dart';
+part 'music_sheet_repository_state.dart';
 
 class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicSheetRepositoryState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
