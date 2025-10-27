@@ -32,6 +32,7 @@ class AddEditMusicSheetView extends HookWidget {
     final localizations = context.loc;
 
     return SafeArea(
+      top: false,
       child: Scaffold(
         appBar: AppBar(title: Text(localizations.modifyMusicSheet)),
         body: BlocBuilder<AddEditMusicSheetCubit, AddEditMusicSheetState>(
@@ -74,11 +75,8 @@ class AddEditMusicSheetView extends HookWidget {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () async {
-                              final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
-                              if (shouldDiscardChanges && context.mounted) {
-                                resetMusicSheetCubitAndShowPlaylist(context);
-                              }
+                            onPressed: () {
+                              discardDialog(context);
                             },
                             style: theme.elevatedButtonTheme.style?.copyWith(
                               backgroundColor: WidgetStateProperty.all(theme.colorScheme.secondary),
@@ -96,14 +94,17 @@ class AddEditMusicSheetView extends HookWidget {
                                 case InitMusicSheetState():
                                   logger.e(localizations.selectImageFirst);
                                 case UploadMusicSheetState():
-                                  context.read<PlaylistBloc>().add(
-                                    UploadNewMusicSheetEvent(
-                                      file: state.file,
-                                      fileName: musicSheetNameController.text,
-                                      user: context.read<AuthBloc>().state.user!,
-                                      repositoryId: state.repositoryId,
-                                    ),
-                                  );
+                                  final user = context.read<AuthBloc>().state.user;
+                                  if (user != null) {
+                                    context.read<PlaylistBloc>().add(
+                                      UploadNewMusicSheetEvent(
+                                        file: state.file,
+                                        fileName: musicSheetNameController.text,
+                                        user: user,
+                                        repositoryId: state.repositoryId,
+                                      ),
+                                    );
+                                  }
                                   resetMusicSheetCubitAndPop(context);
                                 case EditMusicSheetState():
                                   context.read<PlaylistBloc>().add(
@@ -149,5 +150,12 @@ class AddEditMusicSheetView extends HookWidget {
   void resetMusicSheetCubitAndPop(BuildContext context) {
     context.read<AddEditMusicSheetCubit>().resetState();
     Navigator.of(context).pop();
+  }
+
+  void discardDialog(BuildContext context) async {
+    final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
+    if (shouldDiscardChanges && context.mounted) {
+      resetMusicSheetCubitAndShowPlaylist(context);
+    }
   }
 }

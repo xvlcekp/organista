@@ -17,8 +17,6 @@ dart_code_metrics:
     rules:
       - test/**
       - lib/config/app_theme.dart
-  extends:
-    - recommended
   rules:
     - avoid-assignments-as-conditions
     - avoid-cascade-after-if-null
