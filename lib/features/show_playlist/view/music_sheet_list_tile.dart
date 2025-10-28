@@ -72,7 +72,7 @@ class MusicSheetListTile extends HookWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: () async {
+                      onPressed: () {
                         if (context.mounted) {
                           context.read<AddEditMusicSheetCubit>().editMusicSheetInPlaylist(
                             playlist: playlist,
@@ -90,17 +90,17 @@ class MusicSheetListTile extends HookWidget {
                       constraints: const BoxConstraints(),
                     ),
                     IconButton(
-                      onPressed: () async {
-                        final shouldDeleteImage = await showDeleteImageDialog(context);
-                        if (shouldDeleteImage && context.mounted) {
-                          context.read<PlaylistBloc>().add(
-                            DeleteMusicSheetInPlaylistEvent(
-                              musicSheet: musicSheet,
-                              playlist: playlist,
-                            ),
-                          );
-                        }
-                        return;
+                      onPressed: () {
+                        showDeleteImageDialog(context).then((shouldDeleteImage) {
+                          if (shouldDeleteImage && context.mounted) {
+                            context.read<PlaylistBloc>().add(
+                              DeleteMusicSheetInPlaylistEvent(
+                                musicSheet: musicSheet,
+                                playlist: playlist,
+                              ),
+                            );
+                          }
+                        });
                       },
                       icon: Icon(
                         Icons.delete,

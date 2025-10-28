@@ -30,11 +30,11 @@ class CustomLogger extends Logger {
   static final instance = CustomLogger._();
 
   Future<void> setup() async {
-    await enableCrashlytics();
+    enableCrashlytics();
     await _googleCloudLoggingService.setupLoggingApi();
   }
 
-  Future<void> enableCrashlytics() async {
+  void enableCrashlytics() {
     // Enable Firebase crashlytics
     FlutterError.onError = (FlutterErrorDetails details) {
       FirebaseCrashlytics.instance.recordFlutterError(details);

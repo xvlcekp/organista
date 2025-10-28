@@ -112,13 +112,14 @@ class SettingsView extends StatelessWidget {
                     localizations.deleteAccount,
                     style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
-                  onTap: () async {
-                    final shouldDeleteAccount = await showDeleteAccountDialog(context);
-                    if (shouldDeleteAccount && context.mounted) {
-                      context.read<AuthBloc>().add(
-                        const AuthEventDeleteAccount(),
-                      );
-                    }
+                  onTap: () {
+                    showDeleteAccountDialog(context).then((shouldDeleteAccount) {
+                      if (shouldDeleteAccount && context.mounted) {
+                        context.read<AuthBloc>().add(
+                          const AuthEventDeleteAccount(),
+                        );
+                      }
+                    });
                   },
                 ),
               ],

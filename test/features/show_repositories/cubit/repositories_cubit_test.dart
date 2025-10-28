@@ -4,7 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';

@@ -9,7 +9,7 @@ import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
-import 'package:organista/models/music_sheets/list_music_sheet_extension.dart';
+import 'package:organista/models/music_sheets/music_sheet_list_extension.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';

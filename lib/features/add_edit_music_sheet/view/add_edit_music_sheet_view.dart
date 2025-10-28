@@ -76,7 +76,11 @@ class AddEditMusicSheetView extends HookWidget {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              discardDialog(context);
+                              showDiscardUploadedMusicSheetChangesDialog(context).then((shouldDiscardChanges) {
+                                if (shouldDiscardChanges && context.mounted) {
+                                  resetMusicSheetCubitAndShowPlaylist(context);
+                                }
+                              });
                             },
                             style: theme.elevatedButtonTheme.style?.copyWith(
                               backgroundColor: WidgetStateProperty.all(theme.colorScheme.secondary),
@@ -150,12 +154,5 @@ class AddEditMusicSheetView extends HookWidget {
   void resetMusicSheetCubitAndPop(BuildContext context) {
     context.read<AddEditMusicSheetCubit>().resetState();
     Navigator.of(context).pop();
-  }
-
-  void discardDialog(BuildContext context) async {
-    final shouldDiscardChanges = await showDiscardUploadedMusicSheetChangesDialog(context);
-    if (shouldDiscardChanges && context.mounted) {
-      resetMusicSheetCubitAndShowPlaylist(context);
-    }
   }
 }

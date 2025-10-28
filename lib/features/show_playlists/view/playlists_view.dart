@@ -22,6 +22,7 @@ class PlaylistsView extends HookWidget {
     final AuthUser user = context.read<AuthBloc>().state.user!;
     final String userId = user.id;
     final theme = Theme.of(context);
+    final primaryColorScheme = theme.colorScheme.primary;
     final localizations = context.loc;
 
     useEffect(() {
@@ -34,7 +35,7 @@ class PlaylistsView extends HookWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.list_alt, color: theme.colorScheme.primary),
+            Icon(Icons.list_alt, color: primaryColorScheme),
             const SizedBox(width: 8),
             Text(
               localizations.myPlaylists,
@@ -47,24 +48,25 @@ class PlaylistsView extends HookWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final playlistName = await showAddPlaylistDialog(context: context);
-          if (playlistName != null && context.mounted) {
-            context.read<ShowPlaylistsCubit>().addPlaylist(
-              playlistName: playlistName,
-              userId: userId,
-            );
-          }
+        onPressed: () {
+          showAddPlaylistDialog(context: context).then((playlistName) {
+            if (playlistName != null && context.mounted) {
+              context.read<ShowPlaylistsCubit>().addPlaylist(
+                playlistName: playlistName,
+                userId: userId,
+              );
+            }
+          });
         },
         icon: const Icon(Icons.add),
         label: Text(localizations.newPlaylist),
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: primaryColorScheme,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
       body: BlocBuilder<ShowPlaylistsCubit, ShowPlaylistsState>(
         builder: (context, state) {
+          final surfaceVariantColor = theme.colorScheme.onSurfaceVariant;
           if (state.playlists.isEmpty) {
-            final surfaceVariantColor = theme.colorScheme.onSurfaceVariant;
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -124,17 +126,15 @@ class PlaylistsView extends HookWidget {
                       return;
                     },
                     child: InkWell(
-                      onLongPress: () async {
-                        final newPlaylistName = await showEditPlaylistDialog(
-                          context: context,
-                          playlistName: playlist.name,
-                        );
-                        if (newPlaylistName != null && context.mounted) {
-                          context.read<ShowPlaylistsCubit>().editPlaylistName(
-                            newPlaylistName: newPlaylistName,
-                            playlist: playlist,
-                          );
-                        }
+                      onLongPress: () {
+                        showEditPlaylistDialog(context: context, playlistName: playlist.name).then((newPlaylistName) {
+                          if (newPlaylistName != null && context.mounted) {
+                            context.read<ShowPlaylistsCubit>().editPlaylistName(
+                              newPlaylistName: newPlaylistName,
+                              playlist: playlist,
+                            );
+                          }
+                        });
                       },
                       onTap: () {
                         context.read<PlaylistBloc>().add(
@@ -158,7 +158,7 @@ class PlaylistsView extends HookWidget {
                                   Text(
                                     "${localizations.musicSheets}: ${playlist.musicSheets.length}",
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurfaceVariant,
+                                      color: surfaceVariantColor,
                                     ),
                                   ),
                                 ],
@@ -166,7 +166,7 @@ class PlaylistsView extends HookWidget {
                             ),
                             Icon(
                               Icons.chevron_right,
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: surfaceVariantColor,
                             ),
                           ],
                         ),

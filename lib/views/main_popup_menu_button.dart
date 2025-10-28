@@ -6,8 +6,6 @@ import 'package:organista/features/settings/view/settings_view.dart';
 import 'package:organista/features/about/view/about_view.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
-enum MenuAction { logout, settings, about }
-
 class MainPopupMenuButton extends StatelessWidget {
   const MainPopupMenuButton({super.key});
 
@@ -79,3 +77,5 @@ class MainPopupMenuButton extends StatelessWidget {
     );
   }
 }
+
+enum MenuAction { logout, settings, about }

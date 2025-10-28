@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/customRepositories/add_custom_repository_dialog.dart';
 import 'package:organista/dialogs/show_repositories_error.dart';
-import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 import 'package:organista/features/show_repositories/models/repository_tab_type.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/services/auth/auth_user.dart';
@@ -71,20 +71,21 @@ class RepositoriesViewContent extends HookWidget {
           }
         },
         builder: (context, state) {
-          return _buildRepositoryList(context, state, userId, selectedTab.value);
+          return _buildRepositoryList(context, state, selectedTab.value);
         },
       ),
       bottomNavigationBar: _buildBottomNavBar(context, selectedTab),
       floatingActionButton: selectedTab.value.isPersonal
           ? FloatingActionButton.extended(
-              onPressed: () async {
-                final repositoryName = await showAddCustomRepositoryDialog(context: context);
-                if (repositoryName != null && context.mounted) {
-                  context.read<ShowRepositoriesCubit>().createRepository(
-                    repositoryName: repositoryName,
-                    userId: userId,
-                  );
-                }
+              onPressed: () {
+                showAddCustomRepositoryDialog(context: context).then((repositoryName) {
+                  if (repositoryName != null && context.mounted) {
+                    context.read<ShowRepositoriesCubit>().createRepository(
+                      repositoryName: repositoryName,
+                      userId: userId,
+                    );
+                  }
+                });
               },
               icon: const Icon(Icons.add),
               label: Text(localizations.newRepository),
@@ -98,7 +99,6 @@ class RepositoriesViewContent extends HookWidget {
   Widget _buildRepositoryList(
     BuildContext context,
     ShowRepositoriesState state,
-    String userId,
     RepositoryTabType selectedTab,
   ) {
     final currentRepositories = selectedTab.isGlobal ? state.publicRepositories : state.privateRepositories;

@@ -1,4 +1,4 @@
-part of 'repositories_cubit.dart';
+part of 'show_repositories_cubit.dart';
 
 @immutable
 sealed class ShowRepositoriesState extends Equatable {

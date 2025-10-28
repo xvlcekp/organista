@@ -127,17 +127,18 @@ class RepositoryMusicSheetTile extends HookWidget {
                         color: theme.colorScheme.error,
                       ),
                       tooltip: localizations.deleteTooltip,
-                      onPressed: () async {
-                        final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
-                        if (shouldDeleteMusicSheet && context.mounted) {
-                          context.read<MusicSheetRepositoryBloc>().add(
-                            DeleteMusicSheet(
-                              musicSheet: musicSheet,
-                              repositoryId: repositoryId,
-                            ),
-                          );
-                          searchBarController.text = '';
-                        }
+                      onPressed: () {
+                        showDeleteImageDialog(context).then((shouldDeleteMusicSheet) {
+                          if (shouldDeleteMusicSheet && context.mounted) {
+                            context.read<MusicSheetRepositoryBloc>().add(
+                              DeleteMusicSheet(
+                                musicSheet: musicSheet,
+                                repositoryId: repositoryId,
+                              ),
+                            );
+                            searchBarController.text = '';
+                          }
+                        });
                       },
                     ),
                 ],

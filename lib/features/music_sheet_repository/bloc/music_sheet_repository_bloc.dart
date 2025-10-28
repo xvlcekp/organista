@@ -41,7 +41,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     return filteredSheets;
   }
 
-  Future<void> _onSearchMusicSheets(SearchMusicSheets event, Emitter<MusicSheetRepositoryState> emit) async {
+  void _onSearchMusicSheets(SearchMusicSheets event, Emitter<MusicSheetRepositoryState> emit) {
     if (state is MusicSheetRepositoryLoaded) {
       final allSheets = (state as MusicSheetRepositoryLoaded).allMusicSheets;
       final filteredSheets = _filterMusicSheets(allSheets, event.query);
@@ -58,10 +58,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     );
   }
 
-  void _initMusicSheetsRepositoryEvent(
-    InitMusicSheetsRepositoryEvent event,
-    Emitter<MusicSheetRepositoryState> emit,
-  ) async {
+  void _initMusicSheetsRepositoryEvent(InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) {
     emit(MusicSheetRepositoryLoading());
 
     try {

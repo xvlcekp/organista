@@ -105,7 +105,7 @@ class MusicSheetRepositoryView extends HookWidget {
       return visibleSelected.length == visibleIds.length;
     }
 
-    Future<void> addSelectedToPlaylist(BuildContext context, Playlist playlist, List<MusicSheet> musicSheets) async {
+    void addSelectedToPlaylist(BuildContext context, Playlist playlist, List<MusicSheet> musicSheets) {
       context.read<PlaylistBloc>().add(
         AddMusicSheetsToPlaylistEvent(
           musicSheets: musicSheets,
@@ -115,14 +115,14 @@ class MusicSheetRepositoryView extends HookWidget {
       Navigator.of(context).popUntilRoute<PlaylistView>(context);
     }
 
-    Future<void> showPlaylistSelectionDialog(BuildContext context, List<MusicSheet> allMusicSheets) async {
+    void showPlaylistSelectionDialog(BuildContext context, List<MusicSheet> allMusicSheets) {
       final playlist = context.read<PlaylistBloc>().state.playlist;
       final selectedMusicSheets = allMusicSheets
           .where((sheet) => selectedMusicSheetIds.value.contains(sheet.musicSheetId))
           .toList();
 
       // Use the original context that has access to the FirebaseFirestoreRepository
-      await addSelectedToPlaylist(context, playlist, selectedMusicSheets);
+      addSelectedToPlaylist(context, playlist, selectedMusicSheets);
       exitSelectionMode();
     }
 

@@ -5,7 +5,7 @@ import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/customRepositories/delete_repository_dialog.dart';
 import 'package:organista/dialogs/customRepositories/rename_repository_dialog.dart';
 import 'package:organista/dialogs/show_repositories_error.dart';
-import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 
 import 'package:organista/logger/custom_logger.dart';
