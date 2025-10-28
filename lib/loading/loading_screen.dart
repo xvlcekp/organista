@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/loading/loading_screen_controller.dart';
 
 class LoadingScreen {
@@ -49,20 +50,11 @@ class LoadingScreen {
           child: Center(
             child: Container(
               constraints: BoxConstraints(
-                maxWidth: size.width * 0.8,
-                maxHeight: size.height * 0.8,
                 minWidth: size.width * 0.5,
               ),
               decoration: BoxDecoration(
                 color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.shadow.withAlpha(40),
-                    blurRadius: 10.0,
-                    spreadRadius: 2.0,
-                  ),
-                ],
+                borderRadius: BorderRadius.circular(AppTheme.dialogBorderRadius),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -72,12 +64,7 @@ class LoadingScreen {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 16),
-                      CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          colorScheme.primary,
-                        ),
-                        strokeWidth: 3.0,
-                      ),
+                      const CircularProgressIndicator(),
                       const SizedBox(height: 24),
                       StreamBuilder(
                         stream: textController.stream,
