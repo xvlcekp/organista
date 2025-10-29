@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/customRepositories/delete_repository_dialog.dart';
 import 'package:organista/dialogs/customRepositories/rename_repository_dialog.dart';
 import 'package:organista/dialogs/show_repositories_error.dart';
@@ -44,7 +45,7 @@ class RepositoryTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: _getFixedColor(),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(40),
@@ -75,34 +76,21 @@ class RepositoryTile extends StatelessWidget {
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   FutureBuilder<int>(
                     future: _loadMusicSheetsCount(context),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return SizedBox(
+                        return const SizedBox(
                           height: 16,
                           width: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white.withAlpha(200),
-                            ),
-                          ),
+                          child: CircularProgressIndicator(),
                         );
                       }
 
                       final count = snapshot.data ?? 0;
-                      return Text(
-                        '$count ${localizations.sheets}',
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(200),
-                          fontSize: 14,
-                        ),
-                      );
+                      return Text('$count ${localizations.sheets}', style: const TextStyle(color: Colors.white));
                     },
                   ),
                 ],
@@ -145,19 +133,20 @@ class RepositoryTile extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.edit),
                 title: Text(localizations.renameRepository),
-                onTap: () async {
+                onTap: () {
                   Navigator.of(bottomSheetContext).pop();
-                  final newName = await showRenameRepositoryDialog(
+                  showRenameRepositoryDialog(
                     context: context,
                     repositoryName: repository.name,
-                  );
-                  if (newName != null) {
-                    repositoriesCubit.renameRepository(
-                      repositoryId: repository.repositoryId,
-                      newName: newName,
-                      currentUserId: currentUserId,
-                    );
-                  }
+                  ).then((newName) {
+                    if (newName != null) {
+                      repositoriesCubit.renameRepository(
+                        repositoryId: repository.repositoryId,
+                        newName: newName,
+                        currentUserId: currentUserId,
+                      );
+                    }
+                  });
                 },
               ),
               ListTile(
@@ -166,15 +155,16 @@ class RepositoryTile extends StatelessWidget {
                   localizations.deleteRepository,
                   style: const TextStyle(color: Colors.red),
                 ),
-                onTap: () async {
+                onTap: () {
                   Navigator.of(bottomSheetContext).pop();
-                  final shouldDelete = await showDeleteRepositoryDialog(context: context, repository: repository);
-                  if (shouldDelete) {
-                    repositoriesCubit.deleteRepository(
-                      repositoryId: repository.repositoryId,
-                      currentUserId: currentUserId,
-                    );
-                  }
+                  showDeleteRepositoryDialog(context: context, repository: repository).then((shouldDelete) {
+                    if (shouldDelete) {
+                      repositoriesCubit.deleteRepository(
+                        repositoryId: repository.repositoryId,
+                        currentUserId: currentUserId,
+                      );
+                    }
+                  });
                 },
               ),
             ],

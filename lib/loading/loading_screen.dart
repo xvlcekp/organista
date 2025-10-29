@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/loading/loading_screen_controller.dart';
@@ -7,6 +6,7 @@ class LoadingScreen {
   LoadingScreen._sharedInstance();
   static final LoadingScreen _shared = LoadingScreen._sharedInstance();
   factory LoadingScreen.instance() => _shared;
+  static const int shadowTransparency = 125;
 
   LoadingScreenController? controller;
 
@@ -17,7 +17,7 @@ class LoadingScreen {
     if (controller?.update(text) ?? false) {
       return;
     } else {
-      controller = showOverlay(
+      controller = _showOverlay(
         context: context,
         text: text,
       );
@@ -29,61 +29,39 @@ class LoadingScreen {
     controller = null;
   }
 
-  LoadingScreenController showOverlay({
+  LoadingScreenController _showOverlay({
     required BuildContext context,
     required String text,
   }) {
-    final textController = StreamController<String>();
-    textController.add(text);
+    final overlay = Overlay.of(context);
+    String currentText = text;
+    OverlayEntry? overlayEntry;
 
-    final state = Overlay.of(context);
-    final renderBox = context.findRenderObject() as RenderBox;
-    final size = renderBox.size;
-
-    final overlay = OverlayEntry(
+    overlayEntry = OverlayEntry(
       builder: (context) {
         final theme = Theme.of(context);
         final colorScheme = theme.colorScheme;
 
         return Material(
-          color: colorScheme.scrim.withAlpha(125),
+          color: colorScheme.scrim.withAlpha(shadowTransparency),
           child: Center(
             child: Container(
-              constraints: BoxConstraints(
-                minWidth: size.width * 0.5,
-              ),
+              padding: const EdgeInsets.all(24.0),
               decoration: BoxDecoration(
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(AppTheme.dialogBorderRadius),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 16),
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 24),
-                      StreamBuilder(
-                        stream: textController.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              snapshot.data as String,
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.titleMedium,
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 24),
+                  Text(
+                    currentText,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.titleMedium,
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -91,16 +69,17 @@ class LoadingScreen {
       },
     );
 
-    state.insert(overlay);
+    overlay.insert(overlayEntry);
 
     return LoadingScreenController(
       close: () {
-        textController.close();
-        overlay.remove();
+        overlayEntry?.remove();
+        overlayEntry = null;
         return true;
       },
       update: (text) {
-        textController.add(text);
+        currentText = text;
+        overlayEntry?.markNeedsBuild();
         return true;
       },
     );
