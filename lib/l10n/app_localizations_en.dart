@@ -283,7 +283,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personal => 'Personal';
 
   @override
-  String get sheets => 'sheets';
+  String sheets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'sheets',
+      one: 'sheet',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get addMusicSheet => 'Add music sheet';

@@ -635,8 +635,8 @@ abstract class AppLocalizations {
   /// No description provided for @sheets.
   ///
   /// In sk, this message translates to:
-  /// **'položiek'**
-  String get sheets;
+  /// **'{count, plural, =1{položka} few{položky} other{položiek}}'**
+  String sheets(int count);
 
   /// No description provided for @addMusicSheet.
   ///
@@ -994,25 +994,25 @@ abstract class AppLocalizations {
   /// No description provided for @repositoryGenericError.
   ///
   /// In sk, this message translates to:
-  /// **'Pri vykonávaní operácie s repozitárom došlo k chybe'**
+  /// **'Pri vykonávaní operácie s repozitárom došlo k chybe!'**
   String get repositoryGenericError;
 
   /// No description provided for @repositoryNotFoundError.
   ///
   /// In sk, this message translates to:
-  /// **'Repozitár nebol nájdený'**
+  /// **'Repozitár nebol nájdený!'**
   String get repositoryNotFoundError;
 
   /// No description provided for @repositoryCannotModifyPublicError.
   ///
   /// In sk, this message translates to:
-  /// **'Verejné repozitáre nie je možné upravovať'**
+  /// **'Verejné repozitáre nie je možné upravovať!'**
   String get repositoryCannotModifyPublicError;
 
   /// No description provided for @repositoryCannotModifyOtherUsersError.
   ///
   /// In sk, this message translates to:
-  /// **'Môžete upravovať len vlastné repozitáre'**
+  /// **'Môžete upravovať len vlastné repozitáre!'**
   String get repositoryCannotModifyOtherUsersError;
 
   /// Error message when user tries to create more repositories than allowed

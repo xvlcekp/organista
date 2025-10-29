@@ -89,7 +89,14 @@
     "noPersonalRepositories": "No personal repositories available.",
     "global": "Global",
     "personal": "Personal",
-    "sheets": "sheets",
+    "sheets": "{count, plural, =1{sheet} other{sheets}}",
+    "@sheets": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "addMusicSheet": "Add music sheet",
     "edit": "Edit",
     "change": "Change",

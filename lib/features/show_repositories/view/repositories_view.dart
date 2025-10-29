@@ -104,6 +104,11 @@ class RepositoriesViewContent extends HookWidget {
     final currentRepositories = selectedTab.isGlobal ? state.publicRepositories : state.privateRepositories;
     final localizations = context.loc;
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    const axisSpacing = 8.0;
+    const landscapeItemsCount = 4;
+    const portraitItemsCount = 2;
+    const landscapeAspectRatio = 1.2;
+    const portraitAspectRatio = 1.5;
 
     if (currentRepositories.isEmpty) {
       return Center(
@@ -117,10 +122,10 @@ class RepositoriesViewContent extends HookWidget {
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: isLandscape ? 4 : 2,
-          childAspectRatio: isLandscape ? 1.2 : 1.5,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
+          crossAxisCount: isLandscape ? landscapeItemsCount : portraitItemsCount,
+          childAspectRatio: isLandscape ? landscapeAspectRatio : portraitAspectRatio,
+          crossAxisSpacing: axisSpacing,
+          mainAxisSpacing: axisSpacing,
         ),
         itemCount: currentRepositories.length,
         itemBuilder: (context, index) {
@@ -132,6 +137,7 @@ class RepositoriesViewContent extends HookWidget {
 
   Widget _buildBottomNavBar(BuildContext context, ValueNotifier<RepositoryTabType> selectedTab) {
     final localizations = context.loc;
+    const bottomNavBarHeight = 60.0;
     return NavigationBar(
       selectedIndex: selectedTab.value.index,
       onDestinationSelected: (index) {
@@ -147,7 +153,7 @@ class RepositoriesViewContent extends HookWidget {
           label: localizations.personal,
         ),
       ],
-      height: 60,
+      height: bottomNavBarHeight,
     );
   }
 }
