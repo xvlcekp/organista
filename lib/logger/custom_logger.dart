@@ -2,7 +2,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:organista/logger/custom_filter.dart';
-import 'package:organista/logger/custom_pretty_printer.dart';
 import 'package:organista/logger/google_cloud_logging_service.dart';
 
 CustomLogger get logger => CustomLogger.instance;
@@ -12,7 +11,7 @@ class CustomLogger extends Logger {
   CustomLogger._()
     : super(
         filter: CustomFilter(),
-        printer: CustomPrettyPrinter(),
+        printer: PrettyPrinter(),
       ) {
     Logger.addOutputListener((event) {
       if (kReleaseMode) {

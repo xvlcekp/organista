@@ -10,6 +10,7 @@ import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
+import 'package:organista/widgets/empty_list_widget.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
 class PlaylistView extends HookWidget {
@@ -77,32 +78,10 @@ class PlaylistView extends HookWidget {
           logger.i("Item count is ${playlist.musicSheets.length}");
 
           if (playlist.musicSheets.isEmpty) {
-            final surfaceVariantColor = theme.colorScheme.onSurfaceVariant;
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.music_off,
-                    size: 64,
-                    color: surfaceVariantColor,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    localizations.noMusicSheetsYet,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: surfaceVariantColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    localizations.addYourFirstMusicSheet,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: surfaceVariantColor,
-                    ),
-                  ),
-                ],
-              ),
+            return EmptyListWidget(
+              icon: Icons.music_off,
+              title: localizations.noMusicSheetsYet,
+              subtitle: localizations.addYourFirstMusicSheet,
             );
           }
 

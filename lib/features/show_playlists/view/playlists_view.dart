@@ -12,6 +12,7 @@ import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dar
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/views/main_popup_menu_button.dart';
+import 'package:organista/widgets/empty_list_widget.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
 class PlaylistsView extends HookWidget {
@@ -67,31 +68,10 @@ class PlaylistsView extends HookWidget {
         builder: (context, state) {
           final surfaceVariantColor = theme.colorScheme.onSurfaceVariant;
           if (state.playlists.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.music_off,
-                    size: 64,
-                    color: surfaceVariantColor,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    localizations.noPlaylistsYet,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: surfaceVariantColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    localizations.createFirstPlaylist,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: surfaceVariantColor,
-                    ),
-                  ),
-                ],
-              ),
+            return EmptyListWidget(
+              icon: Icons.music_off,
+              title: localizations.noPlaylistsYet,
+              subtitle: localizations.createFirstPlaylist,
             );
           }
           return SafeArea(

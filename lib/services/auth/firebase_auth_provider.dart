@@ -111,7 +111,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
       // Create Firebase credential and sign in (we only need ID token for authentication)
       return await _signInToFirebaseWithGoogleCredential(idToken);
-    } catch (e) {
+    } catch (e, stackTrace) {
       // If it's already an AuthError, rethrow it
       if (e is AuthError) {
         rethrow;
@@ -119,7 +119,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
       // Log and wrap any other unexpected errors
       logger.e('Unexpected error during Google Sign-In: $e');
-      throw const AuthErrorGoogleSignInFailed();
+      Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
     }
   }
 
@@ -135,12 +135,12 @@ class FirebaseAuthProvider implements AuthProvider {
     logger.d('Signing in to Firebase with Google credential');
     try {
       await FirebaseAuth.instance.signInWithCredential(credential);
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e, stackTrace) {
       logger.e('Firebase sign-in failed: ${e.code} - ${e.message}');
-      throw AuthError.from(e);
-    } catch (e) {
+      Error.throwWithStackTrace(AuthError.from(e), stackTrace);
+    } catch (e, stackTrace) {
       logger.e('Firebase sign-in failed with unexpected error: $e');
-      throw const AuthErrorGoogleSignInFailed();
+      Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
     }
 
     // Verify user is signed in

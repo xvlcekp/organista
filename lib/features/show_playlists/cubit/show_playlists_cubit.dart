@@ -17,7 +17,7 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
        super(const InitPlaylistState());
 
-  late final StreamSubscription<Iterable<Playlist>> _streamSubscription;
+  StreamSubscription<Iterable<Playlist>>? _streamSubscription;
 
   void resetState() {
     emit(const InitPlaylistState());
@@ -42,7 +42,7 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
     // Cancel the subscription when leaving the page for optimization
     // Cached values will be available when returning
     // Note: StreamManager handles removeListener automatically via onCancel
-    _streamSubscription.cancel();
+    _streamSubscription?.cancel();
     return super.close();
   }
 

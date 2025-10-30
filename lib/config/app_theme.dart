@@ -7,6 +7,7 @@ class AppTheme {
   static const double inputBorderRadius = 8.0;
   static const double buttonBorderRadius = 30.0;
   static const double dialogBorderRadius = 8.0;
+  static const int selectedColorAlpha = 50;
   static ThemeData get lightTheme {
     return _buildTheme(
       brightness: Brightness.light,

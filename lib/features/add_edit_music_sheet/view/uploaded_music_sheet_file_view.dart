@@ -46,16 +46,7 @@ class UploadedMusicSheetFileView extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: GestureDetector(
-            child: child,
-            onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => MusicSheetFullScreenView(musicSheet: musicSheet),
-              //   ),
-              // );
-            },
-          ),
+          child: child,
         ),
       ],
     );
