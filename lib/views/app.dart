@@ -57,9 +57,9 @@ class App extends StatelessWidget {
             title: 'Organista',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: settingsState.themeMode,
+            themeMode: ThemeMode.values[settingsState.themeModeIndex],
             debugShowCheckedModeBanner: false,
-            locale: settingsState.locale,
+            locale: Locale(settingsState.localeString),
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: BlocConsumer<AuthBloc, AuthState>(

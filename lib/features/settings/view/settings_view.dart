@@ -39,7 +39,7 @@ class SettingsView extends StatelessWidget {
                 ListTile(
                   title: Text(localizations.language),
                   trailing: DropdownButton<String>(
-                    value: state.locale.languageCode,
+                    value: state.localeString,
                     items: [
                       DropdownMenuItem(
                         value: 'en',
@@ -52,7 +52,7 @@ class SettingsView extends StatelessWidget {
                     ],
                     onChanged: (String? languageCode) {
                       if (languageCode != null) {
-                        settingsCubit.changeLanguage(Locale(languageCode));
+                        settingsCubit.changeLanguage(languageCode);
                       }
                     },
                   ),
@@ -60,7 +60,7 @@ class SettingsView extends StatelessWidget {
                 ListTile(
                   title: Text(localizations.theme),
                   trailing: DropdownButton<ThemeMode>(
-                    value: state.themeMode,
+                    value: ThemeMode.values[state.themeModeIndex],
                     items: [
                       DropdownMenuItem(
                         value: ThemeMode.system,
@@ -77,7 +77,7 @@ class SettingsView extends StatelessWidget {
                     ],
                     onChanged: (ThemeMode? themeMode) {
                       if (themeMode != null) {
-                        settingsCubit.changeTheme(themeMode);
+                        settingsCubit.changeTheme(themeMode.index);
                       }
                     },
                   ),

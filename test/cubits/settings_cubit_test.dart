@@ -55,16 +55,16 @@ void main() {
 
   group('SettingsState', () {
     test('supports value equality', () {
-      const state1 = SettingsState(
-        themeMode: ThemeMode.dark,
-        locale: Locale('en'),
+      final state1 = SettingsState(
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
-      const state2 = SettingsState(
-        themeMode: ThemeMode.dark,
-        locale: Locale('en'),
+      final state2 = SettingsState(
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
@@ -73,49 +73,49 @@ void main() {
     });
 
     test('copyWith returns new instance with updated values', () {
-      const originalState = SettingsState(
-        themeMode: ThemeMode.light,
-        locale: Locale('sk'),
+      final originalState = SettingsState(
+        themeModeIndex: ThemeMode.light.index,
+        localeString: 'sk',
         showNavigationArrows: false,
         keepScreenOn: false,
       );
 
       final newState = originalState.copyWith(
-        themeMode: ThemeMode.dark,
+        themeModeIndex: ThemeMode.dark.index,
         keepScreenOn: true,
       );
 
-      expect(newState.themeMode, ThemeMode.dark);
-      expect(newState.locale, const Locale('sk')); // unchanged
+      expect(newState.themeModeIndex, ThemeMode.dark.index);
+      expect(newState.localeString, 'sk'); // unchanged
       expect(newState.showNavigationArrows, false); // unchanged
       expect(newState.keepScreenOn, true);
     });
 
     test('has correct default values', () {
-      const state = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('sk'),
+      final state = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'sk',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
-      expect(state.themeMode, ThemeMode.system);
-      expect(state.locale, const Locale('sk'));
+      expect(state.themeModeIndex, ThemeMode.system.index);
+      expect(state.localeString, 'sk');
       expect(state.showNavigationArrows, true);
       expect(state.keepScreenOn, false);
     });
 
     test('should support inequality', () {
-      const state1 = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('en'),
+      final state1 = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
-      const state2 = SettingsState(
-        themeMode: ThemeMode.dark,
-        locale: Locale('en'),
+      final state2 = SettingsState(
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
@@ -124,9 +124,9 @@ void main() {
     });
 
     test('should support copyWith for keepScreenOn', () {
-      const originalState = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('sk'),
+      final originalState = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'sk',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
@@ -134,28 +134,28 @@ void main() {
       final newState = originalState.copyWith(keepScreenOn: true);
 
       expect(newState.keepScreenOn, true);
-      expect(newState.themeMode, originalState.themeMode);
-      expect(newState.locale, originalState.locale);
+      expect(newState.themeModeIndex, originalState.themeModeIndex);
+      expect(newState.localeString, originalState.localeString);
       expect(newState.showNavigationArrows, originalState.showNavigationArrows);
     });
 
     test('should support copyWith for multiple properties including keepScreenOn', () {
-      const originalState = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('sk'),
+      final originalState = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'sk',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
       final newState = originalState.copyWith(
         keepScreenOn: true,
-        themeMode: ThemeMode.dark,
-        locale: const Locale('en'),
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
       );
 
       expect(newState.keepScreenOn, true);
-      expect(newState.themeMode, ThemeMode.dark);
-      expect(newState.locale, const Locale('en'));
+      expect(newState.themeModeIndex, ThemeMode.dark.index);
+      expect(newState.localeString, 'en');
       expect(newState.showNavigationArrows, originalState.showNavigationArrows);
     });
   });
@@ -196,8 +196,8 @@ void main() {
 
         settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
 
-        expect(settingsCubit.state.themeMode, ThemeMode.system);
-        expect(settingsCubit.state.locale, const Locale('sk'));
+        expect(settingsCubit.state.themeModeIndex, ThemeMode.system.index);
+        expect(settingsCubit.state.localeString, 'sk');
         expect(settingsCubit.state.showNavigationArrows, true);
         expect(settingsCubit.state.keepScreenOn, false);
 
@@ -213,8 +213,8 @@ void main() {
 
         settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
 
-        expect(settingsCubit.state.themeMode, ThemeMode.dark);
-        expect(settingsCubit.state.locale, const Locale('en'));
+        expect(settingsCubit.state.themeModeIndex, ThemeMode.dark.index);
+        expect(settingsCubit.state.localeString, 'en');
         expect(settingsCubit.state.showNavigationArrows, false);
         expect(settingsCubit.state.keepScreenOn, true);
 
@@ -238,9 +238,9 @@ void main() {
       });
 
       test('should change theme mode and save to preferences', () {
-        settingsCubit.changeTheme(ThemeMode.dark);
+        settingsCubit.changeTheme(ThemeMode.dark.index);
 
-        expect(settingsCubit.state.themeMode, ThemeMode.dark);
+        expect(settingsCubit.state.themeModeIndex, ThemeMode.dark.index);
         verify(() => mockPrefs.setInt('theme_mode', 2)).called(1);
       });
 
@@ -248,12 +248,12 @@ void main() {
         final states = <SettingsState>[];
         settingsCubit.stream.listen(states.add);
 
-        settingsCubit.changeTheme(ThemeMode.light);
+        settingsCubit.changeTheme(ThemeMode.light.index);
         await Future.delayed(Duration.zero); // Allow stream to emit
 
         expect(states.length, 1);
-        expect(states.first.themeMode, ThemeMode.light);
-        expect(states.first.locale, const Locale('sk')); // Other values unchanged
+        expect(states.first.themeModeIndex, ThemeMode.light.index);
+        expect(states.first.localeString, 'sk'); // Other values unchanged
         expect(states.first.showNavigationArrows, true); // Other values unchanged
         expect(states.first.keepScreenOn, false); // Other values unchanged
       });
@@ -265,9 +265,9 @@ void main() {
       });
 
       test('should change language and save to preferences', () {
-        settingsCubit.changeLanguage(const Locale('en'));
+        settingsCubit.changeLanguage('en');
 
-        expect(settingsCubit.state.locale, const Locale('en'));
+        expect(settingsCubit.state.localeString, 'en');
         verify(() => mockPrefs.setString('language_code', 'en')).called(1);
       });
 
@@ -275,12 +275,12 @@ void main() {
         final states = <SettingsState>[];
         settingsCubit.stream.listen(states.add);
 
-        settingsCubit.changeLanguage(const Locale('en'));
+        settingsCubit.changeLanguage('en');
         await Future.delayed(Duration.zero); // Allow stream to emit
 
         expect(states.length, 1);
-        expect(states.first.locale, const Locale('en'));
-        expect(states.first.themeMode, ThemeMode.system); // Other values unchanged
+        expect(states.first.localeString, 'en');
+        expect(states.first.themeModeIndex, ThemeMode.system.index); // Other values unchanged
         expect(states.first.showNavigationArrows, true); // Other values unchanged
         expect(states.first.keepScreenOn, false); // Other values unchanged
       });
@@ -307,8 +307,8 @@ void main() {
 
         expect(states.length, 1);
         expect(states.first.showNavigationArrows, false);
-        expect(states.first.themeMode, ThemeMode.system); // Other values unchanged
-        expect(states.first.locale, const Locale('sk')); // Other values unchanged
+        expect(states.first.themeModeIndex, ThemeMode.system.index); // Other values unchanged
+        expect(states.first.localeString, 'sk'); // Other values unchanged
         expect(states.first.keepScreenOn, false); // Other values unchanged
       });
     });
@@ -349,8 +349,8 @@ void main() {
 
         expect(states.length, 1);
         expect(states.first.keepScreenOn, true);
-        expect(states.first.themeMode, ThemeMode.system); // Other values unchanged
-        expect(states.first.locale, const Locale('sk')); // Other values unchanged
+        expect(states.first.themeModeIndex, ThemeMode.system.index); // Other values unchanged
+        expect(states.first.localeString, 'sk'); // Other values unchanged
         expect(states.first.showNavigationArrows, true); // Other values unchanged
       });
 
@@ -382,8 +382,8 @@ void main() {
 
       test('should persist all settings correctly', () async {
         await settingsCubit.changeKeepScreenOn(true);
-        settingsCubit.changeTheme(ThemeMode.dark);
-        settingsCubit.changeLanguage(const Locale('en'));
+        settingsCubit.changeTheme(ThemeMode.dark.index);
+        settingsCubit.changeLanguage('en');
         settingsCubit.changeShowNavigationArrows(false);
 
         verify(() => mockPrefs.setBool('keep_screen_on', true)).called(1);

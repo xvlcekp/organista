@@ -46,18 +46,18 @@ void main() {
       );
 
       when(() => mockSettingsCubit.state).thenReturn(
-        const SettingsState(
-          themeMode: ThemeMode.system,
-          locale: Locale('en'),
+        SettingsState(
+          themeModeIndex: ThemeMode.system.index,
+          localeString: 'en',
           showNavigationArrows: true,
           keepScreenOn: false,
         ),
       );
       when(() => mockSettingsCubit.stream).thenAnswer(
         (_) => Stream.fromIterable([
-          const SettingsState(
-            themeMode: ThemeMode.system,
-            locale: Locale('en'),
+          SettingsState(
+            themeModeIndex: ThemeMode.system.index,
+            localeString: 'en',
             showNavigationArrows: true,
             keepScreenOn: false,
           ),
@@ -76,9 +76,9 @@ void main() {
     Widget createTestWidget({SettingsState? initialState, bool withNavigatorObserver = false}) {
       final state =
           initialState ??
-          const SettingsState(
-            themeMode: ThemeMode.system,
-            locale: Locale('en'),
+          SettingsState(
+            themeModeIndex: ThemeMode.system.index,
+            localeString: 'en',
             showNavigationArrows: true,
             keepScreenOn: false,
           );
@@ -215,9 +215,9 @@ void main() {
       testWidgets('should display switch in OFF state when keepScreenOn is false', (tester) async {
         await tester.pumpWidget(
           createTestWidget(
-            initialState: const SettingsState(
-              themeMode: ThemeMode.system,
-              locale: Locale('en'),
+            initialState: SettingsState(
+              themeModeIndex: ThemeMode.system.index,
+              localeString: 'en',
               showNavigationArrows: true,
               keepScreenOn: false,
             ),
@@ -245,9 +245,9 @@ void main() {
       testWidgets('should display switch in ON state when keepScreenOn is true', (tester) async {
         await tester.pumpWidget(
           createTestWidget(
-            initialState: const SettingsState(
-              themeMode: ThemeMode.system,
-              locale: Locale('en'),
+            initialState: SettingsState(
+              themeModeIndex: ThemeMode.system.index,
+              localeString: 'en',
               showNavigationArrows: true,
               keepScreenOn: true,
             ),
@@ -292,9 +292,9 @@ void main() {
       testWidgets('should call changeKeepScreenOn with false when turning off', (tester) async {
         await tester.pumpWidget(
           createTestWidget(
-            initialState: const SettingsState(
-              themeMode: ThemeMode.system,
-              locale: Locale('en'),
+            initialState: SettingsState(
+              themeModeIndex: ThemeMode.system.index,
+              localeString: 'en',
               showNavigationArrows: true,
               keepScreenOn: true,
             ),

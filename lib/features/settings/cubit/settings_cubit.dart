@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/services/wakelock/wakelock_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,8 +20,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   }) : _wakelockService = wakelockService ?? WakelockPlusService(),
        super(
          SettingsState(
-           themeMode: ThemeMode.values[_prefs.getInt(_themeKey) ?? 0],
-           locale: Locale(_prefs.getString(_languageKey) ?? 'sk'),
+           themeModeIndex: _prefs.getInt(_themeKey) ?? 0,
+           localeString: _prefs.getString(_languageKey) ?? 'sk',
            showNavigationArrows: _prefs.getBool(_showNavigationArrowsKey) ?? true,
            keepScreenOn: _prefs.getBool(_keepScreenOnKey) ?? false,
          ),
@@ -43,14 +43,14 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
-  void changeTheme(ThemeMode themeMode) {
-    _prefs.setInt(_themeKey, themeMode.index);
-    emit(state.copyWith(themeMode: themeMode));
+  void changeTheme(int themeModeIndex) {
+    _prefs.setInt(_themeKey, themeModeIndex);
+    emit(state.copyWith(themeModeIndex: themeModeIndex));
   }
 
-  void changeLanguage(Locale locale) {
-    _prefs.setString(_languageKey, locale.languageCode);
-    emit(state.copyWith(locale: locale));
+  void changeLanguage(String localeString) {
+    _prefs.setString(_languageKey, localeString);
+    emit(state.copyWith(localeString: localeString));
   }
 
   void changeShowNavigationArrows(bool showArrows) {
