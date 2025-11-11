@@ -60,7 +60,7 @@ class SettingsView extends StatelessWidget {
                 ListTile(
                   title: Text(localizations.theme),
                   trailing: DropdownButton<ThemeMode>(
-                    value: ThemeMode.values[state.themeModeIndex],
+                    value: state.themeMode,
                     items: [
                       DropdownMenuItem(
                         value: ThemeMode.system,

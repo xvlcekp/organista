@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class SettingsState extends Equatable {
   final int themeModeIndex;
@@ -12,6 +13,10 @@ class SettingsState extends Equatable {
     required this.showNavigationArrows,
     required this.keepScreenOn,
   });
+
+  // Convenience getters for UI layer
+  ThemeMode get themeMode => ThemeMode.values[themeModeIndex];
+  Locale get locale => Locale(localeString);
 
   @override
   List<Object> get props => [themeModeIndex, localeString, showNavigationArrows, keepScreenOn];

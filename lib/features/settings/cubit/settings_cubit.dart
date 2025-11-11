@@ -1,29 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/repositories/settings_repository.dart';
 import 'package:organista/services/wakelock/wakelock_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
-  final SharedPreferencesWithCache _prefs;
+  final SettingsRepository _repository;
   final WakelockService _wakelockService;
 
-  static const String _themeKey = 'theme_mode';
-  static const String _languageKey = 'language_code';
-  static const String _showNavigationArrowsKey = 'show_navigation_arrows';
-  static const String _keepScreenOnKey = 'keep_screen_on';
-
   SettingsCubit(
-    this._prefs, {
+    this._repository, {
     WakelockService? wakelockService,
   }) : _wakelockService = wakelockService ?? WakelockPlusService(),
        super(
          SettingsState(
-           themeModeIndex: _prefs.getInt(_themeKey) ?? 0,
-           localeString: _prefs.getString(_languageKey) ?? 'sk',
-           showNavigationArrows: _prefs.getBool(_showNavigationArrowsKey) ?? true,
-           keepScreenOn: _prefs.getBool(_keepScreenOnKey) ?? false,
+           themeModeIndex: _repository.getThemeModeIndex(),
+           localeString: _repository.getLocaleString(),
+           showNavigationArrows: _repository.getShowNavigationArrows(),
+           keepScreenOn: _repository.getKeepScreenOn(),
          ),
        ) {
     // Initialize wakelock based on saved preference
@@ -44,22 +38,22 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   void changeTheme(int themeModeIndex) {
-    _prefs.setInt(_themeKey, themeModeIndex);
+    _repository.saveThemeModeIndex(themeModeIndex);
     emit(state.copyWith(themeModeIndex: themeModeIndex));
   }
 
   void changeLanguage(String localeString) {
-    _prefs.setString(_languageKey, localeString);
+    _repository.saveLocaleString(localeString);
     emit(state.copyWith(localeString: localeString));
   }
 
   void changeShowNavigationArrows(bool showArrows) {
-    _prefs.setBool(_showNavigationArrowsKey, showArrows);
+    _repository.saveShowNavigationArrows(showArrows);
     emit(state.copyWith(showNavigationArrows: showArrows));
   }
 
   Future<void> changeKeepScreenOn(bool keepScreenOn) async {
-    await _prefs.setBool(_keepScreenOnKey, keepScreenOn);
+    await _repository.saveKeepScreenOn(keepScreenOn);
 
     // Update wakelock based on the new setting
     try {
@@ -74,11 +68,4 @@ class SettingsCubit extends Cubit<SettingsState> {
 
     emit(state.copyWith(keepScreenOn: keepScreenOn));
   }
-
-  // Getters for testing
-  @visibleForTesting
-  SharedPreferencesWithCache get prefs => _prefs;
-
-  @visibleForTesting
-  WakelockService get wakelockService => _wakelockService;
 }

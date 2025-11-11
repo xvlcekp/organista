@@ -16,8 +16,8 @@ import 'package:organista/features/register/register_view.dart';
 import 'package:organista/logger/custom_logger.dart' show logger;
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:organista/repositories/settings_repository.dart';
 import 'package:organista/services/auth/auth_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -48,7 +48,9 @@ class App extends StatelessWidget {
           ),
         ),
         BlocProvider<SettingsCubit>(
-          create: (context) => SettingsCubit(context.read<SharedPreferencesWithCache>()),
+          create: (context) => SettingsCubit(
+            context.read<SettingsRepository>(),
+          ),
         ),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
@@ -57,9 +59,9 @@ class App extends StatelessWidget {
             title: 'Organista',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.values[settingsState.themeModeIndex],
+            themeMode: settingsState.themeMode,
             debugShowCheckedModeBanner: false,
-            locale: Locale(settingsState.localeString),
+            locale: settingsState.locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: BlocConsumer<AuthBloc, AuthState>(
