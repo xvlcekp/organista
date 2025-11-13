@@ -110,39 +110,41 @@ class _SequenceUpdaterScreenState extends State<_SequenceUpdaterScreen> {
   bool isUpdating = false;
   String status = '';
 
-  Future<void> _startUpdate() async {
+  void _startUpdate() {
     setState(() {
       isUpdating = true;
       status = 'Starting sequence update...';
     });
 
-    try {
-      await updateSequenceIds();
-      if (mounted) {
-        setState(() {
-          status = 'Sequence update completed successfully!';
+    updateSequenceIds()
+        .then((_) {
+          if (mounted) {
+            setState(() {
+              status = 'Sequence update completed successfully!';
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Sequence update completed successfully!')),
+            );
+          }
+        })
+        .catchError((e) {
+          if (mounted) {
+            setState(() {
+              status = 'Sequence update failed: ${e.toString()}';
+            });
+            showErrorDialog(
+              context: context,
+              text: 'Sequence update failed: ${e.toString()}',
+            );
+          }
+        })
+        .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              isUpdating = false;
+            });
+          }
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sequence update completed successfully!')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          status = 'Sequence update failed: ${e.toString()}';
-        });
-        showErrorDialog(
-          context: context,
-          text: 'Sequence update failed: ${e.toString()}',
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          isUpdating = false;
-        });
-      }
-    }
   }
 
   @override
