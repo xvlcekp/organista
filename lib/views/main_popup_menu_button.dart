@@ -14,15 +14,16 @@ class MainPopupMenuButton extends StatelessWidget {
     final localizations = context.loc;
 
     return PopupMenuButton<MenuAction>(
-      onSelected: (value) async {
+      onSelected: (value) {
         switch (value) {
           case MenuAction.logout:
-            final shouldLogOut = await showLogOutDialog(context);
-            if (shouldLogOut && context.mounted) {
-              context.read<AuthBloc>().add(
-                const AuthEventLogOut(),
-              );
-            }
+            showLogOutDialog(context).then((shouldLogOut) {
+              if (shouldLogOut && context.mounted) {
+                context.read<AuthBloc>().add(
+                  const AuthEventLogOut(),
+                );
+              }
+            });
             break;
           case MenuAction.settings:
             Navigator.of(context).push(
