@@ -11,7 +11,8 @@ class CustomLogger extends Logger {
   CustomLogger._()
     : super(
         filter: CustomFilter(),
-        printer: PrettyPrinter(),
+        // Use SimplePrinter in release mode to reduce overhead
+        printer: kDebugMode ? PrettyPrinter() : SimplePrinter(),
       ) {
     Logger.addOutputListener((event) {
       if (kReleaseMode) {
