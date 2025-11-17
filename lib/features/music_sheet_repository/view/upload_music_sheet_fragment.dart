@@ -7,7 +7,7 @@ import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_she
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class UploadMusicSheetFragment extends StatelessWidget {
   final String repositoryId;
@@ -29,41 +29,44 @@ class UploadMusicSheetFragment extends StatelessWidget {
             const SizedBox(height: 16), // Space between buttons
             FloatingActionButton(
               heroTag: 'uploadPdfButton',
-              onPressed: () async {
-                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ['jpg', 'pdf', 'png'],
-                  withData: true,
-                );
-                if (result != null) {
-                  try {
-                    final PlatformFile file = result.files.first;
-                    final MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
+              onPressed: () {
+                FilePicker.platform
+                    .pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['jpg', 'pdf', 'png'],
+                      withData: true,
+                    )
+                    .then((result) {
+                      if (result != null) {
+                        try {
+                          final PlatformFile file = result.files.first;
+                          final MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
 
-                    // Check file size
-                    if (file.size > AppConstants.maxFileSizeBytes) {
-                      if (context.mounted) {
-                        showErrorDialog(
-                          context: context,
-                          text: localizations.fileTooLarge(AppConstants.maxFileSizeMB.toString()),
-                        );
+                          // Check file size
+                          if (file.size > AppConstants.maxFileSizeBytes) {
+                            if (context.mounted) {
+                              showErrorDialog(
+                                context: context,
+                                text: localizations.fileTooLarge(AppConstants.maxFileSizeMB),
+                              );
+                            }
+                            return;
+                          }
+
+                          if (context.mounted) {
+                            context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
+                              file: musicSheetFile,
+                              repositoryId: repositoryId,
+                            );
+                            Navigator.of(context).push<void>(AddEditMusicSheetView.route());
+                          }
+                        } on UnsupportedFileExtensionException {
+                          if (context.mounted) {
+                            showErrorDialog(context: context, text: localizations.unsupportedFileExtension);
+                          }
+                        }
                       }
-                      return;
-                    }
-
-                    if (context.mounted) {
-                      context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
-                        file: musicSheetFile,
-                        repositoryId: repositoryId,
-                      );
-                      Navigator.of(context).push<void>(AddEditMusicSheetView.route());
-                    }
-                  } on UnsupportedFileExtensionException {
-                    if (context.mounted) {
-                      showErrorDialog(context: context, text: localizations.unsupportedFileExtension);
-                    }
-                  }
-                }
+                    });
               },
               child: const Icon(Icons.upload),
             ),

@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
-import 'package:organista/features/show_playlists/cubit/playlists_cubit.dart';
+import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlists_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';

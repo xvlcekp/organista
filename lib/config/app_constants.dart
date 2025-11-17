@@ -25,4 +25,8 @@ class AppConstants {
 
   // Playlist limits
   static const int maxPlaylistCapacity = 50;
+
+  // Debug constants
+  static const String debugRegisterEmail = 'test@test.com';
+  static const String debugRegisterPassword = 'test123';
 }

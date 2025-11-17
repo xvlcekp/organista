@@ -2,10 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/customRepositories/delete_repository_dialog.dart';
 import 'package:organista/dialogs/customRepositories/rename_repository_dialog.dart';
 import 'package:organista/dialogs/show_repositories_error.dart';
-import 'package:organista/features/show_repositories/cubit/repositories_cubit.dart';
+import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 
 import 'package:organista/logger/custom_logger.dart';
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class RepositoryTile extends StatelessWidget {
   final Repository repository;
@@ -27,7 +28,6 @@ class RepositoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = context.loc;
     final currentUserId = context.read<AuthBloc>().state.user?.id ?? '';
 
     return GestureDetector(
@@ -44,83 +44,16 @@ class RepositoryTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: _getFixedColor(),
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(40),
-              blurRadius: 4.0,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
         ),
         child: Stack(
           children: [
-            Positioned(
-              right: -20,
-              bottom: -20,
-              child: Icon(
-                Icons.folder,
-                size: 100,
-                color: Colors.white.withAlpha(40),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoSizeText(
-                    repository.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  FutureBuilder<int>(
-                    future: _loadMusicSheetsCount(context),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white.withAlpha(200),
-                            ),
-                          ),
-                        );
-                      }
-
-                      final count = snapshot.data ?? 0;
-                      return Text(
-                        '$count ${localizations.sheets}',
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(200),
-                          fontSize: 14,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+            const _BackgroundIcon(icon: Icons.folder),
+            _RepositoryCardContent(repository: repository),
           ],
         ),
       ),
     );
-  }
-
-  Future<int> _loadMusicSheetsCount(BuildContext context) async {
-    try {
-      return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
-    } catch (e) {
-      logger.e("Error loading music sheets count: $e");
-      return 0;
-    }
   }
 
   void _showRepositoryContextMenu(BuildContext context, String currentUserId) {
@@ -145,19 +78,20 @@ class RepositoryTile extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.edit),
                 title: Text(localizations.renameRepository),
-                onTap: () async {
+                onTap: () {
                   Navigator.of(bottomSheetContext).pop();
-                  final newName = await showRenameRepositoryDialog(
+                  showRenameRepositoryDialog(
                     context: context,
                     repositoryName: repository.name,
-                  );
-                  if (newName != null) {
-                    repositoriesCubit.renameRepository(
-                      repositoryId: repository.repositoryId,
-                      newName: newName,
-                      currentUserId: currentUserId,
-                    );
-                  }
+                  ).then((newName) {
+                    if (newName != null) {
+                      repositoriesCubit.renameRepository(
+                        repositoryId: repository.repositoryId,
+                        newName: newName,
+                        currentUserId: currentUserId,
+                      );
+                    }
+                  });
                 },
               ),
               ListTile(
@@ -166,15 +100,16 @@ class RepositoryTile extends StatelessWidget {
                   localizations.deleteRepository,
                   style: const TextStyle(color: Colors.red),
                 ),
-                onTap: () async {
+                onTap: () {
                   Navigator.of(bottomSheetContext).pop();
-                  final shouldDelete = await showDeleteRepositoryDialog(context: context, repository: repository);
-                  if (shouldDelete) {
-                    repositoriesCubit.deleteRepository(
-                      repositoryId: repository.repositoryId,
-                      currentUserId: currentUserId,
-                    );
-                  }
+                  showDeleteRepositoryDialog(context: context, repository: repository).then((shouldDelete) {
+                    if (shouldDelete) {
+                      repositoriesCubit.deleteRepository(
+                        repositoryId: repository.repositoryId,
+                        currentUserId: currentUserId,
+                      );
+                    }
+                  });
                 },
               ),
             ],
@@ -186,16 +121,113 @@ class RepositoryTile extends StatelessWidget {
 
   Color _getFixedColor() {
     final List<Color> colors = [
-      Colors.blue[400]!,
-      Colors.red[400]!,
-      Colors.green[400]!,
-      Colors.orange[400]!,
-      Colors.purple[400]!,
-      Colors.teal[400]!,
-      Colors.pink[400]!,
-      Colors.indigo[400]!,
+      Colors.blue.shade400,
+      Colors.red.shade400,
+      Colors.green.shade400,
+      Colors.orange.shade400,
+      Colors.purple.shade400,
+      Colors.teal.shade400,
+      Colors.pink.shade400,
+      Colors.indigo.shade400,
     ];
     // Use the index attribute to select a color, wrapping around if necessary
     return colors[index % colors.length];
+  }
+}
+
+/// Decorative background icon for the repository card
+class _BackgroundIcon extends StatelessWidget {
+  final IconData icon;
+  final double iconOffset = 20;
+  final double iconSize = 100;
+  final int iconOpacity = 40;
+
+  const _BackgroundIcon({
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: -iconOffset,
+      bottom: -iconOffset,
+      child: Icon(
+        icon,
+        size: iconSize,
+        color: Colors.white.withAlpha(iconOpacity),
+      ),
+    );
+  }
+}
+
+/// Content area of the repository card showing name and music sheets count
+class _RepositoryCardContent extends StatelessWidget {
+  final Repository repository;
+
+  const _RepositoryCardContent({
+    required this.repository,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoSizeText(
+            repository.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _MusicSheetsCount(repository: repository),
+        ],
+      ),
+    );
+  }
+}
+
+/// Displays the count of music sheets in a repository with loading state
+class _MusicSheetsCount extends StatelessWidget {
+  final Repository repository;
+
+  const _MusicSheetsCount({
+    required this.repository,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = context.loc;
+
+    return FutureBuilder<int>(
+      future: _loadMusicSheetsCount(context),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 16,
+            width: 16,
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        final count = snapshot.data ?? 0;
+        return Text(
+          '$count ${localizations.sheets(count)}',
+          style: const TextStyle(color: Colors.white),
+        );
+      },
+    );
+  }
+
+  Future<int> _loadMusicSheetsCount(BuildContext context) async {
+    try {
+      return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
+    } catch (e) {
+      logger.e("Error loading music sheets count: $e");
+      return 0;
+    }
   }
 }

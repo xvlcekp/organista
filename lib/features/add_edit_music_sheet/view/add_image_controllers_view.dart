@@ -7,6 +7,7 @@ class AddImageControllersView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    const iconSize = 150.0;
     return Row(
       children: [
         Expanded(
@@ -15,14 +16,14 @@ class AddImageControllersView extends HookWidget {
               Navigator.of(context).push<void>(RepositoriesView.route());
             },
             icon: const Icon(Icons.add),
-            iconSize: 150,
+            iconSize: iconSize,
           ),
         ),
         Expanded(
           child: IconButton(
             onPressed: () => {},
             icon: const Icon(Icons.upload),
-            iconSize: 150,
+            iconSize: iconSize,
           ),
         ),
       ],

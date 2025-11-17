@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlist_page.dart';
@@ -16,8 +16,8 @@ import 'package:organista/features/register/register_view.dart';
 import 'package:organista/logger/custom_logger.dart' show logger;
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:organista/repositories/settings_repository.dart';
 import 'package:organista/services/auth/auth_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatelessWidget {
   const App({
@@ -48,7 +48,9 @@ class App extends StatelessWidget {
           ),
         ),
         BlocProvider<SettingsCubit>(
-          create: (context) => SettingsCubit(context.read<SharedPreferencesWithCache>()),
+          create: (context) => SettingsCubit(
+            context.read<SettingsRepository>(),
+          ),
         ),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(

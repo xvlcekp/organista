@@ -284,7 +284,16 @@ class AppLocalizationsSk extends AppLocalizations {
   String get personal => 'Osobné';
 
   @override
-  String get sheets => 'položiek';
+  String sheets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'položiek',
+      few: 'položky',
+      one: 'položka',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get addMusicSheet => 'Pridať notový záznam';
@@ -376,12 +385,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get couldNotOpenUrl => 'Nepodarilo sa otvoriť URL';
 
   @override
-  String errorOpeningUrl(Object error) {
-    return 'Chyba pri otváraní URL: $error';
+  String errorOpeningUrl(String url) {
+    return 'Chyba pri otváraní URL: $url';
   }
 
   @override
-  String fileTooLarge(Object maxSize) {
+  String fileTooLarge(int maxSize) {
     return 'Súbor je príliš veľký. Maximálna veľkosť je ${maxSize}MB.';
   }
 
@@ -498,21 +507,24 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repositoryGenericError =>
-      'Pri vykonávaní operácie s repozitárom došlo k chybe';
+      'Pri vykonávaní operácie s repozitárom došlo k chybe!';
 
   @override
-  String get repositoryNotFoundError => 'Repozitár nebol nájdený';
+  String get repositoryNotFoundError => 'Repozitár nebol nájdený!';
 
   @override
   String get repositoryCannotModifyPublicError =>
-      'Verejné repozitáre nie je možné upravovať';
+      'Verejné repozitáre nie je možné upravovať!';
 
   @override
   String get repositoryCannotModifyOtherUsersError =>
-      'Môžete upravovať len vlastné repozitáre';
+      'Môžete upravovať len vlastné repozitáre!';
 
   @override
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
     return 'Dosiahli ste maximálny počet repozitárov ($maximumRepositoriesCount). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.';
   }
+
+  @override
+  String get noFileDataAvailable => 'Súbor je poškodený';
 }

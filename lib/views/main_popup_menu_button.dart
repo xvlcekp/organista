@@ -4,9 +4,7 @@ import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/features/settings/view/settings_view.dart';
 import 'package:organista/features/about/view/about_view.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
-
-enum MenuAction { logout, settings, about }
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class MainPopupMenuButton extends StatelessWidget {
   const MainPopupMenuButton({super.key});
@@ -16,15 +14,16 @@ class MainPopupMenuButton extends StatelessWidget {
     final localizations = context.loc;
 
     return PopupMenuButton<MenuAction>(
-      onSelected: (value) async {
+      onSelected: (value) {
         switch (value) {
           case MenuAction.logout:
-            final shouldLogOut = await showLogOutDialog(context);
-            if (shouldLogOut && context.mounted) {
-              context.read<AuthBloc>().add(
-                const AuthEventLogOut(),
-              );
-            }
+            showLogOutDialog(context).then((shouldLogOut) {
+              if (shouldLogOut && context.mounted) {
+                context.read<AuthBloc>().add(
+                  const AuthEventLogOut(),
+                );
+              }
+            });
             break;
           case MenuAction.settings:
             Navigator.of(context).push(
@@ -79,3 +78,5 @@ class MainPopupMenuButton extends StatelessWidget {
     );
   }
 }
+
+enum MenuAction { logout, settings, about }

@@ -19,11 +19,11 @@ final firebaseStorageRepository = FirebaseStorageRepository();
 
 void main() async {
   await mainInitialize();
-  runApp(const MyApp());
+  runApp(const PublicMusicSheetsUploader());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PublicMusicSheetsUploader extends StatelessWidget {
+  const PublicMusicSheetsUploader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +53,8 @@ class UploadFolderScreen extends HookWidget {
         // Sort by length to get the longest matching key
         matchingKeys.sort((a, b) => b.length.compareTo(a.length));
         String baseName = mapping[matchingKeys.first]!;
+        // It makes sense to ignore it here, because it is straightforward and not a security issue.
+        // ignore: avoid-substring
         String remainingName = fileNameWithoutExt.substring(matchingKeys.first.length).trim();
         remainingName = remainingName.replaceAll('__', '');
 
@@ -69,7 +71,6 @@ class UploadFolderScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isUploading = useState(false);
     final uploadedFiles = useState<List<String>>([]);
     final repositories = useState<List<Repository>>([]);
@@ -93,7 +94,7 @@ class UploadFolderScreen extends HookWidget {
       return () => newRepositoryNameController.dispose();
     }, []);
 
-    Future<void> createNewRepository() async {
+    void createNewRepository() {
       if (newRepositoryNameController.text.trim().isEmpty) {
         if (context.mounted) {
           showErrorDialog(context: context, text: "Repository name cannot be empty");
@@ -101,53 +102,71 @@ class UploadFolderScreen extends HookWidget {
         return;
       }
 
-      if (authenticatedUser.value == null) {
-        authenticatedUser.value = await authUtils.checkUserAuth();
-        if (authenticatedUser.value == null) {
-          if (context.mounted) {
-            showErrorDialog(context: context, text: "Authentication failed. Please restart the app.");
-          }
-          return;
-        }
+      void createRepo() {
+        firebaseFirestoreRepository
+            .createGlobalRepository(
+              name: newRepositoryNameController.text.trim(),
+            )
+            .then((_) {
+              if (context.mounted) {
+                showErrorDialog(context: context, text: "Repository created successfully");
+              }
+              newRepositoryNameController.clear();
+            })
+            .catchError((e) {
+              logger.e("Error creating repository", error: e);
+              if (context.mounted) {
+                showErrorDialog(context: context, text: "Failed to create repository: ${e.toString()}");
+              }
+            });
       }
 
-      try {
-        await firebaseFirestoreRepository.createGlobalRepository(
-          name: newRepositoryNameController.text.trim(),
-        );
-
-        if (context.mounted) {
-          showErrorDialog(context: context, text: "Repository created successfully");
-        }
-
-        newRepositoryNameController.clear();
-      } catch (e) {
-        logger.e("Error creating repository", error: e);
-        if (context.mounted) {
-          showErrorDialog(context: context, text: "Failed to create repository: ${e.toString()}");
-        }
+      if (authenticatedUser.value == null) {
+        authUtils.checkUserAuth().then((user) {
+          authenticatedUser.value = user;
+          if (user == null) {
+            if (context.mounted) {
+              showErrorDialog(context: context, text: "Authentication failed. Please restart the app.");
+            }
+            return;
+          }
+          createRepo();
+        });
+      } else {
+        createRepo();
       }
     }
 
-    Future<void> pickJsonFile() async {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-      );
+    void pickJsonFile() {
+      FilePicker.platform
+          .pickFiles(
+            type: FileType.custom,
+            allowedExtensions: ['json'],
+          )
+          .then((result) {
+            if (result != null && result.files.isNotEmpty) {
+              try {
+                String jsonString = utf8.decode(result.files.single.bytes!);
+                Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
-      if (result != null && result.files.isNotEmpty) {
-        try {
-          String jsonString = utf8.decode(result.files.single.bytes!);
-          Map<String, dynamic> jsonData = jsonDecode(jsonString);
-
-          filenameMapping.value = jsonData.map((key, value) => MapEntry(key, value.toString()));
-          logger.i("JSON Mapping Loaded: ${filenameMapping.value}");
-        } catch (e) {
-          logger.e("Error reading JSON file", error: e);
-        }
-      } else {
-        logger.i("No JSON file selected.");
-      }
+                filenameMapping.value = jsonData.map((key, value) => MapEntry(key, value.toString()));
+                logger.i("JSON Mapping Loaded: ${filenameMapping.value}");
+              } catch (e) {
+                logger.e("Error reading JSON file", error: e);
+              }
+            } else {
+              logger.i("No JSON file selected.");
+            }
+          })
+          .catchError((error) {
+            logger.e("Error in pickJsonFile", error: error);
+            if (context.mounted) {
+              showErrorDialog(
+                context: context,
+                text: "Failed to load JSON file: ${error.toString()}",
+              );
+            }
+          });
     }
 
     Future<void> uploadFolder() async {
@@ -231,6 +250,23 @@ class UploadFolderScreen extends HookWidget {
       }
     }
 
+    /// Synchronous wrapper for the async uploadFolder method
+    /// This allows it to be used in onPressed callbacks
+    void handleUploadFolder() {
+      uploadFolder().catchError((error) {
+        logger.e("Error in uploadFolder", error: error);
+        isUploading.value = false;
+        if (context.mounted) {
+          showErrorDialog(
+            context: context,
+            text: "Upload failed: ${error.toString()}",
+          );
+        }
+      });
+    }
+
+    const uploadedFilesWindowHeight = 300.0;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Upload Folder with JSON Mapping")),
       body: Column(
@@ -270,7 +306,6 @@ class UploadFolderScreen extends HookWidget {
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
-                  style: theme.elevatedButtonTheme.style,
                   onPressed: createNewRepository,
                   child: const Text("Create Repository"),
                 ),
@@ -278,7 +313,6 @@ class UploadFolderScreen extends HookWidget {
             ),
           ),
           ElevatedButton(
-            style: theme.elevatedButtonTheme.style,
             onPressed: pickJsonFile,
             child: const Text("Pick JSON Mapping File (Optional)"),
           ),
@@ -290,8 +324,7 @@ class UploadFolderScreen extends HookWidget {
           ),
           const SizedBox(height: 20),
           ElevatedButton(
-            style: theme.elevatedButtonTheme.style,
-            onPressed: isUploading.value || selectedRepository.value == null ? null : uploadFolder,
+            onPressed: isUploading.value || selectedRepository.value == null ? null : handleUploadFolder,
             child: Text(isUploading.value ? "Uploading..." : "Pick & Upload Files"),
           ),
           const SizedBox(height: 20),
@@ -299,7 +332,7 @@ class UploadFolderScreen extends HookWidget {
             const Text("Uploaded Files:", style: TextStyle(fontWeight: FontWeight.bold)),
             Expanded(
               child: SizedBox(
-                height: 300,
+                height: uploadedFilesWindowHeight,
                 child: Scrollbar(
                   thumbVisibility: true,
                   child: ListView.builder(

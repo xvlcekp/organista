@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:organista/logger/custom_logger.dart';
 
 /// A singleton service to manage Firebase streams with caching
@@ -19,18 +20,26 @@ class StreamManager {
     String identifier,
     Stream<T> Function() createFirestoreStream,
   ) {
-    logger.d('Getting stream for: $identifier');
+    // Only log in debug mode to reduce overhead
+    if (kDebugMode) {
+      logger.d('Getting stream for: $identifier');
+    }
 
     // Create a new stream controller for this request
-    late StreamController<T> controller;
     bool listenerAdded = false;
+    StreamSubscription<T>? subscription;
+    final controllerRef = <StreamController<T>>[];
 
-    controller = StreamController<T>(
-      onListen: () async {
+    final controller = StreamController<T>(
+      onListen: () {
+        final controller = controllerRef[0];
+
         // Immediately provide cached value if available
         if (_cachedValues.containsKey(identifier)) {
           final cachedValue = _cachedValues[identifier] as T;
-          logger.d('Providing cached value for: $identifier');
+          if (kDebugMode) {
+            logger.d('Providing cached value for: $identifier');
+          }
           controller.add(cachedValue);
         }
 
@@ -42,10 +51,12 @@ class StreamManager {
         if (!listenerAdded) {
           streamController.listenerCount++;
           listenerAdded = true;
-          logger.d('Listener added to $identifier. Total: ${streamController.listenerCount}');
+          if (kDebugMode) {
+            logger.d('Listener added to $identifier. Total: ${streamController.listenerCount}');
+          }
         }
 
-        final subscription = streamController.controller.stream.listen(
+        subscription = streamController.controller.stream.listen(
           (data) {
             if (!controller.isClosed) {
               controller.add(data);
@@ -65,7 +76,7 @@ class StreamManager {
 
         // Clean up when this controller is canceled
         controller.onCancel = () {
-          subscription.cancel();
+          subscription?.cancel();
           // Only remove listener if we added one
           if (listenerAdded) {
             _removeListenerInternal(identifier);
@@ -75,19 +86,23 @@ class StreamManager {
       },
     );
 
+    controllerRef.add(controller);
+
     return controller.stream;
   }
 
   /// Ensure the underlying Firestore stream exists
   void _ensureStreamExists<T>(String identifier, Stream<T> Function() createFirestoreStream) {
     if (!_streamControllers.containsKey(identifier)) {
-      logger.d('Creating new Firestore stream for: $identifier');
+      if (kDebugMode) {
+        logger.d('Creating new Firestore stream for: $identifier');
+      }
 
       final controller = StreamController<T>.broadcast();
-      late StreamSubscription firestoreSubscription;
+      final subscriptionRef = <StreamSubscription<T>>[];
 
       // Create the underlying Firestore stream
-      firestoreSubscription = createFirestoreStream().listen(
+      final firestoreSubscription = createFirestoreStream().listen(
         (data) {
           _cachedValues[identifier] = data; // Cache the value
           if (!controller.isClosed) {
@@ -101,14 +116,18 @@ class StreamManager {
           logger.e('Error in stream $identifier: $error');
         },
         onDone: () {
-          logger.d('Firestore stream completed for: $identifier');
+          if (kDebugMode) {
+            logger.d('Firestore stream completed for: $identifier');
+          }
           if (!controller.isClosed) {
             controller.close();
           }
           _streamControllers.remove(identifier);
-          _allSubscriptions.remove(firestoreSubscription);
+          _allSubscriptions.remove(subscriptionRef[0]);
         },
       );
+
+      subscriptionRef.add(firestoreSubscription);
 
       // Store the controller and subscription
       _streamControllers[identifier] = _CachedStreamController<T>(
@@ -125,19 +144,27 @@ class StreamManager {
     final streamController = _streamControllers[identifier];
     if (streamController != null && streamController.listenerCount > 0) {
       streamController.listenerCount--;
-      logger.d('Listener removed from $identifier. Remaining: ${streamController.listenerCount}');
+      if (kDebugMode) {
+        logger.d('Listener removed from $identifier. Remaining: ${streamController.listenerCount}');
+      }
 
       // If no more listeners, schedule cleanup (but keep cached value)
       if (streamController.listenerCount <= 0) {
         Timer(const Duration(seconds: 2), () {
           if (streamController.listenerCount <= 0 && _streamControllers.containsKey(identifier)) {
-            logger.d('Cleaning up unused stream: $identifier (keeping cached value)');
+            if (kDebugMode) {
+              logger.d('Cleaning up unused stream: $identifier (keeping cached value)');
+            }
             _cleanupStream(identifier);
           }
         });
       }
     } else if (streamController != null) {
-      logger.w('Attempted to remove listener from $identifier but count is already ${streamController.listenerCount}');
+      if (kDebugMode) {
+        logger.w(
+          'Attempted to remove listener from $identifier but count is already ${streamController.listenerCount}',
+        );
+      }
     }
   }
 

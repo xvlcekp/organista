@@ -121,7 +121,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
   }
 
-  void _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
+  void _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) {
     logger.i("Init playlist was called");
     emit(
       PlaylistLoadedState(
@@ -131,8 +131,9 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
 
     try {
+      final playlistId = event.playlist.playlistId;
       final broadcastStream = StreamManager.instance.getBroadcastStream<Playlist>(
-        'playlist_${event.playlist.playlistId}',
+        'playlist_$playlistId',
         () => _firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
       );
 
@@ -147,7 +148,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         },
       );
 
-      logger.d('Subscribed to playlist stream: ${event.playlist.playlistId}');
+      logger.d('Subscribed to playlist stream: $playlistId');
     } catch (e) {
       logger.e('Error initializing playlist stream: $e');
       add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error initializing playlist"));

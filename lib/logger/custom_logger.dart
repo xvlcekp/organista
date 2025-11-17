@@ -2,7 +2,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:organista/logger/custom_filter.dart';
-import 'package:organista/logger/custom_pretty_printer.dart';
 import 'package:organista/logger/google_cloud_logging_service.dart';
 
 CustomLogger get logger => CustomLogger.instance;
@@ -12,7 +11,8 @@ class CustomLogger extends Logger {
   CustomLogger._()
     : super(
         filter: CustomFilter(),
-        printer: CustomPrettyPrinter(),
+        // Use SimplePrinter in release mode to reduce overhead
+        printer: kDebugMode ? PrettyPrinter() : SimplePrinter(),
       ) {
     Logger.addOutputListener((event) {
       if (kReleaseMode) {
@@ -30,11 +30,11 @@ class CustomLogger extends Logger {
   static final instance = CustomLogger._();
 
   Future<void> setup() async {
-    await enableCrashlytics();
+    enableCrashlytics();
     await _googleCloudLoggingService.setupLoggingApi();
   }
 
-  Future<void> enableCrashlytics() async {
+  void enableCrashlytics() {
     // Enable Firebase crashlytics
     FlutterError.onError = (FlutterErrorDetails details) {
       FirebaseCrashlytics.instance.recordFlutterError(details);

@@ -2,30 +2,34 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 class SettingsState extends Equatable {
-  final ThemeMode themeMode;
-  final Locale locale;
+  final int themeModeIndex;
+  final String localeString;
   final bool showNavigationArrows;
   final bool keepScreenOn;
 
   const SettingsState({
-    required this.themeMode,
-    required this.locale,
+    required this.themeModeIndex,
+    required this.localeString,
     required this.showNavigationArrows,
     required this.keepScreenOn,
   });
 
+  // Convenience getters for UI layer
+  ThemeMode get themeMode => ThemeMode.values[themeModeIndex];
+  Locale get locale => Locale(localeString);
+
   @override
-  List<Object> get props => [themeMode, locale, showNavigationArrows, keepScreenOn];
+  List<Object> get props => [themeModeIndex, localeString, showNavigationArrows, keepScreenOn];
 
   SettingsState copyWith({
-    ThemeMode? themeMode,
-    Locale? locale,
+    int? themeModeIndex,
+    String? localeString,
     bool? showNavigationArrows,
     bool? keepScreenOn,
   }) {
     return SettingsState(
-      themeMode: themeMode ?? this.themeMode,
-      locale: locale ?? this.locale,
+      themeModeIndex: themeModeIndex ?? this.themeModeIndex,
+      localeString: localeString ?? this.localeString,
       showNavigationArrows: showNavigationArrows ?? this.showNavigationArrows,
       keepScreenOn: keepScreenOn ?? this.keepScreenOn,
     );
@@ -33,7 +37,7 @@ class SettingsState extends Equatable {
 
   @override
   String toString() {
-    return 'SettingsState(themeMode: $themeMode, locale: $locale, '
+    return 'SettingsState(themeModeIndex: $themeModeIndex, localeString: $localeString, '
         'showNavigationArrows: $showNavigationArrows, keepScreenOn: $keepScreenOn)';
   }
 }

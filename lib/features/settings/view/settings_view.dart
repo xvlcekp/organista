@@ -4,7 +4,7 @@ import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/delete_account_dialog.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -13,6 +13,8 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = context.loc;
     final settingsCubit = context.read<SettingsCubit>();
+    final theme = Theme.of(context);
+    final titleMedium = theme.textTheme.titleMedium;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, authState) {
@@ -32,15 +34,12 @@ class SettingsView extends StatelessWidget {
                 // App Settings Section
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    localizations.appSettings,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  child: Text(localizations.appSettings, style: titleMedium),
                 ),
                 ListTile(
                   title: Text(localizations.language),
                   trailing: DropdownButton<String>(
-                    value: state.locale.languageCode,
+                    value: state.localeString,
                     items: [
                       DropdownMenuItem(
                         value: 'en',
@@ -53,7 +52,7 @@ class SettingsView extends StatelessWidget {
                     ],
                     onChanged: (String? languageCode) {
                       if (languageCode != null) {
-                        settingsCubit.changeLanguage(Locale(languageCode));
+                        settingsCubit.changeLanguage(languageCode);
                       }
                     },
                   ),
@@ -78,7 +77,7 @@ class SettingsView extends StatelessWidget {
                     ],
                     onChanged: (ThemeMode? themeMode) {
                       if (themeMode != null) {
-                        settingsCubit.changeTheme(themeMode);
+                        settingsCubit.changeTheme(themeMode.index);
                       }
                     },
                   ),
@@ -105,24 +104,22 @@ class SettingsView extends StatelessWidget {
                 // Account Management Section
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    localizations.accountManagement,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  child: Text(localizations.accountManagement, style: titleMedium),
                 ),
                 ListTile(
-                  leading: Icon(Icons.delete_forever, color: Theme.of(context).colorScheme.error),
+                  leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
                   title: Text(
                     localizations.deleteAccount,
                     style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
-                  onTap: () async {
-                    final shouldDeleteAccount = await showDeleteAccountDialog(context);
-                    if (shouldDeleteAccount && context.mounted) {
-                      context.read<AuthBloc>().add(
-                        const AuthEventDeleteAccount(),
-                      );
-                    }
+                  onTap: () {
+                    showDeleteAccountDialog(context).then((shouldDeleteAccount) {
+                      if (shouldDeleteAccount && context.mounted) {
+                        context.read<AuthBloc>().add(
+                          const AuthEventDeleteAccount(),
+                        );
+                      }
+                    });
                   },
                 ),
               ],

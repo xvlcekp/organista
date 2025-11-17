@@ -89,7 +89,14 @@
     "noPersonalRepositories": "Žiadne osobné repozitáre nie sú k dispozícii.",
     "global": "Globálne",
     "personal": "Osobné",
-    "sheets": "položiek",
+    "sheets": "{count, plural, =1{položka} few{položky} other{položiek}}",
+    "@sheets": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "addMusicSheet": "Pridať notový záznam",
     "edit": "Upraviť",
     "change": "Zmeniť",
@@ -118,8 +125,26 @@
     "version": "Verzia",
     "frequentlyAskedQuestions": "Často kladené otázky",
     "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",
-    "errorOpeningUrl": "Chyba pri otváraní URL: {error}",
+    "errorOpeningUrl": "Chyba pri otváraní URL: {url}",
+    "@errorOpeningUrl": {
+        "description": "Error message when failing to open a URL",
+        "placeholders": {
+            "url": {
+                "type": "String",
+                "description": "The URL that failed to open"
+            }
+        }
+    },
     "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
+    "@fileTooLarge": {
+        "description": "Error message when a file exceeds the maximum allowed size",
+        "placeholders": {
+            "maxSize": {
+                "type": "int",
+                "description": "The maximum allowed file size in megabytes"
+            }
+        }
+    },
     "anErrorHappened": "Nastala chyba",
     "showNavigationArrows": "Zobraziť navigačné šípky",
     "keepScreenOn": "Nechať obrazovku zapnutú",
@@ -216,10 +241,10 @@
             }
         }
     },
-    "repositoryGenericError": "Pri vykonávaní operácie s repozitárom došlo k chybe",
-    "repositoryNotFoundError": "Repozitár nebol nájdený",
-    "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať",
-    "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre",
+    "repositoryGenericError": "Pri vykonávaní operácie s repozitárom došlo k chybe!",
+    "repositoryNotFoundError": "Repozitár nebol nájdený!",
+    "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať!",
+    "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre!",
     "maximumRepositoriesCountExceededError": "Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.",
     "@maximumRepositoriesCountExceededError": {
         "description": "Error message when user tries to create more repositories than allowed",
@@ -229,5 +254,6 @@
                 "description": "The maximum number of repositories allowed"
             }
         }
-    }
+    },
+    "noFileDataAvailable": "Súbor je poškodený"
 }

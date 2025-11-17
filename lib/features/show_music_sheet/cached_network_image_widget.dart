@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
+import 'package:organista/features/show_music_sheet/zoomable_music_sheet_viewer.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:photo_view/photo_view.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {
   const CachedNetworkImageWidget({
@@ -15,6 +15,9 @@ class CachedNetworkImageWidget extends StatelessWidget {
   final MusicSheet musicSheet;
   final MusicSheetViewMode mode;
 
+  static const int _previewCacheWidth = 500;
+  static const int _thumbnailCacheWidth = 75;
+
   @override
   Widget build(BuildContext context) {
     return switch (mode) {
@@ -25,10 +28,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
   }
 
   Widget _buildFullImageView() {
-    return PhotoView.customChild(
-      minScale: PhotoViewComputedScale.contained,
-      maxScale: PhotoViewComputedScale.contained * 3.0,
-      initialScale: PhotoViewComputedScale.contained,
+    return ZoomableMusicSheetViewer(
       child: _buildImage(),
     );
   }
@@ -43,13 +43,13 @@ class CachedNetworkImageWidget extends StatelessWidget {
           ),
         ),
       ),
-      child: _buildImage(memCacheWidth: 500, filterQuality: FilterQuality.medium),
+      child: _buildImage(memCacheWidth: _previewCacheWidth, filterQuality: FilterQuality.medium),
     );
   }
 
   Widget _buildThumbnailImage() {
     return _buildImage(
-      memCacheWidth: 75,
+      memCacheWidth: _thumbnailCacheWidth,
       filterQuality: FilterQuality.low,
     );
   }

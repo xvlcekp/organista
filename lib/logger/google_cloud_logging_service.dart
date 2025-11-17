@@ -3,61 +3,99 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:googleapis/logging/v2.dart';
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:organista/config/config_controller.dart';
 
 class GoogleCloudLoggingService {
-  late LoggingApi _loggingApi; // Instance variable for Cloud Logging API
-  bool _isSetup = false; // Indicator to check if the API setup is complete
-  late String _projectId;
+  LoggingApi? _loggingApi;
+  http.Client? _authClient; // Store to allow cleanup
+  String? _projectId;
 
-  // Method to set up the Cloud Logging API
+  bool get isSetup => _loggingApi != null && _projectId != null;
+
   Future<void> setupLoggingApi() async {
-    if (_isSetup) return;
+    if (isSetup) return;
 
     try {
-      await Config.load();
-      final serviceAccountCredentials = jsonDecode(Config.get('googleLoggingToken') ?? '{}');
-      _projectId = serviceAccountCredentials['project_id'] ?? '';
-      // Create credentials using ServiceAccountCredentials
-      final credentials = ServiceAccountCredentials.fromJson(
-        serviceAccountCredentials,
-      );
+      await ConfigController.load();
+      final credentialsJson = ConfigController.get('googleLoggingToken');
 
-      // Authenticate using ServiceAccountCredentials and obtain an AutoRefreshingAuthClient authorized client
-      final authClient = await clientViaServiceAccount(
+      if (credentialsJson == null || credentialsJson.isEmpty) {
+        debugPrint('Google Logging credentials not found in config');
+        return;
+      }
+
+      final serviceAccountCredentials = jsonDecode(credentialsJson) as Map<String, dynamic>;
+      _projectId = serviceAccountCredentials['project_id'] as String?;
+
+      if (_projectId == null || _projectId!.isEmpty) {
+        debugPrint('Project ID not found in service account credentials');
+        return;
+      }
+
+      final credentials = ServiceAccountCredentials.fromJson(serviceAccountCredentials);
+
+      _authClient = await clientViaServiceAccount(
         credentials,
         [LoggingApi.loggingWriteScope],
       );
 
-      // Initialize the Logging API with the authorized client
-      _loggingApi = LoggingApi(authClient);
+      _loggingApi = LoggingApi(_authClient!);
 
-      // Mark the Logging API setup as complete
-      _isSetup = true;
-      debugPrint('Cloud Logging API setup for $_projectId');
-    } catch (error) {
-      debugPrint('Error setting up Cloud Logging API $error');
+      debugPrint('Cloud Logging API setup complete for project: $_projectId');
+    } catch (error, stackTrace) {
+      debugPrint('Error setting up Cloud Logging API: $error\n$stackTrace');
+      // Clean up partial state
+      dispose();
     }
   }
 
-  void writeLog({required Level level, required String message}) {
-    if (!_isSetup) {
-      // If Logging API is not setup, return
-      debugPrint('Cloud Logging API is not setup');
+  Future<void> writeLog({
+    required Level level,
+    required String message,
+    String? userId,
+    String? appInstanceId,
+    String environment = 'dev',
+  }) async {
+    if (!isSetup) {
+      debugPrint('Cannot write log: Cloud Logging API is not setup');
       return;
     }
 
-    // Define environment and log name
-    const env = 'dev';
-    final logName = 'projects/$_projectId/logs/$env'; // It should in the format projects/[PROJECT_ID]/logs/[LOG_ID]
+    try {
+      final logName = 'projects/$_projectId/logs/$environment';
 
-    // Create a monitored resource
-    final resource = MonitoredResource()
-      ..type = 'global'; // A global resource type is used for logs that are not associated with a specific resource
+      final resource = MonitoredResource()..type = 'global';
 
-    // Map log levels to severity levels
-    final severityFromLevel = switch (level) {
+      final severity = _mapLevelToSeverity(level);
+
+      final labels = <String, String>{
+        'project_id': _projectId!,
+        'level': level.name.toUpperCase(),
+        'environment': environment,
+      };
+
+      if (userId != null) labels['user_id'] = userId;
+      if (appInstanceId != null) labels['app_instance_id'] = appInstanceId;
+
+      final logEntry = LogEntry()
+        ..logName = logName
+        ..jsonPayload = {'message': message}
+        ..resource = resource
+        ..severity = severity
+        ..labels = labels;
+
+      final request = WriteLogEntriesRequest()..entries = [logEntry];
+
+      await _loggingApi!.entries.write(request);
+    } catch (error, stackTrace) {
+      debugPrint('Error writing log entry: $error\n$stackTrace');
+    }
+  }
+
+  String _mapLevelToSeverity(Level level) {
+    return switch (level) {
       Level.fatal => 'CRITICAL',
       Level.error => 'ERROR',
       Level.warning => 'WARNING',
@@ -65,29 +103,12 @@ class GoogleCloudLoggingService {
       Level.debug => 'DEBUG',
       _ => 'NOTICE',
     };
+  }
 
-    // Create a log entry
-    final logEntry = LogEntry()
-      ..logName = logName
-      ..jsonPayload = {'message': message}
-      ..resource = resource
-      ..severity = severityFromLevel
-      ..labels = {
-        'project_id': _projectId, // Must match the project ID with the one in the JSON key file
-        'level': level.name.toUpperCase(),
-        'environment': env, // Optional but useful to filter logs by environment
-        'user_id': 'your-app-user-id', // Useful to filter logs by userID
-        'app_instance_id':
-            'your-app-instance-id', // Useful to filter logs by app instance ID e.g device ID + app version (iPhone-12-ProMax-v1.0.0)
-      };
-
-    // Create a write log entries request
-    final request = WriteLogEntriesRequest()..entries = [logEntry];
-
-    // Write the log entry using the Logging API and handle errors
-    _loggingApi.entries.write(request).catchError((error) {
-      debugPrint('Error writing log entry $error');
-      return WriteLogEntriesResponse();
-    });
+  void dispose() {
+    _authClient?.close();
+    _authClient = null;
+    _loggingApi = null;
+    _projectId = null;
   }
 }

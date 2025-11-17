@@ -9,7 +9,7 @@ import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/firebase_collection_name.dart';
-import 'package:organista/models/music_sheets/list_music_sheet_extension.dart';
+import 'package:organista/models/music_sheets/music_sheet_list_extension.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
@@ -36,35 +36,40 @@ class FirebaseFirestoreRepository {
 
   // USER OPERATIONS
 
-  Future<bool> uploadNewUser({
+  /// Creates a new user document in Firestore.
+  /// Uses Firebase Auth user ID as document ID to ensure uniqueness.
+  /// If user already exists, this will fail silently (Firestore handles duplicates).
+  Future<void> createUserDocument({
     required AuthUser user,
   }) async {
     try {
-      // Check if user already exists
-      final existingUserQuery = await instance
-          .collection(FirebaseCollectionName.users)
-          .where(UserInfoKey.userId, isEqualTo: user.id)
-          .limit(1)
-          .get();
-
-      if (existingUserQuery.docs.isNotEmpty) {
-        logger.i('User ${user.id} already exists in database, skipping creation');
-        return true; // User already exists, no need to create
-      }
-
-      // User doesn't exist, create new user
       final userPayload = UserInfoPayload(
         userId: user.id,
         displayName: '',
         email: user.email,
       );
-      await instance.collection(FirebaseCollectionName.users).add(userPayload);
-      logger.i('Successfully created new user ${user.id} in database');
-      return true;
+
+      // Use set with merge: false to create only if doesn't exist
+      // This is more efficient than checking existence first
+      await instance
+          .collection(FirebaseCollectionName.users)
+          .doc(user.id) // Use user ID as document ID for uniqueness
+          .set(userPayload, SetOptions(merge: false));
+
+      logger.i('Successfully created user document for ${user.id}');
+    } on FirebaseException catch (e) {
+      if (e.code == 'already-exists') {
+        // User document already exists, this is fine
+        logger.i('User document ${user.id} already exists, skipping creation');
+      } else {
+        // Re-throw other Firebase exceptions
+        logger.e('Firebase error creating user document: $e');
+        rethrow;
+      }
     } catch (e, stackTrace) {
-      logger.e('Error uploading new user: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error uploading new user');
-      return false;
+      logger.e('Error creating user document: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating user document');
+      rethrow;
     }
   }
 
@@ -117,12 +122,13 @@ class FirebaseFirestoreRepository {
         .doc(playlistId)
         .snapshots(includeMetadataChanges: true)
         .map((snapshot) {
-          if (!snapshot.exists || snapshot.data() == null) {
+          final data = snapshot.data();
+          if (!snapshot.exists || data == null) {
             logger.w("Playlist document does not exist: $playlistId");
             return Playlist.empty();
           }
           logger.i("Got new update for playlist $playlistId");
-          return Playlist(playlistId: playlistId, json: snapshot.data()!);
+          return Playlist(playlistId: playlistId, json: data);
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getPlaylistStream: $error');
@@ -249,7 +255,7 @@ class FirebaseFirestoreRepository {
       playlist.validateCapacityForAdding(musicSheets.length);
 
       // Create a copy of the current music sheets list to avoid mutating the original
-      final updatedMusicSheets = List<MusicSheet>.from(playlist.musicSheets);
+      final updatedMusicSheets = List<MusicSheet>.of(playlist.musicSheets);
 
       // Add all new music sheets to the copy
       updatedMusicSheets.addAll(musicSheets);
@@ -390,7 +396,7 @@ class FirebaseFirestoreRepository {
         });
   }
 
-  Future<bool> createGlobalRepository({required String name}) async {
+  Future<bool> createGlobalRepository({required String name}) {
     return _createRepository(userId: '', name: name);
   }
 
@@ -442,7 +448,8 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       // First, get the repository to verify ownership
-      final repositoryDoc = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).get();
+      final repositoriesCollection = instance.collection(FirebaseCollectionName.repositories);
+      final repositoryDoc = await repositoriesCollection.doc(repositoryId).get();
 
       if (!repositoryDoc.exists) {
         logger.w('Repository $repositoryId not found');
@@ -466,7 +473,7 @@ class FirebaseFirestoreRepository {
       }
 
       // Proceed with rename if validation passes
-      await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).update({
+      await repositoriesCollection.doc(repositoryId).update({
         RepositoryKey.name: newName,
       });
       logger.i("Renaming repository $repositoryId to $newName by user $currentUserId");
@@ -474,7 +481,7 @@ class FirebaseFirestoreRepository {
     } catch (e, stackTrace) {
       logger.e('Error renaming repository: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error renaming repository');
-      throw const RepositoryGenericException();
+      Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
 
@@ -484,7 +491,8 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       // First, get the repository to verify ownership
-      final repositoryDoc = await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).get();
+      final repositoriesCollection = instance.collection(FirebaseCollectionName.repositories);
+      final repositoryDoc = await repositoriesCollection.doc(repositoryId).get();
 
       if (!repositoryDoc.exists) {
         logger.w('Repository $repositoryId not found');
@@ -508,8 +516,7 @@ class FirebaseFirestoreRepository {
       }
 
       // Delete all music sheets in the repository first
-      final musicSheetsQuery = await instance
-          .collection(FirebaseCollectionName.repositories)
+      final musicSheetsQuery = await repositoriesCollection
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets)
           .get();
@@ -520,14 +527,14 @@ class FirebaseFirestoreRepository {
       }
 
       // Finally, delete the repository itself
-      await instance.collection(FirebaseCollectionName.repositories).doc(repositoryId).delete();
+      await repositoriesCollection.doc(repositoryId).delete();
 
       logger.i("Deleting repository $repositoryId by user $currentUserId");
       return true;
     } catch (e, stackTrace) {
       logger.e('Error deleting repository: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting repository');
-      throw const RepositoryGenericException();
+      Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
 

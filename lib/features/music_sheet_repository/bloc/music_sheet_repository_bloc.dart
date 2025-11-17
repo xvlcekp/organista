@@ -10,8 +10,8 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/stream_manager.dart';
 
-part 'repository_event.dart';
-part 'repository_state.dart';
+part 'music_sheet_repository_event.dart';
+part 'music_sheet_repository_state.dart';
 
 class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicSheetRepositoryState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
@@ -41,7 +41,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     return filteredSheets;
   }
 
-  Future<void> _onSearchMusicSheets(SearchMusicSheets event, Emitter<MusicSheetRepositoryState> emit) async {
+  void _onSearchMusicSheets(SearchMusicSheets event, Emitter<MusicSheetRepositoryState> emit) {
     if (state is MusicSheetRepositoryLoaded) {
       final allSheets = (state as MusicSheetRepositoryLoaded).allMusicSheets;
       final filteredSheets = _filterMusicSheets(allSheets, event.query);
@@ -58,10 +58,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     );
   }
 
-  void _initMusicSheetsRepositoryEvent(
-    InitMusicSheetsRepositoryEvent event,
-    Emitter<MusicSheetRepositoryState> emit,
-  ) async {
+  void _initMusicSheetsRepositoryEvent(InitMusicSheetsRepositoryEvent event, Emitter<MusicSheetRepositoryState> emit) {
     emit(MusicSheetRepositoryLoading());
 
     try {

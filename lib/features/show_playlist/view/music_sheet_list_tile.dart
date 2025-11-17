@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -25,6 +26,8 @@ class MusicSheetListTile extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final musicSheet = playlist.musicSheets[index];
+    const iconSize = 20.0;
+    const musicSheetThumbnailSize = 40.0;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 4),
@@ -41,17 +44,14 @@ class MusicSheetListTile extends HookWidget {
             );
           }
         },
-        borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: SizedBox(
-                  height: 40,
-                  width: 40,
+                child: SizedBox.square(
+                  dimension: musicSheetThumbnailSize,
                   child: MusicSheetView(
                     musicSheet: musicSheet,
                     mode: MusicSheetViewMode.thumbnail,
@@ -60,21 +60,14 @@ class MusicSheetListTile extends HookWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  musicSheet.fileName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: AutoSizeText(musicSheet.fileName),
               ),
               if (isEditMode)
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: () async {
+                      onPressed: () {
                         if (context.mounted) {
                           context.read<AddEditMusicSheetCubit>().editMusicSheetInPlaylist(
                             playlist: playlist,
@@ -85,32 +78,28 @@ class MusicSheetListTile extends HookWidget {
                       },
                       icon: Icon(
                         Icons.edit,
-                        size: 20,
+                        size: iconSize,
                         color: theme.colorScheme.primary,
                       ),
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
                     ),
                     IconButton(
-                      onPressed: () async {
-                        final shouldDeleteImage = await showDeleteImageDialog(context);
-                        if (shouldDeleteImage && context.mounted) {
-                          context.read<PlaylistBloc>().add(
-                            DeleteMusicSheetInPlaylistEvent(
-                              musicSheet: musicSheet,
-                              playlist: playlist,
-                            ),
-                          );
-                        }
-                        return;
+                      onPressed: () {
+                        showDeleteImageDialog(context).then((shouldDeleteImage) {
+                          if (shouldDeleteImage && context.mounted) {
+                            context.read<PlaylistBloc>().add(
+                              DeleteMusicSheetInPlaylistEvent(
+                                musicSheet: musicSheet,
+                                playlist: playlist,
+                              ),
+                            );
+                          }
+                        });
                       },
                       icon: Icon(
                         Icons.delete,
-                        size: 20,
+                        size: iconSize,
                         color: theme.colorScheme.error,
                       ),
-                      padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),

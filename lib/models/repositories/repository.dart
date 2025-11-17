@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/repositories/repository_key.dart';
 import 'package:uuid/uuid.dart';
 
@@ -30,7 +29,6 @@ class Repository extends Equatable {
 
   Repository copyWith({
     String? name,
-    List<MusicSheet>? musicSheets,
   }) {
     return Repository(
       json: {

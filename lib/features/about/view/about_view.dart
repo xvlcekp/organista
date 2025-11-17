@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,6 +12,9 @@ class AboutView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = context.loc;
+    final textTheme = Theme.of(context).textTheme;
+    final largeTextStyle = textTheme.bodyLarge;
+    final mediumTextStyle = textTheme.bodyMedium;
     final version = useState<String>('');
 
     useEffect(() {
@@ -32,23 +35,20 @@ class AboutView extends HookWidget {
           children: [
             Text(
               localizations.aboutMessage,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: largeTextStyle,
             ),
             const SizedBox(height: 24),
             InkWell(
-              onTap: () async {
+              onTap: () {
                 final Uri url = Uri.parse(AppConstants.faqUrl);
                 try {
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  } else {
-                    if (context.mounted) {
-                      showErrorDialog(context: context, text: localizations.couldNotOpenUrl);
-                    }
-                  }
+                  launchUrl(url, mode: LaunchMode.externalApplication);
                 } catch (e) {
                   if (context.mounted) {
-                    showErrorDialog(context: context, text: '${localizations.errorOpeningUrl}: ${e.toString()}');
+                    showErrorDialog(
+                      context: context,
+                      text: '${localizations.errorOpeningUrl(AppConstants.faqUrl)}: ${e.toString()}',
+                    );
                   }
                 }
               },
@@ -62,17 +62,17 @@ class AboutView extends HookWidget {
             const SizedBox(height: 20),
             SelectableText(
               'Email: ${AppConstants.contactEmail}',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: largeTextStyle,
             ),
             const SizedBox(height: 20),
             Text(
               '2025 Organista',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: mediumTextStyle,
             ),
             const SizedBox(height: 8),
             Text(
               '${localizations.version} ${version.value}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: mediumTextStyle,
             ),
           ],
         ),

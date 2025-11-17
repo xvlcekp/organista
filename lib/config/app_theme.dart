@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AppTheme {
+  // Border radius constants
+  static const double cardBorderRadius = 12.0; // Material 3 default
+  static const double inputBorderRadius = 8.0;
+  static const double buttonBorderRadius = 30.0;
+  static const double dialogBorderRadius = 8.0;
+  static const int selectedColorAlpha = 50;
   static ThemeData get lightTheme {
     return _buildTheme(
       brightness: Brightness.light,
       surfaceColor: Colors.white,
       onSurfaceColor: Colors.black.withAlpha(150),
-      hintColor: Colors.grey[600]!,
-      labelColor: Colors.grey[800]!,
+      hintColor: Colors.grey.shade600,
+      labelColor: Colors.grey.shade800,
     );
   }
 
@@ -17,7 +23,7 @@ class AppTheme {
       brightness: Brightness.dark,
       surfaceColor: Colors.black.withAlpha(150),
       onSurfaceColor: Colors.white,
-      hintColor: Colors.grey[400]!,
+      hintColor: Colors.grey.shade400,
       labelColor: Colors.white,
     );
   }
@@ -63,7 +69,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(buttonBorderRadius),
           ),
           backgroundColor: colorScheme.primary, // Use primary color from color scheme
           foregroundColor: colorScheme.onPrimary, // Use onPrimary color from color scheme
@@ -71,7 +77,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(inputBorderRadius),
         ),
         filled: true,
         fillColor: surfaceColor,
@@ -82,40 +88,30 @@ class AppTheme {
           color: labelColor,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(inputBorderRadius),
+          borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(inputBorderRadius),
           borderSide: const BorderSide(color: Colors.blue, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.red[300]!),
+          borderRadius: BorderRadius.circular(inputBorderRadius),
+          borderSide: BorderSide(color: Colors.red.shade300),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(inputBorderRadius),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
         ),
-        headlineMedium: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        titleLarge: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
+      ),
+      cardTheme: CardThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(cardBorderRadius),
         ),
       ),
     );

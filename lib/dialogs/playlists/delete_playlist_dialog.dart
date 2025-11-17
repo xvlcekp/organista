@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' show BuildContext;
 import 'package:organista/dialogs/generic_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 Future<bool> showDeletePlaylistDialog(BuildContext context) {
   final localizations = context.loc;

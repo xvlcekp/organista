@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:organista/dialogs/show_repositories_error.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 import 'package:organista/l10n/app_localizations.dart';
 

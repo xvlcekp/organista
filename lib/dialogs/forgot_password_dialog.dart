@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
-Future<void> showForgotPasswordDialog(BuildContext context, TextEditingController emailController) async {
+Future<void> showForgotPasswordDialog(BuildContext context, TextEditingController emailController) {
   final theme = Theme.of(context);
   final localizations = context.loc;
   TextEditingController resetPasswordEmailController = TextEditingController();
   resetPasswordEmailController.text = emailController.text;
-  showDialog(
+  return showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) => AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
       title: Text(
         localizations.resetPassword,
         style: theme.textTheme.titleLarge,
@@ -34,12 +31,7 @@ Future<void> showForgotPasswordDialog(BuildContext context, TextEditingControlle
               controller: resetPasswordEmailController,
               decoration: InputDecoration(
                 hintText: localizations.enterEmailHint,
-                hintStyle: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(153)),
-                prefixIcon: Icon(Icons.email_outlined, size: 18, color: theme.colorScheme.onSurface),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: theme.colorScheme.onSurface),
-                ),
+                prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.onSurface),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 isDense: true,
                 filled: true,

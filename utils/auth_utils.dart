@@ -7,10 +7,10 @@ class AuthUtils {
   AuthUtils();
 
   Future<AuthUser?> checkUserAuth() async {
-    await Config.load();
+    await ConfigController.load();
 
-    final emailUploaderUser = Config.get('emailUploaderUser') ?? '';
-    final passwordUploaderUser = Config.get('passwordUploaderUser') ?? '';
+    final emailUploaderUser = ConfigController.get('emailUploaderUser') ?? '';
+    final passwordUploaderUser = ConfigController.get('passwordUploaderUser') ?? '';
     logger.i(emailUploaderUser);
 
     await AuthService.firebase().logIn(

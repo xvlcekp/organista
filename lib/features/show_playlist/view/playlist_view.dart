@@ -10,7 +10,8 @@ import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/widgets/empty_list_widget.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class PlaylistView extends HookWidget {
   const PlaylistView({super.key});
@@ -35,9 +36,7 @@ class PlaylistView extends HookWidget {
             Expanded(
               child: Text(
                 playlist.name,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.textTheme.titleLarge,
               ),
             ),
           ],
@@ -48,10 +47,7 @@ class PlaylistView extends HookWidget {
               onPressed: () {
                 Navigator.of(context).push<void>(RepositoriesView.route());
               },
-              icon: Icon(
-                Icons.add,
-                color: theme.colorScheme.primary,
-              ),
+              icon: const Icon(Icons.add),
             ),
           IconButton(
             onPressed: () {
@@ -59,7 +55,6 @@ class PlaylistView extends HookWidget {
             },
             icon: Icon(
               isEditMode.value ? Icons.check : Icons.edit,
-              color: theme.colorScheme.primary,
             ),
           ),
         ],
@@ -83,31 +78,10 @@ class PlaylistView extends HookWidget {
           logger.i("Item count is ${playlist.musicSheets.length}");
 
           if (playlist.musicSheets.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.music_off,
-                    size: 64,
-                    color: theme.colorScheme.primary.withAlpha(130),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    localizations.noMusicSheetsYet,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary.withAlpha(130),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    localizations.addYourFirstMusicSheet,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.primary.withAlpha(130),
-                    ),
-                  ),
-                ],
-              ),
+            return EmptyListWidget(
+              icon: Icons.music_off,
+              title: localizations.noMusicSheetsYet,
+              subtitle: localizations.addYourFirstMusicSheet,
             );
           }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' show BuildContext;
 import 'package:organista/dialogs/error_dialog.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 
 Future<void> showRepositoriesError({

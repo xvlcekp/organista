@@ -1,4 +1,4 @@
-part of 'playlists_cubit.dart';
+part of 'show_playlists_cubit.dart';
 
 @immutable
 sealed class ShowPlaylistsState extends Equatable {

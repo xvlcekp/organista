@@ -9,7 +9,7 @@ import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/stream_manager.dart';
 
-part 'repositories_state.dart';
+part 'show_repositories_state.dart';
 
 class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;

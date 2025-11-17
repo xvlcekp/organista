@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/widgets/email_text_field.dart';
+import 'package:organista/widgets/organista_logo.dart';
 import 'package:organista/widgets/password_text_field.dart';
 
 class RegisterView extends HookWidget {
@@ -13,17 +15,12 @@ class RegisterView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = useTextEditingController(
-      text: 'test@test.com'.ifDebugging,
-    );
+    final registerPassword = AppConstants.debugRegisterPassword.ifDebugging;
+    final registerEmail = AppConstants.debugRegisterEmail.ifDebugging;
 
-    final passwordController = useTextEditingController(
-      text: 'test123'.ifDebugging,
-    );
-
-    final verifyPasswordController = useTextEditingController(
-      text: 'test123'.ifDebugging,
-    );
+    final emailController = useTextEditingController(text: registerEmail);
+    final passwordController = useTextEditingController(text: registerPassword);
+    final verifyPasswordController = useTextEditingController(text: registerPassword);
 
     final isPasswordVisible = useState(false);
     final isVerifyPasswordVisible = useState(false);
@@ -41,11 +38,7 @@ class RegisterView extends HookWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Logo or App Name
-                  Image.asset(
-                    'assets/images/organista_icon_200x200.png',
-                    width: 80,
-                    height: 80,
-                  ),
+                  const OrganistaLogo(),
                   const SizedBox(height: 24),
                   Text(
                     localizations.createAccount,

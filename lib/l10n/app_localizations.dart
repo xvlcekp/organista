@@ -635,8 +635,8 @@ abstract class AppLocalizations {
   /// No description provided for @sheets.
   ///
   /// In sk, this message translates to:
-  /// **'položiek'**
-  String get sheets;
+  /// **'{count, plural, =1{položka} few{položky} other{položiek}}'**
+  String sheets(int count);
 
   /// No description provided for @addMusicSheet.
   ///
@@ -806,17 +806,17 @@ abstract class AppLocalizations {
   /// **'Nepodarilo sa otvoriť URL'**
   String get couldNotOpenUrl;
 
-  /// No description provided for @errorOpeningUrl.
+  /// Error message when failing to open a URL
   ///
   /// In sk, this message translates to:
-  /// **'Chyba pri otváraní URL: {error}'**
-  String errorOpeningUrl(Object error);
+  /// **'Chyba pri otváraní URL: {url}'**
+  String errorOpeningUrl(String url);
 
-  /// No description provided for @fileTooLarge.
+  /// Error message when a file exceeds the maximum allowed size
   ///
   /// In sk, this message translates to:
   /// **'Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.'**
-  String fileTooLarge(Object maxSize);
+  String fileTooLarge(int maxSize);
 
   /// No description provided for @anErrorHappened.
   ///
@@ -994,25 +994,25 @@ abstract class AppLocalizations {
   /// No description provided for @repositoryGenericError.
   ///
   /// In sk, this message translates to:
-  /// **'Pri vykonávaní operácie s repozitárom došlo k chybe'**
+  /// **'Pri vykonávaní operácie s repozitárom došlo k chybe!'**
   String get repositoryGenericError;
 
   /// No description provided for @repositoryNotFoundError.
   ///
   /// In sk, this message translates to:
-  /// **'Repozitár nebol nájdený'**
+  /// **'Repozitár nebol nájdený!'**
   String get repositoryNotFoundError;
 
   /// No description provided for @repositoryCannotModifyPublicError.
   ///
   /// In sk, this message translates to:
-  /// **'Verejné repozitáre nie je možné upravovať'**
+  /// **'Verejné repozitáre nie je možné upravovať!'**
   String get repositoryCannotModifyPublicError;
 
   /// No description provided for @repositoryCannotModifyOtherUsersError.
   ///
   /// In sk, this message translates to:
-  /// **'Môžete upravovať len vlastné repozitáre'**
+  /// **'Môžete upravovať len vlastné repozitáre!'**
   String get repositoryCannotModifyOtherUsersError;
 
   /// Error message when user tries to create more repositories than allowed
@@ -1020,6 +1020,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.'**
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount);
+
+  /// No description provided for @noFileDataAvailable.
+  ///
+  /// In sk, this message translates to:
+  /// **'Súbor je poškodený'**
+  String get noFileDataAvailable;
 }
 
 class _AppLocalizationsDelegate

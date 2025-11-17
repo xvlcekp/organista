@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
-import 'package:organista/features/music_sheet_repository/bloc/repository_bloc.dart';
+import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/extensions/buildcontext/loc.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 
 class RepositoryMusicSheetTile extends HookWidget {
   final MusicSheet musicSheet;
@@ -49,6 +50,7 @@ class RepositoryMusicSheetTile extends HookWidget {
     final theme = Theme.of(context);
     final localizations = context.loc;
     final isCached = useState<bool>(false);
+    final selectedColor = theme.colorScheme.primary.withAlpha(AppTheme.selectedColorAlpha);
 
     useEffect(() {
       _checkIfCached().then((cached) {
@@ -78,13 +80,7 @@ class RepositoryMusicSheetTile extends HookWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary.withAlpha(50) : null,
-          border: Border(
-            bottom: BorderSide(
-              color: theme.dividerColor.withAlpha(25),
-              width: 1,
-            ),
-          ),
+          color: isSelected ? selectedColor : null,
         ),
         child: Row(
           children: [
@@ -92,7 +88,6 @@ class RepositoryMusicSheetTile extends HookWidget {
               child: AutoSizeText(
                 musicSheet.fileName,
                 style: theme.textTheme.titleMedium,
-                maxLines: 2,
               ),
             ),
             if (isSelectionMode)
@@ -127,17 +122,18 @@ class RepositoryMusicSheetTile extends HookWidget {
                         color: theme.colorScheme.error,
                       ),
                       tooltip: localizations.deleteTooltip,
-                      onPressed: () async {
-                        final shouldDeleteMusicSheet = await showDeleteImageDialog(context);
-                        if (shouldDeleteMusicSheet && context.mounted) {
-                          context.read<MusicSheetRepositoryBloc>().add(
-                            DeleteMusicSheet(
-                              musicSheet: musicSheet,
-                              repositoryId: repositoryId,
-                            ),
-                          );
-                          searchBarController.text = '';
-                        }
+                      onPressed: () {
+                        showDeleteImageDialog(context).then((shouldDeleteMusicSheet) {
+                          if (shouldDeleteMusicSheet && context.mounted) {
+                            context.read<MusicSheetRepositoryBloc>().add(
+                              DeleteMusicSheet(
+                                musicSheet: musicSheet,
+                                repositoryId: repositoryId,
+                              ),
+                            );
+                            searchBarController.text = '';
+                          }
+                        });
                       },
                     ),
                 ],

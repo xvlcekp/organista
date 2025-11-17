@@ -25,6 +25,8 @@ class Playlist extends Equatable {
   }) : userId = json[PlaylistKey.userId] ?? '',
        createdAt = ((json[PlaylistKey.createdAt] ?? Timestamp(0, 0)) as Timestamp).toDate(),
        name = json[PlaylistKey.name] ?? '',
+       // Using the dynamic type for a Map<> is considered fine, since there is no better way to declare a type of a JSON payload.
+       // ignore: avoid-dynamic
        musicSheets = ((json[PlaylistKey.musicSheets] ?? []) as List<dynamic>)
            .map((record) => MusicSheet(json: record as Map<String, dynamic>))
            .toList();

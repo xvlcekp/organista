@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_event.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
+import 'package:organista/repositories/settings_repository.dart';
 import 'package:organista/services/wakelock/wakelock_service.dart';
 
 // Mock classes
-class MockSharedPreferences extends Mock implements SharedPreferencesWithCache {}
+class MockSettingsRepository extends Mock implements SettingsRepository {}
 
 class MockWakelockService extends Mock implements WakelockService {}
 
@@ -55,16 +55,16 @@ void main() {
 
   group('SettingsState', () {
     test('supports value equality', () {
-      const state1 = SettingsState(
-        themeMode: ThemeMode.dark,
-        locale: Locale('en'),
+      final state1 = SettingsState(
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
-      const state2 = SettingsState(
-        themeMode: ThemeMode.dark,
-        locale: Locale('en'),
+      final state2 = SettingsState(
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
@@ -73,49 +73,49 @@ void main() {
     });
 
     test('copyWith returns new instance with updated values', () {
-      const originalState = SettingsState(
-        themeMode: ThemeMode.light,
-        locale: Locale('sk'),
+      final originalState = SettingsState(
+        themeModeIndex: ThemeMode.light.index,
+        localeString: 'sk',
         showNavigationArrows: false,
         keepScreenOn: false,
       );
 
       final newState = originalState.copyWith(
-        themeMode: ThemeMode.dark,
+        themeModeIndex: ThemeMode.dark.index,
         keepScreenOn: true,
       );
 
-      expect(newState.themeMode, ThemeMode.dark);
-      expect(newState.locale, const Locale('sk')); // unchanged
+      expect(newState.themeModeIndex, ThemeMode.dark.index);
+      expect(newState.localeString, 'sk'); // unchanged
       expect(newState.showNavigationArrows, false); // unchanged
       expect(newState.keepScreenOn, true);
     });
 
     test('has correct default values', () {
-      const state = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('sk'),
+      final state = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'sk',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
-      expect(state.themeMode, ThemeMode.system);
-      expect(state.locale, const Locale('sk'));
+      expect(state.themeModeIndex, ThemeMode.system.index);
+      expect(state.localeString, 'sk');
       expect(state.showNavigationArrows, true);
       expect(state.keepScreenOn, false);
     });
 
     test('should support inequality', () {
-      const state1 = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('en'),
+      final state1 = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
-      const state2 = SettingsState(
-        themeMode: ThemeMode.dark,
-        locale: Locale('en'),
+      final state2 = SettingsState(
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
@@ -124,9 +124,9 @@ void main() {
     });
 
     test('should support copyWith for keepScreenOn', () {
-      const originalState = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('sk'),
+      final originalState = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'sk',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
@@ -134,49 +134,50 @@ void main() {
       final newState = originalState.copyWith(keepScreenOn: true);
 
       expect(newState.keepScreenOn, true);
-      expect(newState.themeMode, originalState.themeMode);
-      expect(newState.locale, originalState.locale);
+      expect(newState.themeModeIndex, originalState.themeModeIndex);
+      expect(newState.localeString, originalState.localeString);
       expect(newState.showNavigationArrows, originalState.showNavigationArrows);
     });
 
     test('should support copyWith for multiple properties including keepScreenOn', () {
-      const originalState = SettingsState(
-        themeMode: ThemeMode.system,
-        locale: Locale('sk'),
+      final originalState = SettingsState(
+        themeModeIndex: ThemeMode.system.index,
+        localeString: 'sk',
         showNavigationArrows: true,
         keepScreenOn: false,
       );
 
       final newState = originalState.copyWith(
         keepScreenOn: true,
-        themeMode: ThemeMode.dark,
-        locale: const Locale('en'),
+        themeModeIndex: ThemeMode.dark.index,
+        localeString: 'en',
       );
 
       expect(newState.keepScreenOn, true);
-      expect(newState.themeMode, ThemeMode.dark);
-      expect(newState.locale, const Locale('en'));
+      expect(newState.themeModeIndex, ThemeMode.dark.index);
+      expect(newState.localeString, 'en');
       expect(newState.showNavigationArrows, originalState.showNavigationArrows);
     });
   });
 
   group('SettingsCubit', () {
-    late MockSharedPreferences mockPrefs;
+    late MockSettingsRepository mockRepository;
     late MockWakelockService mockWakelockService;
     late SettingsCubit settingsCubit;
 
     setUp(() {
-      mockPrefs = MockSharedPreferences();
+      mockRepository = MockSettingsRepository();
       mockWakelockService = MockWakelockService();
 
-      // Setup default SharedPreferences mock responses
-      when(() => mockPrefs.getInt('theme_mode')).thenReturn(0);
-      when(() => mockPrefs.getString('language_code')).thenReturn('sk');
-      when(() => mockPrefs.getBool('show_navigation_arrows')).thenReturn(true);
-      when(() => mockPrefs.getBool('keep_screen_on')).thenReturn(false);
-      when(() => mockPrefs.setInt(any(), any())).thenAnswer((_) async => true);
-      when(() => mockPrefs.setString(any(), any())).thenAnswer((_) async => true);
-      when(() => mockPrefs.setBool(any(), any())).thenAnswer((_) async => true);
+      // Setup default SettingsRepository mock responses
+      when(() => mockRepository.getThemeModeIndex()).thenReturn(0);
+      when(() => mockRepository.getLocaleString()).thenReturn('sk');
+      when(() => mockRepository.getShowNavigationArrows()).thenReturn(true);
+      when(() => mockRepository.getKeepScreenOn()).thenReturn(false);
+      when(() => mockRepository.saveThemeModeIndex(any())).thenAnswer((_) async {});
+      when(() => mockRepository.saveLocaleString(any())).thenAnswer((_) async {});
+      when(() => mockRepository.saveShowNavigationArrows(any())).thenAnswer((_) async {});
+      when(() => mockRepository.saveKeepScreenOn(any())).thenAnswer((_) async {});
 
       // Setup wakelock service mocks
       when(() => mockWakelockService.enable()).thenAnswer((_) async {});
@@ -188,16 +189,16 @@ void main() {
     });
 
     group('Initialization', () {
-      test('should initialize with default values when SharedPreferences is empty', () {
-        when(() => mockPrefs.getInt('theme_mode')).thenReturn(null);
-        when(() => mockPrefs.getString('language_code')).thenReturn(null);
-        when(() => mockPrefs.getBool('show_navigation_arrows')).thenReturn(null);
-        when(() => mockPrefs.getBool('keep_screen_on')).thenReturn(null);
+      test('should initialize with default values when repository returns defaults', () {
+        when(() => mockRepository.getThemeModeIndex()).thenReturn(0);
+        when(() => mockRepository.getLocaleString()).thenReturn('sk');
+        when(() => mockRepository.getShowNavigationArrows()).thenReturn(true);
+        when(() => mockRepository.getKeepScreenOn()).thenReturn(false);
 
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
 
-        expect(settingsCubit.state.themeMode, ThemeMode.system);
-        expect(settingsCubit.state.locale, const Locale('sk'));
+        expect(settingsCubit.state.themeModeIndex, ThemeMode.system.index);
+        expect(settingsCubit.state.localeString, 'sk');
         expect(settingsCubit.state.showNavigationArrows, true);
         expect(settingsCubit.state.keepScreenOn, false);
 
@@ -205,16 +206,16 @@ void main() {
         verify(() => mockWakelockService.disable()).called(1);
       });
 
-      test('should initialize with saved values from SharedPreferences', () {
-        when(() => mockPrefs.getInt('theme_mode')).thenReturn(2); // Dark theme
-        when(() => mockPrefs.getString('language_code')).thenReturn('en');
-        when(() => mockPrefs.getBool('show_navigation_arrows')).thenReturn(false);
-        when(() => mockPrefs.getBool('keep_screen_on')).thenReturn(true);
+      test('should initialize with saved values from repository', () {
+        when(() => mockRepository.getThemeModeIndex()).thenReturn(2); // Dark theme
+        when(() => mockRepository.getLocaleString()).thenReturn('en');
+        when(() => mockRepository.getShowNavigationArrows()).thenReturn(false);
+        when(() => mockRepository.getKeepScreenOn()).thenReturn(true);
 
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
 
-        expect(settingsCubit.state.themeMode, ThemeMode.dark);
-        expect(settingsCubit.state.locale, const Locale('en'));
+        expect(settingsCubit.state.themeModeIndex, ThemeMode.dark.index);
+        expect(settingsCubit.state.localeString, 'en');
         expect(settingsCubit.state.showNavigationArrows, false);
         expect(settingsCubit.state.keepScreenOn, true);
 
@@ -226,7 +227,7 @@ void main() {
         when(() => mockWakelockService.disable()).thenThrow(Exception('Wakelock error'));
 
         expect(
-          () => SettingsCubit(mockPrefs, wakelockService: mockWakelockService),
+          () => SettingsCubit(mockRepository, wakelockService: mockWakelockService),
           returnsNormally,
         );
       });
@@ -234,26 +235,26 @@ void main() {
 
     group('Theme Management', () {
       setUp(() {
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
       });
 
-      test('should change theme mode and save to preferences', () {
-        settingsCubit.changeTheme(ThemeMode.dark);
+      test('should change theme mode and save to repository', () {
+        settingsCubit.changeTheme(ThemeMode.dark.index);
 
-        expect(settingsCubit.state.themeMode, ThemeMode.dark);
-        verify(() => mockPrefs.setInt('theme_mode', 2)).called(1);
+        expect(settingsCubit.state.themeModeIndex, ThemeMode.dark.index);
+        verify(() => mockRepository.saveThemeModeIndex(2)).called(1);
       });
 
       test('should emit new state when theme changes', () async {
         final states = <SettingsState>[];
         settingsCubit.stream.listen(states.add);
 
-        settingsCubit.changeTheme(ThemeMode.light);
+        settingsCubit.changeTheme(ThemeMode.light.index);
         await Future.delayed(Duration.zero); // Allow stream to emit
 
         expect(states.length, 1);
-        expect(states.first.themeMode, ThemeMode.light);
-        expect(states.first.locale, const Locale('sk')); // Other values unchanged
+        expect(states.first.themeModeIndex, ThemeMode.light.index);
+        expect(states.first.localeString, 'sk'); // Other values unchanged
         expect(states.first.showNavigationArrows, true); // Other values unchanged
         expect(states.first.keepScreenOn, false); // Other values unchanged
       });
@@ -261,26 +262,26 @@ void main() {
 
     group('Language Management', () {
       setUp(() {
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
       });
 
-      test('should change language and save to preferences', () {
-        settingsCubit.changeLanguage(const Locale('en'));
+      test('should change language and save to repository', () {
+        settingsCubit.changeLanguage('en');
 
-        expect(settingsCubit.state.locale, const Locale('en'));
-        verify(() => mockPrefs.setString('language_code', 'en')).called(1);
+        expect(settingsCubit.state.localeString, 'en');
+        verify(() => mockRepository.saveLocaleString('en')).called(1);
       });
 
       test('should emit new state when language changes', () async {
         final states = <SettingsState>[];
         settingsCubit.stream.listen(states.add);
 
-        settingsCubit.changeLanguage(const Locale('en'));
+        settingsCubit.changeLanguage('en');
         await Future.delayed(Duration.zero); // Allow stream to emit
 
         expect(states.length, 1);
-        expect(states.first.locale, const Locale('en'));
-        expect(states.first.themeMode, ThemeMode.system); // Other values unchanged
+        expect(states.first.localeString, 'en');
+        expect(states.first.themeModeIndex, ThemeMode.system.index); // Other values unchanged
         expect(states.first.showNavigationArrows, true); // Other values unchanged
         expect(states.first.keepScreenOn, false); // Other values unchanged
       });
@@ -288,14 +289,14 @@ void main() {
 
     group('Navigation Arrows Management', () {
       setUp(() {
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
       });
 
-      test('should change show navigation arrows and save to preferences', () {
+      test('should change show navigation arrows and save to repository', () {
         settingsCubit.changeShowNavigationArrows(false);
 
         expect(settingsCubit.state.showNavigationArrows, false);
-        verify(() => mockPrefs.setBool('show_navigation_arrows', false)).called(1);
+        verify(() => mockRepository.saveShowNavigationArrows(false)).called(1);
       });
 
       test('should emit new state when navigation arrows setting changes', () async {
@@ -307,36 +308,36 @@ void main() {
 
         expect(states.length, 1);
         expect(states.first.showNavigationArrows, false);
-        expect(states.first.themeMode, ThemeMode.system); // Other values unchanged
-        expect(states.first.locale, const Locale('sk')); // Other values unchanged
+        expect(states.first.themeModeIndex, ThemeMode.system.index); // Other values unchanged
+        expect(states.first.localeString, 'sk'); // Other values unchanged
         expect(states.first.keepScreenOn, false); // Other values unchanged
       });
     });
 
     group('Keep Screen On Management', () {
       setUp(() {
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
       });
 
-      test('should enable keep screen on and save to preferences', () async {
+      test('should enable keep screen on and save to repository', () async {
         await settingsCubit.changeKeepScreenOn(true);
 
         expect(settingsCubit.state.keepScreenOn, true);
-        verify(() => mockPrefs.setBool('keep_screen_on', true)).called(1);
+        verify(() => mockRepository.saveKeepScreenOn(true)).called(1);
         verify(() => mockWakelockService.enable()).called(1);
       });
 
-      test('should disable keep screen on and save to preferences', () async {
+      test('should disable keep screen on and save to repository', () async {
         // First enable it
         await settingsCubit.changeKeepScreenOn(true);
         clearInteractions(mockWakelockService);
-        clearInteractions(mockPrefs);
+        clearInteractions(mockRepository);
 
         // Then disable it
         await settingsCubit.changeKeepScreenOn(false);
 
         expect(settingsCubit.state.keepScreenOn, false);
-        verify(() => mockPrefs.setBool('keep_screen_on', false)).called(1);
+        verify(() => mockRepository.saveKeepScreenOn(false)).called(1);
         verify(() => mockWakelockService.disable()).called(1);
       });
 
@@ -349,8 +350,8 @@ void main() {
 
         expect(states.length, 1);
         expect(states.first.keepScreenOn, true);
-        expect(states.first.themeMode, ThemeMode.system); // Other values unchanged
-        expect(states.first.locale, const Locale('sk')); // Other values unchanged
+        expect(states.first.themeModeIndex, ThemeMode.system.index); // Other values unchanged
+        expect(states.first.localeString, 'sk'); // Other values unchanged
         expect(states.first.showNavigationArrows, true); // Other values unchanged
       });
 
@@ -361,7 +362,7 @@ void main() {
         await settingsCubit.changeKeepScreenOn(true);
 
         expect(settingsCubit.state.keepScreenOn, true);
-        verify(() => mockPrefs.setBool('keep_screen_on', true)).called(1);
+        verify(() => mockRepository.saveKeepScreenOn(true)).called(1);
       });
 
       test('should handle wakelock errors gracefully when disabling', () async {
@@ -371,39 +372,25 @@ void main() {
         await settingsCubit.changeKeepScreenOn(false);
 
         expect(settingsCubit.state.keepScreenOn, false);
-        verify(() => mockPrefs.setBool('keep_screen_on', false)).called(1);
+        verify(() => mockRepository.saveKeepScreenOn(false)).called(1);
       });
     });
 
     group('State Persistence', () {
       setUp(() {
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
+        settingsCubit = SettingsCubit(mockRepository, wakelockService: mockWakelockService);
       });
 
       test('should persist all settings correctly', () async {
         await settingsCubit.changeKeepScreenOn(true);
-        settingsCubit.changeTheme(ThemeMode.dark);
-        settingsCubit.changeLanguage(const Locale('en'));
+        settingsCubit.changeTheme(ThemeMode.dark.index);
+        settingsCubit.changeLanguage('en');
         settingsCubit.changeShowNavigationArrows(false);
 
-        verify(() => mockPrefs.setBool('keep_screen_on', true)).called(1);
-        verify(() => mockPrefs.setInt('theme_mode', 2)).called(1);
-        verify(() => mockPrefs.setString('language_code', 'en')).called(1);
-        verify(() => mockPrefs.setBool('show_navigation_arrows', false)).called(1);
-      });
-    });
-
-    group('Getters for Testing', () {
-      setUp(() {
-        settingsCubit = SettingsCubit(mockPrefs, wakelockService: mockWakelockService);
-      });
-
-      test('should expose SharedPreferences for testing', () {
-        expect(settingsCubit.prefs, equals(mockPrefs));
-      });
-
-      test('should expose WakelockService for testing', () {
-        expect(settingsCubit.wakelockService, equals(mockWakelockService));
+        verify(() => mockRepository.saveKeepScreenOn(true)).called(1);
+        verify(() => mockRepository.saveThemeModeIndex(2)).called(1);
+        verify(() => mockRepository.saveLocaleString('en')).called(1);
+        verify(() => mockRepository.saveShowNavigationArrows(false)).called(1);
       });
     });
   });

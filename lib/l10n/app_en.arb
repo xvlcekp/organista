@@ -89,7 +89,14 @@
     "noPersonalRepositories": "No personal repositories available.",
     "global": "Global",
     "personal": "Personal",
-    "sheets": "sheets",
+    "sheets": "{count, plural, =1{sheet} other{sheets}}",
+    "@sheets": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "addMusicSheet": "Add music sheet",
     "edit": "Edit",
     "change": "Change",
@@ -118,8 +125,26 @@
     "version": "Version",
     "frequentlyAskedQuestions": "Frequently Asked Questions",
     "couldNotOpenUrl": "Could not open the URL",
-    "errorOpeningUrl": "Error opening URL: {error}",
+    "errorOpeningUrl": "Error opening URL: {url}",
+    "@errorOpeningUrl": {
+        "description": "Error message when failing to open a URL",
+        "placeholders": {
+            "url": {
+                "type": "String",
+                "description": "The URL that failed to open"
+            }
+        }
+    },
     "fileTooLarge": "File is too large. Maximum size is {maxSize}MB.",
+    "@fileTooLarge": {
+        "description": "Error message when a file exceeds the maximum allowed size",
+        "placeholders": {
+            "maxSize": {
+                "type": "int",
+                "description": "The maximum allowed file size in megabytes"
+            }
+        }
+    },
     "anErrorHappened": "An error happened",
     "showNavigationArrows": "Show navigation arrows",
     "keepScreenOn": "Keep screen on",
@@ -229,5 +254,6 @@
                 "description": "The maximum number of repositories allowed"
             }
         }
-    }
+    },
+    "noFileDataAvailable": "No file data available"
 }
