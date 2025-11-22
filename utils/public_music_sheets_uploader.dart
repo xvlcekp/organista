@@ -18,7 +18,7 @@ final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firebaseStorageRepository = FirebaseStorageRepository();
 
 void main() async {
-  await mainInitialize();
+  await firebaseInitialize();
   runApp(const PublicMusicSheetsUploader());
 }
 
@@ -279,7 +279,7 @@ class UploadFolderScreen extends HookWidget {
                 labelText: 'Select Repository',
                 border: OutlineInputBorder(),
               ),
-              value: selectedRepository.value,
+              initialValue: selectedRepository.value,
               items: repositories.value.map((Repository repository) {
                 return DropdownMenuItem<Repository>(
                   value: repository,
