@@ -40,14 +40,10 @@ class PdfViewerWidget extends HookWidget {
   /// Load PDF document asynchronously without blocking main thread
   Future<PdfDocument> _loadPdfDocument() async {
     if (kIsWeb) {
-      // Web version - process in chunks to avoid blocking
+      // Web version - download first, then parse
       final response = await get(Uri.parse(musicSheet.fileUrl));
-      final document = await PdfDocument.openData(response.bodyBytes);
-
-      // Yield control back to UI thread after processing
-      await Future.delayed(Duration.zero);
-
-      return document;
+      // Parse PDF asynchronously
+      return await PdfDocument.openData(response.bodyBytes);
     } else {
       // Mobile version - cache first, then process
       final pdfFile = await _downloadAndCachePdf(musicSheet.fileUrl);
@@ -56,12 +52,8 @@ class PdfViewerWidget extends HookWidget {
         throw Exception('Failed to download or cache PDF file');
       }
 
-      final document = await PdfDocument.openFile(pdfFile.path);
-
-      // Yield control back to UI thread after processing
-      await Future.delayed(Duration.zero);
-
-      return document;
+      // Parse PDF asynchronously
+      return await PdfDocument.openFile(pdfFile.path);
     }
   }
 
