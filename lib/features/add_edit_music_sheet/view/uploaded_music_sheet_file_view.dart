@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/extensions/hex_color.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:pdfx/pdfx.dart';
 
-class UploadedMusicSheetFileView extends StatelessWidget {
+class UploadedMusicSheetFileView extends HookWidget {
   const UploadedMusicSheetFileView({
     super.key,
     required this.file,
@@ -16,6 +17,28 @@ class UploadedMusicSheetFileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double pdfRenderScale = 2.0;
+    final pdfController = useState<PdfController?>(null);
+    final isLoadingPdf = useState(true);
+    final pdfError = useState(false);
+
+    useEffect(() {
+      if (file.mediaType == MediaType.pdf && file.bytes != null) {
+        // Load PDF asynchronously to avoid blocking main thread
+        PdfDocument.openData(file.bytes!)
+            .then((document) {
+              if (pdfController.value == null) {
+                pdfController.value = PdfController(document: Future.value(document));
+                isLoadingPdf.value = false;
+              }
+            })
+            .catchError((error) {
+              pdfError.value = true;
+              isLoadingPdf.value = false;
+            });
+      }
+      return null;
+    }, [file.bytes]);
+
     Widget child;
     final bytes = file.bytes;
     if (bytes == null) {
@@ -29,18 +52,21 @@ class UploadedMusicSheetFileView extends StatelessWidget {
           );
 
         case MediaType.pdf:
-          final pdfController = PdfController(
-            document: PdfDocument.openData(bytes),
-          );
-          child = PdfView(
-            controller: pdfController,
-            renderer: (PdfPage page) => page.render(
-              width: page.width * pdfRenderScale,
-              height: page.height * pdfRenderScale,
-              format: PdfPageImageFormat.png,
-              backgroundColor: Colors.white.toHex(),
-            ),
-          );
+          if (isLoadingPdf.value) {
+            child = const Center(child: CircularProgressIndicator());
+          } else if (pdfError.value || pdfController.value == null) {
+            child = Center(child: Text(context.loc.noFileDataAvailable));
+          } else {
+            child = PdfView(
+              controller: pdfController.value!,
+              renderer: (PdfPage page) => page.render(
+                width: page.width * pdfRenderScale,
+                height: page.height * pdfRenderScale,
+                format: PdfPageImageFormat.png,
+                backgroundColor: Colors.white.toHex(),
+              ),
+            );
+          }
       }
     }
     return Row(
