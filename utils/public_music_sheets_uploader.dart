@@ -18,7 +18,7 @@ final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firebaseStorageRepository = FirebaseStorageRepository();
 
 void main() async {
-  await mainInitialize();
+  await firebaseInitialize();
   runApp(const PublicMusicSheetsUploader());
 }
 

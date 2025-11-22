@@ -95,7 +95,7 @@ Future<void> updateSequenceIds({
 }
 
 void main() async {
-  await mainInitialize();
+  await firebaseInitialize();
   runApp(const UpdateSequenceIds());
 }
 
