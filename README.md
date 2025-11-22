@@ -116,6 +116,8 @@ If you modify `android/app/google_services.json`, you need to change it also in 
 - `git fetch`
 - `git checkout 3.32.5` (before it was 3.29.3)
 
+The latest flutter upgrade was from 3.32.5 to 3.38.1
+
 
 ## Firebase
 

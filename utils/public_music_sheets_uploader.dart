@@ -279,7 +279,7 @@ class UploadFolderScreen extends HookWidget {
                 labelText: 'Select Repository',
                 border: OutlineInputBorder(),
               ),
-              value: selectedRepository.value,
+              initialValue: selectedRepository.value,
               items: repositories.value.map((Repository repository) {
                 return DropdownMenuItem<Repository>(
                   value: repository,

@@ -8,11 +8,21 @@ CustomLogger get logger => CustomLogger.instance;
 
 class CustomLogger extends Logger {
   final _googleCloudLoggingService = GoogleCloudLoggingService();
+
+  // Stack trace configuration for PrettyPrinter
+  static const int _noStackTraceMethodCount = 0; // No stack traces for debug/info/warning
+  static const int _errorStackTraceMethodCount = 8; // Show stack traces for errors
+
   CustomLogger._()
     : super(
         filter: CustomFilter(),
         // Use SimplePrinter in release mode to reduce overhead
-        printer: kDebugMode ? PrettyPrinter() : SimplePrinter(),
+        printer: kDebugMode
+            ? PrettyPrinter(
+                methodCount: _noStackTraceMethodCount,
+                errorMethodCount: _errorStackTraceMethodCount,
+              )
+            : SimplePrinter(),
       ) {
     Logger.addOutputListener((event) {
       if (kReleaseMode) {
