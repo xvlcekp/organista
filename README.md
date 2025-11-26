@@ -3,6 +3,10 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
+### Version 1.0.7 - 26.11.2025
+- pridaná podpora pre iOS od verzie 15
+- optimalizácia kódu na pozadí, aktualizovaná verzia Flutteru na 3.38.1 a knižníc
+
 ### Version 1.0.6 - 4.10.2025
 <table>
 <tr>
@@ -91,6 +95,11 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 5. **create a release branch**
 
 https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
+
+### Update JS libraries
+In this project we use Firebase functions. As they use 3rd party JS libraries, they need to be regulary updated. To update them run:  
+`cd functions/`  
+`npm update`   
 
 ## Release from pipeline
 For encoding, we will make use of the popular Base64 encoding scheme. Base64 doesn’t stand for specific but various encoding schemes that allow you to convert binary data into a text representation. We need to upload Keystore certificate to Github workflow in STRING format.
