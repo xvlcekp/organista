@@ -3,6 +3,10 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
+### Version 1.0.7 - 26.11.2025
+- pridaná podpora pre iOS od verzie 15
+- optimalizácia kódu na pozadí, aktualizovaná verzia Flutteru na 3.38.1 a knižníc
+
 ### Version 1.0.6 - 4.10.2025
 <table>
 <tr>

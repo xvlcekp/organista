@@ -25,7 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - 
 
-## TODO: test google cloud logging on production in the newest version 
+## [1.0.7] - 2025-11-26
+### Added
+- Pridaná podpora pre iOS
+### Fixed
+- Zrýchlenie aplikácie
+- Zmeny na pozadí, upratovanie kódu
+### Security
+- Aktualizované knižnice na Firebase Functions
 
 ## [1.0.6] - 2025-10-04
 ### Added
