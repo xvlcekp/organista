@@ -37,22 +37,22 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  firebase_core: ^3.8.0
-  firebase_auth: ^5.3.3
-  cloud_firestore: ^5.6.0
-  firebase_analytics: ^11.3.5
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+  firebase_analytics: ^12.0.4
   bloc: ^9.0.0
   flutter_bloc: ^9.0.0
   uuid: ^4.5.1
-  firebase_storage: ^12.3.6
+  firebase_storage: ^13.0.4
   flutter_hooks: ^0.21.2
   collection: ^1.18.0
-  firebase_crashlytics: ^4.2.0
+  firebase_crashlytics: ^5.0.5
   equatable: ^2.0.7
   provider: ^6.1.2
   intl: ^0.20.2
   # Logging to google cloud console
-  googleapis: ^14.0.0
+  googleapis: ^15.0.0
   googleapis_auth: ^2.0.0
   logger: ^2.5.0
   cached_network_image: ^3.4.1
@@ -66,17 +66,30 @@ dependencies:
   diacritic: ^0.1.6
   shared_preferences: ^2.5.3
   auto_size_text: ^3.0.0
-  package_info_plus: ^8.3.0
+  package_info_plus: ^9.0.0
   url_launcher: ^6.3.1
   google_sign_in: ^7.0.0
   wakelock_plus: ^1.3.2
   meta: ^1.16.0
 
+# Config for generating app icons, on config change, it needs to be run again `dart run flutter_launcher_icons:generate`
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/organista_icon.png"
   remove_alpha_ios: true
+  background_color_ios: "#ffffff"
+
+# Config for generating native splash screen, on config change, it needs to be run again `dart run flutter_native_splash:create`
+flutter_native_splash:
+  web: false
+  #! FOR ALL PLATFORM, except Android 12+:
+  color: "#ffffff"
+  image: "assets/images/organista_icon.png"
+  fullscreen: true
+  #! ANDROID 12+ configuration:
+  android_12:
+    color: "#ffffff"
 
 dev_dependencies:
   flutter_test:
@@ -91,11 +104,12 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   mockito: ^5.4.4
   mocktail: ^1.0.4
-  fake_cloud_firestore: ^3.1.0
+  fake_cloud_firestore: ^4.0.0
   build_runner: ^2.4.13
   test: ^1.25.15
   bloc_test: ^10.0.0
-  bloc_lint: ^0.2.1
+  bloc_lint: ^0.3.5
+  flutter_native_splash: ^2.4.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

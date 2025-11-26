@@ -118,6 +118,13 @@ If you modify `android/app/google_services.json`, you need to change it also in 
 
 The latest flutter upgrade was from 3.32.5 to 3.38.1
 
+### iOS
+```
+cd ios
+pod deintegrate (remove all iOS dependencies from workspace)
+pod install
+```
+
 
 ## Firebase
 
