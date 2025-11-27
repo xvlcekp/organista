@@ -33,6 +33,7 @@
     "passwordsDoNotMatch": "Heslá sa nezhodujú",
     "login": "Prihlásiť sa",
     "signInWithGoogle": "Prihlásiť sa pomocou Google",
+    "signInWithApple": "Prihlásiť sa pomocou Apple",
     "register": "Registrovať sa",
     "playlists": "Zoznamy skladieb",
     "repositories": "Repozitáre",
@@ -172,6 +173,7 @@
     "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.",
     
     "authErrorGoogleSignInFailedText": "Prihlásenie cez Google zlyhalo. Skúste to znova.",
+    "authErrorAppleSignInFailedText": "Prihlásenie cez Apple zlyhalo. Skúste to znova.",
 
     "musicSheetAlreadyInPlaylist": "Notový záznam '{musicSheetName}' už existuje v zozname skladieb '{playlistName}'.",
     "@musicSheetAlreadyInPlaylist": {

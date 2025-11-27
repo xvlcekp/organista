@@ -37,6 +37,11 @@ class AuthEventSignInWithGoogle implements AuthEvent {
 }
 
 @immutable
+class AuthEventSignInWithApple implements AuthEvent {
+  const AuthEventSignInWithApple();
+}
+
+@immutable
 class AuthEventGoToRegistration implements AuthEvent {
   const AuthEventGoToRegistration();
 }

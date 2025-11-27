@@ -33,6 +33,7 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "login": "Login",
     "signInWithGoogle": "Sign in with Google",
+    "signInWithApple": "Sign in with Apple",
     "register": "Register",
     "playlists": "Playlists",
     "repositories": "Repositories",
@@ -172,6 +173,7 @@
     "authErrorInvalidCredentialText": "The supplied auth credential is incorrect, malformed or has expired.",
     
     "authErrorGoogleSignInFailedText": "Google Sign-In failed. Please try again.",
+    "authErrorAppleSignInFailedText": "Sign in with Apple failed. Please try again.",
 
     "musicSheetAlreadyInPlaylist": "Music sheet '{musicSheetName}' already exists in playlist '{playlistName}'.",
     "@musicSheetAlreadyInPlaylist": {

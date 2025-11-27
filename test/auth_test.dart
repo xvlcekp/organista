@@ -93,6 +93,24 @@ void main() {
       expect(uninitializedProvider.signInWithGoogle(), throwsA(const TypeMatcher<NotInitializedException>()));
     });
 
+    test('Should be able to sign in with Apple', () async {
+      await provider.initialize();
+      expect(provider.currentUser, null);
+
+      final user = await provider.signInWithApple();
+      expect(provider.currentUser, user);
+      expect(user.isEmailVerified, true);
+      expect(user.email, 'apple@example.com');
+    });
+
+    test('Should handle Apple Sign-In when not initialized', () async {
+      final uninitializedProvider = MockAuthProvider();
+      expect(
+        uninitializedProvider.signInWithApple(),
+        throwsA(const TypeMatcher<NotInitializedException>()),
+      );
+    });
+
     test('Should force account picker on repeated Google Sign-In', () async {
       await provider.initialize();
 
@@ -126,19 +144,19 @@ void main() {
     test('Should allow switching between regular login and Google Sign-In', () async {
       await provider.initialize();
 
-      // Start with regular login
-      await provider.logIn(email: 'user', password: 'password');
-      expect(provider.currentUser!.email, 'foo@bar.com');
-      expect(provider.currentUser!.isEmailVerified, false);
+        // Start with regular login
+        await provider.logIn(email: 'user', password: 'password');
+        expect(provider.currentUser!.email, 'foo@bar.com');
+        expect(provider.currentUser!.isEmailVerified, false);
 
-      // Logout completely
-      await provider.logOut();
-      expect(provider.currentUser, null);
+        // Logout completely
+        await provider.logOut();
+        expect(provider.currentUser, null);
 
-      // Sign in with Google
-      await provider.signInWithGoogle();
-      expect(provider.currentUser!.email, 'google@example.com');
-      expect(provider.currentUser!.isEmailVerified, true);
+        // Sign in with Google
+        await provider.signInWithGoogle();
+        expect(provider.currentUser!.email, 'google@example.com');
+        expect(provider.currentUser!.isEmailVerified, true);
 
       // Logout and back to regular login
       await provider.logOut();
@@ -247,6 +265,20 @@ class MockAuthProvider implements AuthProvider {
 
     await Future.delayed(const Duration(milliseconds: 500));
     const user = AuthUser(isEmailVerified: true, id: 'google123', email: 'google@example.com');
+    _user = user;
+    return Future.value(user);
+  }
+
+  @override
+  Future<AuthUser> signInWithApple() async {
+    if (!isInitialized) throw NotInitializedException();
+
+    await Future.delayed(const Duration(milliseconds: 500));
+    const user = AuthUser(
+      isEmailVerified: true,
+      id: 'apple123',
+      email: 'apple@example.com',
+    );
     _user = user;
     return Future.value(user);
   }
