@@ -148,6 +148,7 @@ class FirebaseAuthProvider implements AuthProvider {
       final oauthCredential = OAuthProvider('apple.com').credential(
         idToken: appleCredential.identityToken,
         rawNonce: rawNonce,
+        accessToken: appleCredential.authorizationCode,
       );
 
       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
@@ -159,9 +160,7 @@ class FirebaseAuthProvider implements AuthProvider {
           appleCredential.familyName,
         ].whereType<String>().where((name) => name.isNotEmpty).toList();
 
-        if (fullNameParts.isNotEmpty &&
-            (firebaseUser.displayName == null ||
-                firebaseUser.displayName!.isEmpty)) {
+        if (fullNameParts.isNotEmpty && (firebaseUser.displayName == null || firebaseUser.displayName!.isEmpty)) {
           await firebaseUser.updateDisplayName(fullNameParts.join(' '));
         }
       }
@@ -176,8 +175,17 @@ class FirebaseAuthProvider implements AuthProvider {
         throw const AuthErrorUserNotLoggedIn();
       }
     } on SignInWithAppleAuthorizationException catch (e, stackTrace) {
+      // Handle user cancellation gracefully
+      if (e.code == AuthorizationErrorCode.canceled) {
+        logger.i('Apple Sign-In was canceled by user');
+        Error.throwWithStackTrace(const AuthErrorUserNotLoggedIn(), stackTrace);
+      }
+      // Log detailed error information for debugging
       logger.e('Apple authorization failed: ${e.code} - ${e.message}');
       Error.throwWithStackTrace(const AuthErrorAppleSignInFailed(), stackTrace);
+    } on FirebaseAuthException catch (e, stackTrace) {
+      logger.e('Firebase sign-in with Apple failed: ${e.code} - ${e.message}');
+      Error.throwWithStackTrace(AuthError.from(e), stackTrace);
     } catch (e, stackTrace) {
       logger.e('Unexpected error during Apple Sign-In: $e');
       Error.throwWithStackTrace(const AuthErrorAppleSignInFailed(), stackTrace);
@@ -266,8 +274,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
 String _generateNonce() {
   const int length = 32;
-  const charset =
-      '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
   final random = Random.secure();
   return List.generate(
     length,
