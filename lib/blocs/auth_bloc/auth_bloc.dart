@@ -25,6 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventGoToRegistration>(_authEventGoToRegistration);
     on<AuthEventLogIn>(_authEventLogIn);
     on<AuthEventSignInWithGoogle>(_authEventSignInWithGoogle);
+    on<AuthEventSignInWithApple>(_authEventSignInWithApple);
     on<AuthEventGoToLogin>(_authEventGoToLogin);
     on<AuthEventRegister>(_authEventRegister);
     on<AuthEventInitialize>(_authEventInitialize);
@@ -264,6 +265,43 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final authUser = await _authProvider.signInWithGoogle();
 
       // Create user document in Firestore if it doesn't exist
+      await _firebaseFirestoreRepository.createUserDocument(
+        user: authUser,
+      );
+
+      emit(
+        AuthStateLoggedIn(
+          isLoading: false,
+          user: authUser,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthError.from(e),
+        ),
+      );
+    } catch (e) {
+      emit(
+        const AuthStateLoggedOut(
+          isLoading: false,
+          authError: AuthGenericException(),
+        ),
+      );
+    }
+  }
+
+  void _authEventSignInWithApple(
+    AuthEventSignInWithApple event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(
+      const AuthStateLoggedOut(isLoading: true),
+    );
+    try {
+      final authUser = await _authProvider.signInWithApple();
+
       await _firebaseFirestoreRepository.createUserDocument(
         user: authUser,
       );

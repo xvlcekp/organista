@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/config/app_theme.dart';
 import 'package:organista/config/config_controller.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/dialogs/forgot_password_dialog.dart';
@@ -10,6 +11,7 @@ import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/widgets/email_text_field.dart';
 import 'package:organista/widgets/organista_logo.dart';
 import 'package:organista/widgets/password_text_field.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginView extends HookWidget {
   const LoginView({super.key});
@@ -134,6 +136,19 @@ class LoginView extends HookWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ...[
+                      SignInWithAppleButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(
+                            const AuthEventSignInWithApple(),
+                          );
+                        },
+                        style: SignInWithAppleButtonStyle.black,
+                        borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                        text: localizations.signInWithApple,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     // Register Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

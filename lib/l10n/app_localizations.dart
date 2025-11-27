@@ -296,6 +296,12 @@ abstract class AppLocalizations {
   /// **'Prihlásiť sa pomocou Google'**
   String get signInWithGoogle;
 
+  /// No description provided for @signInWithApple.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prihlásiť sa pomocou Apple'**
+  String get signInWithApple;
+
   /// No description provided for @register.
   ///
   /// In sk, this message translates to:
@@ -907,6 +913,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Prihlásenie cez Google zlyhalo. Skúste to znova.'**
   String get authErrorGoogleSignInFailedText;
+
+  /// No description provided for @authErrorAppleSignInFailedText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prihlásenie cez Apple zlyhalo. Skúste to znova.'**
+  String get authErrorAppleSignInFailedText;
 
   /// Error message when trying to add a music sheet that already exists in a playlist
   ///

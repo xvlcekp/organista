@@ -12,6 +12,7 @@ abstract class AuthProvider {
     required String password,
   });
   Future<AuthUser> signInWithGoogle();
+  Future<AuthUser> signInWithApple();
   Future<void> logOut();
   Future<void> sendEmailVerification();
   Future<bool> sendPasswordResetEmail({required String email});

@@ -111,6 +111,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get signInWithGoogle => 'Prihlásiť sa pomocou Google';
 
   @override
+  String get signInWithApple => 'Prihlásiť sa pomocou Apple';
+
+  @override
   String get register => 'Registrovať sa';
 
   @override
@@ -448,6 +451,10 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get authErrorGoogleSignInFailedText =>
       'Prihlásenie cez Google zlyhalo. Skúste to znova.';
+
+  @override
+  String get authErrorAppleSignInFailedText =>
+      'Prihlásenie cez Apple zlyhalo. Skúste to znova.';
 
   @override
   String musicSheetAlreadyInPlaylist(

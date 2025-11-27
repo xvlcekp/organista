@@ -99,3 +99,8 @@ class AuthErrorInvalidCredential extends AuthError {
 class AuthErrorGoogleSignInFailed extends AuthError {
   const AuthErrorGoogleSignInFailed() : super();
 }
+
+@immutable
+class AuthErrorAppleSignInFailed extends AuthError {
+  const AuthErrorAppleSignInFailed() : super();
+}
