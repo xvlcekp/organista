@@ -144,19 +144,19 @@ void main() {
     test('Should allow switching between regular login and Google Sign-In', () async {
       await provider.initialize();
 
-        // Start with regular login
-        await provider.logIn(email: 'user', password: 'password');
-        expect(provider.currentUser!.email, 'foo@bar.com');
-        expect(provider.currentUser!.isEmailVerified, false);
+      // Start with regular login
+      await provider.logIn(email: 'user', password: 'password');
+      expect(provider.currentUser!.email, 'foo@bar.com');
+      expect(provider.currentUser!.isEmailVerified, false);
 
-        // Logout completely
-        await provider.logOut();
-        expect(provider.currentUser, null);
+      // Logout completely
+      await provider.logOut();
+      expect(provider.currentUser, null);
 
-        // Sign in with Google
-        await provider.signInWithGoogle();
-        expect(provider.currentUser!.email, 'google@example.com');
-        expect(provider.currentUser!.isEmailVerified, true);
+      // Sign in with Google
+      await provider.signInWithGoogle();
+      expect(provider.currentUser!.email, 'google@example.com');
+      expect(provider.currentUser!.isEmailVerified, true);
 
       // Logout and back to regular login
       await provider.logOut();

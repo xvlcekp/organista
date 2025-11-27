@@ -159,9 +159,7 @@ class FirebaseAuthProvider implements AuthProvider {
           appleCredential.familyName,
         ].whereType<String>().where((name) => name.isNotEmpty).toList();
 
-        if (fullNameParts.isNotEmpty &&
-            (firebaseUser.displayName == null ||
-                firebaseUser.displayName!.isEmpty)) {
+        if (fullNameParts.isNotEmpty && (firebaseUser.displayName == null || firebaseUser.displayName!.isEmpty)) {
           await firebaseUser.updateDisplayName(fullNameParts.join(' '));
         }
       }
@@ -266,8 +264,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
 String _generateNonce() {
   const int length = 32;
-  const charset =
-      '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
   final random = Random.secure();
   return List.generate(
     length,
