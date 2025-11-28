@@ -128,11 +128,19 @@ If you modify `android/app/google_services.json`, you need to change it also in 
 The latest flutter upgrade was from 3.32.5 to 3.38.1
 
 ### iOS
+Reinstall dependencies:
 ```
 cd ios
 pod deintegrate (remove all iOS dependencies from workspace)
 pod install
 ```
+Release process:
+```
+flutter build ipa --obfuscate --split-debug-info=build/ios/outputs/symbols
+open /Users/palo/Projects/organista/build/ios/archive/Runner.xcarchive
+```
+Click the **Validate App** button. If any issues are reported, address them and produce another build. You can reuse the same build ID until you upload an archive.
+After the archive has been successfully validated, click **Distribute App**.
 
 
 ## Firebase
