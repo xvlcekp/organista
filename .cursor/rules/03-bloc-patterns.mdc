@@ -1,0 +1,48 @@
+---
+alwaysApply: true
+---
+
+# BLoC/Cubit State Management
+
+Business logic lives in BLoC/Cubit, NOT in widgets. Widgets are dumb presentational components.
+
+**Key rules:**
+- No business logic in widgets
+- Use BLoC for complex state with events
+- Use Cubit for simple state with methods
+- Events and states must be immutable
+- Test BLoCs independently
+
+**Widget responsibilities (ONLY):**
+- Build UI
+- Dispatch events: `context.read<MyBloc>().add(event)`
+- React to states with `BlocBuilder`/`BlocListener`
+
+**BLoC responsibilities:**
+- Handle business logic
+- Coordinate use cases/repositories
+- Transform events to states
+- Error handling
+
+**Example:**
+```dart
+// Widget triggers event
+ElevatedButton(
+  onPressed: () => context.read<AuthBloc>().add(
+    AuthEventSignIn(email: email, password: password),
+  ),
+)
+
+// BLoC handles logic
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  void _authEventSignIn(event, emit) async {
+    emit(AuthStateLoggedOut(isLoading: true));
+    try {
+      final user = await _authProvider.signIn(...);
+      emit(AuthStateLoggedIn(user: user));
+    } catch (e) {
+      emit(AuthStateLoggedOut(authError: e));
+    }
+  }
+}
+```

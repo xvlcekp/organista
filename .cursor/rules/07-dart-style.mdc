@@ -1,0 +1,72 @@
+---
+alwaysApply: true
+---
+
+# Dart Style and Code Quality
+
+**Format with `dart format`:**
+- Line length: 120 characters
+- Always use trailing commas
+- Never indent triple backticks in code blocks
+
+**Naming conventions:**
+- Classes/Types: `UpperCamelCase` (MusicSheetRepository)
+- Files/Directories: `lowercase_with_underscores` (music_sheet_repository.dart)
+- Variables/Functions: `lowerCamelCase` (userName, fetchData)
+- Private members: `_prefix` (_privateField)
+- Constants: `lowerCamelCase` (defaultTimeout)
+
+**Code organization:**
+1. Static constants
+2. Static fields
+3. Instance fields
+4. Constructors
+5. Named/factory constructors
+6. Getters/setters
+7. Public methods
+8. Private methods
+9. Overridden methods
+
+**Best practices:**
+```dart
+// ✅ Use final when possible
+final user = fetchUser();
+final count = items.length;
+
+// ✅ Use const for constants
+const padding = EdgeInsets.all(16);
+
+// ✅ Use => for single expressions
+String getName() => _firstName + ' ' + _lastName;
+
+// ✅ Prefer is over as
+if (item is Movie) {
+  print(item.director);
+}
+
+// ✅ Use cascade notation
+final builder = StringBuilder()
+  ..write('Hello')
+  ..write(' ')
+  ..write('World');
+
+// ✅ Use trailing commas
+final widget = Padding(
+  padding: EdgeInsets.all(16),
+  child: Column(
+    children: [
+      Text('Title'),
+      Text('Subtitle'),
+    ],
+  ),
+);
+```
+
+**Error handling:**
+```dart
+// ✅ Use specific exceptions
+throw AuthenticationException('Invalid credentials');
+
+// ❌ NEVER throw strings
+throw 'Error occurred'; // BAD
+```

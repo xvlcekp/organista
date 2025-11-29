@@ -1,0 +1,81 @@
+---
+alwaysApply: true
+---
+
+# Linter and Analyzer Compliance
+
+**ZERO TOLERANCE for linter errors and analyzer warnings.**
+
+**Before every commit:**
+```bash
+flutter analyze                # Must return 0 issues
+dart format --output=none --set-exit-if-changed .
+```
+
+**Common fixes:**
+```dart
+// ❌ Missing return type
+getUser() async { }
+
+// ✅ Declare return type
+Future<User> getUser() async { }
+
+// ❌ No const
+Padding(padding: EdgeInsets.all(16))
+
+// ✅ Add const
+const Padding(padding: EdgeInsets.all(16))
+
+// ❌ Avoid print
+print('Debug message');
+
+// ✅ Use logger
+logger.d('Debug message');
+
+// ❌ Missing key
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(context) { }
+}
+
+// ✅ Add key parameter
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+  
+  @override
+  Widget build(context) { }
+}
+
+// ❌ Missing @override
+class MyClass extends BaseClass {
+  void method() { } // Overrides base
+}
+
+// ✅ Add @override
+class MyClass extends BaseClass {
+  @override
+  void method() { }
+}
+```
+
+**Auto-fix:**
+```bash
+dart fix --dry-run   # Preview fixes
+dart fix --apply     # Apply fixes
+dart format .        # Format code
+```
+
+**Suppressing (use sparingly):**
+```dart
+// Suppress with reason
+// ignore: avoid_print
+// Required for Flutter driver integration tests
+print('Driver: Waiting for widget');
+```
+
+**ALWAYS:**
+- Run analyze before committing
+- Fix all warnings/errors
+- Format code
+- Enable linter in IDE
+- Don't suppress without valid reason
