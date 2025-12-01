@@ -18,6 +18,7 @@ final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firebaseStorageRepository = FirebaseStorageRepository();
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await firebaseInitialize();
   runApp(const PublicMusicSheetsUploader());
 }
