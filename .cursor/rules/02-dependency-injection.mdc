@@ -1,0 +1,29 @@
+---
+alwaysApply: true
+---
+
+# Dependency Injection Guidelines
+
+Always use constructor injection for dependencies. Depend on abstractions, not concrete implementations. Use service locators (like GetIt) for dependency registration. Test with mocks.
+
+**Key principles:**
+- Constructor injection only
+- Depend on abstract classes
+- No global singletons
+- Register in central location
+- Keep dependencies mockable
+
+**Example:**
+```dart
+// ✅ CORRECT
+class AuthBloc {
+  final AuthProvider _authProvider;
+  AuthBloc({required AuthProvider authProvider})
+      : _authProvider = authProvider;
+}
+
+// ❌ WRONG
+class AuthBloc {
+  final _authProvider = FirebaseAuthProvider(); // Hard-coded!
+}
+```

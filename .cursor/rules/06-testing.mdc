@@ -1,0 +1,55 @@
+---
+alwaysApply: true
+---
+
+# Test-Driven Development (TDD)
+
+Follow Red-Green-Refactor cycle: Write failing test → Make it pass → Refactor.
+
+**Test pyramid:**
+- 70% Unit tests (fast, isolated)
+- 20% Widget tests (UI components)
+- 10% Integration tests (complete flows)
+
+**Coverage requirements:**
+- Overall: 80%+
+- Domain layer: 90%+ (critical business logic)
+- Data layer: 85%+ (repositories, data sources)
+- Presentation layer: 75%+ (BLoCs, widgets)
+
+**Testing patterns:**
+```dart
+// Unit test - BLoC
+blocTest<AuthBloc, AuthState>(
+  'emits logged in state when sign in succeeds',
+  build: () => AuthBloc(authProvider: mockAuthProvider),
+  act: (bloc) => bloc.add(AuthEventSignIn(email, password)),
+  expect: () => [
+    AuthStateLoggedOut(isLoading: true),
+    AuthStateLoggedIn(user: testUser),
+  ],
+);
+
+// Widget test
+testWidgets('should display email field', (tester) async {
+  await tester.pumpWidget(makeTestableWidget(LoginView()));
+  expect(find.byType(EmailTextField), findsOneWidget);
+});
+
+// Test setup with mocks
+setUp(() {
+  mockAuthProvider = MockAuthProvider();
+  authBloc = AuthBloc(authProvider: mockAuthProvider);
+});
+
+tearDown(() {
+  authBloc.close();
+});
+```
+
+**Best practices:**
+- Test public interfaces, not implementation
+- Use descriptive names: `should emit error when credentials are invalid`
+- Mock external dependencies
+- Test edge cases and error paths
+- Keep tests independent

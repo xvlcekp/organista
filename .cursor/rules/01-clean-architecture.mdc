@@ -1,0 +1,79 @@
+---
+alwaysApply: true
+---
+
+# Feature-First Clean Architecture
+
+## Project Structure
+Enforce feature-first clean architecture with clear boundaries:
+
+```
+lib/
+├── features/
+│   └── feature_name/
+│       ├── data/
+│       │   ├── datasources/     # Remote/local data access
+│       │   ├── models/          # Data transfer objects
+│       │   └── repositories/    # Repository implementations
+│       ├── domain/
+│       │   ├── entities/        # Business objects (immutable)
+│       │   ├── repositories/    # Repository contracts (abstract)
+│       │   └── usecases/        # Business logic operations
+│       └── presentation/
+│           ├── blocs/           # BLoC/Cubit state management
+│           ├── widgets/         # Feature-specific widgets
+│           └── pages/           # Feature screens
+├── core/
+│   ├── error/                   # Error handling
+│   ├── network/                 # Network utilities
+│   └── usecases/               # Base usecase classes
+└── shared/
+    ├── widgets/                 # Reusable widgets
+    └── utils/                   # Shared utilities
+```
+
+## Rules
+
+### 1. Feature Isolation
+- Each feature must be self-contained in its own directory
+- Features should not directly depend on other features
+- Cross-feature communication through domain layer or shared services only
+
+### 2. Layer Boundaries
+- **Presentation** depends on **Domain** (not Data)
+- **Data** depends on **Domain** (implements contracts)
+- **Domain** has no dependencies (pure business logic)
+- Dependencies flow inward: Presentation → Domain ← Data
+
+### 3. Dependency Rule
+```dart
+// ✅ CORRECT: Presentation depends on domain abstractions
+class MyBloc {
+  final GetUserUseCase getUserUseCase;
+  MyBloc(this.getUserUseCase);
+}
+
+// ❌ WRONG: Presentation depends on data layer
+class MyBloc {
+  final UserRepository userRepository; // Should be abstract from domain
+}
+```
+
+### 4. File Organization
+- Group by feature, not by type
+- Keep related files close together
+- Use barrel files (`index.dart`) sparingly, only for public API
+
+### 5. Naming Conventions
+- Entities: `User`, `MusicSheet` (domain models)
+- Models: `UserModel`, `MusicSheetModel` (data DTOs)
+- Repositories (abstract): `UserRepository` (in domain)
+- Repositories (impl): `UserRepositoryImpl` (in data)
+- UseCases: `GetUserUseCase`, `CreateMusicSheetUseCase`
+- DataSources: `RemoteUserDataSource`, `LocalUserDataSource`
+
+## Enforcement
+- When creating new features, always create the three layers
+- When adding functionality, identify which layer it belongs to
+- Reject code that violates layer boundaries
+- Suggest refactoring when boundaries are unclear

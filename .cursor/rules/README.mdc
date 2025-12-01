@@ -1,0 +1,52 @@
+---
+alwaysApply: false
+---
+
+# Cursor Rules for Organista Flutter Project
+
+This directory contains comprehensive coding guidelines and best practices. All rules use `.mdc` format with YAML frontmatter.
+
+## Rule Files
+
+1. **01-clean-architecture.mdc** - Feature-first structure, layer boundaries
+2. **02-dependency-injection.mdc** - Constructor injection, DI patterns
+3. **03-bloc-patterns.mdc** - BLoC/Cubit guidelines, no logic in widgets
+4. **04-repositories-services.mdc** - Repository pattern, data sources
+5. **05-theming-ui.mdc** - No magic numbers, design tokens
+6. **06-testing.mdc** - TDD, test pyramid, coverage goals
+7. **07-dart-style.mdc** - Dart style guide, naming conventions
+8. **08-linter-analyzer.mdc** - Zero tolerance linter policy
+
+## Core Principles
+
+- **Clean Architecture**: Strict layer boundaries (Presentation → Domain ← Data)
+- **Dependency Injection**: Always use constructor injection
+- **BLoC Pattern**: Business logic in BLoC, not widgets
+- **No Magic Numbers**: Use centralized theme tokens
+- **TDD**: Write tests first
+- **Zero Linter Errors**: Fix all warnings before committing
+
+## Quick Reference
+
+### Before Committing
+```bash
+flutter analyze              # Must be clean
+dart format .               # Auto-format
+flutter test --coverage     # Run tests
+```
+
+### Core Rules
+- Widgets are DUMB (no business logic)
+- BLoCs handle all business logic
+- Use abstractions, not concrete classes
+- All visual values from AppTheme
+- Test everything (80%+ coverage)
+- Fix linter warnings immediately
+
+## Enforcement
+
+These rules are enforced through:
+- Cursor AI (follows these guidelines)
+- Pre-commit hooks (recommended)
+- CI/CD pipeline (automated checks)
+- Code reviews (manual verification)

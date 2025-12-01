@@ -1,0 +1,60 @@
+---
+alwaysApply: true
+---
+
+# Theming, Tokens, and Responsive UI
+
+**NO MAGIC NUMBERS!** All visual values must come from centralized theme/constants.
+
+**Key rules:**
+- Define all values in `AppTheme` or `AppConstants`
+- Use semantic naming: `spacingM` not `spacing16`
+- Support responsive design (mobile/tablet/desktop)
+- Consider accessibility (min touch targets, contrast)
+
+**Example:**
+```dart
+// ❌ WRONG: Magic numbers
+Padding(
+  padding: EdgeInsets.all(16.0), // BAD
+  child: Text('Hello', style: TextStyle(fontSize: 14.0)), // BAD
+)
+
+// ✅ CORRECT: Theme constants
+Padding(
+  padding: EdgeInsets.all(AppSpacing.m),
+  child: Text('Hello', style: AppTypography.bodyMedium),
+)
+```
+
+**Theme structure:**
+```dart
+class AppTheme {
+  // Colors
+  static const Color primaryColor = Color(0xFF6200EE);
+  
+  // Spacing
+  static const double spacingXS = 4.0;
+  static const double spacingS = 8.0;
+  static const double spacingM = 16.0;
+  static const double spacingL = 24.0;
+  
+  // Typography
+  static const double fontSizeBody = 14.0;
+  static const double fontSizeTitle = 18.0;
+  
+  // Sizing
+  static const double buttonHeight = 48.0;
+  static const double buttonBorderRadius = 8.0;
+}
+```
+
+**Responsive UI:**
+```dart
+final columns = Responsive.valueByScreen(
+  context,
+  mobile: 1,
+  tablet: 2,
+  desktop: 3,
+);
+```
