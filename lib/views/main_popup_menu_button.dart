@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/logout_dialog.dart';
 import 'package:organista/features/settings/view/settings_view.dart';

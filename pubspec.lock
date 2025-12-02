@@ -402,7 +402,7 @@ packages:
     source: hosted
     version: "2.1.4"
   file:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: file
       sha256: a3b4f84adafef897088c160faf7dfffb7696046cb13ae90b508c2cbc95d3b8d4
@@ -553,10 +553,11 @@ packages:
   flutter_cache_manager:
     dependency: "direct main"
     description:
-      name: flutter_cache_manager
-      sha256: "400b6592f16a4409a7f2bb929a9a7e38c72cceb8ffb99ee57bbf2cb2cecf8386"
-      url: "https://pub.dev"
-    source: hosted
+      path: flutter_cache_manager
+      ref: "3d1995f175087475e6c2d8f78fd59a0683e773f7"
+      resolved-ref: "3d1995f175087475e6c2d8f78fd59a0683e773f7"
+      url: "https://github.com/Baseflow/flutter_cache_manager.git"
+    source: git
     version: "3.4.1"
   flutter_hooks:
     dependency: "direct main"
@@ -942,7 +943,7 @@ packages:
     source: hosted
     version: "1.9.1"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
