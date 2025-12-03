@@ -86,15 +86,10 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 
 ## Releasing a new version
-1. **write changelog**
-2. **increase app version** + bundle
-   Next steps can be omitted if release process in workflow works. 
-   TODO: remove after testing
-3. **compile** - `flutter clean; flutter pub get; flutter build appbundle`
-4. **import debug symbols** - `/build/app/intermediates/merged_native_libs/release/mergeReleaseNativeLibs/out/lib`
-5. **create a release branch**
-
-https://stackoverflow.com/questions/62568757/playstore-error-app-bundle-contains-native-code-and-youve-not-uploaded-debug
+1. **write changes** to `CHANGELOG.md` file
+2. **increase app version** + bundle & commit
+3. **create a release tag on github** - and set the release as primary
+4. **upload to playstore** - on release tag a bundle is created automatically. Just download it and upload to Google Play
 
 ### Update JS libraries
 In this project we use Firebase functions. As they use 3rd party JS libraries, they need to be regulary updated. To update them run:  
@@ -142,6 +137,9 @@ open /Users/palo/Projects/organista/build/ios/archive/Runner.xcarchive
 Click the **Validate App** button. If any issues are reported, address them and produce another build. You can reuse the same build ID until you upload an archive.
 After the archive has been successfully validated, click **Distribute App**.
 
+## Caching pdfs/images
+The library [flutter_cache_manager](https://pub.dev/packages/flutter_cache_manager) is not maintained for more then 1 year anymore. Since there is a bug that cache is not removed based on stalePerioad, or maxNrOfCachedFiles, it is overriden by a git commit which is not merged.
+Another problem is that the library caches to cache directory which is not under full control of application and can be erased at any time. That is why a new `PersistentFileSystem` is added and necessary files are stored in /files folder. Be careful when updating the library, because there are these "hacks" (also mentioned in `pubspec.yaml`).
 
 ## Firebase
 
