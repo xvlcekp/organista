@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/dialogs/delete_account_dialog.dart';
+import 'package:organista/features/cache_management/view/cache_management_page.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
+import 'package:organista/features/settings/widgets/section_header.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
 class SettingsView extends StatelessWidget {
@@ -14,7 +16,7 @@ class SettingsView extends StatelessWidget {
     final localizations = context.loc;
     final settingsCubit = context.read<SettingsCubit>();
     final theme = Theme.of(context);
-    final titleMedium = theme.textTheme.titleMedium;
+    final errorColor = theme.colorScheme.error;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, authState) {
@@ -32,11 +34,12 @@ class SettingsView extends StatelessWidget {
             return ListView(
               children: [
                 // App Settings Section
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(localizations.appSettings, style: titleMedium),
+                SectionHeader(
+                  title: localizations.appSettings,
+                  icon: Icons.settings,
                 ),
                 ListTile(
+                  leading: const Icon(Icons.language),
                   title: Text(localizations.language),
                   trailing: DropdownButton<String>(
                     value: state.localeString,
@@ -58,6 +61,7 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.palette),
                   title: Text(localizations.theme),
                   trailing: DropdownButton<ThemeMode>(
                     value: state.themeMode,
@@ -83,6 +87,7 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.expand_sharp),
                   title: Text(context.loc.showNavigationArrows),
                   trailing: Switch(
                     value: state.showNavigationArrows,
@@ -92,6 +97,7 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.stay_current_portrait),
                   title: Text(context.loc.keepScreenOn),
                   trailing: Switch(
                     value: state.keepScreenOn,
@@ -101,16 +107,33 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
 
-                // Account Management Section
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(localizations.accountManagement, style: titleMedium),
+                // Storage Management Section
+                SectionHeader(
+                  title: localizations.storageManagement,
+                  icon: Icons.storage,
                 ),
                 ListTile(
-                  leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
+                  leading: const Icon(Icons.wifi_off),
+                  title: Text(localizations.manageCachedMusicSheets),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const CacheManagementPage(),
+                      ),
+                    );
+                  },
+                ),
+                // Account Management Section
+                SectionHeader(
+                  title: localizations.accountManagement,
+                  icon: Icons.person,
+                ),
+                ListTile(
+                  leading: Icon(Icons.delete_forever, color: errorColor),
                   title: Text(
                     localizations.deleteAccount,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(color: errorColor),
                   ),
                   onTap: () {
                     showDeleteAccountDialog(context).then((shouldDeleteAccount) {
