@@ -7,7 +7,7 @@ import 'package:organista/features/show_repositories/models/repository_error.dar
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/services/stream_manager.dart';
+import 'package:organista/managers/stream_manager.dart';
 
 part 'show_repositories_state.dart';
 

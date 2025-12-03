@@ -8,7 +8,7 @@ import 'package:meta/meta.dart' show immutable;
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/services/stream_manager.dart';
+import 'package:organista/managers/stream_manager.dart';
 
 part 'music_sheet_repository_event.dart';
 part 'music_sheet_repository_state.dart';
