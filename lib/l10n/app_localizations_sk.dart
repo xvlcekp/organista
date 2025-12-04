@@ -548,7 +548,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get clearCache => 'Vyčistiť dočasnú pamäť';
 
   @override
-  String get clearCacheConfirmTitle => 'Chcete naozaj vyčistiť dočasnú pamäť';
+  String get clearCacheConfirmTitle => 'Chcete naozaj vyčistiť dočasnú pamäť?';
 
   @override
   String clearCacheConfirmMessage(int count, String size) {

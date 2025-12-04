@@ -1066,7 +1066,7 @@ abstract class AppLocalizations {
   /// No description provided for @clearCacheConfirmTitle.
   ///
   /// In sk, this message translates to:
-  /// **'Chcete naozaj vyčistiť dočasnú pamäť'**
+  /// **'Chcete naozaj vyčistiť dočasnú pamäť?'**
   String get clearCacheConfirmTitle;
 
   /// Confirmation message when clearing cache

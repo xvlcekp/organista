@@ -262,7 +262,7 @@
     "cachedFiles": "Počet súborov v dočasnej pamäti",
     "cacheSize": "Veľkosť dočasnej pamäti",
     "clearCache": "Vyčistiť dočasnú pamäť",
-    "clearCacheConfirmTitle": "Chcete naozaj vyčistiť dočasnú pamäť",
+    "clearCacheConfirmTitle": "Chcete naozaj vyčistiť dočasnú pamäť?",
     "clearCacheConfirmMessage": "Týmto sa vymažú všetky súbory v dočasnej pamäti ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.",
     "@clearCacheConfirmMessage": {
         "description": "Confirmation message when clearing cache",

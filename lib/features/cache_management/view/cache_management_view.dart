@@ -42,7 +42,7 @@ class CacheManagementView extends StatelessWidget {
 
     final confirmed = await showGenericDialog<bool>(
       context: context,
-      title: '${localizations.clearCacheConfirmTitle}?',
+      title: localizations.clearCacheConfirmTitle,
       content: localizations.clearCacheConfirmMessage(
         cacheState.totalFiles,
         cacheState.sizeInMB.toStringAsFixed(_decimalPlaces),

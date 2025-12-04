@@ -14,7 +14,7 @@ class AppConstants {
   static const Duration cacheStalePeriod = Duration(days: 365);
 
   /// Maximum number of objects to keep in cache
-  static const int maxCacheObjects = 5000;
+  static const int maxCacheObjects = 2000;
 
   static const double nextPagetouchAreaHeight = 0.15;
 
