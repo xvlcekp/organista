@@ -25,7 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - 
 
-## [1.0.7] - 2025-11-26
+## [1.0.8] - 2025-
+### Added
+- Pridaná obrazovka na mazanie dočasnej pamäte
+### Fixed
+- Opravené mazanie nôt, keď aplikácia nebola dlhšie pripojená k internetu
+
+## [1.0.7] - 2025-11-28
 ### Added
 - Pridaná podpora pre iOS
 - Pridaná možnosť prihlásenia cez Apple ID
