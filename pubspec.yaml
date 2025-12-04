@@ -73,6 +73,22 @@ dependencies:
   meta: ^1.16.0
   sign_in_with_apple: ^7.0.1
   crypto: ^3.0.7
+  path_provider: ^2.1.5
+  file: ^7.0.1
+
+# Override dependencies to use git version with cache cleanup fix
+# The flutter_cache_manager is not maintained anymore, so these fixes are applied manually:
+# 1. Files are not deleted from the cache directory when the cache is cleared, but only JSON file is deleted with references, thus the cache is not cleared physically.
+# 2. stalePeriod is not respected, so files were not deleted after the period. It is event-based cleanup so it clears cache only when accessing a file or downloading a new file
+# More details:
+# https://github.com/Baseflow/flutter_cache_manager/issues/490
+# https://github.com/Baseflow/flutter_cache_manager/issues/476
+dependency_overrides:
+  flutter_cache_manager:
+    git:
+      url: https://github.com/Baseflow/flutter_cache_manager.git
+      path: flutter_cache_manager
+      ref: "3d1995f175087475e6c2d8f78fd59a0683e773f7"
 
 # Config for generating app icons, on config change, it needs to be run again `dart run flutter_launcher_icons:generate`
 flutter_launcher_icons:

@@ -8,7 +8,7 @@ import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_provider.dart';
-import 'package:organista/services/stream_manager.dart';
+import 'package:organista/managers/stream_manager.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

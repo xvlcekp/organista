@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
@@ -10,7 +11,6 @@ import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_shee
 import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
@@ -34,9 +34,9 @@ class RepositoryMusicSheetTile extends HookWidget {
     this.onLongPress,
   });
 
-  Future<bool> _checkIfCached() async {
+  Future<bool> _checkIfCached(CacheManager cacheManager) async {
     try {
-      final file = await PersistentCacheManager().getFileFromCache(musicSheet.fileUrl);
+      final file = await cacheManager.getFileFromCache(musicSheet.fileUrl);
       return file != null;
     } catch (e) {
       logger.e("Error checking cache for ${musicSheet.fileName}: $e");
@@ -51,9 +51,10 @@ class RepositoryMusicSheetTile extends HookWidget {
     final localizations = context.loc;
     final isCached = useState<bool>(false);
     final selectedColor = theme.colorScheme.primary.withAlpha(AppTheme.selectedColorAlpha);
+    final cacheManager = context.read<CacheManager>();
 
     useEffect(() {
-      _checkIfCached().then((cached) {
+      _checkIfCached(cacheManager).then((cached) {
         isCached.value = cached;
       });
       return null;
@@ -71,7 +72,7 @@ class RepositoryMusicSheetTile extends HookWidget {
                   )
                   .then((_) {
                     // Check cache status after returning from the view
-                    _checkIfCached().then((cached) {
+                    _checkIfCached(cacheManager).then((cached) {
                       isCached.value = cached;
                     });
                   });

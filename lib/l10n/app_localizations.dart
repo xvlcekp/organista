@@ -1038,6 +1038,78 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Súbor je poškodený'**
   String get noFileDataAvailable;
+
+  /// No description provided for @storageManagement.
+  ///
+  /// In sk, this message translates to:
+  /// **'Správa úložiska'**
+  String get storageManagement;
+
+  /// No description provided for @cachedFiles.
+  ///
+  /// In sk, this message translates to:
+  /// **'Počet súborov v dočasnej pamäti'**
+  String get cachedFiles;
+
+  /// No description provided for @cacheSize.
+  ///
+  /// In sk, this message translates to:
+  /// **'Veľkosť dočasnej pamäti'**
+  String get cacheSize;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vyčistiť dočasnú pamäť'**
+  String get clearCache;
+
+  /// No description provided for @clearCacheConfirmTitle.
+  ///
+  /// In sk, this message translates to:
+  /// **'Chcete naozaj vyčistiť dočasnú pamäť?'**
+  String get clearCacheConfirmTitle;
+
+  /// Confirmation message when clearing cache
+  ///
+  /// In sk, this message translates to:
+  /// **'Týmto sa vymažú všetky súbory v dočasnej pamäti ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.'**
+  String clearCacheConfirmMessage(int count, String size);
+
+  /// No description provided for @cacheClearedSuccess.
+  ///
+  /// In sk, this message translates to:
+  /// **'Dočasná pamäť úspešne vyčistená'**
+  String get cacheClearedSuccess;
+
+  /// No description provided for @cacheSummary.
+  ///
+  /// In sk, this message translates to:
+  /// **'Dočasná pamäť'**
+  String get cacheSummary;
+
+  /// No description provided for @aboutCache.
+  ///
+  /// In sk, this message translates to:
+  /// **'O dočasnej pamäti'**
+  String get aboutCache;
+
+  /// No description provided for @cacheDescription.
+  ///
+  /// In sk, this message translates to:
+  /// **'Súbory v dočasnej pamäti umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené. Dočasná pamäť je trvalá a nebude automaticky vymazaná systémom.'**
+  String get cacheDescription;
+
+  /// Informácie o tom, kedy sú súbory v dočasnej pamäti odstránené
+  ///
+  /// In sk, this message translates to:
+  /// **'Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď dočasná pamäť dosiahne maximálnu kapacitu {maxObjects} súborov.'**
+  String cacheRemovalInfo(int days, int maxObjects);
+
+  /// No description provided for @manageCachedMusicSheets.
+  ///
+  /// In sk, this message translates to:
+  /// **'Spravovať offline noty'**
+  String get manageCachedMusicSheets;
 }
 
 class _AppLocalizationsDelegate

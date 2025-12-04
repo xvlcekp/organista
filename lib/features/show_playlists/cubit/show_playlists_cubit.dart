@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/services/stream_manager.dart';
+import 'package:organista/managers/stream_manager.dart';
 
 part 'show_playlists_state.dart';
 

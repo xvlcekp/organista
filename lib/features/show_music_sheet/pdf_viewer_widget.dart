@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:organista/config/app_theme.dart';
@@ -13,7 +13,6 @@ import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/features/show_music_sheet/zoomable_music_sheet_viewer.dart';
 import 'package:organista/features/show_music_sheet/pdf_navigation_touch_area.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:pdfx/pdfx.dart';
 
@@ -28,17 +27,8 @@ class PdfViewerWidget extends HookWidget {
     this.mode = MusicSheetViewMode.full, // Default to full mode
   });
 
-  Future<File?> _downloadAndCachePdf(String url) async {
-    try {
-      return await PersistentCacheManager().getSingleFile(url);
-    } catch (e) {
-      logger.e("Failed to load PDF: $e");
-      return null;
-    }
-  }
-
   /// Load PDF document asynchronously without blocking main thread
-  Future<PdfDocument> _loadPdfDocument() async {
+  Future<PdfDocument> _loadPdfDocument(CacheManager cacheManager) async {
     if (kIsWeb) {
       // Web version - download first, then parse
       final response = await get(Uri.parse(musicSheet.fileUrl));
@@ -46,12 +36,7 @@ class PdfViewerWidget extends HookWidget {
       return await PdfDocument.openData(response.bodyBytes);
     } else {
       // Mobile version - cache first, then process
-      final pdfFile = await _downloadAndCachePdf(musicSheet.fileUrl);
-
-      if (pdfFile == null) {
-        throw Exception('Failed to download or cache PDF file');
-      }
-
+      final pdfFile = await cacheManager.getSingleFile(musicSheet.fileUrl);
       // Parse PDF asynchronously
       return await PdfDocument.openFile(pdfFile.path);
     }
@@ -62,6 +47,7 @@ class PdfViewerWidget extends HookWidget {
     final pdfControllerFuture = useState<PdfController?>(null);
     final isLoading = useState(true);
     final hasError = useState(false);
+    final cacheManager = context.read<CacheManager>();
 
     useEffect(() {
       // Use a completer to handle the async operation properly
@@ -69,7 +55,7 @@ class PdfViewerWidget extends HookWidget {
 
       () async {
         try {
-          final document = await _loadPdfDocument();
+          final document = await _loadPdfDocument(cacheManager);
 
           if (!completer.isCompleted) {
             pdfControllerFuture.value = PdfController(document: Future.value(document));
@@ -78,8 +64,8 @@ class PdfViewerWidget extends HookWidget {
             completer.complete();
           }
         } catch (e) {
+          logger.e("Failed to download or cache PDF file: $e");
           if (!completer.isCompleted) {
-            logger.e("Error loading PDF: $e");
             hasError.value = true;
             isLoading.value = false;
             completer.complete();

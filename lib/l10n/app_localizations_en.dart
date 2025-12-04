@@ -530,4 +530,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noFileDataAvailable => 'No file data available';
+
+  @override
+  String get storageManagement => 'Storage Management';
+
+  @override
+  String get cachedFiles => 'Cached files';
+
+  @override
+  String get cacheSize => 'Cache size';
+
+  @override
+  String get clearCache => 'Clear cache';
+
+  @override
+  String get clearCacheConfirmTitle => 'Clear Cache?';
+
+  @override
+  String clearCacheConfirmMessage(int count, String size) {
+    return 'This will delete all cached files ($count files, $size MB). Music sheets will need to be re-downloaded when accessed again.';
+  }
+
+  @override
+  String get cacheClearedSuccess => 'Cache cleared successfully';
+
+  @override
+  String get cacheSummary => 'Cache Summary';
+
+  @override
+  String get aboutCache => 'About Cache';
+
+  @override
+  String get cacheDescription =>
+      'Cached files allow faster loading of music sheets you\'ve already viewed. The cache is persistent and will not be cleared by the system automatically.';
+
+  @override
+  String cacheRemovalInfo(int days, int maxObjects) {
+    return 'Files are automatically removed when they haven\'t been accessed for $days days or when the cache reaches its maximum capacity of $maxObjects files.';
+  }
+
+  @override
+  String get manageCachedMusicSheets => 'Manage cached music sheets';
 }

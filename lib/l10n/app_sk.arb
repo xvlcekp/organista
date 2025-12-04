@@ -257,5 +257,43 @@
             }
         }
     },
-    "noFileDataAvailable": "Súbor je poškodený"
+    "noFileDataAvailable": "Súbor je poškodený",
+    "storageManagement": "Správa úložiska",
+    "cachedFiles": "Počet súborov v dočasnej pamäti",
+    "cacheSize": "Veľkosť dočasnej pamäti",
+    "clearCache": "Vyčistiť dočasnú pamäť",
+    "clearCacheConfirmTitle": "Chcete naozaj vyčistiť dočasnú pamäť?",
+    "clearCacheConfirmMessage": "Týmto sa vymažú všetky súbory v dočasnej pamäti ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.",
+    "@clearCacheConfirmMessage": {
+        "description": "Confirmation message when clearing cache",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of cached files"
+            },
+            "size": {
+                "type": "String",
+                "description": "Total cache size"
+            }
+        }
+    },
+    "cacheClearedSuccess": "Dočasná pamäť úspešne vyčistená",
+    "cacheSummary": "Dočasná pamäť",
+    "aboutCache": "O dočasnej pamäti",
+    "cacheDescription": "Súbory v dočasnej pamäti umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené. Dočasná pamäť je trvalá a nebude automaticky vymazaná systémom.",
+    "cacheRemovalInfo": "Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď dočasná pamäť dosiahne maximálnu kapacitu {maxObjects} súborov.",
+    "@cacheRemovalInfo": {
+        "description": "Informácie o tom, kedy sú súbory v dočasnej pamäti odstránené",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Počet dní, po ktorých sa súbory stanú zastaralými"
+            },
+            "maxObjects": {
+                "type": "int",
+                "description": "Maximálny počet objektov v dočasnej pamäti"
+            }
+        }
+    },
+    "manageCachedMusicSheets": "Spravovať offline noty"
 }

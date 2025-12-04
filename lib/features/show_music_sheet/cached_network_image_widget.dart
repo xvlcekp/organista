@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/zoomable_music_sheet_viewer.dart';
-import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {
@@ -21,15 +22,15 @@ class CachedNetworkImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (mode) {
-      MusicSheetViewMode.full => _buildFullImageView(),
-      MusicSheetViewMode.thumbnail => _buildThumbnailImage(),
+      MusicSheetViewMode.full => _buildFullImageView(context),
+      MusicSheetViewMode.thumbnail => _buildThumbnailImage(context),
       MusicSheetViewMode.preview => _buildPreviewImage(context),
     };
   }
 
-  Widget _buildFullImageView() {
+  Widget _buildFullImageView(BuildContext context) {
     return ZoomableMusicSheetViewer(
-      child: _buildImage(),
+      child: _buildImage(context),
     );
   }
 
@@ -43,18 +44,29 @@ class CachedNetworkImageWidget extends StatelessWidget {
           ),
         ),
       ),
-      child: _buildImage(memCacheWidth: _previewCacheWidth, filterQuality: FilterQuality.medium),
+      child: _buildImage(
+        context,
+        memCacheWidth: _previewCacheWidth,
+        filterQuality: FilterQuality.medium,
+      ),
     );
   }
 
-  Widget _buildThumbnailImage() {
+  Widget _buildThumbnailImage(BuildContext context) {
     return _buildImage(
+      context,
       memCacheWidth: _thumbnailCacheWidth,
       filterQuality: FilterQuality.low,
     );
   }
 
-  Widget _buildImage({int? memCacheWidth, FilterQuality filterQuality = FilterQuality.high}) {
+  Widget _buildImage(
+    BuildContext context, {
+    int? memCacheWidth,
+    FilterQuality filterQuality = FilterQuality.high,
+  }) {
+    final cacheManager = context.read<CacheManager>();
+
     return CachedNetworkImage(
       placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
       errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -64,7 +76,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
       fit: BoxFit.contain,
       memCacheWidth: memCacheWidth,
       filterQuality: filterQuality,
-      cacheManager: PersistentCacheManager(),
+      cacheManager: cacheManager,
     );
   }
 }

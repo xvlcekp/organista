@@ -10,7 +10,7 @@ import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'package:organista/services/stream_manager.dart';
+import 'package:organista/managers/stream_manager.dart';
 import 'dart:async';
 
 part 'playlist_event.dart';
