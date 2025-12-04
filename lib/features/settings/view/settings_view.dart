@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
-import 'package:organista/dialogs/delete_account_dialog.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/settings/view/delete_account_dialog.dart';
 import 'package:organista/features/cache_management/view/cache_management_page.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';

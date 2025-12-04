@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
-import 'package:organista/dialogs/playlists/add_playlist_dialog.dart';
-import 'package:organista/dialogs/playlists/delete_playlist_dialog.dart';
-import 'package:organista/dialogs/playlists/rename_playlist_dialog.dart';
+import 'package:organista/features/show_playlists/view/add_playlist_dialog.dart';
+import 'package:organista/features/show_playlists/view/delete_playlist_dialog.dart';
+import 'package:organista/features/show_playlists/view/rename_playlist_dialog.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'package:organista/views/main_popup_menu_button.dart';
+import 'package:organista/features/popup_menu/main_popup_menu_button.dart';
 import 'package:organista/widgets/empty_list_widget.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 

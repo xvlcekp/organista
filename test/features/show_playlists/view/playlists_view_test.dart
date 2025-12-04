@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlists_view.dart';
@@ -13,7 +13,7 @@ import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'package:organista/views/main_popup_menu_button.dart';
+import 'package:organista/features/popup_menu/main_popup_menu_button.dart';
 
 // Mock classes
 class MockShowPlaylistsCubit extends MockCubit<ShowPlaylistsState> implements ShowPlaylistsCubit {}

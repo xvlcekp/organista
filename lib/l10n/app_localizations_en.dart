@@ -30,8 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMusicSheetsYet => 'No music sheets yet';
 
   @override
-  String get addYourFirstMusicSheet =>
-      'Add your first music sheet to get started';
+  String get addYourFirstMusicSheet => 'Add your first music sheet to get started';
 
   @override
   String get selectImageFirst => 'You have to select an image first';
@@ -40,8 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discardChanges => 'Discard Changes';
 
   @override
-  String get discardChangesMessage =>
-      'Are you sure you want to discard changes?';
+  String get discardChangesMessage => 'Are you sure you want to discard changes?';
 
   @override
   String get yes => 'Yes';
@@ -62,8 +60,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteImage => 'Delete image';
 
   @override
-  String get deleteImageMessage =>
-      'Are you sure you want to delete this image? You cannot undo this operation!';
+  String get deleteImageMessage => 'Are you sure you want to delete this image? You cannot undo this operation!';
 
   @override
   String get logout => 'Logout';
@@ -75,8 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccount => 'Delete account';
 
   @override
-  String get deleteAccountMessage =>
-      'Are you sure you want to delete your account? This action cannot be undone.';
+  String get deleteAccountMessage => 'Are you sure you want to delete your account? This action cannot be undone.';
 
   @override
   String get forgotPassword => 'Forgot Password';
@@ -142,8 +138,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get success => 'Success';
 
   @override
-  String get passwordResetEmailSent =>
-      'Password reset email sent. Please check your inbox.';
+  String get passwordResetEmailSent => 'Password reset email sent. Please check your inbox.';
 
   @override
   String get invalidEmail => 'Invalid email';
@@ -312,8 +307,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add => 'Add';
 
   @override
-  String get resetPasswordMessage =>
-      'Enter your email address and we\'ll send you a link to reset your password.';
+  String get resetPasswordMessage => 'Enter your email address and we\'ll send you a link to reset your password.';
 
   @override
   String get enterEmail => 'Enter your email';
@@ -337,8 +331,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inputCannotBeEmpty => 'Input cannot be empty';
 
   @override
-  String get inputCannotBeSameAsCurrent =>
-      'Input cannot be the same as the current name';
+  String get inputCannotBeSameAsCurrent => 'Input cannot be the same as the current name';
 
   @override
   String get theme => 'Theme';
@@ -359,15 +352,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deletePlaylist => 'Delete playlist';
 
   @override
-  String get deletePlaylistMessage =>
-      'Are you sure you want to delete this playlist? You cannot undo this operation!';
+  String get deletePlaylistMessage => 'Are you sure you want to delete this playlist? You cannot undo this operation!';
 
   @override
   String get about => 'About';
 
   @override
-  String get aboutMessage =>
-      'A music sheet management application\nCreated by Pavol Vlček';
+  String get aboutMessage => 'A music sheet management application\nCreated by Pavol Vlček';
 
   @override
   String get appSettings => 'App Settings';
@@ -417,70 +408,49 @@ class AppLocalizationsEn extends AppLocalizations {
       'You need to log out and log back in again in order to perform this operation';
 
   @override
-  String get authErrorOperationNotAllowedText =>
-      'You cannot register using this method at this moment!';
+  String get authErrorOperationNotAllowedText => 'You cannot register using this method at this moment!';
 
   @override
-  String get authErrorUserNotFoundText =>
-      'The given user was not found on the server!';
+  String get authErrorUserNotFoundText => 'The given user was not found on the server!';
 
   @override
-  String get authErrorWeakPasswordText =>
-      'Please choose a stronger password consisting of more characters!';
+  String get authErrorWeakPasswordText => 'Please choose a stronger password consisting of more characters!';
 
   @override
-  String get authErrorInvalidEmailText =>
-      'Please double check your email and try again!';
+  String get authErrorInvalidEmailText => 'Please double check your email and try again!';
 
   @override
-  String get authErrorEmailAlreadyInUseText =>
-      'Please choose another email to register with!';
+  String get authErrorEmailAlreadyInUseText => 'Please choose another email to register with!';
 
   @override
-  String get authErrorUserDisabledText =>
-      'This user has been disabled. Please contact support for help.';
+  String get authErrorUserDisabledText => 'This user has been disabled. Please contact support for help.';
 
   @override
-  String get authErrorInvalidCredentialText =>
-      'The supplied auth credential is incorrect, malformed or has expired.';
+  String get authErrorInvalidCredentialText => 'The supplied auth credential is incorrect, malformed or has expired.';
 
   @override
-  String get authErrorGoogleSignInFailedText =>
-      'Google Sign-In failed. Please try again.';
+  String get authErrorGoogleSignInFailedText => 'Google Sign-In failed. Please try again.';
 
   @override
-  String get authErrorAppleSignInFailedText =>
-      'Sign in with Apple failed. Please try again.';
+  String get authErrorAppleSignInFailedText => 'Sign in with Apple failed. Please try again.';
 
   @override
-  String musicSheetAlreadyInPlaylist(
-    String musicSheetName,
-    String playlistName,
-  ) {
+  String musicSheetAlreadyInPlaylist(String musicSheetName, String playlistName) {
     return 'Music sheet \'$musicSheetName\' already exists in playlist \'$playlistName\'.';
   }
 
   @override
-  String multipleMusicSheetsAlreadyInPlaylist(
-    String musicSheetNames,
-    String playlistName,
-  ) {
+  String multipleMusicSheetsAlreadyInPlaylist(String musicSheetNames, String playlistName) {
     return 'The following music sheets already exist in playlist \'$playlistName\': $musicSheetNames';
   }
 
   @override
-  String playlistCapacityExceeded(
-    int attemptedToAdd,
-    String playlistName,
-    int currentCount,
-    int maxCapacity,
-  ) {
+  String playlistCapacityExceeded(int attemptedToAdd, String playlistName, int currentCount, int maxCapacity) {
     return 'Cannot add $attemptedToAdd music sheets to playlist \'$playlistName\'. Playlist currently has $currentCount/$maxCapacity music sheets. Maximum capacity is $maxCapacity music sheets.';
   }
 
   @override
-  String get musicSheetInitializationError =>
-      'An error happened while initialization.';
+  String get musicSheetInitializationError => 'An error happened while initialization.';
 
   @override
   String get selectAll => 'Select all';
@@ -509,19 +479,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get repositoryGenericError =>
-      'An error occurred while performing the repository operation';
+  String get repositoryGenericError => 'An error occurred while performing the repository operation';
 
   @override
   String get repositoryNotFoundError => 'Repository not found';
 
   @override
-  String get repositoryCannotModifyPublicError =>
-      'Cannot modify public repositories';
+  String get repositoryCannotModifyPublicError => 'Cannot modify public repositories';
 
   @override
-  String get repositoryCannotModifyOtherUsersError =>
-      'You can only modify your own repositories';
+  String get repositoryCannotModifyOtherUsersError => 'You can only modify your own repositories';
 
   @override
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
