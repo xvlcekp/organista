@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 /// Base state for cache management
 abstract class CacheState extends Equatable {
   static const int decimalPlaces = 2;
-  
+
   const CacheState();
 
   @override
@@ -44,7 +44,8 @@ class CacheLoaded extends CacheState {
   }
 
   @override
-  String toString() => 'CacheLoaded(totalFiles: $totalFiles, sizeInMB: ${sizeInMB.toStringAsFixed(CacheState.decimalPlaces)})';
+  String toString() =>
+      'CacheLoaded(totalFiles: $totalFiles, sizeInMB: ${sizeInMB.toStringAsFixed(CacheState.decimalPlaces)})';
 }
 
 /// State when cache has been successfully cleared

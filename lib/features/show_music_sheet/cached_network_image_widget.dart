@@ -66,7 +66,7 @@ class CachedNetworkImageWidget extends StatelessWidget {
     FilterQuality filterQuality = FilterQuality.high,
   }) {
     final cacheManager = context.read<CacheManager>();
-    
+
     return CachedNetworkImage(
       placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
       errorWidget: (context, url, error) => const Icon(Icons.error),

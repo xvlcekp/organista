@@ -47,7 +47,7 @@ class PersistentFileSystem implements FileSystem {
   @override
   Future<void> deleteCacheDir() async {
     final directory = await _fileDir;
-    
+
     if (await directory.exists()) {
       await directory.delete(recursive: true);
     }

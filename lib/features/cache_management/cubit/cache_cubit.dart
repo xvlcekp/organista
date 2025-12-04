@@ -13,9 +13,10 @@ class CacheCubit extends Cubit<CacheState> {
 
   final CacheManager _cacheManager;
 
-  CacheCubit({required CacheManager cacheManager})
-      : _cacheManager = cacheManager,
-        super(const CacheInitial());
+  CacheCubit({
+    required CacheManager cacheManager,
+  }) : _cacheManager = cacheManager,
+       super(const CacheInitial());
 
   /// Load cache information (file count and size)
   ///
@@ -36,15 +37,19 @@ class CacheCubit extends Cubit<CacheState> {
       // Calculate size in MB
       final sizeInMB = totalSize / _bytesPerMB;
 
-      emit(CacheLoaded(
-        totalFiles: cacheObjects.length,
-        sizeInMB: sizeInMB,
-      ));
+      emit(
+        CacheLoaded(
+          totalFiles: cacheObjects.length,
+          sizeInMB: sizeInMB,
+        ),
+      );
     } catch (e, stackTrace) {
       logger.e('Error loading cache info', error: e, stackTrace: stackTrace);
-      emit(CacheError(
-        message: e.toString(),
-      ));
+      emit(
+        CacheError(
+          message: e.toString(),
+        ),
+      );
     }
   }
 
@@ -55,17 +60,18 @@ class CacheCubit extends Cubit<CacheState> {
     try {
       await _cacheManager.emptyCache();
       logger.i('Cache cleared successfully via CacheCubit');
-      
+
       emit(const CacheCleared());
-      
+
       // Reload cache info after clearing
       await loadCacheInfo();
     } catch (e, stackTrace) {
       logger.e('Error clearing cache', error: e, stackTrace: stackTrace);
-      emit(CacheError(
-        message: e.toString(),
-      ));
+      emit(
+        CacheError(
+          message: e.toString(),
+        ),
+      );
     }
   }
 }
-

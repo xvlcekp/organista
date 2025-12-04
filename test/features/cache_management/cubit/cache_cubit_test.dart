@@ -57,11 +57,13 @@ void main() {
         setUp: () {
           when(() => mockCacheStore.getCacheSize()).thenAnswer((_) async => 5242880); // 5 MB
           when(() => mockCacheInfoRepository.open()).thenAnswer((_) async => true);
-          when(() => mockCacheInfoRepository.getAllObjects()).thenAnswer((_) async => [
-                MockCacheObject(),
-                MockCacheObject(),
-                MockCacheObject(),
-              ]);
+          when(() => mockCacheInfoRepository.getAllObjects()).thenAnswer(
+            (_) async => [
+              MockCacheObject(),
+              MockCacheObject(),
+              MockCacheObject(),
+            ],
+          );
         },
         build: () => CacheCubit(cacheManager: mockCacheManager),
         act: (cubit) => cubit.loadCacheInfo(),

@@ -23,7 +23,6 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
     // Use surfaceContainerHighest for subtle background
     final backgroundColor = colorScheme.surfaceContainerHighest.withValues(
       alpha: _backgroundOpacity,
@@ -66,4 +65,3 @@ class SectionHeader extends StatelessWidget {
     );
   }
 }
-

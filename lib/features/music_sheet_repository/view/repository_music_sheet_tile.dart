@@ -53,8 +53,6 @@ class RepositoryMusicSheetTile extends HookWidget {
     final selectedColor = theme.colorScheme.primary.withAlpha(AppTheme.selectedColorAlpha);
     final cacheManager = context.read<CacheManager>();
 
-
-
     useEffect(() {
       _checkIfCached(cacheManager).then((cached) {
         isCached.value = cached;

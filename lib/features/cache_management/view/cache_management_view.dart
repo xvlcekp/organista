@@ -25,15 +25,18 @@ class CacheManagementView extends StatelessWidget {
     required ThemeData theme,
     String? value,
   }) {
+    Widget? trailingWidget;
+    if (isLoading) {
+      trailingWidget = const CircularProgressIndicator();
+    } else if (value != null) {
+      trailingWidget = Text(value, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold));
+    }
+
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, size: _iconSize),
       title: Text(title, style: theme.textTheme.bodyMedium),
-      trailing: isLoading
-        ? const CircularProgressIndicator()
-        : value != null
-            ? Text(value, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold))
-            : null,
+      trailing: trailingWidget,
     );
   }
 
@@ -63,7 +66,6 @@ class CacheManagementView extends StatelessWidget {
     final localizations = context.loc;
     final theme = Theme.of(context);
     final titleMedium = theme.textTheme.titleMedium;
-
 
     return BlocListener<CacheCubit, CacheState>(
       listener: (context, cacheState) {
@@ -186,7 +188,7 @@ class CacheManagementView extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
               ],
             );
