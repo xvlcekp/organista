@@ -30,7 +30,7 @@ if [ -z "$DART_FILES" ]; then
   exit 0
 fi
 
-# Check 1: Formatting
+# Check 1: Formatting (fast - only staged files)
 echo -e "${GREEN}Checking code formatting (line-length=120)...${NC}"
 FORMAT_ERRORS=0
 
@@ -54,16 +54,10 @@ fi
 
 echo -e "${GREEN}✓ Formatting check passed${NC}"
 
-# Check 2: Linting (flutter analyze)
-echo -e "${GREEN}Running flutter analyze...${NC}"
-if ! flutter analyze --no-fatal-infos 2>&1 | grep -q "No issues found"; then
-  echo -e "${RED}Linting errors found!${NC}"
-  echo -e "${YELLOW}Run 'flutter analyze' to see details${NC}"
-  flutter analyze --no-fatal-infos
-  exit 1
-fi
-
-echo -e "${GREEN}✓ Linting check passed${NC}"
+# Note: Analysis is skipped in pre-commit hook for speed
+# Full project analysis runs in CI/CD (GitHub Actions) as a safety net
+# This keeps pre-commit fast while still ensuring code quality in CI
 echo -e "${GREEN}All pre-commit checks passed!${NC}"
+echo -e "${YELLOW}Note: Full analysis runs in CI/CD${NC}"
 exit 0
 

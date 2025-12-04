@@ -29,6 +29,6 @@ chmod +x "$HOOK_DEST"
 
 echo "✓ Pre-commit hook installed successfully!"
 echo "  The hook will check:"
-echo "  - Code formatting (dart format --line-length=120)"
-echo "  - Linting (flutter analyze)"
+echo "  - Code formatting (dart format --line-length=120) on staged files"
+echo "  Note: Full analysis runs in CI/CD for speed"
 

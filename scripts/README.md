@@ -22,14 +22,12 @@ chmod +x .git/hooks/pre-commit
 The pre-commit hook automatically runs the following checks before each commit:
 
 1. **Code Formatting** (`dart format --line-length=120`)
-   - Verifies that all Dart files are properly formatted
+   - Verifies that staged Dart files are properly formatted
    - Uses line length of 120 characters
-   - Only checks staged files (or all files if none are staged)
+   - Only checks staged files (fast!)
    - Excludes `lib/l10n/*` (generated localization files)
 
-2. **Linting** (`flutter analyze`)
-   - Runs static analysis to catch potential issues
-   - Ensures code follows Dart/Flutter best practices
+**Note:** Analysis (`flutter analyze`) is **not** run in the pre-commit hook for speed. Full project analysis runs in CI/CD (GitHub Actions) as a safety net, ensuring code quality while keeping local commits fast.
 
 ## What Happens if Checks Fail?
 
