@@ -257,5 +257,43 @@
             }
         }
     },
-    "noFileDataAvailable": "No file data available"
+    "noFileDataAvailable": "No file data available",
+    "storageManagement": "Storage Management",
+    "cachedFiles": "Cached files",
+    "cacheSize": "Cache size",
+    "clearCache": "Clear cache",
+    "clearCacheConfirmTitle": "Clear Cache?",
+    "clearCacheConfirmMessage": "This will delete all cached files ({count} files, {size} MB). Music sheets will need to be re-downloaded when accessed again.",
+    "@clearCacheConfirmMessage": {
+        "description": "Confirmation message when clearing cache",
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "description": "Number of cached files"
+            },
+            "size": {
+                "type": "String",
+                "description": "Total cache size"
+            }
+        }
+    },
+    "cacheClearedSuccess": "Cache cleared successfully",
+    "cacheSummary": "Cache Summary",
+    "aboutCache": "About Cache",
+    "cacheDescription": "Cached files allow faster loading of music sheets you've already viewed. The cache is persistent and will not be cleared by the system automatically.",
+    "cacheRemovalInfo": "Files are automatically removed when they haven't been accessed for {days} days or when the cache reaches its maximum capacity of {maxObjects} files.",
+    "@cacheRemovalInfo": {
+        "description": "Information about when cached files are removed",
+        "placeholders": {
+            "days": {
+                "type": "int",
+                "description": "Number of days after which files become stale"
+            },
+            "maxObjects": {
+                "type": "int",
+                "description": "Maximum number of cache objects"
+            }
+        }
+    },
+    "manageCachedMusicSheets": "Manage cached music sheets"
 }
