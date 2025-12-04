@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
@@ -11,8 +11,8 @@ import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
-import 'package:organista/features/login/login_view.dart';
-import 'package:organista/features/register/register_view.dart';
+import 'package:organista/features/authentication/login/login_view.dart';
+import 'package:organista/features/authentication/register/register_view.dart';
 import 'package:organista/logger/custom_logger.dart' show logger;
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';

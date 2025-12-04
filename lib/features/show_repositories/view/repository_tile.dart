@@ -1,11 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
-import 'package:organista/dialogs/customRepositories/delete_repository_dialog.dart';
-import 'package:organista/dialogs/customRepositories/rename_repository_dialog.dart';
-import 'package:organista/dialogs/show_repositories_error.dart';
+import 'package:organista/features/show_repositories/view/delete_repository_dialog.dart';
+import 'package:organista/features/show_repositories/view/rename_repository_dialog.dart';
+import 'package:organista/features/show_repositories/view/show_repositories_error.dart';
 import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
 

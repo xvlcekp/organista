@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 
 import 'package:organista/features/show_repositories/view/repositories_view.dart';

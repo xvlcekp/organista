@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/dialogs/delete_image_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';

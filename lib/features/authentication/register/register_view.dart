@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/blocs/auth_bloc/auth_bloc.dart';
+import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/extensions/if_debugging.dart';
