@@ -24,8 +24,15 @@ The pre-commit hook automatically runs the following checks before each commit:
 1. **Code Formatting** (`dart format --line-length=120`)
    - Verifies that staged Dart files are properly formatted
    - Uses line length of 120 characters
-   - Only checks staged files (fast!)
+   - **Only checks staged files** (never scans entire project - optimized for speed!)
+   - Processes all files in a single `dart format` call (efficient and simple)
    - Excludes `lib/l10n/*` (generated localization files)
+   - Excludes `.dart_tool/` and `build/` directories
+
+**Performance:** The hook is optimized for speed:
+- Only processes staged Dart files (no full project scan)
+- Single `dart format` call handles all files efficiently
+- Typically completes in <1 second for most commits
 
 **Note:** Analysis (`flutter analyze`) is **not** run in the pre-commit hook for speed. Full project analysis runs in CI/CD (GitHub Actions) as a safety net, ensuring code quality while keeping local commits fast.
 
@@ -35,23 +42,27 @@ If any check fails, the commit will be **blocked** and you'll see error messages
 
 ### Fixing Formatting Issues
 
-If formatting fails, run:
+If formatting fails, the hook will show which files need formatting. Fix them by running:
 
 ```bash
-find . -name "*.dart" -not -path "./lib/l10n/*" -not -path "./.dart_tool/*" | xargs dart format --line-length=120
+# Format specific file
+dart format --line-length=120 path/to/file.dart
+
+# Or format all Dart files (excluding generated files)
+find . -name "*.dart" -not -path "./lib/l10n/*" -not -path "./.dart_tool/*" -not -path "./build/*" | xargs dart format --line-length=120
 ```
 
 Then stage the formatted files and try committing again.
 
-### Fixing Linting Issues
+### Running Analysis Locally
 
-If linting fails, run:
+While analysis doesn't run in the pre-commit hook (for speed), you can run it manually:
 
 ```bash
 flutter analyze
 ```
 
-Fix the reported issues and try committing again.
+This is recommended before pushing to catch issues early, though CI/CD will also catch them.
 
 ## Bypassing the Hook (Not Recommended)
 

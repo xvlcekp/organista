@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Pre-commit hook to check Dart/Flutter code formatting and linting
+# Pre-commit hook to check Dart/Flutter code formatting
 # This hook runs before each commit to ensure code quality
+# Optimized for speed: only checks staged files (dart format handles multiple files efficiently)
 
 set -e
 
@@ -13,17 +14,11 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Running pre-commit checks...${NC}"
 
-# Get list of staged Dart files
+# Get list of staged Dart files (only check staged files for speed)
 STAGED_DART_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.dart$' || true)
 
-# If no Dart files are staged, check all Dart files
-if [ -z "$STAGED_DART_FILES" ]; then
-  echo -e "${YELLOW}No staged Dart files found. Checking all Dart files...${NC}"
-  DART_FILES=$(find . -name "*.dart" -not -path "./lib/l10n/*" -not -path "./.dart_tool/*" -not -path "./build/*" || true)
-else
-  # Filter out l10n files and build files
-  DART_FILES=$(echo "$STAGED_DART_FILES" | grep -v "^lib/l10n/" | grep -v "^\.dart_tool/" | grep -v "^build/" || true)
-fi
+# Filter out l10n files and build files
+DART_FILES=$(echo "$STAGED_DART_FILES" | grep -v "^lib/l10n/" | grep -v "^\.dart_tool/" | grep -v "^build/" || true)
 
 if [ -z "$DART_FILES" ]; then
   echo -e "${GREEN}No Dart files to check.${NC}"
@@ -32,23 +27,21 @@ fi
 
 # Check 1: Formatting (fast - only staged files)
 echo -e "${GREEN}Checking code formatting (line-length=120)...${NC}"
-FORMAT_ERRORS=0
 
-# Check formatting without modifying files
+# Convert newline-separated list to space-separated arguments
+# Filter to only existing files (safety check)
+FILES_TO_CHECK=""
 for file in $DART_FILES; do
   if [ -f "$file" ]; then
-    if ! dart format --line-length=120 --output=none --set-exit-if-changed "$file" 2>/dev/null; then
-      echo -e "${RED}✗ Formatting error in: $file${NC}"
-      echo -e "${YELLOW}  Run: dart format --line-length=120 $file${NC}"
-      FORMAT_ERRORS=1
-    fi
+    FILES_TO_CHECK="$FILES_TO_CHECK $file"
   fi
 done
 
-if [ $FORMAT_ERRORS -eq 1 ]; then
+# Run dart format on all files at once (much simpler and faster!)
+if ! dart format --line-length=120 --output=none --set-exit-if-changed $FILES_TO_CHECK 2>/dev/null; then
   echo -e "${RED}Formatting check failed!${NC}"
-  echo -e "${YELLOW}To fix formatting issues, run:${NC}"
-  echo -e "${YELLOW}  find . -name \"*.dart\" -not -path \"./lib/l10n/*\" -not -path \"./.dart_tool/*\" | xargs dart format --line-length=120${NC}"
+  echo -e "${YELLOW}Some files need formatting. Run:${NC}"
+  echo -e "${YELLOW}  dart format --line-length=120 $FILES_TO_CHECK${NC}"
   exit 1
 fi
 
