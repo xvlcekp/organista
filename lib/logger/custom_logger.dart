@@ -1,4 +1,3 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:organista/logger/custom_filter.dart';
@@ -40,14 +39,6 @@ class CustomLogger extends Logger {
   static final instance = CustomLogger._();
 
   Future<void> setup() async {
-    enableCrashlytics();
     await _googleCloudLoggingService.setupLoggingApi();
-  }
-
-  void enableCrashlytics() {
-    // Enable Firebase crashlytics
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FirebaseCrashlytics.instance.recordFlutterError(details);
-    };
   }
 }

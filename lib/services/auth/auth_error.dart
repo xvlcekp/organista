@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:organista/logger/custom_logger.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 const Map<String, AuthError> authErrorMapping = {
   'user-not-found': AuthErrorUserNotFound(),
@@ -28,6 +29,14 @@ class AuthErrorUnknown extends AuthError {
   final FirebaseAuthException exception;
   AuthErrorUnknown({required this.exception}) : super() {
     logger.e(exception);
+    // Report unknown auth errors to Sentry for investigation
+    Sentry.captureException(
+      exception,
+      hint: Hint.withMap({
+        'error_code': exception.code,
+        'error_type': 'unknown_auth_error',
+      }),
+    );
   }
 }
 

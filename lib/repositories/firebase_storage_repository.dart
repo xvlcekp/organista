@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mime/mime.dart';
@@ -25,7 +25,11 @@ class FirebaseStorageRepository {
           await item.delete();
         } catch (e, stackTrace) {
           logger.e("Error while deleting item ${item.fullPath} in folder $path: $e");
-          FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage item');
+          Sentry.captureException(
+            e,
+            stackTrace: stackTrace,
+            hint: Hint.withMap({'operation': 'delete_storage_item', 'path': item.fullPath}),
+          );
         }
       }
 
@@ -35,7 +39,11 @@ class FirebaseStorageRepository {
       }
     } catch (e, stackTrace) {
       logger.e("Error deleting folder $path: $e");
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting storage folder');
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+        hint: Hint.withMap({'operation': 'delete_storage_folder', 'path': path}),
+      );
     }
   }
 
@@ -76,7 +84,11 @@ class FirebaseStorageRepository {
       return ref;
     } catch (e, stackTrace) {
       logger.e('Error uploading file ${file.name}: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error uploading file');
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+        hint: Hint.withMap({'operation': 'upload_file', 'file_name': file.name}),
+      );
       return null;
     }
   }
