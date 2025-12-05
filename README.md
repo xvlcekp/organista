@@ -1,4 +1,5 @@
 # Organista
+[![Codemagic build status](https://api.codemagic.io/apps/69246add8c4a7a82d015b54e/69246add8c4a7a82d015b54d/status_badge.svg)](https://codemagic.io/app/69246add8c4a7a82d015b54e/69246add8c4a7a82d015b54d/latest_build)
 
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
