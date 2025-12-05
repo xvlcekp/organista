@@ -182,3 +182,4 @@ sentry:
   project: flutter
   org: slovac
   dart_symbol_map_path: build/app/obfuscation.map.json
+  upload_sources: true  # Enable source context for viewing source code in stack traces

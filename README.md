@@ -137,9 +137,20 @@ open /Users/palo/Projects/organista/build/ios/archive/Runner.xcarchive
 Click the **Validate App** button. If any issues are reported, address them and produce another build. You can reuse the same build ID until you upload an archive.
 After the archive has been successfully validated, click **Distribute App**.
 
-## Caching pdfs/images
+## Caching PDFs/images
 The library [flutter_cache_manager](https://pub.dev/packages/flutter_cache_manager) is not maintained for more then 1 year anymore. Since there is a bug that cache is not removed based on stalePerioad, or maxNrOfCachedFiles, it is overriden by a git commit which is not merged.
 Another problem is that the library caches to cache directory which is not under full control of application and can be erased at any time. That is why a new `PersistentFileSystem` is added and necessary files are stored in /files folder. Be careful when updating the library, because there are these "hacks" (also mentioned in `pubspec.yaml`).
+
+## Error Tracking
+
+The app uses **Sentry** for error tracking and crash reporting. Sentry automatically captures:
+- Unhandled exceptions and crashes
+- BLoC/Cubit errors
+- Unknown authentication errors
+- Critical repository operations (user deletion, data streams)
+- Storage operations (file uploads, deletions)
+
+Errors are reported via `Sentry.captureException()` in catch blocks and automatically through `SentryWidget` wrapper for unhandled exceptions. Debug symbols, obfuscation maps, and source context are uploaded via `sentry_dart_plugin` during build for readable stack traces with source code visibility.
 
 ## Firebase
 
