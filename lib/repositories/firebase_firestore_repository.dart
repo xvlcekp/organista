@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/config/app_constants.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
@@ -68,7 +68,7 @@ class FirebaseFirestoreRepository {
       }
     } catch (e, stackTrace) {
       logger.e('Error creating user document: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating user document');
+      Sentry.captureException(e, stackTrace: stackTrace, hint: Hint.withMap({'operation': 'create_user_document'}));
       rethrow;
     }
   }
@@ -79,7 +79,7 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e('Error deleting user: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting user');
+      Sentry.captureException(e, stackTrace: stackTrace, hint: Hint.withMap({'operation': 'delete_user'}));
       return false;
     }
   }
@@ -93,7 +93,7 @@ class FirebaseFirestoreRepository {
       ]);
     } catch (e, stackTrace) {
       logger.e('Error in _deleteUserData: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting user data');
+      Sentry.captureException(e, stackTrace: stackTrace, hint: Hint.withMap({'operation': 'delete_user_data'}));
       rethrow;
     }
   }
@@ -109,7 +109,11 @@ class FirebaseFirestoreRepository {
       );
     } catch (e, stackTrace) {
       logger.e('Error deleting documents from $collectionName: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting documents');
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+        hint: Hint.withMap({'operation': 'delete_documents', 'collection': collectionName}),
+      );
       rethrow;
     }
   }
@@ -132,7 +136,7 @@ class FirebaseFirestoreRepository {
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getPlaylistStream: $error');
-          FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in playlist stream');
+          Sentry.captureException(error, stackTrace: stackTrace, hint: Hint.withMap({'operation': 'playlist_stream'}));
           return Playlist.empty();
         });
   }
@@ -156,7 +160,7 @@ class FirebaseFirestoreRepository {
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getPlaylistsStream: $error');
-          FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in playlists stream');
+          Sentry.captureException(error, stackTrace: stackTrace, hint: Hint.withMap({'operation': 'playlists_stream'}));
           return <Playlist>[];
         });
   }
@@ -174,9 +178,8 @@ class FirebaseFirestoreRepository {
       await instance.collection(FirebaseCollectionName.playlists).add(playlistPayload);
       logger.i("Uploading new playlist");
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error adding new playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error adding new playlist');
       return false;
     }
   }
@@ -191,9 +194,8 @@ class FirebaseFirestoreRepository {
       });
       logger.i("Renaming playlist ${playlist.name} to $newPlaylistName");
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error renaming playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error renaming playlist');
       return false;
     }
   }
@@ -203,9 +205,8 @@ class FirebaseFirestoreRepository {
       await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).delete();
       logger.i("Removing playlist ${playlist.name} with id ${playlist.playlistId}");
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error deleting playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting playlist');
       return false;
     }
   }
@@ -239,9 +240,8 @@ class FirebaseFirestoreRepository {
       logger.i("Uploading music sheet record");
       await firestoreRef.doc(docRef.id).update(musicSheetPayload);
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error uploading music sheet record: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error uploading music sheet record');
       return false;
     }
   }
@@ -269,9 +269,8 @@ class FirebaseFirestoreRepository {
     } on PlaylistCapacityExceededError {
       // Re-throw validation errors so they can be handled by the caller
       rethrow;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error adding multiple music sheets to playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error adding multiple music sheets to playlist');
       return false;
     }
   }
@@ -287,9 +286,8 @@ class FirebaseFirestoreRepository {
       });
       logger.i("musicSheetRename update successful");
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error renaming music sheet in playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error renaming music sheet');
       return false;
     }
   }
@@ -304,9 +302,8 @@ class FirebaseFirestoreRepository {
         PlaylistKey.musicSheets: playlist.musicSheets.removeById(musicSheet.musicSheetId).toJsonList(),
       });
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error deleting music sheet from playlist: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting music sheet from playlist');
       return false;
     }
   }
@@ -318,9 +315,8 @@ class FirebaseFirestoreRepository {
       });
       logger.i("musicSheetReorder update successful");
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error reordering music sheets: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error reordering music sheets');
       return false;
     }
   }
@@ -339,9 +335,8 @@ class FirebaseFirestoreRepository {
         "Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId",
       );
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error deleting music sheet from repository: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting music sheet from repository');
       return false;
     }
   }
@@ -368,7 +363,11 @@ class FirebaseFirestoreRepository {
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getRepositoriesStream: $error');
-          FirebaseCrashlytics.instance.recordError(error, stackTrace, reason: 'Error in repositories stream');
+          Sentry.captureException(
+            error,
+            stackTrace: stackTrace,
+            hint: Hint.withMap({'operation': 'repositories_stream'}),
+          );
           return <Repository>[];
         });
   }
@@ -387,10 +386,10 @@ class FirebaseFirestoreRepository {
         })
         .handleError((error, stackTrace) {
           logger.e('Error in getRepositoryMusicSheetsStream: $error');
-          FirebaseCrashlytics.instance.recordError(
+          Sentry.captureException(
             error,
-            stackTrace,
-            reason: 'Error in repository music sheets stream',
+            stackTrace: stackTrace,
+            hint: Hint.withMap({'operation': 'repository_music_sheets_stream'}),
           );
           return <MusicSheet>[];
         });
@@ -434,9 +433,8 @@ class FirebaseFirestoreRepository {
       );
       await instance.collection(FirebaseCollectionName.repositories).add(repositoryPayload);
       return true;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error creating repository: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error creating repository');
       return false;
     }
   }
@@ -480,7 +478,6 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e('Error renaming repository: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error renaming repository');
       Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
@@ -533,7 +530,6 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e('Error deleting repository: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error deleting repository');
       Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
@@ -547,9 +543,8 @@ class FirebaseFirestoreRepository {
           .count()
           .get();
       return snapshot.count ?? 0;
-    } catch (e, stackTrace) {
+    } catch (e) {
       logger.e('Error getting music sheets count: $e');
-      FirebaseCrashlytics.instance.recordError(e, stackTrace, reason: 'Error getting music sheets count');
       return 0;
     }
   }

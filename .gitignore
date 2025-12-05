@@ -59,3 +59,4 @@ content/
 # Environment variables and keystore files
 .env
 /android/app/keystore/
+sentry.properties

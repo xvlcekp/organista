@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  sentry_flutter: ^9.8.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -47,7 +48,6 @@ dependencies:
   firebase_storage: ^13.0.4
   flutter_hooks: ^0.21.2
   collection: ^1.18.0
-  firebase_crashlytics: ^5.0.5
   equatable: ^2.0.7
   provider: ^6.1.2
   intl: ^0.20.2
@@ -110,6 +110,7 @@ flutter_native_splash:
     color: "#ffffff"
 
 dev_dependencies:
+  sentry_dart_plugin: ^3.2.0
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
@@ -175,3 +176,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+sentry:
+  upload_debug_symbols: true
+  project: organista
+  org: slovac
+  dart_symbol_map_path: build/app/obfuscation.map.json
+  upload_sources: true  # Enable source context for viewing source code in stack traces

@@ -10,7 +10,11 @@
 # Firebase
 -keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.** { *; }
--keep class com.google.firebase.crashlytics.** { *; }
+
+# Sentry
+-keep class io.sentry.** { *; }
+-keep class io.sentry.android.** { *; }
+-dontwarn io.sentry.**
 
 # Keep your application classes that will be serialized/deserialized over Gson
 -keep class sk.anickaapavol.organista.models.** { *; }
@@ -27,9 +31,6 @@
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
 
-# Crashlytics
--keepattributes SourceFile,LineNumberTable
--keep public class * extends java.lang.Exception
 
 # Keep setters in Views so that animations can still work.
 -keepclassmembers public class * extends android.view.View {
