@@ -53,19 +53,29 @@ android {
     signingConfigs {
         release {
             def keystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
-            if (keystorePath != null) {
+            def keystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            def keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+            def keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            
+            // Only configure signing if all required values are present (local builds)
+            // On Codemagic with native signing, these will be null and Codemagic handles signing
+            if (keystorePath != null && keystorePassword != null && 
+                keyAlias != null && keyPassword != null) {
                 storeFile file(keystorePath)
+                storePassword keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             }
-            storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-            keyAlias System.getenv("ANDROID_KEY_ALIAS")
-            keyPassword System.getenv("ANDROID_KEY_PASSWORD")
         }
     }
 
     buildTypes {
         release {
-            // Signing with the release keys
-            signingConfig signingConfigs.release
+            // Only apply signing config if it's properly configured (local builds)
+            // On Codemagic with native signing, this will be null and Codemagic handles signing
+            if (signingConfigs.release.storeFile != null) {
+                signingConfig signingConfigs.release
+            }
             // Enables code shrinking, obfuscation, and optimization
             minifyEnabled true
             // Enables resource shrinking
