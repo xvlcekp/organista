@@ -33,7 +33,6 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<RenameMusicSheetInPlaylistEvent>(_renameMusicSheetInPlaylistEvent);
     on<AddMusicSheetsToPlaylistEvent>(_addMusicSheetsToPlaylistEvent);
     on<InitPlaylistEvent>(_initPlaylistEvent);
-    on<UpdatePlaylistEvent>(_onUpdatePlaylist);
   }
 
   void _uploadNewMusicSheetEvent(UploadNewMusicSheetEvent event, Emitter<PlaylistState> emit) async {
@@ -140,31 +139,23 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       // Always subscribe to the broadcast stream (even if reusing existing stream)
       _playlistSubscription = broadcastStream.listen(
         (playlist) {
-          add(UpdatePlaylistEvent(playlist: playlist));
+          emit(
+            PlaylistLoadedState(
+              isLoading: false,
+              playlist: playlist,
+            ),
+          );
         },
         onError: (error) {
           logger.e('Error in playlist stream: $error');
-          add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error on initialization"));
+          emit(PlaylistErrorState(errorMessage: "Error on initialization"));
         },
       );
 
       logger.d('Subscribed to playlist stream: $playlistId');
     } catch (e) {
       logger.e('Error initializing playlist stream: $e');
-      add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error initializing playlist"));
-    }
-  }
-
-  void _onUpdatePlaylist(UpdatePlaylistEvent event, Emitter<PlaylistState> emit) {
-    if (event.errorMessage != null) {
-      emit(PlaylistErrorState(errorMessage: event.errorMessage!));
-    } else {
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: event.playlist,
-        ),
-      );
+      emit(PlaylistErrorState(errorMessage: "Error initializing playlist"));
     }
   }
 
