@@ -24,9 +24,6 @@ Future<void> main() async {
       // The sampling rate for profiling is relative to tracesSampleRate
       // Setting to 1.0 will profile 100% of sampled transactions:
       options.profilesSampleRate = 1.0;
-      // ignore: no-magic-number, all config together
-      options.replay.sessionSampleRate = 0.1;
-      options.replay.onErrorSampleRate = 1.0;
       // Only capture errors in release mode
       options.environment = kDebugMode ? 'development' : 'production';
     },
