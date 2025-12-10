@@ -19,40 +19,6 @@ class InitPlaylistEvent extends PlaylistEvent {
 }
 
 @immutable
-class UploadNewMusicSheetEvent extends PlaylistEvent {
-  final AuthUser user;
-  final MusicSheetFile file;
-  final String fileName;
-  final String repositoryId;
-
-  const UploadNewMusicSheetEvent({
-    required this.user,
-    required this.file,
-    required this.fileName,
-    required this.repositoryId,
-  });
-
-  @override
-  List<Object?> get props => [user, file, fileName, repositoryId];
-}
-
-@immutable
-class RenameMusicSheetInPlaylistEvent extends PlaylistEvent {
-  final Playlist playlist;
-  final MusicSheet musicSheet;
-  final String fileName;
-
-  const RenameMusicSheetInPlaylistEvent({
-    required this.playlist,
-    required this.musicSheet,
-    required this.fileName,
-  });
-
-  @override
-  List<Object?> get props => [playlist, musicSheet, fileName];
-}
-
-@immutable
 class DeleteMusicSheetInPlaylistEvent extends PlaylistEvent {
   final MusicSheet musicSheet;
   final Playlist playlist;

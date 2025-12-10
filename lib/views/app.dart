@@ -39,12 +39,14 @@ class App extends StatelessWidget {
               ),
         ),
         BlocProvider<AddEditMusicSheetCubit>(
-          create: (context) => AddEditMusicSheetCubit(),
+          create: (context) => AddEditMusicSheetCubit(
+            firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
+            firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
+          ),
         ),
         BlocProvider<PlaylistBloc>(
           create: (context) => PlaylistBloc(
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
-            firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),
         ),
         BlocProvider<SettingsCubit>(

@@ -1,14 +1,11 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:meta/meta.dart' show immutable;
 import 'package:equatable/equatable.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/managers/stream_manager.dart';
 import 'dart:async';
@@ -18,68 +15,15 @@ part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
-  final FirebaseStorageRepository _firebaseStorageRepository;
   StreamSubscription<Playlist>? _playlistSubscription;
-
   PlaylistBloc({
     required FirebaseFirestoreRepository firebaseFirestoreRepository,
-    required FirebaseStorageRepository firebaseStorageRepository,
-  }) : _firebaseStorageRepository = firebaseStorageRepository,
-       _firebaseFirestoreRepository = firebaseFirestoreRepository,
+  }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
        super(PlaylistInitState()) {
-    on<UploadNewMusicSheetEvent>(_uploadNewMusicSheetEvent);
     on<DeleteMusicSheetInPlaylistEvent>(_deleteMusicSheetInPlaylistEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
-    on<RenameMusicSheetInPlaylistEvent>(_renameMusicSheetInPlaylistEvent);
     on<AddMusicSheetsToPlaylistEvent>(_addMusicSheetsToPlaylistEvent);
     on<InitPlaylistEvent>(_initPlaylistEvent);
-  }
-
-  void _uploadNewMusicSheetEvent(UploadNewMusicSheetEvent event, Emitter<PlaylistState> emit) async {
-    emit(
-      PlaylistLoadedState(
-        isLoading: true,
-        playlist: state.playlist,
-      ),
-    );
-
-    final MusicSheetFile file = event.file;
-    final String fileName = event.fileName;
-    final AuthUser user = event.user;
-    final String repositoryId = event.repositoryId;
-
-    try {
-      final Reference? reference = await _firebaseStorageRepository.uploadFile(
-        file: file,
-        bucket: user.id,
-      );
-
-      if (reference != null) {
-        await _firebaseFirestoreRepository.uploadMusicSheetRecord(
-          reference: reference,
-          userId: user.id,
-          fileName: fileName,
-          mediaType: file.mediaType,
-          repositoryId: repositoryId,
-        );
-        emit(
-          PlaylistLoadedState(
-            isLoading: false,
-            playlist: state.playlist,
-          ),
-        );
-      } else {
-        throw Exception('Failed to upload file, not uploading MusicSheet record to Firestore');
-      }
-    } catch (e) {
-      logger.e('Failed to upload file: $e');
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: state.playlist,
-        ),
-      );
-    }
   }
 
   void _deleteMusicSheetInPlaylistEvent(DeleteMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
@@ -107,17 +51,6 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       ),
     );
     await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
-  }
-
-  void _renameMusicSheetInPlaylistEvent(RenameMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
-    final musicSheet = event.musicSheet;
-    final fileName = event.fileName;
-    final playlist = event.playlist;
-    await _firebaseFirestoreRepository.renameMusicSheetInPlaylist(
-      musicSheet: musicSheet,
-      fileName: fileName,
-      playlist: playlist,
-    );
   }
 
   void _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) {
