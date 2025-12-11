@@ -57,3 +57,24 @@ class AddMusicSheetsToPlaylistEvent extends PlaylistEvent {
   @override
   List<Object?> get props => [musicSheets, playlist];
 }
+
+@immutable
+class ExportPlaylistEvent extends PlaylistEvent {
+  final Playlist playlist;
+
+  const ExportPlaylistEvent({required this.playlist});
+
+  @override
+  List<Object?> get props => [playlist];
+}
+
+@immutable
+class SaveExportedPlaylistEvent extends PlaylistEvent {
+  final String tempPath;
+  final String fileName;
+
+  const SaveExportedPlaylistEvent({required this.tempPath, required this.fileName});
+
+  @override
+  List<Object?> get props => [tempPath, fileName];
+}

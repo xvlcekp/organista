@@ -295,5 +295,12 @@
             }
         }
     },
-    "manageCachedMusicSheets": "Manage cached music sheets"
+    "manageCachedMusicSheets": "Manage cached music sheets",
+    "exportToPdf": "Export to PDF",
+    "exportSuccess": "Playlist exported successfully",
+    "exportFailed": "Failed to export playlist",
+    "noMusicSheetsToExport": "No music sheets to export",
+    "exportErrorSourceFileNotFound": "Source file not found",
+    "exportErrorSaveFailed": "Failed to save file",
+    "exportCancelled": "Export cancelled"
 }

@@ -13,8 +13,10 @@ import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/features/authentication/login/login_view.dart';
 import 'package:organista/features/authentication/register/register_view.dart';
+import 'package:organista/services/export_playlist/export_playlist_service.dart';
 import 'package:organista/logger/custom_logger.dart' show logger;
 import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/repositories/settings_repository.dart';
 import 'package:organista/services/auth/auth_service.dart';
@@ -44,9 +46,12 @@ class App extends StatelessWidget {
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
           ),
         ),
+        // TODO: Consider moving AddMusicSheetsToPlaylistEvent to the AddEditMusicSheet feature / repository layer
+        // and this doesn't need to be as a public bloc
         BlocProvider<PlaylistBloc>(
           create: (context) => PlaylistBloc(
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
+            exportService: ExportPlaylistService(cacheManager: context.read<CacheManager>()),
           ),
         ),
         BlocProvider<SettingsCubit>(
@@ -99,6 +104,7 @@ class App extends StatelessWidget {
                 }
               },
             ),
+            // TODO: I have opened a playlist, I minimize the app, returns back and other playlist is loaded with original name
             // TODO: named routes how to acces it - based on vandad's 1. video of state management course
             // use library https://pub.dev/packages/go_router for advanced routing
             // routes: {

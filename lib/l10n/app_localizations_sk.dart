@@ -541,4 +541,25 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get manageCachedMusicSheets => 'Spravovať offline noty';
+
+  @override
+  String get exportToPdf => 'Exportovať do PDF';
+
+  @override
+  String get exportSuccess => 'Zoznam úspešne exportovaný';
+
+  @override
+  String get exportFailed => 'Nepodarilo sa exportovať zoznam';
+
+  @override
+  String get noMusicSheetsToExport => 'Žiadne noty na export';
+
+  @override
+  String get exportErrorSourceFileNotFound => 'Zdrojový súbor nebol nájdený';
+
+  @override
+  String get exportErrorSaveFailed => 'Nepodarilo sa uložiť súbor';
+
+  @override
+  String get exportCancelled => 'Export zrušený';
 }

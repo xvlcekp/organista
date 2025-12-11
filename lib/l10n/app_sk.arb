@@ -295,5 +295,12 @@
             }
         }
     },
-    "manageCachedMusicSheets": "Spravovať offline noty"
+    "manageCachedMusicSheets": "Spravovať offline noty",
+    "exportToPdf": "Exportovať do PDF",
+    "exportSuccess": "Zoznam úspešne exportovaný",
+    "exportFailed": "Nepodarilo sa exportovať zoznam",
+    "noMusicSheetsToExport": "Žiadne noty na export",
+    "exportErrorSourceFileNotFound": "Zdrojový súbor nebol nájdený",
+    "exportErrorSaveFailed": "Nepodarilo sa uložiť súbor",
+    "exportCancelled": "Export zrušený"
 }
