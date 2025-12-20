@@ -48,10 +48,25 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final MusicSheet musicSheetToDelete = event.musicSheet;
     final Playlist playlist = event.playlist;
 
-    await _firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
-      musicSheet: musicSheetToDelete,
-      playlist: playlist,
-    );
+    try {
+      await _firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
+        musicSheet: musicSheetToDelete,
+        playlist: playlist,
+      );
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: state.playlist,
+        ),
+      );
+    } catch (e) {
+      emit(
+        PlaylistErrorState(
+          error: const PlaylistErrorUnknown(),
+          playlist: state.playlist,
+        ),
+      );
+    }
   }
 
   void _reorderMusicSheetEvent(ReorderMusicSheetEvent event, Emitter<PlaylistState> emit) async {
@@ -61,7 +76,22 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         playlist: state.playlist,
       ),
     );
-    await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
+    try {
+      await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: state.playlist,
+        ),
+      );
+    } catch (e) {
+      emit(
+        PlaylistErrorState(
+          error: const PlaylistErrorUnknown(),
+          playlist: state.playlist,
+        ),
+      );
+    }
   }
 
   Future<void> _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
@@ -162,25 +192,35 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
     emit(PlaylistLoadedState(isLoading: true, playlist: playlist));
 
-    final tempOutputPath = await _exportService.exportPlaylistToPdf(playlist: playlist);
+    try {
+      logger.i('Exporting playlist to PDF: ${playlist.name}');
+      final tempOutputPath = await _exportService.exportPlaylistToPdf(playlist: playlist);
 
-    if (tempOutputPath == null) {
+      if (tempOutputPath == null) {
+        emit(
+          PlaylistErrorState(
+            error: const ExportPlaylistError(),
+            playlist: playlist,
+          ),
+        );
+        return;
+      }
+      emit(
+        PlaylistReadyToExportState(
+          isLoading: false,
+          playlist: playlist,
+          tempPath: tempOutputPath,
+          playlistName: playlist.name,
+        ),
+      );
+    } catch (e) {
       emit(
         PlaylistErrorState(
           error: const ExportPlaylistError(),
           playlist: playlist,
         ),
       );
-      return;
     }
-    emit(
-      PlaylistReadyToExportState(
-        isLoading: false,
-        playlist: playlist,
-        tempPath: tempOutputPath,
-        playlistName: playlist.name,
-      ),
-    );
   }
 
   /// Saves the exported file to user-selected location
