@@ -158,8 +158,10 @@ Errors are reported via `Sentry.captureException()` in catch blocks and automati
 **deleteStorageFilesOnDocDelete** - automation on firebase using Firebase Functions. When musicSheet document is deleted, also musicSheet file is deleted in Firebase Storage.  
 *After every deployment, artifacts needs to be removed in Google Artifact Repository!*
 
-## Utils
-Tool for croping PDFs https://smallpdf.com/crop-pdf (if limit exceeded, use incognito mode in browser)
+## How to crop music sheets from multi-sheets PDF
+1. Download [PDF Gear](https://www.pdfgear.com/)
+2. Split PDF to separate pages. (PDF Gear -> Page -> mark all -> Extract Pages -> All)
+3. Manually crop pages and rename them.
 
 ### Cors issue
 https://stackoverflow.com/questions/65849071/flutter-firebase-storage-cors-issue
