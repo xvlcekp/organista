@@ -1,86 +1,40 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:meta/meta.dart' show immutable;
 import 'package:equatable/equatable.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:meta/meta.dart' show immutable;
+import 'package:organista/extensions/num_extensions.dart';
+import 'package:organista/services/export_playlist/export_playlist_service.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/internal/music_sheet_file.dart';
+import 'package:organista/managers/stream_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'package:organista/managers/stream_manager.dart';
 import 'dart:async';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'playlist_event.dart';
 part 'playlist_state.dart';
 
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
-  final FirebaseStorageRepository _firebaseStorageRepository;
-  StreamSubscription<Playlist>? _playlistSubscription;
+  final ExportPlaylistService _exportService;
 
   PlaylistBloc({
     required FirebaseFirestoreRepository firebaseFirestoreRepository,
-    required FirebaseStorageRepository firebaseStorageRepository,
-  }) : _firebaseStorageRepository = firebaseStorageRepository,
-       _firebaseFirestoreRepository = firebaseFirestoreRepository,
+    required ExportPlaylistService exportService,
+  }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
+       _exportService = exportService,
        super(PlaylistInitState()) {
-    on<UploadNewMusicSheetEvent>(_uploadNewMusicSheetEvent);
     on<DeleteMusicSheetInPlaylistEvent>(_deleteMusicSheetInPlaylistEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
-    on<RenameMusicSheetInPlaylistEvent>(_renameMusicSheetInPlaylistEvent);
     on<AddMusicSheetsToPlaylistEvent>(_addMusicSheetsToPlaylistEvent);
     on<InitPlaylistEvent>(_initPlaylistEvent);
-    on<UpdatePlaylistEvent>(_onUpdatePlaylist);
-  }
-
-  void _uploadNewMusicSheetEvent(UploadNewMusicSheetEvent event, Emitter<PlaylistState> emit) async {
-    emit(
-      PlaylistLoadedState(
-        isLoading: true,
-        playlist: state.playlist,
-      ),
-    );
-
-    final MusicSheetFile file = event.file;
-    final String fileName = event.fileName;
-    final AuthUser user = event.user;
-    final String repositoryId = event.repositoryId;
-
-    try {
-      final Reference? reference = await _firebaseStorageRepository.uploadFile(
-        file: file,
-        bucket: user.id,
-      );
-
-      if (reference != null) {
-        await _firebaseFirestoreRepository.uploadMusicSheetRecord(
-          reference: reference,
-          userId: user.id,
-          fileName: fileName,
-          mediaType: file.mediaType,
-          repositoryId: repositoryId,
-        );
-        emit(
-          PlaylistLoadedState(
-            isLoading: false,
-            playlist: state.playlist,
-          ),
-        );
-      } else {
-        throw Exception('Failed to upload file, not uploading MusicSheet record to Firestore');
-      }
-    } catch (e) {
-      logger.e('Failed to upload file: $e');
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: state.playlist,
-        ),
-      );
-    }
+    on<ExportPlaylistEvent>(_exportPlaylistEvent);
+    on<SaveExportedPlaylistEvent>(_saveExportedPlaylistEvent);
   }
 
   void _deleteMusicSheetInPlaylistEvent(DeleteMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
@@ -94,10 +48,25 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final MusicSheet musicSheetToDelete = event.musicSheet;
     final Playlist playlist = event.playlist;
 
-    await _firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
-      musicSheet: musicSheetToDelete,
-      playlist: playlist,
-    );
+    try {
+      await _firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
+        musicSheet: musicSheetToDelete,
+        playlist: playlist,
+      );
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: state.playlist,
+        ),
+      );
+    } catch (e) {
+      emit(
+        PlaylistErrorState(
+          error: const PlaylistErrorUnknown(),
+          playlist: state.playlist,
+        ),
+      );
+    }
   }
 
   void _reorderMusicSheetEvent(ReorderMusicSheetEvent event, Emitter<PlaylistState> emit) async {
@@ -107,21 +76,25 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         playlist: state.playlist,
       ),
     );
-    await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
+    try {
+      await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
+      emit(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: state.playlist,
+        ),
+      );
+    } catch (e) {
+      emit(
+        PlaylistErrorState(
+          error: const PlaylistErrorUnknown(),
+          playlist: state.playlist,
+        ),
+      );
+    }
   }
 
-  void _renameMusicSheetInPlaylistEvent(RenameMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
-    final musicSheet = event.musicSheet;
-    final fileName = event.fileName;
-    final playlist = event.playlist;
-    await _firebaseFirestoreRepository.renameMusicSheetInPlaylist(
-      musicSheet: musicSheet,
-      fileName: fileName,
-      playlist: playlist,
-    );
-  }
-
-  void _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) {
+  Future<void> _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
     logger.i("Init playlist was called");
     emit(
       PlaylistLoadedState(
@@ -137,41 +110,29 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         () => _firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
       );
 
-      // Always subscribe to the broadcast stream (even if reusing existing stream)
-      _playlistSubscription = broadcastStream.listen(
-        (playlist) {
-          add(UpdatePlaylistEvent(playlist: playlist));
+      logger.d('Subscribed to playlist stream: $playlistId');
+
+      // Use emit.forEach to keep the event handler alive while processing the stream
+      await emit.forEach<Playlist>(
+        broadcastStream,
+        onData: (playlist) {
+          return PlaylistLoadedState(
+            isLoading: false,
+            playlist: playlist,
+          );
         },
-        onError: (error) {
+        onError: (error, stackTrace) {
           logger.e('Error in playlist stream: $error');
-          add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error on initialization"));
+          return PlaylistErrorState(error: const InitializationError(), playlist: state.playlist);
         },
       );
-
-      logger.d('Subscribed to playlist stream: $playlistId');
     } catch (e) {
       logger.e('Error initializing playlist stream: $e');
-      add(UpdatePlaylistEvent(playlist: Playlist.empty(), errorMessage: "Error initializing playlist"));
+      emit(PlaylistErrorState(error: const InitializationError(), playlist: state.playlist));
     }
   }
 
-  void _onUpdatePlaylist(UpdatePlaylistEvent event, Emitter<PlaylistState> emit) {
-    if (event.errorMessage != null) {
-      emit(PlaylistErrorState(errorMessage: event.errorMessage!));
-    } else {
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: event.playlist,
-        ),
-      );
-    }
-  }
-
-  void _addMusicSheetsToPlaylistEvent(
-    AddMusicSheetsToPlaylistEvent event,
-    Emitter<PlaylistState> emit,
-  ) async {
+  void _addMusicSheetsToPlaylistEvent(AddMusicSheetsToPlaylistEvent event, Emitter<PlaylistState> emit) async {
     final Playlist playlist = event.playlist;
     final List<MusicSheet> musicSheets = event.musicSheets;
 
@@ -205,13 +166,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           musicSheets: newMusicSheets,
         );
       } on PlaylistCapacityExceededError catch (error) {
-        emit(
-          PlaylistLoadedState(
-            isLoading: false,
-            playlist: state.playlist,
-            error: error,
-          ),
-        );
+        emit(PlaylistErrorState(error: error, playlist: state.playlist));
         return;
       }
     }
@@ -222,23 +177,136 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         duplicateMusicSheetNames: duplicates.map((sheet) => sheet.fileName).toList(),
         playlistName: playlist.name,
       );
+      emit(PlaylistErrorState(error: error, playlist: state.playlist));
+    }
+  }
 
+  Future<void> _exportPlaylistEvent(ExportPlaylistEvent event, Emitter<PlaylistState> emit) async {
+    final Playlist playlist = event.playlist;
+    final List<MusicSheet> musicSheets = playlist.musicSheets;
+
+    if (musicSheets.isEmpty) {
+      emit(PlaylistErrorState(error: const ExportNoMusicSheetsPlaylistError(), playlist: playlist));
+      return;
+    }
+
+    emit(PlaylistLoadedState(isLoading: true, playlist: playlist));
+
+    try {
+      logger.i('Exporting playlist to PDF: ${playlist.name}');
+      final tempOutputPath = await _exportService.exportPlaylistToPdf(playlist: playlist);
+
+      if (tempOutputPath == null) {
+        emit(
+          PlaylistErrorState(
+            error: const ExportPlaylistError(),
+            playlist: playlist,
+          ),
+        );
+        return;
+      }
       emit(
-        PlaylistLoadedState(
+        PlaylistReadyToExportState(
           isLoading: false,
-          playlist: state.playlist,
-          error: error,
+          playlist: playlist,
+          tempPath: tempOutputPath,
+          playlistName: playlist.name,
+        ),
+      );
+    } catch (e) {
+      emit(
+        PlaylistErrorState(
+          error: const ExportPlaylistError(),
+          playlist: playlist,
         ),
       );
     }
   }
 
-  @override
-  Future<void> close() {
-    // Cancel the subscription when leaving the page for optimization
-    // Cached values will be available when returning
-    // Note: StreamManager handles removeListener automatically via onCancel
-    _playlistSubscription?.cancel();
-    return super.close();
+  /// Saves the exported file to user-selected location
+  Future<void> _saveExportedPlaylistEvent(SaveExportedPlaylistEvent event, Emitter<PlaylistState> emit) async {
+    final String tempPath = event.tempPath;
+    final String fileName = event.fileName;
+    emit(PlaylistLoadedState(isLoading: true, playlist: state.playlist));
+
+    // Read file bytes first (required on Android/iOS)
+    final sourceFile = File(tempPath);
+
+    try {
+      // Check if file exists and get size
+      if (!await sourceFile.exists()) {
+        logger.e('Source file does not exist: $tempPath');
+        emit(
+          PlaylistErrorState(
+            error: const SourceFileNotFoundPlaylistError(),
+            playlist: state.playlist,
+          ),
+        );
+        return;
+      }
+
+      final fileSize = await sourceFile.length();
+      logger.i('File size: ${fileSize.bytesToMegaBytes} MB');
+
+      final bytes = await sourceFile.readAsBytes();
+      logger.i('Read ${bytes.length} bytes from file');
+
+      // Always show file picker to let user choose save location
+      final result = await FilePicker.platform.saveFile(
+        dialogTitle: 'Export to PDF',
+        fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        bytes: bytes, // Required on Android & iOS
+      );
+
+      logger.i('File picker result: $result');
+
+      if (result != null && result.isNotEmpty) {
+        // File was saved by file picker
+        logger.i('File saved to user-selected location: $result');
+        emit(
+          PlaylistExportedState(isLoading: false, playlist: state.playlist),
+        );
+      } else {
+        // User cancelled the file picker
+        logger.i('User cancelled file picker');
+        emit(PlaylistExportCancelledState(isLoading: false, playlist: state.playlist));
+      }
+    } catch (e, stackTrace) {
+      logger.e('File picker save failed: $e');
+      logger.e('Stack trace: $stackTrace');
+      Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+        hint: Hint.withMap({
+          'temp_path': tempPath,
+          'file_name': fileName,
+        }),
+      );
+      // File picker failed, show error to user
+      emit(
+        PlaylistErrorState(
+          error: ExportSaveFailedPlaylistError(exceptionMessage: e.toString()),
+          playlist: state.playlist,
+        ),
+      );
+    } finally {
+      // Always try to clean up the temporary file after save operation completes
+      await _cleanupTempFile(sourceFile);
+    }
+  }
+
+  /// Cleans up the temporary file
+  Future<void> _cleanupTempFile(File tempFile) async {
+    try {
+      if (await tempFile.exists()) {
+        await tempFile.delete();
+        logger.i('Temporary file deleted: ${tempFile.path}');
+      }
+    } catch (e) {
+      logger.w('Failed to delete temporary file: ${tempFile.path}, error: $e');
+      // Don't throw - cleanup failure shouldn't break the flow
+    }
   }
 }

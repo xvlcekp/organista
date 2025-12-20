@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
+import 'package:organista/extensions/num_extensions.dart';
 import 'package:organista/features/cache_management/cubit/cache_state.dart';
 import 'package:organista/logger/custom_logger.dart';
 
@@ -8,9 +9,6 @@ import 'package:organista/logger/custom_logger.dart';
 /// Handles loading cache information and clearing cache using
 /// CacheManager with library's native API.
 class CacheCubit extends Cubit<CacheState> {
-  static const int _bytesPerKB = 1024;
-  static const int _bytesPerMB = _bytesPerKB * _bytesPerKB;
-
   final CacheManager _cacheManager;
 
   CacheCubit({
@@ -35,7 +33,7 @@ class CacheCubit extends Cubit<CacheState> {
       final cacheObjects = await repository.getAllObjects();
 
       // Calculate size in MB
-      final sizeInMB = totalSize / _bytesPerMB;
+      final sizeInMB = totalSize.bytesToMegaBytes.toDouble();
 
       emit(
         CacheLoaded(

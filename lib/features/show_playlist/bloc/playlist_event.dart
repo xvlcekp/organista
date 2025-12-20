@@ -19,54 +19,6 @@ class InitPlaylistEvent extends PlaylistEvent {
 }
 
 @immutable
-class UpdatePlaylistEvent extends PlaylistEvent {
-  final Playlist playlist;
-  final String? errorMessage;
-
-  const UpdatePlaylistEvent({
-    required this.playlist,
-    this.errorMessage,
-  });
-
-  @override
-  List<Object?> get props => [playlist, errorMessage];
-}
-
-@immutable
-class UploadNewMusicSheetEvent extends PlaylistEvent {
-  final AuthUser user;
-  final MusicSheetFile file;
-  final String fileName;
-  final String repositoryId;
-
-  const UploadNewMusicSheetEvent({
-    required this.user,
-    required this.file,
-    required this.fileName,
-    required this.repositoryId,
-  });
-
-  @override
-  List<Object?> get props => [user, file, fileName, repositoryId];
-}
-
-@immutable
-class RenameMusicSheetInPlaylistEvent extends PlaylistEvent {
-  final Playlist playlist;
-  final MusicSheet musicSheet;
-  final String fileName;
-
-  const RenameMusicSheetInPlaylistEvent({
-    required this.playlist,
-    required this.musicSheet,
-    required this.fileName,
-  });
-
-  @override
-  List<Object?> get props => [playlist, musicSheet, fileName];
-}
-
-@immutable
 class DeleteMusicSheetInPlaylistEvent extends PlaylistEvent {
   final MusicSheet musicSheet;
   final Playlist playlist;
@@ -104,4 +56,25 @@ class AddMusicSheetsToPlaylistEvent extends PlaylistEvent {
 
   @override
   List<Object?> get props => [musicSheets, playlist];
+}
+
+@immutable
+class ExportPlaylistEvent extends PlaylistEvent {
+  final Playlist playlist;
+
+  const ExportPlaylistEvent({required this.playlist});
+
+  @override
+  List<Object?> get props => [playlist];
+}
+
+@immutable
+class SaveExportedPlaylistEvent extends PlaylistEvent {
+  final String tempPath;
+  final String fileName;
+
+  const SaveExportedPlaylistEvent({required this.tempPath, required this.fileName});
+
+  @override
+  List<Object?> get props => [tempPath, fileName];
 }

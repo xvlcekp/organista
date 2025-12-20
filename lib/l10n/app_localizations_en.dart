@@ -538,4 +538,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manageCachedMusicSheets => 'Manage cached music sheets';
+
+  @override
+  String get exportToPdf => 'Export to PDF';
+
+  @override
+  String get exportSuccess => 'Playlist exported successfully';
+
+  @override
+  String get exportFailed => 'Failed to export playlist';
+
+  @override
+  String get noMusicSheetsToExport => 'No music sheets to export';
+
+  @override
+  String get exportErrorSourceFileNotFound => 'Source file not found';
+
+  @override
+  String get exportErrorSaveFailed => 'Failed to save file';
+
+  @override
+  String get exportCancelled => 'Export cancelled';
 }

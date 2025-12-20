@@ -1093,6 +1093,48 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Spravovať offline noty'**
   String get manageCachedMusicSheets;
+
+  /// No description provided for @exportToPdf.
+  ///
+  /// In sk, this message translates to:
+  /// **'Exportovať do PDF'**
+  String get exportToPdf;
+
+  /// No description provided for @exportSuccess.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zoznam úspešne exportovaný'**
+  String get exportSuccess;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nepodarilo sa exportovať zoznam'**
+  String get exportFailed;
+
+  /// No description provided for @noMusicSheetsToExport.
+  ///
+  /// In sk, this message translates to:
+  /// **'Žiadne noty na export'**
+  String get noMusicSheetsToExport;
+
+  /// No description provided for @exportErrorSourceFileNotFound.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zdrojový súbor nebol nájdený'**
+  String get exportErrorSourceFileNotFound;
+
+  /// No description provided for @exportErrorSaveFailed.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nepodarilo sa uložiť súbor'**
+  String get exportErrorSaveFailed;
+
+  /// No description provided for @exportCancelled.
+  ///
+  /// In sk, this message translates to:
+  /// **'Export zrušený'**
+  String get exportCancelled;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -36,3 +36,28 @@ class PlaylistCapacityExceededError extends PlaylistError {
 class InitializationError extends PlaylistError {
   const InitializationError() : super();
 }
+
+/// Error when trying to export a playlist with no music sheets
+@immutable
+class ExportNoMusicSheetsPlaylistError extends PlaylistError {
+  const ExportNoMusicSheetsPlaylistError() : super();
+}
+
+/// Error when export fails
+@immutable
+class ExportPlaylistError extends PlaylistError {
+  const ExportPlaylistError() : super();
+}
+
+/// Error when source file does not exist
+@immutable
+class SourceFileNotFoundPlaylistError extends PlaylistError {
+  const SourceFileNotFoundPlaylistError() : super();
+}
+
+/// Error when saving file fails
+@immutable
+class ExportSaveFailedPlaylistError extends PlaylistError {
+  final String exceptionMessage;
+  const ExportSaveFailedPlaylistError({required this.exceptionMessage}) : super();
+}
