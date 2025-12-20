@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -112,14 +110,13 @@ void main() {
     });
 
     testWidgets('does not pop while loading upload', (tester) async {
-      final mockPlatformFile = PlatformFile(
-        name: 'test.pdf',
-        size: 1024,
-        bytes: Uint8List.fromList([1, 2, 3, 4]),
-      );
       final mockFile = MusicSheetFile(
-        file: mockPlatformFile,
-        mediaType: MediaType.pdf,
+        file: PlatformFile(
+          name: 'test.png',
+          size: 0,
+          bytes: null,
+        ),
+        mediaType: MediaType.image,
       );
       final cubit =
           AddEditMusicSheetViewTest(
