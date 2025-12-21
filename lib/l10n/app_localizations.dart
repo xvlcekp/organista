@@ -1028,71 +1028,71 @@ abstract class AppLocalizations {
   /// **'Správa úložiska'**
   String get storageManagement;
 
-  /// No description provided for @cachedFiles.
+  /// No description provided for @storedFiles.
   ///
   /// In sk, this message translates to:
-  /// **'Počet súborov v dočasnej pamäti'**
-  String get cachedFiles;
+  /// **'Počet súborov v úložisku'**
+  String get storedFiles;
 
-  /// No description provided for @cacheSize.
+  /// No description provided for @storageSize.
   ///
   /// In sk, this message translates to:
-  /// **'Veľkosť dočasnej pamäti'**
-  String get cacheSize;
+  /// **'Veľkosť úložiska'**
+  String get storageSize;
 
-  /// No description provided for @clearCache.
+  /// No description provided for @clearStorage.
   ///
   /// In sk, this message translates to:
-  /// **'Vyčistiť dočasnú pamäť'**
-  String get clearCache;
+  /// **'Vyčistiť úložisko'**
+  String get clearStorage;
 
-  /// No description provided for @clearCacheConfirmTitle.
+  /// No description provided for @clearStorageConfirmTitle.
   ///
   /// In sk, this message translates to:
-  /// **'Chcete naozaj vyčistiť dočasnú pamäť?'**
-  String get clearCacheConfirmTitle;
+  /// **'Chcete naozaj vyčistiť úložisko?'**
+  String get clearStorageConfirmTitle;
 
-  /// Confirmation message when clearing cache
+  /// Confirmation message when clearing storage
   ///
   /// In sk, this message translates to:
-  /// **'Týmto sa vymažú všetky súbory v dočasnej pamäti ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.'**
-  String clearCacheConfirmMessage(int count, String size);
+  /// **'Týmto sa vymažú všetky súbory v úložisku ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.'**
+  String clearStorageConfirmMessage(int count, String size);
 
-  /// No description provided for @cacheClearedSuccess.
+  /// No description provided for @storageClearedSuccess.
   ///
   /// In sk, this message translates to:
-  /// **'Dočasná pamäť úspešne vyčistená'**
-  String get cacheClearedSuccess;
+  /// **'Úložisko úspešne vyčistené'**
+  String get storageClearedSuccess;
 
-  /// No description provided for @cacheSummary.
+  /// No description provided for @storageSummary.
   ///
   /// In sk, this message translates to:
-  /// **'Dočasná pamäť'**
-  String get cacheSummary;
+  /// **'Úložisko'**
+  String get storageSummary;
 
-  /// No description provided for @aboutCache.
+  /// No description provided for @aboutStorage.
   ///
   /// In sk, this message translates to:
-  /// **'O dočasnej pamäti'**
-  String get aboutCache;
+  /// **'O úložisku'**
+  String get aboutStorage;
 
-  /// No description provided for @cacheDescription.
+  /// No description provided for @storageDescription.
   ///
   /// In sk, this message translates to:
-  /// **'Súbory v dočasnej pamäti umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené. Dočasná pamäť je trvalá a nebude automaticky vymazaná systémom.'**
-  String get cacheDescription;
+  /// **'Súbory v úložisku umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené.'**
+  String get storageDescription;
 
-  /// Informácie o tom, kedy sú súbory v dočasnej pamäti odstránené
+  /// Informácie o tom, kedy sú súbory v úložisku odstránené
   ///
   /// In sk, this message translates to:
-  /// **'Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď dočasná pamäť dosiahne maximálnu kapacitu {maxObjects} súborov.'**
-  String cacheRemovalInfo(int days, int maxObjects);
+  /// **'Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď úložisko dosiahne maximálnu kapacitu {maxObjects} súborov.'**
+  String storageRemovalInfo(int days, int maxObjects);
 
-  /// No description provided for @manageCachedMusicSheets.
+  /// No description provided for @manageStoredMusicSheets.
   ///
   /// In sk, this message translates to:
   /// **'Spravovať offline noty'**
-  String get manageCachedMusicSheets;
+  String get manageStoredMusicSheets;
 
   /// No description provided for @exportToPdf.
   ///
