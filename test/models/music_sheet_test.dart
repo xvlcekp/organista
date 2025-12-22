@@ -34,6 +34,7 @@ void main() {
 
     test('should create MusicSheet with default values for missing fields', () {
       final minimalJson = {
+        MusicSheetKey.musicSheetId: 'firebase-generated-id',
         MusicSheetKey.createdAt: testTimestamp,
         MusicSheetKey.fileUrl: 'https://example.com/sheet.pdf',
         MusicSheetKey.fileName: 'test.pdf',
@@ -43,9 +44,30 @@ void main() {
 
       final musicSheet = MusicSheet(json: minimalJson);
 
-      expect(musicSheet.musicSheetId, isNotEmpty); // Generated UUID
+      expect(musicSheet.musicSheetId, 'firebase-generated-id');
       expect(musicSheet.userId, ''); // Default empty string
       expect(musicSheet.sequenceId, 0); // Default value
+    });
+
+    test('should throw ArgumentError when musicSheetId is missing', () {
+      final jsonWithoutId = {
+        MusicSheetKey.createdAt: testTimestamp,
+        MusicSheetKey.fileUrl: 'https://example.com/sheet.pdf',
+        MusicSheetKey.fileName: 'test.pdf',
+        MusicSheetKey.originalFileStorageId: 'storage-123',
+        MusicSheetKey.mediaType: 'pdf',
+      };
+
+      expect(
+        () => MusicSheet(json: jsonWithoutId),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('music_sheet_id is required'),
+          ),
+        ),
+      );
     });
 
     test('should convert MusicSheet to JSON correctly', () {

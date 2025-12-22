@@ -505,42 +505,42 @@ class AppLocalizationsSk extends AppLocalizations {
   String get storageManagement => 'Správa úložiska';
 
   @override
-  String get cachedFiles => 'Počet súborov v dočasnej pamäti';
+  String get storedFiles => 'Počet súborov v úložisku';
 
   @override
-  String get cacheSize => 'Veľkosť dočasnej pamäti';
+  String get storageSize => 'Veľkosť úložiska';
 
   @override
-  String get clearCache => 'Vyčistiť dočasnú pamäť';
+  String get clearStorage => 'Vyčistiť úložisko';
 
   @override
-  String get clearCacheConfirmTitle => 'Chcete naozaj vyčistiť dočasnú pamäť?';
+  String get clearStorageConfirmTitle => 'Chcete naozaj vyčistiť úložisko?';
 
   @override
-  String clearCacheConfirmMessage(int count, String size) {
-    return 'Týmto sa vymažú všetky súbory v dočasnej pamäti ($count súborov, $size MB). Noty sa znova načítajú pri ďalšom otvorení.';
+  String clearStorageConfirmMessage(int count, String size) {
+    return 'Týmto sa vymažú všetky súbory v úložisku ($count súborov, $size MB). Noty sa znova načítajú pri ďalšom otvorení.';
   }
 
   @override
-  String get cacheClearedSuccess => 'Dočasná pamäť úspešne vyčistená';
+  String get storageClearedSuccess => 'Úložisko úspešne vyčistené';
 
   @override
-  String get cacheSummary => 'Dočasná pamäť';
+  String get storageSummary => 'Úložisko';
 
   @override
-  String get aboutCache => 'O dočasnej pamäti';
+  String get aboutStorage => 'O úložisku';
 
   @override
-  String get cacheDescription =>
-      'Súbory v dočasnej pamäti umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené. Dočasná pamäť je trvalá a nebude automaticky vymazaná systémom.';
+  String get storageDescription =>
+      'Súbory v úložisku umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené.';
 
   @override
-  String cacheRemovalInfo(int days, int maxObjects) {
-    return 'Súbory sú automaticky odstránené, keď neboli otvorené $days dní alebo keď dočasná pamäť dosiahne maximálnu kapacitu $maxObjects súborov.';
+  String storageRemovalInfo(int days, int maxObjects) {
+    return 'Súbory sú automaticky odstránené, keď neboli otvorené $days dní alebo keď úložisko dosiahne maximálnu kapacitu $maxObjects súborov.';
   }
 
   @override
-  String get manageCachedMusicSheets => 'Spravovať offline noty';
+  String get manageStoredMusicSheets => 'Spravovať offline noty';
 
   @override
   String get exportToPdf => 'Exportovať do PDF';

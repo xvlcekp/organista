@@ -45,14 +45,14 @@ class CacheManagementView extends StatelessWidget {
 
     final confirmed = await showGenericDialog<bool>(
       context: context,
-      title: localizations.clearCacheConfirmTitle,
-      content: localizations.clearCacheConfirmMessage(
+      title: localizations.clearStorageConfirmTitle,
+      content: localizations.clearStorageConfirmMessage(
         cacheState.totalFiles,
         cacheState.sizeInMB.toStringAsFixed(_decimalPlaces),
       ),
       optionsBuilder: () => {
         localizations.cancel: false,
-        localizations.clearCache: true,
+        localizations.clearStorage: true,
       },
     );
 
@@ -73,7 +73,7 @@ class CacheManagementView extends StatelessWidget {
         if (cacheState is CacheCleared) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(localizations.cacheClearedSuccess),
+              content: Text(localizations.storageClearedSuccess),
               backgroundColor: Colors.green,
               duration: const Duration(seconds: 2),
             ),
@@ -111,13 +111,13 @@ class CacheManagementView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          localizations.cacheSummary,
+                          localizations.storageSummary,
                           style: titleMedium,
                         ),
                         const SizedBox(height: 16),
                         _buildCacheInfoTile(
                           icon: Icons.file_present,
-                          title: localizations.cachedFiles,
+                          title: localizations.storedFiles,
                           isLoading: isLoading,
                           value: '$totalFiles',
                           theme: theme,
@@ -125,7 +125,7 @@ class CacheManagementView extends StatelessWidget {
                         const Divider(),
                         _buildCacheInfoTile(
                           icon: Icons.storage,
-                          title: localizations.cacheSize,
+                          title: localizations.storageSize,
                           isLoading: isLoading,
                           value: '${sizeInMB.toStringAsFixed(_decimalPlaces)} MB',
                           theme: theme,
@@ -148,18 +148,18 @@ class CacheManagementView extends StatelessWidget {
                             Icon(Icons.info_outline, color: theme.colorScheme.primary),
                             const SizedBox(width: 8),
                             Text(
-                              localizations.aboutCache,
+                              localizations.aboutStorage,
                               style: titleMedium,
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          localizations.cacheDescription,
+                          localizations.storageDescription,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          localizations.cacheRemovalInfo(
+                          localizations.storageRemovalInfo(
                             AppConstants.cacheStalePeriod.inDays,
                             AppConstants.maxCacheObjects,
                           ),
@@ -179,7 +179,7 @@ class CacheManagementView extends StatelessWidget {
                         ? () => _showClearCacheDialog(context, cacheState)
                         : null,
                     icon: const Icon(Icons.delete_sweep),
-                    label: Text(localizations.clearCache),
+                    label: Text(localizations.clearStorage),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.error,
                       foregroundColor: theme.colorScheme.onError,

@@ -55,7 +55,7 @@ void main() {
         );
 
         expect(find.byType(Card), findsNWidgets(2)); // Summary card + Info card
-        expect(find.text('Cache Summary'), findsOneWidget);
+        expect(find.text('Storage Summary'), findsOneWidget);
       });
 
       testWidgets('should display information card', (tester) async {
@@ -65,7 +65,7 @@ void main() {
           ),
         );
 
-        expect(find.text('About Cache'), findsOneWidget);
+        expect(find.text('About Storage'), findsOneWidget);
         expect(find.byIcon(Icons.info_outline), findsOneWidget);
       });
 
@@ -76,7 +76,7 @@ void main() {
           ),
         );
 
-        expect(find.text('Clear cache'), findsOneWidget);
+        expect(find.text('Clear storage'), findsOneWidget);
         expect(find.byIcon(Icons.delete_sweep), findsOneWidget);
       });
     });
@@ -95,7 +95,7 @@ void main() {
 
         // Button text should still be visible, but button should be disabled
         // We can verify this by checking that tapping it doesn't show dialog
-        final clearButtonText = find.text('Clear cache');
+        final clearButtonText = find.text('Clear storage');
         if (clearButtonText.evaluate().isNotEmpty) {
           await tester.tap(clearButtonText);
           await tester.pump();
@@ -116,7 +116,7 @@ void main() {
         await tester.pumpWidget(createTestWidget(initialState: const CacheLoading()));
 
         // Button should be disabled - verify by trying to tap
-        final clearButtonText = find.text('Clear cache');
+        final clearButtonText = find.text('Clear storage');
         if (clearButtonText.evaluate().isNotEmpty) {
           await tester.tap(clearButtonText);
           await tester.pump();
@@ -165,7 +165,7 @@ void main() {
         );
 
         // Verify button is enabled by checking it can be tapped to show dialog
-        final clearButton = find.text('Clear cache');
+        final clearButton = find.text('Clear storage');
         await tester.tap(clearButton);
         await tester.pumpAndSettle();
         expect(find.byType(AlertDialog), findsOneWidget);
@@ -179,7 +179,7 @@ void main() {
         );
 
         // Button should be disabled - verify by trying to tap
-        final clearButtonText = find.text('Clear cache');
+        final clearButtonText = find.text('Clear storage');
         if (clearButtonText.evaluate().isNotEmpty) {
           await tester.tap(clearButtonText);
           await tester.pump();
@@ -220,7 +220,7 @@ void main() {
         );
 
         // Button should be disabled - verify by trying to tap
-        final clearButtonText = find.text('Clear cache');
+        final clearButtonText = find.text('Clear storage');
         if (clearButtonText.evaluate().isNotEmpty) {
           await tester.tap(clearButtonText);
           await tester.pump();
@@ -256,12 +256,12 @@ void main() {
           ),
         );
 
-        final clearButton = find.text('Clear cache');
+        final clearButton = find.text('Clear storage');
         await tester.tap(clearButton);
         await tester.pumpAndSettle();
 
         expect(find.byType(AlertDialog), findsOneWidget);
-        expect(find.text('Clear Cache?'), findsOneWidget); // Note: "?" is appended in code
+        expect(find.text('Clear Storage?'), findsOneWidget); // Note: "?" is appended in code
         expect(find.textContaining('5 files'), findsOneWidget);
         // Note: "10.50 MB" appears in both the summary and dialog, so use findAtLeastNWidgets
         expect(find.textContaining('10.50 MB'), findsAtLeastNWidgets(1));
@@ -274,7 +274,7 @@ void main() {
           ),
         );
 
-        final clearButton = find.text('Clear cache');
+        final clearButton = find.text('Clear storage');
         await tester.tap(clearButton);
         await tester.pumpAndSettle();
 
@@ -297,17 +297,17 @@ void main() {
           ),
         );
 
-        final clearButton = find.text('Clear cache');
+        final clearButton = find.text('Clear storage');
         await tester.tap(clearButton);
         await tester.pumpAndSettle();
 
         // Tap clear cache button in dialog
-        // Find the button in the dialog (there will be multiple "Clear cache" texts)
+        // Find the button in the dialog (there will be multiple "Clear storage" texts)
         final dialogButtons = find.descendant(
           of: find.byType(AlertDialog),
           matching: find.byType(TextButton),
         );
-        // The last button should be the "Clear cache" button
+        // The last button should be the "Clear storage" button
         await tester.tap(dialogButtons.last);
         await tester.pumpAndSettle();
 
@@ -325,7 +325,7 @@ void main() {
         );
 
         // The description text should be visible
-        expect(find.textContaining('Cached files allow'), findsOneWidget);
+        expect(find.textContaining('Stored files allow'), findsOneWidget);
       });
 
       testWidgets('should display cache removal info with constants', (tester) async {
@@ -372,7 +372,7 @@ void main() {
         );
 
         // Verify button and icon are present
-        expect(find.text('Clear cache'), findsOneWidget);
+        expect(find.text('Clear storage'), findsOneWidget);
         expect(find.byIcon(Icons.delete_sweep), findsOneWidget);
       });
 

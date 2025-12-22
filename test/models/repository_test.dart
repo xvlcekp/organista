@@ -26,6 +26,7 @@ void main() {
     test('should create Repository with default values for missing fields', () {
       final minimalJson = {
         RepositoryKey.createdAt: testTimestamp,
+        RepositoryKey.repositoryId: 'firebase-generated-id',
       };
       final repository = Repository(json: minimalJson);
 

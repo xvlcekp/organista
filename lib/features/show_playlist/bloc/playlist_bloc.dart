@@ -22,6 +22,7 @@ part 'playlist_state.dart';
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   final ExportPlaylistService _exportService;
+  String? _currentPlaylistId;
 
   PlaylistBloc({
     required FirebaseFirestoreRepository firebaseFirestoreRepository,
@@ -96,6 +97,11 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
   Future<void> _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
     logger.i("Init playlist was called");
+
+    // Update current playlist ID to prevent old stream handlers from emitting states
+    final playlistId = event.playlist.playlistId;
+    _currentPlaylistId = playlistId;
+
     emit(
       PlaylistLoadedState(
         isLoading: true,
@@ -104,7 +110,6 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
 
     try {
-      final playlistId = event.playlist.playlistId;
       final broadcastStream = StreamManager.instance.getBroadcastStream<Playlist>(
         'playlist_$playlistId',
         () => _firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
@@ -116,19 +121,32 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       await emit.forEach<Playlist>(
         broadcastStream,
         onData: (playlist) {
-          return PlaylistLoadedState(
-            isLoading: false,
-            playlist: playlist,
-          );
+          // Only emit state if this playlist is still the current one
+          // This prevents old stream handlers from updating state when switching playlists
+          if (_currentPlaylistId == playlist.playlistId) {
+            return PlaylistLoadedState(
+              isLoading: false,
+              playlist: playlist,
+            );
+          }
+          // Return current state unchanged if playlist has changed
+          return state;
         },
         onError: (error, stackTrace) {
           logger.e('Error in playlist stream: $error');
-          return PlaylistErrorState(error: const InitializationError(), playlist: state.playlist);
+          // Only emit error if this is still the current playlist
+          if (_currentPlaylistId == playlistId) {
+            return PlaylistErrorState(error: const InitializationError(), playlist: state.playlist);
+          }
+          return state;
         },
       );
     } catch (e) {
       logger.e('Error initializing playlist stream: $e');
-      emit(PlaylistErrorState(error: const InitializationError(), playlist: state.playlist));
+      // Only emit error if this is still the current playlist
+      if (_currentPlaylistId == playlistId) {
+        emit(PlaylistErrorState(error: const InitializationError(), playlist: state.playlist));
+      }
     }
   }
 

@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
-import 'package:uuid/uuid.dart';
 
 @immutable
 class MusicSheet extends Equatable {
@@ -16,10 +15,11 @@ class MusicSheet extends Equatable {
   final MediaType mediaType;
   final int sequenceId;
 
-  // TODO:  Uuid().v4() should be probably removed, because we want to use IDs generated from Firebase
   MusicSheet({
     required Map<String, dynamic> json,
-  }) : musicSheetId = json[MusicSheetKey.musicSheetId] ?? const Uuid().v4(),
+  }) : musicSheetId =
+           json[MusicSheetKey.musicSheetId] as String? ??
+           (throw ArgumentError('${MusicSheetKey.musicSheetId} is required and must be provided from Firebase')),
        userId = json[MusicSheetKey.userId] ?? '',
        createdAt = (json[MusicSheetKey.createdAt] as Timestamp).toDate(),
        fileUrl = json[MusicSheetKey.fileUrl],

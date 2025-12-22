@@ -502,42 +502,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storageManagement => 'Storage Management';
 
   @override
-  String get cachedFiles => 'Cached files';
+  String get storedFiles => 'Stored files';
 
   @override
-  String get cacheSize => 'Cache size';
+  String get storageSize => 'Storage size';
 
   @override
-  String get clearCache => 'Clear cache';
+  String get clearStorage => 'Clear storage';
 
   @override
-  String get clearCacheConfirmTitle => 'Clear Cache?';
+  String get clearStorageConfirmTitle => 'Clear Storage?';
 
   @override
-  String clearCacheConfirmMessage(int count, String size) {
-    return 'This will delete all cached files ($count files, $size MB). Music sheets will need to be re-downloaded when accessed again.';
+  String clearStorageConfirmMessage(int count, String size) {
+    return 'This will delete all stored files ($count files, $size MB). Music sheets will need to be re-downloaded when accessed again.';
   }
 
   @override
-  String get cacheClearedSuccess => 'Cache cleared successfully';
+  String get storageClearedSuccess => 'Storage cleared successfully';
 
   @override
-  String get cacheSummary => 'Cache Summary';
+  String get storageSummary => 'Storage Summary';
 
   @override
-  String get aboutCache => 'About Cache';
+  String get aboutStorage => 'About Storage';
 
   @override
-  String get cacheDescription =>
-      'Cached files allow faster loading of music sheets you\'ve already viewed. The cache is persistent and will not be cleared by the system automatically.';
+  String get storageDescription => 'Stored files allow faster loading of music sheets you\'ve already viewed.';
 
   @override
-  String cacheRemovalInfo(int days, int maxObjects) {
-    return 'Files are automatically removed when they haven\'t been accessed for $days days or when the cache reaches its maximum capacity of $maxObjects files.';
+  String storageRemovalInfo(int days, int maxObjects) {
+    return 'Files are automatically removed when they haven\'t been accessed for $days days or when the storage reaches its maximum capacity of $maxObjects files.';
   }
 
   @override
-  String get manageCachedMusicSheets => 'Manage cached music sheets';
+  String get manageStoredMusicSheets => 'Manage stored music sheets';
 
   @override
   String get exportToPdf => 'Export to PDF';

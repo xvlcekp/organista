@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:organista/models/repositories/repository_key.dart';
-import 'package:uuid/uuid.dart';
 
 @immutable
 class Repository extends Equatable {
@@ -13,7 +12,9 @@ class Repository extends Equatable {
 
   Repository({
     required Map<String, dynamic> json,
-  }) : repositoryId = json[RepositoryKey.repositoryId] ?? const Uuid().v4(),
+  }) : repositoryId =
+           json[RepositoryKey.repositoryId] as String? ??
+           (throw ArgumentError('${RepositoryKey.repositoryId} is required and must be provided from Firebase')),
        name = json[RepositoryKey.name] ?? '',
        userId = json[RepositoryKey.userId] ?? '',
        createdAt = (json[RepositoryKey.createdAt] as Timestamp).toDate();

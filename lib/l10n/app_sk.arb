@@ -259,31 +259,31 @@
     },
     "noFileDataAvailable": "Súbor je poškodený",
     "storageManagement": "Správa úložiska",
-    "cachedFiles": "Počet súborov v dočasnej pamäti",
-    "cacheSize": "Veľkosť dočasnej pamäti",
-    "clearCache": "Vyčistiť dočasnú pamäť",
-    "clearCacheConfirmTitle": "Chcete naozaj vyčistiť dočasnú pamäť?",
-    "clearCacheConfirmMessage": "Týmto sa vymažú všetky súbory v dočasnej pamäti ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.",
-    "@clearCacheConfirmMessage": {
-        "description": "Confirmation message when clearing cache",
+    "storedFiles": "Počet súborov v úložisku",
+    "storageSize": "Veľkosť úložiska",
+    "clearStorage": "Vyčistiť úložisko",
+    "clearStorageConfirmTitle": "Chcete naozaj vyčistiť úložisko?",
+    "clearStorageConfirmMessage": "Týmto sa vymažú všetky súbory v úložisku ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.",
+    "@clearStorageConfirmMessage": {
+        "description": "Confirmation message when clearing storage",
         "placeholders": {
             "count": {
                 "type": "int",
-                "description": "Number of cached files"
+                "description": "Number of stored files"
             },
             "size": {
                 "type": "String",
-                "description": "Total cache size"
+                "description": "Total storage size"
             }
         }
     },
-    "cacheClearedSuccess": "Dočasná pamäť úspešne vyčistená",
-    "cacheSummary": "Dočasná pamäť",
-    "aboutCache": "O dočasnej pamäti",
-    "cacheDescription": "Súbory v dočasnej pamäti umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené. Dočasná pamäť je trvalá a nebude automaticky vymazaná systémom.",
-    "cacheRemovalInfo": "Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď dočasná pamäť dosiahne maximálnu kapacitu {maxObjects} súborov.",
-    "@cacheRemovalInfo": {
-        "description": "Informácie o tom, kedy sú súbory v dočasnej pamäti odstránené",
+    "storageClearedSuccess": "Úložisko úspešne vyčistené",
+    "storageSummary": "Úložisko",
+    "aboutStorage": "O úložisku",
+    "storageDescription": "Súbory v úložisku umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené.",
+    "storageRemovalInfo": "Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď úložisko dosiahne maximálnu kapacitu {maxObjects} súborov.",
+    "@storageRemovalInfo": {
+        "description": "Informácie o tom, kedy sú súbory v úložisku odstránené",
         "placeholders": {
             "days": {
                 "type": "int",
@@ -291,11 +291,11 @@
             },
             "maxObjects": {
                 "type": "int",
-                "description": "Maximálny počet objektov v dočasnej pamäti"
+                "description": "Maximálny počet objektov v úložisku"
             }
         }
     },
-    "manageCachedMusicSheets": "Spravovať offline noty",
+    "manageStoredMusicSheets": "Spravovať offline noty",
     "exportToPdf": "Exportovať do PDF",
     "exportSuccess": "Zoznam úspešne exportovaný",
     "exportFailed": "Nepodarilo sa exportovať zoznam",

@@ -259,31 +259,31 @@
     },
     "noFileDataAvailable": "No file data available",
     "storageManagement": "Storage Management",
-    "cachedFiles": "Cached files",
-    "cacheSize": "Cache size",
-    "clearCache": "Clear cache",
-    "clearCacheConfirmTitle": "Clear Cache?",
-    "clearCacheConfirmMessage": "This will delete all cached files ({count} files, {size} MB). Music sheets will need to be re-downloaded when accessed again.",
-    "@clearCacheConfirmMessage": {
-        "description": "Confirmation message when clearing cache",
+    "storedFiles": "Stored files",
+    "storageSize": "Storage size",
+    "clearStorage": "Clear storage",
+    "clearStorageConfirmTitle": "Clear Storage?",
+    "clearStorageConfirmMessage": "This will delete all stored files ({count} files, {size} MB). Music sheets will need to be re-downloaded when accessed again.",
+    "@clearStorageConfirmMessage": {
+        "description": "Confirmation message when clearing storage",
         "placeholders": {
             "count": {
                 "type": "int",
-                "description": "Number of cached files"
+                "description": "Number of stored files"
             },
             "size": {
                 "type": "String",
-                "description": "Total cache size"
+                "description": "Total storage size"
             }
         }
     },
-    "cacheClearedSuccess": "Cache cleared successfully",
-    "cacheSummary": "Cache Summary",
-    "aboutCache": "About Cache",
-    "cacheDescription": "Cached files allow faster loading of music sheets you've already viewed. The cache is persistent and will not be cleared by the system automatically.",
-    "cacheRemovalInfo": "Files are automatically removed when they haven't been accessed for {days} days or when the cache reaches its maximum capacity of {maxObjects} files.",
-    "@cacheRemovalInfo": {
-        "description": "Information about when cached files are removed",
+    "storageClearedSuccess": "Storage cleared successfully",
+    "storageSummary": "Storage Summary",
+    "aboutStorage": "About Storage",
+    "storageDescription": "Stored files allow faster loading of music sheets you've already viewed.",
+    "storageRemovalInfo": "Files are automatically removed when they haven't been accessed for {days} days or when the storage reaches its maximum capacity of {maxObjects} files.",
+    "@storageRemovalInfo": {
+        "description": "Information about when stored files are removed",
         "placeholders": {
             "days": {
                 "type": "int",
@@ -291,11 +291,11 @@
             },
             "maxObjects": {
                 "type": "int",
-                "description": "Maximum number of cache objects"
+                "description": "Maximum number of storage objects"
             }
         }
     },
-    "manageCachedMusicSheets": "Manage cached music sheets",
+    "manageStoredMusicSheets": "Manage stored music sheets",
     "exportToPdf": "Export to PDF",
     "exportSuccess": "Playlist exported successfully",
     "exportFailed": "Failed to export playlist",

@@ -114,7 +114,7 @@ class SettingsView extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.wifi_off),
-                  title: Text(localizations.manageCachedMusicSheets),
+                  title: Text(localizations.manageStoredMusicSheets),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.of(context).push(
