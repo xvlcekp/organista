@@ -25,11 +25,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - 
 
-## [1.0.8] - 2025-
+## [1.1.0] - 2025-12-22
 ### Added
-- Pridaná obrazovka na mazanie dočasnej pamäte
+- Pridaná obrazovka na mazanie nôt z úložiska
+- Pridaná možnosť exportu playlistu do PDF
+- Nahradené Crashlytics za Sentry na monitorovanie chýb
+- Interné zmeny organizácie projektu
+- Používanie CodeMagic na deploy
 ### Fixed
+- Zlepšená obrazovka s nastaveniami
 - Opravené mazanie nôt, keď aplikácia nebola dlhšie pripojená k internetu
+- Počas nahrávania vlastného súboru bolo možno zrušiť proces tlačidlom späť, opravené
+- Aktualizované knižnice na Firebase Functions, balíky knižníc
 
 ## [1.0.7] - 2025-11-28
 ### Added

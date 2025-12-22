@@ -4,6 +4,33 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
+### Version 1.1.0 - 22.12.2025
+<table>
+<tr>
+<th width="33.33%">Export playlistu do PDF</th>
+<th width="33.33%">Prehľadnejšie nastavenia</th>
+<th width="33.33%">Offline úložisko</th>
+</tr>
+<tr>
+<td width="33.33%"><img src="docs/1.1.0/export_pdf.gif"></td>
+<td width="33.33%"><img src="docs/1.1.0/updated_settings.jpg"></td>
+<td width="33.33%"><img src="docs/1.1.0/storage_management.jpg"></td>
+</tr>
+<tr>
+<td width="33.33%">Možnosť exportovať celý playlist do samostatného PDF súboru, ktoré sa uloží do zariadenia.</td>
+<td width="33.33%">Jasne oddelené položky v nastaveniach.</td>
+<td width="33.33%">Možnosť vyčistiť offline úložisko. Zároveň sa offline uložené noty automaticky nevymažúpo nejakom čase systémom, ako doteraz.</td>
+</tr>
+</table>
+
+#### Ďalšie zmeny
+- Nahradené Crashlytics za Sentry na monitorovanie chýb
+- Interné zmeny organizácie projektu
+- Používanie CodeMagic na deploy
+- Opravené mazanie nôt, keď aplikácia nebola dlhšie pripojená k internetu
+- Počas nahrávania vlastného súboru bolo možné zrušiť proces tlačidlom späť, opravené
+- Aktualizované knižnice na Firebase Functions, balíky knižníc
+
 ### Version 1.0.7 - 26.11.2025
 - pridaná podpora pre iOS od verzie 15
 - optimalizácia kódu na pozadí, aktualizovaná verzia Flutteru na 3.38.1 a knižníc
