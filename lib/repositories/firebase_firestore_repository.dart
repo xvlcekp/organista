@@ -226,6 +226,8 @@ class FirebaseFirestoreRepository {
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets);
 
+      // Generate a document reference with auto-generated ID
+      final docRef = firestoreRef.doc();
       final musicSheetPayload = MusicSheetPayload(
         fileName: fileName,
         fileUrl: await reference.getDownloadURL(),
@@ -235,10 +237,15 @@ class FirebaseFirestoreRepository {
         sequenceId: fileName.sequenceId,
       );
 
-      var docRef = await firestoreRef.add(musicSheetPayload);
-      musicSheetPayload[MusicSheetKey.musicSheetId] = docRef.id;
+      // Add the music_sheet_id to the payload before creating the document
+      // This ensures the stream receives a complete document from the start
+      final payloadWithId = {
+        ...musicSheetPayload,
+        MusicSheetKey.musicSheetId: docRef.id,
+      };
+
       logger.i("Uploading music sheet record");
-      await firestoreRef.doc(docRef.id).update(musicSheetPayload);
+      await docRef.set(payloadWithId);
       return true;
     } catch (e) {
       logger.e('Error uploading music sheet record: $e');
