@@ -1135,6 +1135,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Export zrušený'**
   String get exportCancelled;
+
+  /// No description provided for @fillAllFields.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prosím vyplňte všetky polia'**
+  String get fillAllFields;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

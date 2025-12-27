@@ -562,4 +562,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get exportCancelled => 'Export zrušený';
+
+  @override
+  String get fillAllFields => 'Prosím vyplňte všetky polia';
 }

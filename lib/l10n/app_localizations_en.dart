@@ -558,4 +558,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportCancelled => 'Export cancelled';
+
+  @override
+  String get fillAllFields => 'Please fill in all fields';
 }

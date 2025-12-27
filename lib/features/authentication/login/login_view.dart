@@ -102,8 +102,19 @@ class LoginView extends HookWidget {
                     // Login Button
                     ElevatedButton(
                       onPressed: () {
-                        final email = emailController.text;
-                        final password = passwordController.text;
+                        final email = emailController.text.trim();
+                        final password = passwordController.text.trim();
+
+                        if (email.isEmpty || password.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(localizations.fillAllFields),
+                              backgroundColor: theme.colorScheme.error,
+                            ),
+                          );
+                          return;
+                        }
+
                         context.read<AuthBloc>().add(
                           AuthEventLogIn(
                             email: email,

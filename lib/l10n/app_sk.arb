@@ -302,5 +302,6 @@
     "noMusicSheetsToExport": "Žiadne noty na export",
     "exportErrorSourceFileNotFound": "Zdrojový súbor nebol nájdený",
     "exportErrorSaveFailed": "Nepodarilo sa uložiť súbor",
-    "exportCancelled": "Export zrušený"
+    "exportCancelled": "Export zrušený",
+    "fillAllFields": "Prosím vyplňte všetky polia"
 }

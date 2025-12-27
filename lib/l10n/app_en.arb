@@ -302,5 +302,6 @@
     "noMusicSheetsToExport": "No music sheets to export",
     "exportErrorSourceFileNotFound": "Source file not found",
     "exportErrorSaveFailed": "Failed to save file",
-    "exportCancelled": "Export cancelled"
+    "exportCancelled": "Export cancelled",
+    "fillAllFields": "Please fill in all fields"
 }
