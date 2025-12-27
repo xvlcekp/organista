@@ -25,13 +25,18 @@ import 'package:organista/models/repositories/repository_key.dart';
 import 'package:organista/services/auth/auth_user.dart';
 
 class FirebaseFirestoreRepository {
-  final instance = FirebaseFirestore.instance;
+  final FirebaseFirestore _instance;
 
-  FirebaseFirestoreRepository() {
-    instance.settings = const Settings(
-      persistenceEnabled: true,
-      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-    );
+  FirebaseFirestoreRepository({
+    required FirebaseFirestore instance,
+    bool skipSettingsConfiguration = false,
+  }) : _instance = instance {
+    if (!skipSettingsConfiguration) {
+      _instance.settings = const Settings(
+        persistenceEnabled: true,
+        cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+      );
+    }
   }
 
   // USER OPERATIONS
@@ -49,23 +54,21 @@ class FirebaseFirestoreRepository {
         email: user.email,
       );
 
-      // Use set with merge: false to create only if doesn't exist
-      // This is more efficient than checking existence first
-      await instance
-          .collection(FirebaseCollectionName.users)
-          .doc(user.id) // Use user ID as document ID for uniqueness
-          .set(userPayload, SetOptions(merge: false));
+      final userDoc = _instance.collection(FirebaseCollectionName.users).doc(user.id);
+      final snapshot = await userDoc.get();
+
+      if (snapshot.exists) {
+        logger.i('User document ${user.id} already exists, skipping creation');
+        return;
+      }
+
+      await userDoc.set(userPayload);
 
       logger.i('Successfully created user document for ${user.id}');
     } on FirebaseException catch (e) {
-      if (e.code == 'already-exists') {
-        // User document already exists, this is fine
-        logger.i('User document ${user.id} already exists, skipping creation');
-      } else {
-        // Re-throw other Firebase exceptions
-        logger.e('Firebase error creating user document: $e');
-        rethrow;
-      }
+      // Re-throw Firebase exceptions
+      logger.e('Firebase error creating user document: $e');
+      rethrow;
     } catch (e, stackTrace) {
       logger.e('Error creating user document: $e');
       Sentry.captureException(e, stackTrace: stackTrace, hint: Hint.withMap({'operation': 'create_user_document'}));
@@ -100,7 +103,7 @@ class FirebaseFirestoreRepository {
 
   Future<void> _deleteDocuments(String collectionName, String userKey, String userId) async {
     try {
-      final snapshot = await instance.collection(collectionName).where(userKey, isEqualTo: userId).get();
+      final snapshot = await _instance.collection(collectionName).where(userKey, isEqualTo: userId).get();
       await Future.wait(
         snapshot.docs.map((doc) async {
           await doc.reference.delete();
@@ -121,7 +124,7 @@ class FirebaseFirestoreRepository {
   // PLAYLIST OPERATIONS
 
   Stream<Playlist> getPlaylistStream(String playlistId) {
-    return instance
+    return _instance
         .collection(FirebaseCollectionName.playlists)
         .doc(playlistId)
         .snapshots(includeMetadataChanges: true)
@@ -142,7 +145,7 @@ class FirebaseFirestoreRepository {
   }
 
   Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
-    return instance
+    return _instance
         .collection(FirebaseCollectionName.playlists)
         .where(PlaylistKey.userId, isEqualTo: userId)
         .orderBy(PlaylistKey.name)
@@ -175,7 +178,7 @@ class FirebaseFirestoreRepository {
         name: playlistName,
         musicSheets: const [],
       );
-      await instance.collection(FirebaseCollectionName.playlists).add(playlistPayload);
+      await _instance.collection(FirebaseCollectionName.playlists).add(playlistPayload);
       logger.i("Uploading new playlist");
       return true;
     } catch (e) {
@@ -189,7 +192,7 @@ class FirebaseFirestoreRepository {
     required Playlist playlist,
   }) async {
     try {
-      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.name: newPlaylistName,
       });
       logger.i("Renaming playlist ${playlist.name} to $newPlaylistName");
@@ -202,7 +205,7 @@ class FirebaseFirestoreRepository {
 
   Future<bool> deletePlaylist({required Playlist playlist}) async {
     try {
-      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).delete();
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).delete();
       logger.i("Removing playlist ${playlist.name} with id ${playlist.playlistId}");
       return true;
     } catch (e) {
@@ -221,7 +224,7 @@ class FirebaseFirestoreRepository {
     required String repositoryId,
   }) async {
     try {
-      final firestoreRef = instance
+      final firestoreRef = _instance
           .collection(FirebaseCollectionName.repositories)
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets);
@@ -268,7 +271,7 @@ class FirebaseFirestoreRepository {
       updatedMusicSheets.addAll(musicSheets);
 
       // Update Firestore with the complete list in a single atomic operation
-      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
 
@@ -288,7 +291,7 @@ class FirebaseFirestoreRepository {
     required Playlist playlist,
   }) async {
     try {
-      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.renameSheet(musicSheet.musicSheetId, fileName).toJsonList(),
       });
       logger.i("musicSheetRename update successful");
@@ -305,7 +308,7 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       logger.i("Removing music sheet ${musicSheet.fileName} from playlist");
-      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.removeById(musicSheet.musicSheetId).toJsonList(),
       });
       return true;
@@ -317,7 +320,7 @@ class FirebaseFirestoreRepository {
 
   Future<bool> musicSheetReorder({required Playlist playlist}) async {
     try {
-      await instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
       });
       logger.i("musicSheetReorder update successful");
@@ -333,7 +336,7 @@ class FirebaseFirestoreRepository {
     required String repositoryId,
   }) async {
     try {
-      final firestoreRef = instance
+      final firestoreRef = _instance
           .collection(FirebaseCollectionName.repositories)
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets);
@@ -351,7 +354,7 @@ class FirebaseFirestoreRepository {
   // REPOSITORY OPERATIONS
 
   Stream<Iterable<Repository>> getRepositoriesStream({required String userId}) {
-    return instance
+    return _instance
         .collection(FirebaseCollectionName.repositories)
         .where(RepositoryKey.userId, whereIn: [userId, ''])
         .snapshots(includeMetadataChanges: true)
@@ -380,7 +383,7 @@ class FirebaseFirestoreRepository {
   }
 
   Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
-    return instance
+    return _instance
         .collection(FirebaseCollectionName.repositories)
         .doc(repositoryId)
         .collection(FirebaseCollectionName.musicSheets)
@@ -406,9 +409,8 @@ class FirebaseFirestoreRepository {
     return _createRepository(userId: '', name: name);
   }
 
-  // TODO: cover with tests
   Future<int> getUserRepositoriesCount({required String userId}) async {
-    final snapshot = await instance
+    final snapshot = await _instance
         .collection(FirebaseCollectionName.repositories)
         .where(RepositoryKey.userId, isEqualTo: userId)
         .count()
@@ -438,7 +440,7 @@ class FirebaseFirestoreRepository {
         userId: userId,
         name: name,
       );
-      await instance.collection(FirebaseCollectionName.repositories).add(repositoryPayload);
+      await _instance.collection(FirebaseCollectionName.repositories).add(repositoryPayload);
       return true;
     } catch (e) {
       logger.e('Error creating repository: $e');
@@ -453,7 +455,7 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       // First, get the repository to verify ownership
-      final repositoriesCollection = instance.collection(FirebaseCollectionName.repositories);
+      final repositoriesCollection = _instance.collection(FirebaseCollectionName.repositories);
       final repositoryDoc = await repositoriesCollection.doc(repositoryId).get();
 
       if (!repositoryDoc.exists) {
@@ -495,7 +497,7 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       // First, get the repository to verify ownership
-      final repositoriesCollection = instance.collection(FirebaseCollectionName.repositories);
+      final repositoriesCollection = _instance.collection(FirebaseCollectionName.repositories);
       final repositoryDoc = await repositoriesCollection.doc(repositoryId).get();
 
       if (!repositoryDoc.exists) {
@@ -543,7 +545,7 @@ class FirebaseFirestoreRepository {
 
   Future<int> getRepositoryMusicSheetsCount(String repositoryId) async {
     try {
-      final AggregateQuerySnapshot snapshot = await instance
+      final AggregateQuerySnapshot snapshot = await _instance
           .collection(FirebaseCollectionName.repositories)
           .doc(repositoryId)
           .collection(FirebaseCollectionName.musicSheets)

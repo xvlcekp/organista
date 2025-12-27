@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -16,10 +18,14 @@ class AppRepository extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider<FirebaseFirestoreRepository>(
-          create: (context) => FirebaseFirestoreRepository(),
+          create: (context) => FirebaseFirestoreRepository(
+            instance: FirebaseFirestore.instance,
+          ),
         ),
         RepositoryProvider<FirebaseStorageRepository>(
-          create: (context) => FirebaseStorageRepository(),
+          create: (context) => FirebaseStorageRepository(
+            storage: FirebaseStorage.instance,
+          ),
         ),
         RepositoryProvider<SettingsRepository>(
           create: (context) => SettingsRepository(

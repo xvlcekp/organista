@@ -6,7 +6,6 @@ import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/main.dart';
 import 'package:organista/models/firebase_collection_name.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
-import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 
 import 'auth_utils.dart';
@@ -25,7 +24,6 @@ class UpdateSequenceIds extends StatelessWidget {
   }
 }
 
-final firebaseFirestoreRepository = FirebaseFirestoreRepository();
 final firestore = FirebaseFirestore.instance;
 
 Future<void> updateSequenceIds({

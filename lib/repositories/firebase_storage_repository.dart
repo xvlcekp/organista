@@ -7,7 +7,9 @@ import 'package:uuid/uuid.dart';
 import 'package:mime/mime.dart';
 
 class FirebaseStorageRepository {
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseStorage _storage;
+
+  FirebaseStorageRepository({required FirebaseStorage storage}) : _storage = storage;
 
   /// Lists all items in a folder
   Future<ListResult> listFolderContents(String path) {
