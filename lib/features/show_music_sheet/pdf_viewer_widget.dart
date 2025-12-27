@@ -14,6 +14,7 @@ import 'package:organista/features/show_music_sheet/zoomable_music_sheet_viewer.
 import 'package:organista/features/show_music_sheet/pdf_navigation_touch_area.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/utils/size_utils.dart';
 import 'package:pdfx/pdfx.dart';
 
 class PdfViewerWidget extends HookWidget {
@@ -101,28 +102,28 @@ class PdfViewerWidget extends HookWidget {
     };
   }
 
-  PdfView getPdfPreview(PdfController pdfController) {
-    const double pdfRenderScale = 0.5;
+  PdfView _buildPdfView(PdfController pdfController, double maxSide) {
     return PdfView(
       controller: pdfController,
-      renderer: (PdfPage page) => page.render(
-        width: page.width * pdfRenderScale,
-        height: page.height * pdfRenderScale,
-        backgroundColor: backgroundColor.toHex(),
-      ),
+      renderer: (PdfPage page) {
+        final size = SizeUtils.calculateRenderSize(page.width, page.height, maxSide);
+        return page.render(
+          width: size.width,
+          height: size.height,
+          backgroundColor: backgroundColor.toHex(),
+        );
+      },
     );
   }
 
+  PdfView getPdfPreview(PdfController pdfController) {
+    const double maxPreviewSide = 2000;
+    return _buildPdfView(pdfController, maxPreviewSide);
+  }
+
   PdfView getPdfThumbnailView(PdfController pdfController) {
-    const double pdfRenderScale = 0.25;
-    return PdfView(
-      controller: pdfController,
-      renderer: (PdfPage page) => page.render(
-        width: page.width * pdfRenderScale,
-        height: page.height * pdfRenderScale,
-        backgroundColor: backgroundColor.toHex(),
-      ),
-    );
+    const double maxThumbnailSide = 500;
+    return _buildPdfView(pdfController, maxThumbnailSide);
   }
 
   Widget getPdfFullView(PdfController pdfController) {
