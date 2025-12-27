@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -14,8 +16,12 @@ import 'package:organista/services/auth/auth_user.dart';
 
 import 'auth_utils.dart';
 
-final firebaseFirestoreRepository = FirebaseFirestoreRepository();
-final firebaseStorageRepository = FirebaseStorageRepository();
+final firebaseFirestoreRepository = FirebaseFirestoreRepository(
+  instance: FirebaseFirestore.instance,
+);
+final firebaseStorageRepository = FirebaseStorageRepository(
+  storage: FirebaseStorage.instance,
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,18 +3,17 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i3;
 
-import 'package:cloud_firestore/cloud_firestore.dart' as _i2;
-import 'package:firebase_storage/firebase_storage.dart' as _i7;
+import 'package:firebase_storage/firebase_storage.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:organista/models/music_sheets/media_type.dart' as _i8;
-import 'package:organista/models/music_sheets/music_sheet.dart' as _i9;
-import 'package:organista/models/playlists/playlist.dart' as _i6;
-import 'package:organista/models/repositories/repository.dart' as _i10;
-import 'package:organista/repositories/firebase_firestore_repository.dart' as _i3;
-import 'package:organista/services/auth/auth_user.dart' as _i5;
-import 'package:organista/services/export_playlist/export_playlist_service.dart' as _i11;
+import 'package:organista/models/music_sheets/media_type.dart' as _i7;
+import 'package:organista/models/music_sheets/music_sheet.dart' as _i8;
+import 'package:organista/models/playlists/playlist.dart' as _i5;
+import 'package:organista/models/repositories/repository.dart' as _i9;
+import 'package:organista/repositories/firebase_firestore_repository.dart' as _i2;
+import 'package:organista/services/auth/auth_user.dart' as _i4;
+import 'package:organista/services/export_playlist/export_playlist_service.dart' as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -31,64 +30,49 @@ import 'package:organista/services/export_playlist/export_playlist_service.dart'
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakeFirebaseFirestore_0 extends _i1.SmartFake implements _i2.FirebaseFirestore {
-  _FakeFirebaseFirestore_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
-
 /// A class which mocks [FirebaseFirestoreRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFirestoreRepository {
+class MockFirebaseFirestoreRepository extends _i1.Mock implements _i2.FirebaseFirestoreRepository {
   MockFirebaseFirestoreRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.FirebaseFirestore get instance =>
-      (super.noSuchMethod(
-            Invocation.getter(#instance),
-            returnValue: _FakeFirebaseFirestore_0(
-              this,
-              Invocation.getter(#instance),
-            ),
-          )
-          as _i2.FirebaseFirestore);
-
-  @override
-  _i4.Future<void> createUserDocument({required _i5.AuthUser? user}) =>
+  _i3.Future<void> createUserDocument({required _i4.AuthUser? user}) =>
       (super.noSuchMethod(
             Invocation.method(#createUserDocument, [], {#user: user}),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i3.Future<void>);
 
   @override
-  _i4.Future<bool> deleteUser({required String? userId}) =>
+  _i3.Future<bool> deleteUser({required String? userId}) =>
       (super.noSuchMethod(
             Invocation.method(#deleteUser, [], {#userId: userId}),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Stream<_i6.Playlist> getPlaylistStream(String? playlistId) =>
+  _i3.Stream<_i5.Playlist> getPlaylistStream(String? playlistId) =>
       (super.noSuchMethod(
             Invocation.method(#getPlaylistStream, [playlistId]),
-            returnValue: _i4.Stream<_i6.Playlist>.empty(),
+            returnValue: _i3.Stream<_i5.Playlist>.empty(),
           )
-          as _i4.Stream<_i6.Playlist>);
+          as _i3.Stream<_i5.Playlist>);
 
   @override
-  _i4.Stream<Iterable<_i6.Playlist>> getPlaylistsStream(String? userId) =>
+  _i3.Stream<Iterable<_i5.Playlist>> getPlaylistsStream(String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#getPlaylistsStream, [userId]),
-            returnValue: _i4.Stream<Iterable<_i6.Playlist>>.empty(),
+            returnValue: _i3.Stream<Iterable<_i5.Playlist>>.empty(),
           )
-          as _i4.Stream<Iterable<_i6.Playlist>>);
+          as _i3.Stream<Iterable<_i5.Playlist>>);
 
   @override
-  _i4.Future<bool> addNewPlaylist({
+  _i3.Future<bool> addNewPlaylist({
     required String? playlistName,
     required String? userId,
   }) =>
@@ -97,38 +81,38 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #playlistName: playlistName,
               #userId: userId,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> renamePlaylist({
+  _i3.Future<bool> renamePlaylist({
     required String? newPlaylistName,
-    required _i6.Playlist? playlist,
+    required _i5.Playlist? playlist,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#renamePlaylist, [], {
               #newPlaylistName: newPlaylistName,
               #playlist: playlist,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> deletePlaylist({required _i6.Playlist? playlist}) =>
+  _i3.Future<bool> deletePlaylist({required _i5.Playlist? playlist}) =>
       (super.noSuchMethod(
             Invocation.method(#deletePlaylist, [], {#playlist: playlist}),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> uploadMusicSheetRecord({
+  _i3.Future<bool> uploadMusicSheetRecord({
     required String? fileName,
     required String? userId,
-    required _i7.Reference? reference,
-    required _i8.MediaType? mediaType,
+    required _i6.Reference? reference,
+    required _i7.MediaType? mediaType,
     required String? repositoryId,
   }) =>
       (super.noSuchMethod(
@@ -139,29 +123,29 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #mediaType: mediaType,
               #repositoryId: repositoryId,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> addMusicSheetsToPlaylist({
-    required _i6.Playlist? playlist,
-    required List<_i9.MusicSheet>? musicSheets,
+  _i3.Future<bool> addMusicSheetsToPlaylist({
+    required _i5.Playlist? playlist,
+    required List<_i8.MusicSheet>? musicSheets,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#addMusicSheetsToPlaylist, [], {
               #playlist: playlist,
               #musicSheets: musicSheets,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> renameMusicSheetInPlaylist({
-    required _i9.MusicSheet? musicSheet,
+  _i3.Future<bool> renameMusicSheetInPlaylist({
+    required _i8.MusicSheet? musicSheet,
     required String? fileName,
-    required _i6.Playlist? playlist,
+    required _i5.Playlist? playlist,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#renameMusicSheetInPlaylist, [], {
@@ -169,35 +153,35 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #fileName: fileName,
               #playlist: playlist,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteMusicSheetInPlaylist({
-    required _i9.MusicSheet? musicSheet,
-    required _i6.Playlist? playlist,
+  _i3.Future<bool> deleteMusicSheetInPlaylist({
+    required _i8.MusicSheet? musicSheet,
+    required _i5.Playlist? playlist,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#deleteMusicSheetInPlaylist, [], {
               #musicSheet: musicSheet,
               #playlist: playlist,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> musicSheetReorder({required _i6.Playlist? playlist}) =>
+  _i3.Future<bool> musicSheetReorder({required _i5.Playlist? playlist}) =>
       (super.noSuchMethod(
             Invocation.method(#musicSheetReorder, [], {#playlist: playlist}),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteMusicSheetFromRepository({
-    required _i9.MusicSheet? musicSheet,
+  _i3.Future<bool> deleteMusicSheetFromRepository({
+    required _i8.MusicSheet? musicSheet,
     required String? repositoryId,
   }) =>
       (super.noSuchMethod(
@@ -205,48 +189,48 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #musicSheet: musicSheet,
               #repositoryId: repositoryId,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Stream<Iterable<_i10.Repository>> getRepositoriesStream({
+  _i3.Stream<Iterable<_i9.Repository>> getRepositoriesStream({
     required String? userId,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getRepositoriesStream, [], {#userId: userId}),
-            returnValue: _i4.Stream<Iterable<_i10.Repository>>.empty(),
+            returnValue: _i3.Stream<Iterable<_i9.Repository>>.empty(),
           )
-          as _i4.Stream<Iterable<_i10.Repository>>);
+          as _i3.Stream<Iterable<_i9.Repository>>);
 
   @override
-  _i4.Stream<Iterable<_i9.MusicSheet>> getRepositoryMusicSheetsStream(
+  _i3.Stream<Iterable<_i8.MusicSheet>> getRepositoryMusicSheetsStream(
     String? repositoryId,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getRepositoryMusicSheetsStream, [repositoryId]),
-            returnValue: _i4.Stream<Iterable<_i9.MusicSheet>>.empty(),
+            returnValue: _i3.Stream<Iterable<_i8.MusicSheet>>.empty(),
           )
-          as _i4.Stream<Iterable<_i9.MusicSheet>>);
+          as _i3.Stream<Iterable<_i8.MusicSheet>>);
 
   @override
-  _i4.Future<bool> createGlobalRepository({required String? name}) =>
+  _i3.Future<bool> createGlobalRepository({required String? name}) =>
       (super.noSuchMethod(
             Invocation.method(#createGlobalRepository, [], {#name: name}),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<int> getUserRepositoriesCount({required String? userId}) =>
+  _i3.Future<int> getUserRepositoriesCount({required String? userId}) =>
       (super.noSuchMethod(
             Invocation.method(#getUserRepositoriesCount, [], {#userId: userId}),
-            returnValue: _i4.Future<int>.value(0),
+            returnValue: _i3.Future<int>.value(0),
           )
-          as _i4.Future<int>);
+          as _i3.Future<int>);
 
   @override
-  _i4.Future<bool> createUserRepository({
+  _i3.Future<bool> createUserRepository({
     required String? userId,
     required String? name,
   }) =>
@@ -255,12 +239,12 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #userId: userId,
               #name: name,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> renameRepository({
+  _i3.Future<bool> renameRepository({
     required String? repositoryId,
     required String? newName,
     required String? currentUserId,
@@ -271,12 +255,12 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #newName: newName,
               #currentUserId: currentUserId,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<bool> deleteRepository({
+  _i3.Future<bool> deleteRepository({
     required String? repositoryId,
     required String? currentUserId,
   }) =>
@@ -285,32 +269,32 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #repositoryId: repositoryId,
               #currentUserId: currentUserId,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: _i3.Future<bool>.value(false),
           )
-          as _i4.Future<bool>);
+          as _i3.Future<bool>);
 
   @override
-  _i4.Future<int> getRepositoryMusicSheetsCount(String? repositoryId) =>
+  _i3.Future<int> getRepositoryMusicSheetsCount(String? repositoryId) =>
       (super.noSuchMethod(
             Invocation.method(#getRepositoryMusicSheetsCount, [repositoryId]),
-            returnValue: _i4.Future<int>.value(0),
+            returnValue: _i3.Future<int>.value(0),
           )
-          as _i4.Future<int>);
+          as _i3.Future<int>);
 }
 
 /// A class which mocks [ExportPlaylistService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockExportPlaylistService extends _i1.Mock implements _i11.ExportPlaylistService {
+class MockExportPlaylistService extends _i1.Mock implements _i10.ExportPlaylistService {
   MockExportPlaylistService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<String?> exportPlaylistToPdf({required _i6.Playlist? playlist}) =>
+  _i3.Future<String?> exportPlaylistToPdf({required _i5.Playlist? playlist}) =>
       (super.noSuchMethod(
             Invocation.method(#exportPlaylistToPdf, [], {#playlist: playlist}),
-            returnValue: _i4.Future<String?>.value(),
+            returnValue: _i3.Future<String?>.value(),
           )
-          as _i4.Future<String?>);
+          as _i3.Future<String?>);
 }
