@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -47,17 +49,19 @@ Future<void> main() async {
 
       // Setup logger after app starts (non-blocking)
       // This prevents blocking the UI thread during startup
-      logger
-          .setup()
-          .then((_) {
-            Bloc.observer = SimpleBlocObserver(logger: logger);
-            logger.i('App started');
-          })
-          .catchError((error, stackTrace) {
-            // Log error but don't crash - logging is not critical for app functionality
-            debugPrint('Logger setup failed: $error');
-            Sentry.captureException(error, stackTrace: stackTrace);
-          });
+      unawaited(
+        logger
+            .setup()
+            .then((_) {
+              Bloc.observer = SimpleBlocObserver(logger: logger);
+              logger.i('App started');
+            })
+            .catchError((error, stackTrace) {
+              // Log error but don't crash - logging is not critical for app functionality
+              debugPrint('Logger setup failed: $error');
+              unawaited(Sentry.captureException(error, stackTrace: stackTrace));
+            }),
+      );
     },
   );
 }

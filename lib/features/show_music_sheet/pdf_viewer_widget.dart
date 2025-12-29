@@ -64,8 +64,8 @@ class PdfViewerWidget extends HookWidget {
             isLoading.value = false;
             completer.complete();
           }
-        } catch (e) {
-          logger.e("Failed to download or cache PDF file: $e");
+        } catch (e, stackTrace) {
+          logger.e("Failed to download or cache PDF file", error: e, stackTrace: stackTrace);
           if (!completer.isCompleted) {
             hasError.value = true;
             isLoading.value = false;

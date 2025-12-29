@@ -77,8 +77,8 @@ Future<void> updateSequenceIds({
           });
 
           logger.i('Updated document ${doc.id} with sequence_id: $sequenceId');
-        } catch (e) {
-          logger.e('Error updating document ${doc.id}', error: e);
+        } catch (e, stackTrace) {
+          logger.e('Error updating document ${doc.id}', error: e, stackTrace: stackTrace);
         }
       }
 
@@ -86,8 +86,8 @@ Future<void> updateSequenceIds({
     }
 
     logger.i('Sequence ID update completed successfully for all repositories');
-  } catch (e) {
-    logger.e('Error updating sequence IDs', error: e);
+  } catch (e, stackTrace) {
+    logger.e('Error updating sequence IDs', error: e, stackTrace: stackTrace);
     rethrow;
   }
 }

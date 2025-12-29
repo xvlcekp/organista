@@ -20,12 +20,17 @@ class PdfNavigationTouchArea extends StatelessWidget {
     const paddingMax = 16.0;
     final greenWithGradientMax = Colors.green.withAlpha(gradientMax);
 
+    final mediaQueryHeight = MediaQuery.of(context).size.height;
+    final touchAreaHeight = mediaQueryHeight.isNaN || mediaQueryHeight <= 0
+        ? 0.0
+        : mediaQueryHeight * AppConstants.nextPagetouchAreaHeight;
+
     return Positioned(
       top: isTop ? 0 : null,
       bottom: isTop ? null : 0,
       left: 0,
       right: 0,
-      height: MediaQuery.of(context).size.height * AppConstants.nextPagetouchAreaHeight,
+      height: touchAreaHeight,
       child: Listener(
         behavior: HitTestBehavior.opaque,
         onPointerDown: (_) => onTap(),

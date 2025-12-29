@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseException, FirebaseAuthException;
 import 'package:organista/logger/custom_logger.dart';
@@ -9,6 +10,7 @@ import 'package:equatable/equatable.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/services/auth/auth_provider.dart';
 import 'package:organista/managers/stream_manager.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -69,6 +71,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isLoading: false,
         ),
       );
+
+      unawaited(_updateSentryUser(null));
     } on FirebaseAuthException catch (e) {
       emit(
         AuthStateLoggedIn(
@@ -85,9 +89,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isLoading: false,
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Handle any other errors
-      logger.e('Error during account deletion: $e');
+      logger.e('Error during account deletion', error: e, stackTrace: stackTrace);
       emit(
         AuthStateLoggedIn(
           isLoading: false,
@@ -106,6 +110,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await StreamManager.instance.cancelAllStreams();
 
       await _authProvider.logOut();
+
+      unawaited(_updateSentryUser(null));
+
       emit(
         const AuthStateLoggedOut(isLoading: false),
       );
@@ -128,18 +135,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _authEventInitialize(AuthEventInitialize event, Emitter<AuthState> emit) async {
-    await _authProvider.initialize();
-    final user = _authProvider.currentUser;
-    if (user == null) {
+    try {
+      await _authProvider.initialize();
+      final user = _authProvider.currentUser;
+
+      if (user == null) {
+        emit(
+          const AuthStateLoggedOut(isLoading: false),
+        );
+      } else {
+        // Small delay to ensure Firebase services (like Firestore) are fully aware
+        // of the auth state before any queries are triggered by the UI.
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        unawaited(_updateSentryUser(user));
+
+        emit(
+          AuthStateLoggedIn(
+            isLoading: false,
+            user: user,
+          ),
+        );
+      }
+    } catch (e, stackTrace) {
+      logger.e('Error during auth initialization', error: e, stackTrace: stackTrace);
       emit(
         const AuthStateLoggedOut(isLoading: false),
-      );
-    } else {
-      emit(
-        AuthStateLoggedIn(
-          isLoading: false,
-          user: user,
-        ),
       );
     }
   }
@@ -158,6 +179,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _firebaseFirestoreRepository.createUserDocument(
         user: authUser,
       );
+
+      unawaited(_updateSentryUser(authUser));
 
       emit(
         AuthStateLoggedIn(
@@ -203,6 +226,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
       );
+      unawaited(_updateSentryUser(authUser));
+
       emit(
         AuthStateLoggedIn(
           isLoading: false,
@@ -269,6 +294,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         user: authUser,
       );
 
+      unawaited(_updateSentryUser(authUser));
+
       emit(
         AuthStateLoggedIn(
           isLoading: false,
@@ -306,6 +333,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         user: authUser,
       );
 
+      unawaited(_updateSentryUser(authUser));
+
       emit(
         AuthStateLoggedIn(
           isLoading: false,
@@ -327,5 +356,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       );
     }
+  }
+
+  Future<void> _updateSentryUser(AuthUser? user) async {
+    await Sentry.configureScope((scope) {
+      if (user == null) {
+        scope.setUser(null);
+      } else {
+        scope.setUser(
+          SentryUser(
+            id: user.id,
+            email: user.email,
+          ),
+        );
+      }
+    });
   }
 }

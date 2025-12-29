@@ -99,8 +99,8 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
       } else {
         throw Exception('Failed to upload file, not uploading MusicSheet record to Firestore');
       }
-    } catch (e) {
-      logger.e('Failed to upload file: $e');
+    } catch (e, stackTrace) {
+      logger.e('Failed to upload file', error: e, stackTrace: stackTrace);
       if (!isClosed) {
         emit(
           UploadMusicSheetState(
@@ -144,8 +144,8 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
           ),
         );
       }
-    } catch (e) {
-      logger.e('Failed to rename music sheet: $e');
+    } catch (e, stackTrace) {
+      logger.e('Failed to rename music sheet', error: e, stackTrace: stackTrace);
       if (!isClosed) {
         emit(
           EditMusicSheetState(

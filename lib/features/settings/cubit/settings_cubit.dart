@@ -62,8 +62,8 @@ class SettingsCubit extends Cubit<SettingsState> {
       } else {
         await _wakelockService.disable();
       }
-    } catch (e) {
-      logger.e('Error changing keep screen on', error: e);
+    } catch (e, stackTrace) {
+      logger.e('Error changing keep screen on', error: e, stackTrace: stackTrace);
     }
 
     emit(state.copyWith(keepScreenOn: keepScreenOn));

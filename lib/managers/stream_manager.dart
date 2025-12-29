@@ -198,7 +198,7 @@ class StreamManager {
     // Close all stream controllers
     for (final streamController in _streamControllers.values) {
       if (!streamController.controller.isClosed) {
-        streamController.controller.close();
+        await streamController.controller.close();
       }
     }
 

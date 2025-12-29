@@ -80,10 +80,11 @@ linter:
   # producing the lint.
   rules:
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-    lines_longer_than_80_chars: false  # Disable 80-char limit since we use 120
+    lines_longer_than_80_chars: false # Disable 80-char limit since we use 120
     prefer_const_constructors: true
     prefer_const_literals_to_create_immutables: true
     prefer_const_declarations: true
+    unawaited_futures: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
