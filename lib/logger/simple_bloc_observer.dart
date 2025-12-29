@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class SimpleBlocObserver extends BlocObserver {
   final CustomLogger logger;
@@ -29,15 +28,7 @@ class SimpleBlocObserver extends BlocObserver {
   @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     // Always log errors regardless of build mode
-    logger.e('${bloc.runtimeType} $error', error: error, stackTrace: stackTrace);
-
-    // Report BLoC errors to Sentry
-    Sentry.captureException(
-      error,
-      stackTrace: stackTrace,
-      hint: Hint.withMap({'bloc_type': bloc.runtimeType.toString()}),
-    );
-
+    logger.e('Bloc type: ${bloc.runtimeType} $error', error: error, stackTrace: stackTrace);
     super.onError(bloc, error, stackTrace);
   }
 }
