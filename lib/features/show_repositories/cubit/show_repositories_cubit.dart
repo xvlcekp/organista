@@ -11,6 +11,8 @@ import 'package:organista/managers/stream_manager.dart';
 
 part 'show_repositories_state.dart';
 
+// TODO: fix creating new custom repository while offine
+
 class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   ShowRepositoriesCubit({
@@ -28,47 +30,19 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     required String repositoryName,
     required String userId,
   }) async {
-    // Emit loading state while preserving current repositories
-    emit(
-      RepositoriesState(
-        publicRepositories: state.publicRepositories,
-        privateRepositories: state.privateRepositories,
-        isLoading: true,
-      ),
+    await _handleAction(
+      () async {
+        final success = await _firebaseFirestoreRepository.createUserRepository(
+          userId: userId,
+          name: repositoryName,
+        );
+
+        if (!success) {
+          throw const RepositoryGenericException();
+        }
+      },
+      errorLogMessage: 'Error during repository creation',
     );
-
-    try {
-      final success = await _firebaseFirestoreRepository.createUserRepository(
-        userId: userId,
-        name: repositoryName,
-      );
-
-      if (success) {
-        // Success state with message
-        emit(
-          RepositoriesState(
-            publicRepositories: state.publicRepositories,
-            privateRepositories: state.privateRepositories,
-          ),
-        );
-      } else {
-        emit(
-          RepositoriesState(
-            publicRepositories: state.publicRepositories,
-            privateRepositories: state.privateRepositories,
-            error: const RepositoryGenericException(),
-          ),
-        );
-      }
-    } catch (e) {
-      emit(
-        RepositoriesState(
-          publicRepositories: state.publicRepositories,
-          privateRepositories: state.privateRepositories,
-          error: e as RepositoryError,
-        ),
-      );
-    }
   }
 
   Future<void> renameRepository({
@@ -76,38 +50,14 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     required String newName,
     required String currentUserId,
   }) async {
-    // Emit loading state while preserving current repositories
-    emit(
-      RepositoriesState(
-        publicRepositories: state.publicRepositories,
-        privateRepositories: state.privateRepositories,
-        isLoading: true,
-      ),
-    );
-
-    try {
-      await _firebaseFirestoreRepository.renameRepository(
+    await _handleAction(
+      () => _firebaseFirestoreRepository.renameRepository(
         repositoryId: repositoryId,
         newName: newName,
         currentUserId: currentUserId,
-      );
-
-      // Success state with message
-      emit(
-        RepositoriesState(
-          publicRepositories: state.publicRepositories,
-          privateRepositories: state.privateRepositories,
-        ),
-      );
-    } catch (e) {
-      emit(
-        RepositoriesState(
-          publicRepositories: state.publicRepositories,
-          privateRepositories: state.privateRepositories,
-          error: e as RepositoryError,
-        ),
-      );
-    }
+      ),
+      errorLogMessage: 'Error during repository rename',
+    );
   }
 
   Future<void> deleteRepository({
@@ -115,37 +65,13 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     required String currentUserId,
   }) async {
     logger.d('deleteRepository was called with repositoryId: $repositoryId');
-    // Emit loading state while preserving current repositories
-    emit(
-      RepositoriesState(
-        publicRepositories: state.publicRepositories,
-        privateRepositories: state.privateRepositories,
-        isLoading: true,
-      ),
-    );
-
-    try {
-      await _firebaseFirestoreRepository.deleteRepository(
+    await _handleAction(
+      () => _firebaseFirestoreRepository.deleteRepository(
         repositoryId: repositoryId,
         currentUserId: currentUserId,
-      );
-
-      // Success state with message
-      emit(
-        RepositoriesState(
-          publicRepositories: state.publicRepositories,
-          privateRepositories: state.privateRepositories,
-        ),
-      );
-    } catch (e) {
-      emit(
-        RepositoriesState(
-          publicRepositories: state.publicRepositories,
-          privateRepositories: state.privateRepositories,
-          error: e as RepositoryError,
-        ),
-      );
-    }
+      ),
+      errorLogMessage: 'Error during repository deletion',
+    );
   }
 
   void startSubscribingRepositories({required String userId}) {
@@ -176,5 +102,49 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
     // Note: StreamManager handles removeListener automatically via onCancel
     _streamSubscription?.cancel();
     return super.close();
+  }
+
+  /// Private helper to handle common repository action state transitions and errors.
+  Future<void> _handleAction(
+    Future<void> Function() action, {
+    String? errorLogMessage,
+  }) async {
+    // Emit loading state while preserving current repositories
+    emit(
+      RepositoriesState(
+        publicRepositories: state.publicRepositories,
+        privateRepositories: state.privateRepositories,
+        isLoading: true,
+      ),
+    );
+
+    try {
+      await action();
+
+      // Success state (isLoading defaults to false)
+      emit(
+        RepositoriesState(
+          publicRepositories: state.publicRepositories,
+          privateRepositories: state.privateRepositories,
+        ),
+      );
+    } on RepositoryError catch (e) {
+      emit(
+        RepositoriesState(
+          publicRepositories: state.publicRepositories,
+          privateRepositories: state.privateRepositories,
+          error: e,
+        ),
+      );
+    } catch (e, stackTrace) {
+      logger.e(errorLogMessage ?? 'Generic repository error', error: e, stackTrace: stackTrace);
+      emit(
+        RepositoriesState(
+          publicRepositories: state.publicRepositories,
+          privateRepositories: state.privateRepositories,
+          error: const RepositoryGenericException(),
+        ),
+      );
+    }
   }
 }
