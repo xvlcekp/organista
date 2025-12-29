@@ -89,9 +89,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isLoading: false,
         ),
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Handle any other errors
-      logger.e('Error during account deletion: $e');
+      logger.e('Error during account deletion', error: e, stackTrace: stackTrace);
       emit(
         AuthStateLoggedIn(
           isLoading: false,

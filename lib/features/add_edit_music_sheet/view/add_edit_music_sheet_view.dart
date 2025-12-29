@@ -10,7 +10,6 @@ import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_shee
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/loading/loading_screen.dart';
-import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
 class AddEditMusicSheetView extends HookWidget {
@@ -135,7 +134,7 @@ class AddEditMusicSheetView extends HookWidget {
 
                                 switch (state) {
                                   case InitMusicSheetState():
-                                    logger.e(localizations.selectImageFirst);
+                                    break;
                                   case UploadMusicSheetState():
                                     final user = context.read<AuthBloc>().state.user;
                                     if (user != null) {

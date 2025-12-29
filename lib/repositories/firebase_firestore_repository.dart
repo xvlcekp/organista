@@ -69,7 +69,7 @@ class FirebaseFirestoreRepository {
       logger.e('Firebase error creating user document: $e', error: e, stackTrace: StackTrace.current);
       rethrow;
     } catch (e, stackTrace) {
-      logger.e('Error creating user document: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error creating user document', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -79,7 +79,7 @@ class FirebaseFirestoreRepository {
       await _deleteUserData(userId);
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error deleting user: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error deleting user', error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -92,7 +92,7 @@ class FirebaseFirestoreRepository {
         _deleteDocuments(FirebaseCollectionName.repositories, RepositoryKey.userId, userId),
       ]);
     } catch (e, stackTrace) {
-      logger.e('Error in _deleteUserData: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error in _deleteUserData', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -107,7 +107,7 @@ class FirebaseFirestoreRepository {
         }),
       );
     } catch (e, stackTrace) {
-      logger.e('Error deleting documents from $collectionName: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error deleting documents from $collectionName', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -129,7 +129,7 @@ class FirebaseFirestoreRepository {
           return Playlist(playlistId: playlistId, json: data);
         })
         .handleError((error, stackTrace) {
-          logger.e('Error in getPlaylistStream: $error', error: error, stackTrace: stackTrace);
+          logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
           return Playlist.empty();
         });
   }
@@ -152,7 +152,7 @@ class FirebaseFirestoreRepository {
           );
         })
         .handleError((error, stackTrace) {
-          logger.e('Error in getPlaylistsStream for user $userId: $error', error: error, stackTrace: stackTrace);
+          logger.e('Error in getPlaylistsStream for user $userId', error: error, stackTrace: stackTrace);
           return <Playlist>[];
         });
   }
@@ -171,7 +171,7 @@ class FirebaseFirestoreRepository {
       logger.i("Uploading new playlist");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error adding new playlist for user $userId: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error adding new playlist for user $userId', error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -188,7 +188,7 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e(
-        'Error renaming playlist ${playlist.playlistId} to $newPlaylistName: $e',
+        'Error renaming playlist ${playlist.playlistId} to $newPlaylistName',
         error: e,
         stackTrace: stackTrace,
       );
@@ -202,7 +202,7 @@ class FirebaseFirestoreRepository {
       logger.i("Removing playlist ${playlist.name} with id ${playlist.playlistId}");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error deleting playlist ${playlist.playlistId}: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error deleting playlist ${playlist.playlistId}', error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -245,7 +245,7 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e(
-        'Error uploading music sheet record for user $userId in repository $repositoryId: $e',
+        'Error uploading music sheet record for user $userId in repository $repositoryId',
         error: e,
         stackTrace: stackTrace,
       );
@@ -278,7 +278,7 @@ class FirebaseFirestoreRepository {
       rethrow;
     } catch (e, stackTrace) {
       logger.e(
-        'Error adding multiple music sheets to playlist ${playlist.playlistId}: $e',
+        'Error adding multiple music sheets to playlist ${playlist.playlistId}',
         error: e,
         stackTrace: stackTrace,
       );
@@ -299,7 +299,7 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e(
-        'Error renaming music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId} to $fileName: $e',
+        'Error renaming music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId} to $fileName',
         error: e,
         stackTrace: stackTrace,
       );
@@ -319,7 +319,7 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e(
-        'Error deleting music sheet ${musicSheet.musicSheetId} from playlist ${playlist.playlistId}: $e',
+        'Error deleting music sheet ${musicSheet.musicSheetId} from playlist ${playlist.playlistId}',
         error: e,
         stackTrace: stackTrace,
       );
@@ -336,7 +336,7 @@ class FirebaseFirestoreRepository {
       return true;
     } catch (e, stackTrace) {
       logger.e(
-        'Error reordering music sheets in playlist ${playlist.playlistId}: $e',
+        'Error reordering music sheets in playlist ${playlist.playlistId}',
         error: e,
         stackTrace: stackTrace,
       );
@@ -358,8 +358,8 @@ class FirebaseFirestoreRepository {
         "Removing musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} from repository $repositoryId",
       );
       return true;
-    } catch (e) {
-      logger.e('Error deleting music sheet from repository: $e');
+    } catch (e, stackTrace) {
+      logger.e('Error deleting music sheet from repository', error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -385,7 +385,7 @@ class FirebaseFirestoreRepository {
           );
         })
         .handleError((error, stackTrace) {
-          logger.e('Error in getRepositoriesStream for user $userId: $error', error: error, stackTrace: stackTrace);
+          logger.e('Error in getRepositoriesStream for user $userId', error: error, stackTrace: stackTrace);
           return <Repository>[];
         });
   }
@@ -404,7 +404,7 @@ class FirebaseFirestoreRepository {
         })
         .handleError((error, stackTrace) {
           logger.e(
-            'Error in getRepositoryMusicSheetsStream for repository $repositoryId: $error',
+            'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
             error: error,
             stackTrace: stackTrace,
           );
@@ -425,7 +425,7 @@ class FirebaseFirestoreRepository {
           .get();
       return snapshot.count ?? 0;
     } catch (e, stackTrace) {
-      logger.e('Error getting user repositories count for user $userId: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error getting user repositories count for user $userId', error: e, stackTrace: stackTrace);
       return 0;
     }
   }
@@ -454,8 +454,8 @@ class FirebaseFirestoreRepository {
       );
       await _instance.collection(FirebaseCollectionName.repositories).add(repositoryPayload);
       return true;
-    } catch (e) {
-      logger.e('Error creating repository: $e');
+    } catch (e, stackTrace) {
+      logger.e('Error creating repository', error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -498,7 +498,7 @@ class FirebaseFirestoreRepository {
       logger.i("Renaming repository $repositoryId to $newName by user $currentUserId");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error renaming repository: $e');
+      logger.e('Error renaming repository', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
@@ -550,7 +550,7 @@ class FirebaseFirestoreRepository {
       logger.i("Deleting repository $repositoryId by user $currentUserId");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error deleting repository: $e');
+      logger.e('Error deleting repository', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
     }
   }
@@ -565,7 +565,7 @@ class FirebaseFirestoreRepository {
           .get();
       return snapshot.count ?? 0;
     } catch (e, stackTrace) {
-      logger.e('Error getting music sheets count for repository $repositoryId: $e', error: e, stackTrace: stackTrace);
+      logger.e('Error getting music sheets count for repository $repositoryId', error: e, stackTrace: stackTrace);
       return 0;
     }
   }

@@ -225,8 +225,12 @@ class _MusicSheetsCount extends StatelessWidget {
   Future<int> _loadMusicSheetsCount(BuildContext context) async {
     try {
       return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
-    } catch (e) {
-      logger.e("Error loading music sheets count: $e");
+    } catch (e, stackTrace) {
+      logger.e(
+        "Error loading music sheets count for repository ${repository.repositoryId}",
+        error: e,
+        stackTrace: stackTrace,
+      );
       return 0;
     }
   }
