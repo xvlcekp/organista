@@ -38,8 +38,8 @@ class RepositoryMusicSheetTile extends HookWidget {
     try {
       final file = await cacheManager.getFileFromCache(musicSheet.fileUrl);
       return file != null;
-    } catch (e) {
-      logger.e("Error checking cache for ${musicSheet.fileName}: $e");
+    } catch (e, stackTrace) {
+      logger.e("Error checking cache for ${musicSheet.fileName}", error: e, stackTrace: stackTrace);
       return false;
     }
   }

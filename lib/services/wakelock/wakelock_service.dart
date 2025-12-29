@@ -19,8 +19,8 @@ class WakelockPlusService implements WakelockService {
   Future<void> enable() async {
     try {
       await WakelockPlus.enable();
-    } catch (e) {
-      logger.e('Error enabling wakelock', error: e);
+    } catch (e, stackTrace) {
+      logger.e('Error enabling wakelock', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -29,8 +29,8 @@ class WakelockPlusService implements WakelockService {
   Future<void> disable() async {
     try {
       await WakelockPlus.disable();
-    } catch (e) {
-      logger.e('Error disabling wakelock', error: e);
+    } catch (e, stackTrace) {
+      logger.e('Error disabling wakelock', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -39,8 +39,8 @@ class WakelockPlusService implements WakelockService {
   Future<bool> get isEnabled async {
     try {
       return await WakelockPlus.enabled;
-    } catch (e) {
-      logger.e('Error getting wakelock status', error: e);
+    } catch (e, stackTrace) {
+      logger.e('Error getting wakelock status', error: e, stackTrace: stackTrace);
       return false;
     }
   }

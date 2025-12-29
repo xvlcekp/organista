@@ -72,15 +72,15 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
         (musicSheets) {
           add(UpdateMusicSheetsEvent(musicSheets));
         },
-        onError: (error) {
-          logger.e('Error in music sheets stream: $error');
+        onError: (error, stackTrace) {
+          logger.e('Error in music sheets stream', error: error, stackTrace: stackTrace);
           add(const UpdateMusicSheetsEvent([]));
         },
       );
 
       logger.d('Subscribed to music sheets stream: ${event.repositoryId}');
-    } catch (e) {
-      logger.e('Error initializing music sheets stream: $e');
+    } catch (e, stackTrace) {
+      logger.e('Error initializing music sheets stream', error: e, stackTrace: stackTrace);
       emit(MusicSheetRepositoryError('Failed to load music sheets: $e'));
     }
   }

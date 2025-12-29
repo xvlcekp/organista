@@ -120,8 +120,8 @@ class UploadFolderScreen extends HookWidget {
               }
               newRepositoryNameController.clear();
             })
-            .catchError((e) {
-              logger.e("Error creating repository", error: e);
+            .catchError((e, stackTrace) {
+              logger.e("Error creating repository", error: e, stackTrace: stackTrace);
               if (context.mounted) {
                 showErrorDialog(context: context, text: "Failed to create repository: ${e.toString()}");
               }
@@ -158,15 +158,15 @@ class UploadFolderScreen extends HookWidget {
 
                 filenameMapping.value = jsonData.map((key, value) => MapEntry(key, value.toString()));
                 logger.i("JSON Mapping Loaded: ${filenameMapping.value}");
-              } catch (e) {
-                logger.e("Error reading JSON file", error: e);
+              } catch (e, stackTrace) {
+                logger.e("Error reading JSON file", error: e, stackTrace: stackTrace);
               }
             } else {
               logger.i("No JSON file selected.");
             }
           })
-          .catchError((error) {
-            logger.e("Error in pickJsonFile", error: error);
+          .catchError((error, stackTrace) {
+            logger.e("Error in pickJsonFile", error: error, stackTrace: stackTrace);
             if (context.mounted) {
               showErrorDialog(
                 context: context,
@@ -243,8 +243,8 @@ class UploadFolderScreen extends HookWidget {
           }
 
           uploadedFiles.value = [...uploadedFiles.value, fileNameToUse];
-        } catch (e) {
-          logger.e("Error uploading ${file.name}", error: e);
+        } catch (e, stackTrace) {
+          logger.e("Error uploading ${file.name}", error: e, stackTrace: stackTrace);
         }
       }
 
@@ -260,8 +260,8 @@ class UploadFolderScreen extends HookWidget {
     /// Synchronous wrapper for the async uploadFolder method
     /// This allows it to be used in onPressed callbacks
     void handleUploadFolder() {
-      uploadFolder().catchError((error) {
-        logger.e("Error in uploadFolder", error: error);
+      uploadFolder().catchError((error, stackTrace) {
+        logger.e("Error in uploadFolder", error: error, stackTrace: stackTrace);
         isUploading.value = false;
         if (context.mounted) {
           showErrorDialog(
@@ -381,7 +381,7 @@ Future<void> loadRepositories(
         }
       });
     }
-  } catch (e) {
-    logger.e("Error loading repositories", error: e);
+  } catch (e, stackTrace) {
+    logger.e("Error loading repositories", error: e, stackTrace: stackTrace);
   }
 }

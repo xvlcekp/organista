@@ -48,8 +48,7 @@ class ExportPlaylistService {
         return null;
       }
     } catch (e, stackTrace) {
-      logger.e('Error exporting playlist: $e');
-      logger.e('Stack trace: $stackTrace');
+      logger.e('Error exporting playlist', error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -67,8 +66,8 @@ class ExportPlaylistService {
         final file = await _cacheManager.getSingleFile(sheet.fileUrl);
         filePaths.add(file.path);
         logger.d('Downloaded file ${i + 1}/$totalSheets: ${sheet.fileName}');
-      } catch (e) {
-        logger.e('Failed to download file: ${sheet.fileName}, error: $e');
+      } catch (e, stackTrace) {
+        logger.e('Failed to download file', error: e, stackTrace: stackTrace);
         // Continue with other files even if one fails
       }
     }
