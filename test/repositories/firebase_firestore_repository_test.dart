@@ -697,7 +697,7 @@ void main() {
             userId: userId,
             name: 'One Too Many',
           ),
-          throwsA(isA<MaximumRepositoriesCounExceeded>()),
+          throwsA(isA<MaximumRepositoriesCountExceeded>()),
         );
       });
     });

@@ -169,7 +169,7 @@ void main() {
               userId: userId,
               name: repositoryName,
             ),
-          ).thenThrow(const MaximumRepositoriesCounExceeded(maximumRepositoriesCount: 5));
+          ).thenThrow(const MaximumRepositoriesCountExceeded(maximumRepositoriesCount: 5));
           return cubit;
         },
         act: (cubit) => cubit.createRepository(
@@ -185,7 +185,7 @@ void main() {
           const RepositoriesState(
             publicRepositories: [],
             privateRepositories: [],
-            error: MaximumRepositoriesCounExceeded(maximumRepositoriesCount: 5),
+            error: MaximumRepositoriesCountExceeded(maximumRepositoriesCount: 5),
             isLoading: false,
           ),
         ],

@@ -36,7 +36,7 @@ class RepositoryCannotModifyOtherUsers extends RepositoryError {
 }
 
 @immutable
-class MaximumRepositoriesCounExceeded extends RepositoryError {
+class MaximumRepositoriesCountExceeded extends RepositoryError {
   final int maximumRepositoriesCount;
-  const MaximumRepositoriesCounExceeded({required this.maximumRepositoriesCount}) : super();
+  const MaximumRepositoriesCountExceeded({required this.maximumRepositoriesCount}) : super();
 }

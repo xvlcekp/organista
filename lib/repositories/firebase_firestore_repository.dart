@@ -438,7 +438,7 @@ class FirebaseFirestoreRepository {
     const maximumRepositoriesCount = AppConstants.maximumRepositoriesCount;
     if (count >= maximumRepositoriesCount) {
       logger.i('User $userId already has $maximumRepositoriesCount repositories, skipping creation');
-      throw const MaximumRepositoriesCounExceeded(maximumRepositoriesCount: maximumRepositoriesCount);
+      throw const MaximumRepositoriesCountExceeded(maximumRepositoriesCount: maximumRepositoriesCount);
     }
     return _createRepository(userId: userId, name: name);
   }
