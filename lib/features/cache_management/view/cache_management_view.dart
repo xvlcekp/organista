@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/config/app_constants.dart';
@@ -57,7 +58,7 @@ class CacheManagementView extends StatelessWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      context.read<CacheCubit>().clearCache();
+      unawaited(context.read<CacheCubit>().clearCache());
     }
   }
 

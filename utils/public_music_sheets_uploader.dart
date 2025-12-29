@@ -179,7 +179,7 @@ class UploadFolderScreen extends HookWidget {
     Future<void> uploadFolder() async {
       if (selectedRepository.value == null) {
         if (context.mounted) {
-          showErrorDialog(context: context, text: "Please select a repository first");
+          await showErrorDialog(context: context, text: "Please select a repository first");
         }
         return;
       }
@@ -205,7 +205,7 @@ class UploadFolderScreen extends HookWidget {
         if (authenticatedUser.value == null) {
           isUploading.value = false;
           if (context.mounted) {
-            showErrorDialog(context: context, text: "Authentication failed. Please restart the app.");
+            await showErrorDialog(context: context, text: "Authentication failed. Please restart the app.");
           }
           return;
         }
