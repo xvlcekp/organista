@@ -13,8 +13,6 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'dart:async';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'playlist_event.dart';
 part 'playlist_state.dart';
@@ -292,15 +290,10 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         emit(PlaylistExportCancelledState(isLoading: false, playlist: state.playlist));
       }
     } catch (e, stackTrace) {
-      logger.e('File picker save failed: $e');
-      logger.e('Stack trace: $stackTrace');
-      Sentry.captureException(
-        e,
+      logger.e(
+        'File picker save failed, temp path: $tempPath, file name: $fileName, error: $e',
+        error: e,
         stackTrace: stackTrace,
-        hint: Hint.withMap({
-          'temp_path': tempPath,
-          'file_name': fileName,
-        }),
       );
       // File picker failed, show error to user
       emit(

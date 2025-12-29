@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mime/mime.dart';
@@ -26,12 +25,7 @@ class FirebaseStorageRepository {
         try {
           await item.delete();
         } catch (e, stackTrace) {
-          logger.e("Error while deleting item ${item.fullPath} in folder $path: $e");
-          Sentry.captureException(
-            e,
-            stackTrace: stackTrace,
-            hint: Hint.withMap({'operation': 'delete_storage_item', 'path': item.fullPath}),
-          );
+          logger.e("Error while deleting item ${item.fullPath} in folder $path", error: e, stackTrace: stackTrace);
         }
       }
 
@@ -40,12 +34,7 @@ class FirebaseStorageRepository {
         await deleteFolder(folder.fullPath);
       }
     } catch (e, stackTrace) {
-      logger.e("Error deleting folder $path: $e");
-      Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-        hint: Hint.withMap({'operation': 'delete_storage_folder', 'path': path}),
-      );
+      logger.e("Error deleting folder $path", error: e, stackTrace: stackTrace);
     }
   }
 
@@ -85,12 +74,7 @@ class FirebaseStorageRepository {
       logger.i('Successfully uploaded file to ${ref.fullPath}');
       return ref;
     } catch (e, stackTrace) {
-      logger.e('Error uploading file ${file.name}: $e');
-      Sentry.captureException(
-        e,
-        stackTrace: stackTrace,
-        hint: Hint.withMap({'operation': 'upload_file', 'file_name': file.name}),
-      );
+      logger.e('Error uploading file ${file.name}', error: e, stackTrace: stackTrace);
       return null;
     }
   }
