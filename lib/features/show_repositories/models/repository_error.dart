@@ -40,3 +40,8 @@ class MaximumRepositoriesCountExceeded extends RepositoryError {
   final int maximumRepositoriesCount;
   const MaximumRepositoriesCountExceeded({required this.maximumRepositoriesCount}) : super();
 }
+
+@immutable
+class RepositoryNetworkException extends RepositoryError {
+  const RepositoryNetworkException() : super();
+}

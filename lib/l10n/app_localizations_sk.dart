@@ -499,6 +499,9 @@ class AppLocalizationsSk extends AppLocalizations {
   }
 
   @override
+  String get repositoryNetworkError => 'Problém s konektivitou. Skontrolujte pripojenie na internet.';
+
+  @override
   String get noFileDataAvailable => 'Súbor je poškodený';
 
   @override

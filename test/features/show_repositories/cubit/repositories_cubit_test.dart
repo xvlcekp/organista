@@ -102,7 +102,7 @@ void main() {
       );
 
       blocTest<ShowRepositoriesCubit, ShowRepositoriesState>(
-        'should emit loading state then error state when repository creation fails',
+        'should emit loading state then success state when repository creation returns false',
         build: () {
           when(
             () => mockRepository.createUserRepository(
@@ -125,7 +125,6 @@ void main() {
           const RepositoriesState(
             publicRepositories: [],
             privateRepositories: [],
-            error: RepositoryGenericException(),
             isLoading: false,
           ),
         ],
@@ -186,6 +185,36 @@ void main() {
             publicRepositories: [],
             privateRepositories: [],
             error: MaximumRepositoriesCountExceeded(maximumRepositoriesCount: 5),
+            isLoading: false,
+          ),
+        ],
+      );
+
+      blocTest<ShowRepositoriesCubit, ShowRepositoriesState>(
+        'should emit loading state then error state when offline exception occurs',
+        build: () {
+          when(
+            () => mockRepository.createUserRepository(
+              userId: userId,
+              name: repositoryName,
+            ),
+          ).thenThrow(const RepositoryNetworkException());
+          return cubit;
+        },
+        act: (cubit) => cubit.createRepository(
+          repositoryName: repositoryName,
+          userId: userId,
+        ),
+        expect: () => [
+          const RepositoriesState(
+            publicRepositories: [],
+            privateRepositories: [],
+            isLoading: true,
+          ),
+          const RepositoriesState(
+            publicRepositories: [],
+            privateRepositories: [],
+            error: RepositoryNetworkException(),
             isLoading: false,
           ),
         ],

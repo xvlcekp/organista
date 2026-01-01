@@ -257,6 +257,7 @@
             }
         }
     },
+    "repositoryNetworkError": "Problém s konektivitou. Skontrolujte pripojenie na internet.",
     "noFileDataAvailable": "Súbor je poškodený",
     "storageManagement": "Správa úložiska",
     "storedFiles": "Počet súborov v úložisku",

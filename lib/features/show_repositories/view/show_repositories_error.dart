@@ -25,6 +25,8 @@ String getLocalizedMessage(RepositoryError repositoriesError, BuildContext conte
     return loc.repositoryCannotModifyOtherUsersError;
   } else if (repositoriesError is MaximumRepositoriesCountExceeded) {
     return loc.maximumRepositoriesCountExceededError(repositoriesError.maximumRepositoriesCount);
+  } else if (repositoriesError is RepositoryNetworkException) {
+    return loc.repositoryNetworkError;
   }
   return loc.errorUnknownText;
 }

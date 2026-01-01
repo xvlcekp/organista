@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/config/app_constants.dart';
@@ -20,6 +21,10 @@ import 'package:organista/services/auth/auth_user.dart';
 
 // Mock classes
 class MockReference extends Mock implements Reference {}
+
+class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
+
+class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 
 void main() {
   late FakeFirebaseFirestore fakeFirestore;
@@ -725,18 +730,18 @@ void main() {
         expect(doc.data()?[RepositoryKey.name], 'New Name');
       });
 
-      test('should throw RepositoryGenericException when repository does not exist', () async {
+      test('should throw RepositoryNotFound when repository does not exist', () async {
         expect(
           () => repository.renameRepository(
             repositoryId: 'non-existent',
             newName: 'New Name',
             currentUserId: 'user-123',
           ),
-          throwsA(isA<RepositoryGenericException>()),
+          throwsA(isA<RepositoryNotFound>()),
         );
       });
 
-      test('should throw RepositoryGenericException for public repository', () async {
+      test('should throw RepositoryCannotModifyPublic for public repository', () async {
         const repositoryId = 'public-repo';
         await createTestRepository(
           repositoryId: repositoryId,
@@ -750,11 +755,11 @@ void main() {
             newName: 'New Name',
             currentUserId: 'user-123',
           ),
-          throwsA(isA<RepositoryGenericException>()),
+          throwsA(isA<RepositoryCannotModifyPublic>()),
         );
       });
 
-      test('should throw RepositoryGenericException when not owner', () async {
+      test('should throw RepositoryCannotModifyOtherUsers when not owner', () async {
         const repositoryId = 'repo-123';
         await createTestRepository(
           repositoryId: repositoryId,
@@ -768,7 +773,7 @@ void main() {
             newName: 'New Name',
             currentUserId: 'different-user',
           ),
-          throwsA(isA<RepositoryGenericException>()),
+          throwsA(isA<RepositoryCannotModifyOtherUsers>()),
         );
       });
     });
@@ -818,17 +823,17 @@ void main() {
         expect(musicSheets.docs, isEmpty);
       });
 
-      test('should throw RepositoryGenericException when repository does not exist', () async {
+      test('should throw RepositoryNotFound when repository does not exist', () async {
         expect(
           () => repository.deleteRepository(
             repositoryId: 'non-existent',
             currentUserId: 'user-123',
           ),
-          throwsA(isA<RepositoryGenericException>()),
+          throwsA(isA<RepositoryNotFound>()),
         );
       });
 
-      test('should throw RepositoryGenericException for public repository', () async {
+      test('should throw RepositoryCannotModifyPublic for public repository', () async {
         const repositoryId = 'public-repo';
         await createTestRepository(
           repositoryId: repositoryId,
@@ -840,7 +845,7 @@ void main() {
             repositoryId: repositoryId,
             currentUserId: 'user-123',
           ),
-          throwsA(isA<RepositoryGenericException>()),
+          throwsA(isA<RepositoryCannotModifyPublic>()),
         );
       });
 
@@ -856,7 +861,7 @@ void main() {
             repositoryId: repositoryId,
             currentUserId: 'different-user',
           ),
-          throwsA(isA<RepositoryGenericException>()),
+          throwsA(isA<RepositoryCannotModifyOtherUsers>()),
         );
       });
     });
@@ -901,6 +906,29 @@ void main() {
         final count = await repository.getRepositoryMusicSheetsCount(repositoryId);
 
         expect(count, 0);
+      });
+    });
+
+    group('_handleRepositoryError', () {
+      test('should throw RepositoryOfflineException for PlatformException with UNAVAILABLE message', () async {
+        final mockFirestore = MockFirebaseFirestore();
+        final repo = FirebaseFirestoreRepository(
+          instance: mockFirestore,
+          skipSettingsConfiguration: true,
+        );
+
+        when(() => mockFirestore.collection(any())).thenThrow(
+          PlatformException(
+            code: 'firebase_firestore',
+            message: 'com.google.firebase.firestore.FirebaseFirestoreException: UNAVAILABLE: Unable to resolve host',
+            details: {'code': 'unavailable'},
+          ),
+        );
+
+        expect(
+          () => repo.deleteRepository(repositoryId: 'any', currentUserId: 'any'),
+          throwsA(isA<RepositoryNetworkException>()),
+        );
       });
     });
   });

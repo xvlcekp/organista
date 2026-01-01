@@ -496,6 +496,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get repositoryNetworkError => 'Connectivity problem. Please check your internet connection.';
+
+  @override
   String get noFileDataAvailable => 'No file data available';
 
   @override
