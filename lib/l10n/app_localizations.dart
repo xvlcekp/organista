@@ -1016,6 +1016,12 @@ abstract class AppLocalizations {
   /// **'Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.'**
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount);
 
+  /// No description provided for @repositoryNetworkError.
+  ///
+  /// In sk, this message translates to:
+  /// **'Problém s konektivitou. Skontrolujte pripojenie na internet.'**
+  String get repositoryNetworkError;
+
   /// No description provided for @noFileDataAvailable.
   ///
   /// In sk, this message translates to:

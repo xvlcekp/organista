@@ -131,7 +131,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           return state;
         },
         onError: (error, stackTrace) {
-          logger.e('Error in playlist stream: $error');
+          logger.e('Error in playlist stream $playlistId', error: error, stackTrace: stackTrace);
           // Only emit error if this is still the current playlist
           if (_currentPlaylistId == playlistId) {
             return PlaylistErrorState(error: const InitializationError(), playlist: state.playlist);
@@ -139,8 +139,8 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
           return state;
         },
       );
-    } catch (e) {
-      logger.e('Error initializing playlist stream: $e');
+    } catch (e, stackTrace) {
+      logger.e('Error initializing playlist stream $playlistId', error: e, stackTrace: stackTrace);
       // Only emit error if this is still the current playlist
       if (_currentPlaylistId == playlistId) {
         emit(PlaylistErrorState(error: const InitializationError(), playlist: state.playlist));
@@ -291,7 +291,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       }
     } catch (e, stackTrace) {
       logger.e(
-        'File picker save failed, temp path: $tempPath, file name: $fileName, error: $e',
+        'File picker save failed, temp path: $tempPath, file name: $fileName',
         error: e,
         stackTrace: stackTrace,
       );

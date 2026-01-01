@@ -257,6 +257,7 @@
             }
         }
     },
+    "repositoryNetworkError": "Connectivity problem. Please check your internet connection.",
     "noFileDataAvailable": "No file data available",
     "storageManagement": "Storage Management",
     "storedFiles": "Stored files",

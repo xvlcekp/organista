@@ -109,11 +109,11 @@ class StreamManager {
             controller.add(data);
           }
         },
-        onError: (error) {
+        onError: (error, stackTrace) {
           if (!controller.isClosed) {
             controller.addError(error);
           }
-          logger.e('Error in stream $identifier: $error');
+          logger.e('Error in stream $identifier', error: error, stackTrace: stackTrace);
         },
         onDone: () {
           if (kDebugMode) {

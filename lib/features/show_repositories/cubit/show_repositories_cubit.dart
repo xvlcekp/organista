@@ -11,8 +11,6 @@ import 'package:organista/managers/stream_manager.dart';
 
 part 'show_repositories_state.dart';
 
-// TODO: fix creating new custom repository while offine
-
 class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   ShowRepositoriesCubit({
@@ -32,16 +30,12 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   }) async {
     await _handleAction(
       () async {
-        final success = await _firebaseFirestoreRepository.createUserRepository(
+        logger.i("Creating new custom repository $repositoryName for user $userId");
+        await _firebaseFirestoreRepository.createUserRepository(
           userId: userId,
           name: repositoryName,
         );
-
-        if (!success) {
-          throw const RepositoryGenericException();
-        }
       },
-      errorLogMessage: 'Error during repository creation',
     );
   }
 
@@ -56,7 +50,6 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
         newName: newName,
         currentUserId: currentUserId,
       ),
-      errorLogMessage: 'Error during repository rename',
     );
   }
 
@@ -70,7 +63,6 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
         repositoryId: repositoryId,
         currentUserId: currentUserId,
       ),
-      errorLogMessage: 'Error during repository deletion',
     );
   }
 
@@ -105,10 +97,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
   }
 
   /// Private helper to handle common repository action state transitions and errors.
-  Future<void> _handleAction(
-    Future<void> Function() action, {
-    String? errorLogMessage,
-  }) async {
+  Future<void> _handleAction(Future<void> Function() action) async {
     // Emit loading state while preserving current repositories
     emit(
       RepositoriesState(
@@ -137,7 +126,7 @@ class ShowRepositoriesCubit extends Cubit<ShowRepositoriesState> {
         ),
       );
     } catch (e, stackTrace) {
-      logger.e(errorLogMessage ?? 'Generic repository error', error: e, stackTrace: stackTrace);
+      logger.e('Generic repository error', error: e, stackTrace: stackTrace);
       emit(
         RepositoriesState(
           publicRepositories: state.publicRepositories,

@@ -84,7 +84,7 @@ class FirebaseAuthProvider implements AuthProvider {
       // Check if authenticate method is supported
       logger.d('Checking if authenticate method is supported');
       if (!_googleSignIn.supportsAuthenticate()) {
-        logger.e('Authenticate method not supported on this platform');
+        logger.w('Authenticate method not supported on this platform');
         throw const AuthErrorGoogleSignInFailed();
       }
 
@@ -94,10 +94,10 @@ class FirebaseAuthProvider implements AuthProvider {
       try {
         googleUser = await _googleSignIn.authenticate();
       } on GoogleSignInException catch (e, stackTrace) {
-        logger.e('Google authentication failed: ${e.code} - ${e.description}');
+        logger.e('Google authentication failed: ${e.code} - ${e.description}', error: e, stackTrace: stackTrace);
         Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
       } catch (e, stackTrace) {
-        logger.e('Google authentication failed: $e');
+        logger.e('Google authentication failed', error: e, stackTrace: stackTrace);
         Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
       }
 
@@ -124,7 +124,7 @@ class FirebaseAuthProvider implements AuthProvider {
       }
 
       // Log and wrap any other unexpected errors
-      logger.e('Unexpected error during Google Sign-In: $e');
+      logger.e('Unexpected error during Google Sign-In', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
     }
   }
@@ -181,13 +181,13 @@ class FirebaseAuthProvider implements AuthProvider {
         Error.throwWithStackTrace(const AuthErrorUserNotLoggedIn(), stackTrace);
       }
       // Log detailed error information for debugging
-      logger.e('Apple authorization failed: ${e.code} - ${e.message}');
+      logger.e('Apple authorization failed', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(const AuthErrorAppleSignInFailed(), stackTrace);
     } on FirebaseAuthException catch (e, stackTrace) {
-      logger.e('Firebase sign-in with Apple failed: ${e.code} - ${e.message}');
+      logger.e('Firebase sign-in with Apple failed', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(AuthError.from(e), stackTrace);
     } catch (e, stackTrace) {
-      logger.e('Unexpected error during Apple Sign-In: $e');
+      logger.e('Unexpected error during Apple Sign-In', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(const AuthErrorAppleSignInFailed(), stackTrace);
     }
   }
@@ -205,10 +205,10 @@ class FirebaseAuthProvider implements AuthProvider {
     try {
       await FirebaseAuth.instance.signInWithCredential(credential);
     } on FirebaseAuthException catch (e, stackTrace) {
-      logger.e('Firebase sign-in failed: ${e.code} - ${e.message}');
+      logger.e('Firebase sign-in failed', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(AuthError.from(e), stackTrace);
     } catch (e, stackTrace) {
-      logger.e('Firebase sign-in failed with unexpected error: $e');
+      logger.e('Firebase sign-in failed with unexpected error', error: e, stackTrace: stackTrace);
       Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
     }
 

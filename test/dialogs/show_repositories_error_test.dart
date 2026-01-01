@@ -45,7 +45,7 @@ void main() {
           (const RepositoryCannotModifyPublic(), () => loc.repositoryCannotModifyPublicError),
           (const RepositoryCannotModifyOtherUsers(), () => loc.repositoryCannotModifyOtherUsersError),
           (
-            const MaximumRepositoriesCounExceeded(maximumRepositoriesCount: 5),
+            const MaximumRepositoriesCountExceeded(maximumRepositoriesCount: 5),
             () => loc.maximumRepositoriesCountExceededError(5),
           ),
           (RepositoriesErrorUnknown(exception: FirebaseAuthException(code: 'test')), () => loc.errorUnknownText),
@@ -61,7 +61,7 @@ void main() {
         final counts = [1, 5, 10, 100];
 
         for (final count in counts) {
-          final error = MaximumRepositoriesCounExceeded(maximumRepositoriesCount: count);
+          final error = MaximumRepositoriesCountExceeded(maximumRepositoriesCount: count);
           final message = await getErrorMessage(tester, error);
           expect(message, contains(count.toString()));
         }

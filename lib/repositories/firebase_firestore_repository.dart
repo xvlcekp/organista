@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/string_extensions.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
@@ -425,7 +426,7 @@ class FirebaseFirestoreRepository {
           .get();
       return snapshot.count ?? 0;
     } catch (e, stackTrace) {
-      logger.e('Error getting user repositories count for user $userId', error: e, stackTrace: stackTrace);
+      _handleRepositoryError(e, stackTrace, 'Error getting user repositories count for user $userId');
       return 0;
     }
   }
@@ -438,7 +439,7 @@ class FirebaseFirestoreRepository {
     const maximumRepositoriesCount = AppConstants.maximumRepositoriesCount;
     if (count >= maximumRepositoriesCount) {
       logger.i('User $userId already has $maximumRepositoriesCount repositories, skipping creation');
-      throw const MaximumRepositoriesCounExceeded(maximumRepositoriesCount: maximumRepositoriesCount);
+      throw const MaximumRepositoriesCountExceeded(maximumRepositoriesCount: maximumRepositoriesCount);
     }
     return _createRepository(userId: userId, name: name);
   }
@@ -455,7 +456,7 @@ class FirebaseFirestoreRepository {
       await _instance.collection(FirebaseCollectionName.repositories).add(repositoryPayload);
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error creating repository', error: e, stackTrace: stackTrace);
+      _handleRepositoryError(e, stackTrace, 'Error creating repository');
       return false;
     }
   }
@@ -492,14 +493,15 @@ class FirebaseFirestoreRepository {
       }
 
       // Proceed with rename if validation passes
-      await repositoriesCollection.doc(repositoryId).update({
-        RepositoryKey.name: newName,
-      });
+      await repositoriesCollection
+          .doc(repositoryId)
+          .update({RepositoryKey.name: newName})
+          .timeout(const Duration(seconds: 2));
       logger.i("Renaming repository $repositoryId to $newName by user $currentUserId");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error renaming repository', error: e, stackTrace: stackTrace);
-      Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
+      _handleRepositoryError(e, stackTrace, 'Error renaming repository');
+      return false;
     }
   }
 
@@ -541,7 +543,7 @@ class FirebaseFirestoreRepository {
 
       // Delete all music sheet documents
       for (final doc in musicSheetsQuery.docs) {
-        await doc.reference.delete();
+        await doc.reference.delete().timeout(const Duration(seconds: 3));
       }
 
       // Finally, delete the repository itself
@@ -550,8 +552,8 @@ class FirebaseFirestoreRepository {
       logger.i("Deleting repository $repositoryId by user $currentUserId");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error deleting repository', error: e, stackTrace: stackTrace);
-      Error.throwWithStackTrace(const RepositoryGenericException(), stackTrace);
+      _handleRepositoryError(e, stackTrace, 'Error deleting repository');
+      return false;
     }
   }
 
@@ -565,8 +567,22 @@ class FirebaseFirestoreRepository {
           .get();
       return snapshot.count ?? 0;
     } catch (e, stackTrace) {
-      logger.e('Error getting music sheets count for repository $repositoryId', error: e, stackTrace: stackTrace);
+      _handleRepositoryError(e, stackTrace, 'Error getting music sheets count for repository $repositoryId');
       return 0;
     }
+  }
+
+  void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
+    if (e is PlatformException && e.code == 'firebase_firestore' && e.details['code'] == 'unavailable') {
+      logger.w('$logMessage: Service unavailable (offline)');
+      throw const RepositoryNetworkException();
+    } else if (e is TimeoutException) {
+      logger.w('$logMessage: Operation timed out');
+      throw const RepositoryNetworkException();
+    } else if (e is RepositoryError) {
+      throw e;
+    }
+    logger.e(logMessage, error: e, stackTrace: stackTrace);
+    throw const RepositoryGenericException();
   }
 }

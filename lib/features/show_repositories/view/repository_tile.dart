@@ -8,8 +8,6 @@ import 'package:organista/features/show_repositories/view/rename_repository_dial
 import 'package:organista/features/show_repositories/view/show_repositories_error.dart';
 import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 import 'package:organista/features/show_repositories/models/repository_error.dart';
-
-import 'package:organista/logger/custom_logger.dart';
 import 'package:provider/provider.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/models/repositories/repository.dart';
@@ -223,15 +221,6 @@ class _MusicSheetsCount extends StatelessWidget {
   }
 
   Future<int> _loadMusicSheetsCount(BuildContext context) async {
-    try {
-      return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
-    } catch (e, stackTrace) {
-      logger.e(
-        "Error loading music sheets count for repository ${repository.repositoryId}",
-        error: e,
-        stackTrace: stackTrace,
-      );
-      return 0;
-    }
+    return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
   }
 }
