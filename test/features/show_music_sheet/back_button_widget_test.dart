@@ -85,5 +85,20 @@ void main() {
       // Verify the tooltip contains the localized "Back" text
       expect(find.byTooltip('Back'), findsOneWidget);
     });
+
+    testWidgets('should have onPressed callback', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        createTestableWidget(
+          child: const BackButtonWidget(),
+        ),
+      );
+
+      final iconButton = tester.widget<IconButton>(
+        find.byType(IconButton),
+      );
+
+      // Verify the button has a press callback (not null)
+      expect(iconButton.onPressed, isNotNull);
+    });
   });
 }
