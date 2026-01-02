@@ -1,0 +1,17 @@
+ignore:
+  # Generated files
+  - "lib/firebase_options.dart"
+  - "lib/l10n/*.dart"
+
+  # Test files (usually don't need coverage)
+  - "test/**/*.dart"
+
+  # Generated models (if any)
+  - "lib/models/**/*.g.dart"
+  - "lib/models/**/*.freezed.dart"
+
+# You can also use glob patterns:
+# ignore:
+#   - "**/*.generated.dart"
+#   - "**/test/**/*"
+#   - "lib/main.dart"

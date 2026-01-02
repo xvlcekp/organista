@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:organista/features/show_music_sheet/back_button_widget.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ZoomableMusicSheetViewer extends StatelessWidget {
@@ -13,11 +14,16 @@ class ZoomableMusicSheetViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PhotoView.customChild(
-      minScale: PhotoViewComputedScale.contained,
-      maxScale: PhotoViewComputedScale.contained * _maxScaleMultiplier,
-      initialScale: PhotoViewComputedScale.contained,
-      child: child,
+    return Stack(
+      children: [
+        PhotoView.customChild(
+          minScale: PhotoViewComputedScale.contained,
+          maxScale: PhotoViewComputedScale.contained * _maxScaleMultiplier,
+          initialScale: PhotoViewComputedScale.contained,
+          child: child,
+        ),
+        const BackButtonWidget(),
+      ],
     );
   }
 }

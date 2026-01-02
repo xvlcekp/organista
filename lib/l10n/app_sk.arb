@@ -304,5 +304,6 @@
     "exportErrorSourceFileNotFound": "Zdrojový súbor nebol nájdený",
     "exportErrorSaveFailed": "Nepodarilo sa uložiť súbor",
     "exportCancelled": "Export zrušený",
-    "fillAllFields": "Prosím vyplňte všetky polia"
+    "fillAllFields": "Prosím vyplňte všetky polia",
+    "back": "Späť"
 }

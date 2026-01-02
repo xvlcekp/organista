@@ -1147,6 +1147,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Prosím vyplňte všetky polia'**
   String get fillAllFields;
+
+  /// No description provided for @back.
+  ///
+  /// In sk, this message translates to:
+  /// **'Späť'**
+  String get back;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
