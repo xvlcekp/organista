@@ -304,5 +304,6 @@
     "exportErrorSourceFileNotFound": "Source file not found",
     "exportErrorSaveFailed": "Failed to save file",
     "exportCancelled": "Export cancelled",
-    "fillAllFields": "Please fill in all fields"
+    "fillAllFields": "Please fill in all fields",
+    "back": "Back"
 }
