@@ -157,7 +157,7 @@
     
     "authErrorUserNotLoggedInText": "Žiadny používateľ nie je momentálne prihlásený!",
     
-    "authErrorRequiresRecentLoginText": "Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu",
+    "authErrorRequiresRecentLoginText": "Robíte citlivú operáciu. Musíte sa odhlásiť a znova sa prihlásiť, aby sme overili, že ku kontu máte naozaj prístup. Následne zopakujte operáciu.",
     
     "authErrorOperationNotAllowedText": "Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!",
     

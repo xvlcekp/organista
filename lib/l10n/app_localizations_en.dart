@@ -410,7 +410,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authErrorRequiresRecentLoginText =>
-      'You need to log out and log back in again in order to perform this operation';
+      'You are performing a sensitive operation. Please log out and sign in again to verify that you have access to the account. Then repeat the operation.';
 
   @override
   String get authErrorOperationNotAllowedText => 'You cannot register using this method at this moment!';

@@ -412,7 +412,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get authErrorRequiresRecentLoginText =>
-      'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu';
+      'Robíte citlivú operáciu. Musíte sa odhlásiť a znova sa prihlásiť, aby sme overili, že ku kontu máte naozaj prístup. Následne zopakujte operáciu.';
 
   @override
   String get authErrorOperationNotAllowedText => 'Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!';
