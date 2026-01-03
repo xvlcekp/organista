@@ -147,7 +147,7 @@ void main() {
           await tester.tap(find.text('Personal'));
           await tester.pump();
 
-          expect(find.text('No personal repositories available.'), findsOneWidget);
+          expect(find.text("You don't have a personal repository yet"), findsOneWidget);
         },
       );
 
@@ -231,13 +231,15 @@ void main() {
 
         // Switch to Personal tab to show FAB
         await tester.tap(find.text('Personal'));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
         expect(find.byType(FloatingActionButton), findsOneWidget);
 
         // Tap the FAB - suppress warning since the button might be positioned at edge
         await tester.tap(find.byType(FloatingActionButton));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
         // The dialog would appear here, but testing dialogs requires more complex setup
         // For now, we just verify the FAB can be tapped without errors

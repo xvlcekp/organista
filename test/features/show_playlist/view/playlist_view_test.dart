@@ -163,7 +163,8 @@ void main() {
         // Tap edit button to enter edit mode
         expect(find.byType(FloatingActionButton), findsOneWidget);
         await tester.tap(find.byIcon(Icons.edit));
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
         expect(find.byType(FloatingActionButton), findsNothing);
       },

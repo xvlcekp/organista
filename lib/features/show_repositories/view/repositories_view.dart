@@ -11,6 +11,7 @@ import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/features/show_repositories/view/repository_tile.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
+import 'package:organista/widgets/empty_list_widget.dart';
 
 class RepositoriesView extends HookWidget {
   const RepositoriesView({super.key});
@@ -111,10 +112,10 @@ class RepositoriesViewContent extends HookWidget {
     const portraitAspectRatio = 1.5;
 
     if (currentRepositories.isEmpty) {
-      return Center(
-        child: Text(
-          selectedTab.isGlobal ? localizations.noGlobalRepositories : localizations.noPersonalRepositories,
-        ),
+      return EmptyListWidget(
+        icon: Icons.folder_off,
+        title: selectedTab.isGlobal ? localizations.noGlobalRepositories : localizations.noPersonalRepositories,
+        subtitle: selectedTab.isGlobal ? '' : localizations.createFirstPersonalRepository,
       );
     }
 

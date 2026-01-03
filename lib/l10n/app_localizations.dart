@@ -131,13 +131,13 @@ abstract class AppLocalizations {
   /// No description provided for @noMusicSheetsYet.
   ///
   /// In sk, this message translates to:
-  /// **'Zatiaľ žiadne notové záznamy'**
+  /// **'Zatiaľ žiadne noty'**
   String get noMusicSheetsYet;
 
   /// No description provided for @addYourFirstMusicSheet.
   ///
   /// In sk, this message translates to:
-  /// **'Pridajte svoj prvý notový záznam a začnite'**
+  /// **'Pridajte svoje prvé noty tlačidlom + nižšie.\nNoty si môžte pridať zo spoločných repozitárov, alebo vlastné.\nNoty si viete dlhým podržaním preusporiadať v poradí, v akom ich budete hrať.'**
   String get addYourFirstMusicSheet;
 
   /// No description provided for @selectImageFirst.
@@ -587,7 +587,7 @@ abstract class AppLocalizations {
   /// No description provided for @createFirstPlaylist.
   ///
   /// In sk, this message translates to:
-  /// **'Vytvorte svoj prvý zoznam skladieb'**
+  /// **'Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.'**
   String get createFirstPlaylist;
 
   /// No description provided for @musicSheets.
@@ -614,10 +614,16 @@ abstract class AppLocalizations {
   /// **'Žiadne globálne repozitáre nie sú k dispozícii.'**
   String get noGlobalRepositories;
 
+  /// No description provided for @createFirstPersonalRepository.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vytvorte si nový repozitár, kam si viete nahrať vlastné noty.'**
+  String get createFirstPersonalRepository;
+
   /// No description provided for @noPersonalRepositories.
   ///
   /// In sk, this message translates to:
-  /// **'Žiadne osobné repozitáre nie sú k dispozícii.'**
+  /// **'Ešte nemáte osobný repozitár'**
   String get noPersonalRepositories;
 
   /// No description provided for @global.
@@ -719,7 +725,7 @@ abstract class AppLocalizations {
   /// No description provided for @inputCannotBeSameAsCurrent.
   ///
   /// In sk, this message translates to:
-  /// **'Vstup nemôže byť rovnaký ako aktuálny'**
+  /// **'Názov nemôže byť rovnaký ako aktuálny'**
   String get inputCannotBeSameAsCurrent;
 
   /// No description provided for @theme.
