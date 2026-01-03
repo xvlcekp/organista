@@ -30,7 +30,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMusicSheetsYet => 'No music sheets yet';
 
   @override
-  String get addYourFirstMusicSheet => 'Add your first music sheet to get started';
+  String get addYourFirstMusicSheet =>
+      'Add your first music sheets with the + button below.\nYou can add music sheets from shared repositories, or your own.\nYou can rearrange music sheets by long pressing in the order you will play them.';
 
   @override
   String get selectImageFirst => 'You have to select an image first';
@@ -257,7 +258,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPlaylistsYet => 'No playlists yet';
 
   @override
-  String get createFirstPlaylist => 'Create your first playlist';
+  String get createFirstPlaylist =>
+      'Create your first playlist.\nYou will add music sheets from repositories in the next step.';
 
   @override
   String get musicSheets => 'Music sheets';
@@ -272,7 +274,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noGlobalRepositories => 'No global repositories available.';
 
   @override
-  String get noPersonalRepositories => 'No personal repositories available.';
+  String get createFirstPersonalRepository => 'Create a new repository where you can upload your own music sheets.';
+
+  @override
+  String get noPersonalRepositories => 'You don\'t have a personal repository yet';
 
   @override
   String get global => 'Global';
@@ -331,7 +336,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inputCannotBeEmpty => 'Input cannot be empty';
 
   @override
-  String get inputCannotBeSameAsCurrent => 'Input cannot be the same as the current name';
+  String get inputCannotBeSameAsCurrent => 'Name cannot be the same as current';
 
   @override
   String get theme => 'Theme';

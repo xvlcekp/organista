@@ -27,10 +27,11 @@ class AppLocalizationsSk extends AppLocalizations {
   String get save => 'Uložiť';
 
   @override
-  String get noMusicSheetsYet => 'Zatiaľ žiadne notové záznamy';
+  String get noMusicSheetsYet => 'Zatiaľ žiadne noty';
 
   @override
-  String get addYourFirstMusicSheet => 'Pridajte svoj prvý notový záznam a začnite';
+  String get addYourFirstMusicSheet =>
+      'Pridajte svoje prvé noty tlačidlom + nižšie.\nNoty si môžte pridať zo spoločných repozitárov, alebo vlastné.\nNoty si viete dlhým podržaním preusporiadať v poradí, v akom ich budete hrať.';
 
   @override
   String get selectImageFirst => 'Najprv musíte vybrať obrázok';
@@ -258,7 +259,8 @@ class AppLocalizationsSk extends AppLocalizations {
   String get noPlaylistsYet => 'Zatiaľ žiadne zoznamy skladieb';
 
   @override
-  String get createFirstPlaylist => 'Vytvorte svoj prvý zoznam skladieb';
+  String get createFirstPlaylist =>
+      'Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.';
 
   @override
   String get musicSheets => 'Počet nôt';
@@ -273,7 +275,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get noGlobalRepositories => 'Žiadne globálne repozitáre nie sú k dispozícii.';
 
   @override
-  String get noPersonalRepositories => 'Žiadne osobné repozitáre nie sú k dispozícii.';
+  String get createFirstPersonalRepository => 'Vytvorte si nový repozitár, kam si viete nahrať vlastné noty.';
+
+  @override
+  String get noPersonalRepositories => 'Ešte nemáte osobný repozitár';
 
   @override
   String get global => 'Globálne';
@@ -333,7 +338,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get inputCannotBeEmpty => 'Názov nemôže byť prázdny';
 
   @override
-  String get inputCannotBeSameAsCurrent => 'Vstup nemôže byť rovnaký ako aktuálny';
+  String get inputCannotBeSameAsCurrent => 'Názov nemôže byť rovnaký ako aktuálny';
 
   @override
   String get theme => 'Téma';

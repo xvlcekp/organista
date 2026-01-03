@@ -158,7 +158,7 @@ void main() {
 
         expect(find.byIcon(Icons.music_off), findsOneWidget);
         expect(find.text('No playlists yet'), findsOneWidget);
-        expect(find.text('Create your first playlist'), findsOneWidget);
+        expect(find.textContaining('Create your first playlist'), findsOneWidget);
         expect(find.byType(ListView), findsNothing);
       });
     });
@@ -290,7 +290,7 @@ void main() {
         );
 
         expect(find.text('No playlists yet'), findsOneWidget);
-        expect(find.text('Create your first playlist'), findsOneWidget);
+        expect(find.textContaining('Create your first playlist'), findsOneWidget);
         expect(find.byIcon(Icons.music_off), findsOneWidget);
       });
     });
