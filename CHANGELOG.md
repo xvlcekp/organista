@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Zlepšenie logovania
 - Pridané Shorebird na zrýchlenie vývoja
 - Pridané tlačidlo späť pri zobrazení nôt na celú obrazovku
-- Jasnejšie inštrukcie pri prázdnom playliste / žiadnych playlistoc
+- Jasnejšie inštrukcie pri prázdnom playliste / žiadnych playlistoch
 ### Fixed
 - Opravený chýbajúce ID piesne v Firebase
 - Opravená chyba s alokáciou pamäti pri zobrazovaní PDF
@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Oprava chýb vlastých repozitárov, keď je aplikácia offline
 - Opravená chyba s odstránením užívateľa po kratšej a dlhšej dobe od prihlásenia
 - Refaktoring
+### Security
 - Aktualizované knižnice na Firebase Functions, balíky knižníc
 
 ## [1.1.0] - 2025-12-22
