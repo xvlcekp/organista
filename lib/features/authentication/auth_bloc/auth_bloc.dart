@@ -58,6 +58,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Cancel all Firebase streams first to prevent permission errors
       await StreamManager.instance.cancelAllStreams();
 
+      if (!_ensureRecentLogin(user, emit)) {
+        return;
+      }
+
       // Delete user data from Firestore and Storage
       await _firebaseFirestoreRepository.deleteUser(userId: user.id);
       await _firebaseStorageRepository.deleteFolder(user.id);
@@ -371,5 +375,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       }
     });
+  }
+
+  /// Prevents deleting user data without deleting user.
+  /// User needs to be freshly logged in to delete it, but it is possible to delete user's data without reauthentication.
+  bool _ensureRecentLogin(AuthUser user, Emitter<AuthState> emit) {
+    const recentLoginMaxDuration = Duration(minutes: 5);
+    final lastSignInTime = user.lastSignInTime;
+    if (lastSignInTime == null || DateTime.now().difference(lastSignInTime) > recentLoginMaxDuration) {
+      emit(
+        AuthStateLoggedIn(
+          isLoading: false,
+          user: user,
+          authError: const AuthErrorRequiresRecentLogin(),
+        ),
+      );
+      return false;
+    }
+    return true;
   }
 }

@@ -30,7 +30,7 @@ class AuthStateLoggedIn extends AuthState with EquatableMixin {
 }
 
 @immutable
-class AuthStateLoggedOut extends AuthState {
+class AuthStateLoggedOut extends AuthState with EquatableMixin {
   const AuthStateLoggedOut({
     required super.isLoading,
     super.authError,
@@ -40,10 +40,13 @@ class AuthStateLoggedOut extends AuthState {
   @override
   String toString() =>
       'AuthStateLoggedOut, isLoading = $isLoading, authError = $authError, passwordResetSent = $passwordResetSent';
+
+  @override
+  List<Object?> get props => [isLoading, authError, passwordResetSent];
 }
 
 @immutable
-class AuthStateIsInRegistrationView extends AuthState {
+class AuthStateIsInRegistrationView extends AuthState with EquatableMixin {
   const AuthStateIsInRegistrationView({
     required super.isLoading,
     super.authError,
@@ -51,6 +54,9 @@ class AuthStateIsInRegistrationView extends AuthState {
 
   @override
   String toString() => 'AuthStateIsInRegistrationView';
+
+  @override
+  List<Object?> get props => [isLoading, authError];
 }
 
 extension GetUser on AuthState {

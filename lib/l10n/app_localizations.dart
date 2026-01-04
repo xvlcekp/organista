@@ -863,7 +863,7 @@ abstract class AppLocalizations {
   /// No description provided for @authErrorRequiresRecentLoginText.
   ///
   /// In sk, this message translates to:
-  /// **'Musíte sa odhlásiť a znova prihlásiť, aby ste mohli vykonať túto operáciu'**
+  /// **'Robíte citlivú operáciu. Musíte sa odhlásiť a znova sa prihlásiť, aby sme overili, že ku kontu máte naozaj prístup. Následne zopakujte operáciu.'**
   String get authErrorRequiresRecentLoginText;
 
   /// No description provided for @authErrorOperationNotAllowedText.
