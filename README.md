@@ -4,6 +4,11 @@
 Info about project for organists: https://sites.google.com/view/organista-app/domov 
 
 ## Changelog
+### Version 1.1.1 - 4.12.2026
+- Pridané tlačidlo späť pri zobrazení nôt na celú obrazovku
+- Jasnejšie inštrukcie pri prázdnom playliste / žiadnych playlistoch
+- Opravené viaceré chyby
+
 ### Version 1.1.0 - 22.12.2025
 <table>
 <tr>
