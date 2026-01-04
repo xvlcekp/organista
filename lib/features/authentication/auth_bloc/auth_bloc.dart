@@ -382,7 +382,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool _ensureRecentLogin(AuthUser user, Emitter<AuthState> emit) {
     const recentLoginMaxDuration = Duration(minutes: 5);
     final lastSignInTime = user.lastSignInTime;
-    if (lastSignInTime != null && DateTime.now().difference(lastSignInTime) > recentLoginMaxDuration) {
+    if (lastSignInTime == null || DateTime.now().difference(lastSignInTime) > recentLoginMaxDuration) {
       emit(
         AuthStateLoggedIn(
           isLoading: false,
