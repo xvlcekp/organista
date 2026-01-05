@@ -185,6 +185,15 @@ The app uses **Sentry** for error tracking and crash reporting. Sentry automatic
 
 Errors are reported via `Sentry.captureException()` in catch blocks and automatically through `SentryWidget` wrapper for unhandled exceptions. Debug symbols, obfuscation maps, and source context are uploaded via `sentry_dart_plugin` during build for readable stack traces with source code visibility.
 
+## Shorebird
+
+Shorebird is a tool that allows instant patches for applications on iOS/Android without need reviews on stores. However Shorebird doesn't support obfuscation for iOS yet. They plan to add the support in year 2026.  
+This is skipped so far and needs to be fixed in the future:  
+`--obfuscate --split-debug-info=build/debug-info --extra-gen-snapshot-options=--save-obfuscation-map=build/app/obfuscation.map.json`
+
+The Shorebird is used as an integration on Codemagic - tool to auto deploy app to stores.
+https://github.com/shorebirdtech/shorebird/issues/1619
+
 ## Firebase
 
 **deleteStorageFilesOnDocDelete** - automation on firebase using Firebase Functions. When musicSheet document is deleted, also musicSheet file is deleted in Firebase Storage.  
