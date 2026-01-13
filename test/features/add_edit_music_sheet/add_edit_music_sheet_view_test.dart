@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
-import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
+import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/media_type.dart';

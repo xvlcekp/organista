@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
-import 'package:organista/features/show_music_sheet/zoomable_music_sheet_viewer.dart';
+import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
+import 'package:organista/features/show_music_sheet/view/zoomable_music_sheet_viewer.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 
 class CachedNetworkImageWidget extends StatelessWidget {

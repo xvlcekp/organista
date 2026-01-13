@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:organista/features/show_music_sheet/back_button_widget.dart';
+import 'package:organista/features/show_music_sheet/view/back_button_widget.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ZoomableMusicSheetViewer extends StatelessWidget {
