@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:organista/config/app_theme.dart';
 
-class PdfTitleOverlay extends StatelessWidget {
+class MusicSheetTitleOverlay extends StatelessWidget {
   final String fileName;
   final VoidCallback onDismiss;
 
-  const PdfTitleOverlay({
+  const MusicSheetTitleOverlay({
     super.key,
     required this.fileName,
     required this.onDismiss,

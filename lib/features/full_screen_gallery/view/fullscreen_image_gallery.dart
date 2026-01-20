@@ -106,3 +106,7 @@ void useFullScreenMode() {
     };
   }, []);
 }
+
+// TODO:
+// MusicSheetView should be able to handle both PDFs and images and should be able to work with bytes
+//.   Replace MusicSheet with other object and pass it to classes (PDFView appears twice in the project)
