@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:organista/features/show_music_sheet/back_button_widget.dart';
+import 'package:organista/features/show_music_sheet/view/back_button_widget.dart';
 import 'package:organista/l10n/app_localizations.dart';
 
 void main() {

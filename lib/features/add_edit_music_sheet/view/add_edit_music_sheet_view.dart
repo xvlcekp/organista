@@ -5,7 +5,7 @@ import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/discard_changes_uploaded_music_sheet_dialog.dart';
 import 'package:organista/extensions/navigation/navigation_extensions.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
-import 'package:organista/features/show_music_sheet/music_sheet_view.dart';
+import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_file_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
