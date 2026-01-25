@@ -1,5 +1,6 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/config/app_constants.dart';
+import 'package:organista/features/cache_management/utils/custom_http_file_service.dart';
 import 'package:organista/features/cache_management/utils/persistent_file_system.dart';
 
 /// Custom cache manager that uses PersistentFileSystem for persistent storage.
@@ -22,7 +23,9 @@ class PersistentCacheManager extends CacheManager with ImageCacheManager {
           maxNrOfCacheObjects: AppConstants.maxCacheObjects,
           repo: JsonCacheInfoRepository(databaseName: AppConstants.cacheKey),
           fileSystem: PersistentFileSystem(AppConstants.cacheKey),
-          fileService: HttpFileService(),
+          fileService: CustomHttpFileService(
+            cacheDuration: AppConstants.cacheStalePeriod,
+          ),
         ),
       );
 }
