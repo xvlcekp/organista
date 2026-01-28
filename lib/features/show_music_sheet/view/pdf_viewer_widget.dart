@@ -8,7 +8,6 @@ import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_page_counter.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_navigation_arrows.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
-import 'package:organista/utils/size_utils.dart';
 import 'package:pdfx/pdfx.dart';
 
 import 'package:organista/features/show_music_sheet/hooks/pdf_load_result.dart';
@@ -18,14 +17,14 @@ class PdfViewerWidget extends HookWidget {
   final MusicSheetViewMode mode;
   final Color backgroundColor = Colors.white;
 
-  /// Max side size for PDF full rendering
-  static const double fullMaxSide = 2500.0;
+  /// Quality for PDF full rendering
+  static const double fullQuality = 2.0;
 
-  /// Max side size for PDF preview rendering
-  static const double previewMaxSide = 2000.0;
+  /// Quality for PDF preview rendering
+  static const double previewQuality = 1.0;
 
-  /// Max side size for PDF thumbnail rendering
-  static const double thumbnailMaxSide = 500.0;
+  /// Quality for PDF thumbnail rendering
+  static const double thumbnailQuality = 0.5;
 
   const PdfViewerWidget({
     super.key,
@@ -47,10 +46,10 @@ class PdfViewerWidget extends HookWidget {
 
     final pdfController = loadResult.controller!;
 
-    final maxSide = switch (mode) {
-      MusicSheetViewMode.full => fullMaxSide,
-      MusicSheetViewMode.thumbnail => thumbnailMaxSide,
-      MusicSheetViewMode.preview => previewMaxSide,
+    final qualityMultiplier = switch (mode) {
+      MusicSheetViewMode.full => fullQuality,
+      MusicSheetViewMode.thumbnail => thumbnailQuality,
+      MusicSheetViewMode.preview => previewQuality,
     };
 
     return BlocBuilder<SettingsCubit, SettingsState>(
@@ -61,16 +60,17 @@ class PdfViewerWidget extends HookWidget {
               controller: pdfController,
               scrollDirection: Axis.vertical,
               renderer: (PdfPage page) {
-                final size = SizeUtils.calculateRenderSize(page.width, page.height, maxSide);
                 return page.render(
-                  width: size.width,
-                  height: size.height,
+                  width: page.width * qualityMultiplier,
+                  height: page.height * qualityMultiplier,
+                  format: PdfPageImageFormat.jpeg,
                   backgroundColor: backgroundColor.toHex(),
                 );
               },
             ),
             if (mode == MusicSheetViewMode.full) PdfPageCounter(controller: pdfController),
             if (mode == MusicSheetViewMode.full && settingsState.showNavigationArrows)
+              // TODO: fix zooming withing navigation arrows, it corrupts the PdfView
               PdfNavigationArrows(controller: pdfController),
           ],
         );
