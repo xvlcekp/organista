@@ -70,7 +70,6 @@ class PdfViewerWidget extends HookWidget {
             ),
             if (mode == MusicSheetViewMode.full) PdfPageCounter(controller: pdfController),
             if (mode == MusicSheetViewMode.full && settingsState.showNavigationArrows)
-              // TODO: fix zooming withing navigation arrows, it corrupts the PdfView
               PdfNavigationArrows(controller: pdfController),
           ],
         );

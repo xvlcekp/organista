@@ -82,6 +82,7 @@ class FullScreenImageGallery extends HookWidget {
               logger.i("Index is $index");
               final musicSheet = musicSheets[index];
               return PhotoViewGalleryPageOptions.customChild(
+                disableGestures: true,
                 child: MusicSheetView(
                   key: ValueKey(musicSheet.musicSheetId),
                   musicSheet: musicSheet,
