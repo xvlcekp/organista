@@ -60,3 +60,6 @@ content/
 .env
 /android/app/keystore/
 sentry.properties
+
+# iOS related
+ios/Podfile.lock
