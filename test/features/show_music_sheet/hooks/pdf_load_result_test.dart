@@ -31,7 +31,7 @@ void main() {
             'Failed host lookup: firebasestorage.googleapis.com',
             osError: OSError('No address associated with hostname', 7),
           ),
-          'SocketException with OSError (Sentry scenario)'
+          'SocketException with OSError (Sentry scenario)',
         ),
       ];
 
