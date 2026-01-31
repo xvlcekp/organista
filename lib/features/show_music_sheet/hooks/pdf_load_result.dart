@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
@@ -65,7 +66,14 @@ PdfLoadResult usePdfDocument(MusicSheet musicSheet) {
           completer.complete();
         }
       } catch (e, stackTrace) {
-        logger.e("Failed to load PDF", error: e, stackTrace: stackTrace);
+        // Network errors are expected when device is offline - don't report to Sentry
+        if (e is SocketException || e is ClientException || e is OSError) {
+          logger.w("Failed to load PDF due to network error (device is offline)", error: e);
+        } else {
+          // Real errors should be reported to Sentry
+          logger.e("Failed to load PDF", error: e, stackTrace: stackTrace);
+        }
+
         if (!completer.isCompleted) {
           hasError.value = true;
           isLoading.value = false;
