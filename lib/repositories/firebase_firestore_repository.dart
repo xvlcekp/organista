@@ -56,6 +56,41 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  /// Executes a Firestore operation with unified error handling for permission-denied errors.
+  /// Returns the default value if permission-denied occurs, otherwise rethrows for other error handlers.
+  Future<T> _executeWithPermissionHandling<T>({
+    required Future<T> Function() operation,
+    required T defaultValue,
+    required String context,
+  }) async {
+    try {
+      return await operation();
+    } on FirebaseException catch (e, stackTrace) {
+      if (e.code == 'permission-denied') {
+        _handlePermissionDenied(context, e, stackTrace);
+        return defaultValue;
+      }
+      rethrow;
+    }
+  }
+
+  /// Creates a unified error handler for streams that handles permission-denied errors.
+  /// Returns the empty value and logs appropriately based on auth state.
+  T Function(Object, StackTrace) _createStreamErrorHandler<T>({
+    required T emptyValue,
+    required String context,
+    required String errorMessage,
+  }) {
+    return (error, stackTrace) {
+      if (error is FirebaseException && error.code == 'permission-denied') {
+        _handlePermissionDenied(context, error, stackTrace);
+      } else {
+        logger.e(errorMessage, error: error, stackTrace: stackTrace);
+      }
+      return emptyValue;
+    };
+  }
+
   // USER OPERATIONS
 
   /// Creates a new user document in Firestore.
@@ -146,14 +181,13 @@ class FirebaseFirestoreRepository {
           logger.i("Got new update for playlist $playlistId");
           return Playlist(playlistId: playlistId, json: data);
         })
-        .handleError((error, stackTrace) {
-          if (error is FirebaseException && error.code == 'permission-denied') {
-            _handlePermissionDenied('when accessing playlist $playlistId', error, stackTrace);
-          } else {
-            logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
-          }
-          return Playlist.empty();
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: Playlist.empty(),
+            context: 'when accessing playlist $playlistId',
+            errorMessage: 'Error in getPlaylistStream',
+          ),
+        );
   }
 
   Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
@@ -173,14 +207,13 @@ class FirebaseFirestoreRepository {
             ),
           );
         })
-        .handleError((error, stackTrace) {
-          if (error is FirebaseException && error.code == 'permission-denied') {
-            _handlePermissionDenied('when querying playlists for user $userId', error, stackTrace);
-          } else {
-            logger.e('Error in getPlaylistsStream for user $userId', error: error, stackTrace: stackTrace);
-          }
-          return <Playlist>[];
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: <Playlist>[],
+            context: 'when querying playlists for user $userId',
+            errorMessage: 'Error in getPlaylistsStream for user $userId',
+          ),
+        );
   }
 
   Future<bool> addNewPlaylist({
@@ -410,14 +443,13 @@ class FirebaseFirestoreRepository {
             ),
           );
         })
-        .handleError((error, stackTrace) {
-          if (error is FirebaseException && error.code == 'permission-denied') {
-            _handlePermissionDenied('when querying repositories for user $userId', error, stackTrace);
-          } else {
-            logger.e('Error in getRepositoriesStream for user $userId', error: error, stackTrace: stackTrace);
-          }
-          return <Repository>[];
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: <Repository>[],
+            context: 'when querying repositories for user $userId',
+            errorMessage: 'Error in getRepositoriesStream for user $userId',
+          ),
+        );
   }
 
   Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
@@ -432,18 +464,13 @@ class FirebaseFirestoreRepository {
           logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
           return documents.map((doc) => MusicSheet(json: doc.data()));
         })
-        .handleError((error, stackTrace) {
-          if (error is FirebaseException && error.code == 'permission-denied') {
-            _handlePermissionDenied('when querying music sheets for repository $repositoryId', error, stackTrace);
-          } else {
-            logger.e(
-              'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
-              error: error,
-              stackTrace: stackTrace,
-            );
-          }
-          return <MusicSheet>[];
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: <MusicSheet>[],
+            context: 'when querying music sheets for repository $repositoryId',
+            errorMessage: 'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
+          ),
+        );
   }
 
   Future<bool> createGlobalRepository({required String name}) {
@@ -452,12 +479,18 @@ class FirebaseFirestoreRepository {
 
   Future<int> getUserRepositoriesCount({required String userId}) async {
     try {
-      final snapshot = await _instance
-          .collection(FirebaseCollectionName.repositories)
-          .where(RepositoryKey.userId, isEqualTo: userId)
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      return await _executeWithPermissionHandling(
+        operation: () async {
+          final snapshot = await _instance
+              .collection(FirebaseCollectionName.repositories)
+              .where(RepositoryKey.userId, isEqualTo: userId)
+              .count()
+              .get();
+          return snapshot.count ?? 0;
+        },
+        defaultValue: 0,
+        context: 'when getting user repositories count for user $userId',
+      );
     } catch (e, stackTrace) {
       _handleRepositoryError(e, stackTrace, 'Error getting user repositories count for user $userId');
       return 0;
@@ -592,13 +625,19 @@ class FirebaseFirestoreRepository {
 
   Future<int> getRepositoryMusicSheetsCount(String repositoryId) async {
     try {
-      final AggregateQuerySnapshot snapshot = await _instance
-          .collection(FirebaseCollectionName.repositories)
-          .doc(repositoryId)
-          .collection(FirebaseCollectionName.musicSheets)
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      return await _executeWithPermissionHandling(
+        operation: () async {
+          final AggregateQuerySnapshot snapshot = await _instance
+              .collection(FirebaseCollectionName.repositories)
+              .doc(repositoryId)
+              .collection(FirebaseCollectionName.musicSheets)
+              .count()
+              .get();
+          return snapshot.count ?? 0;
+        },
+        defaultValue: 0,
+        context: 'when getting music sheets count for repository $repositoryId',
+      );
     } catch (e, stackTrace) {
       _handleRepositoryError(e, stackTrace, 'Error getting music sheets count for repository $repositoryId');
       return 0;
