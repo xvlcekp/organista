@@ -49,15 +49,22 @@ android {
     }
 
     signingConfigs {
+        debug {
+            // Use shared debug keystore for all developers to ensure consistent SHA fingerprints
+            storeFile file('../keystores/debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
         release {
             def keystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
             def keystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
             def keyAlias = System.getenv("ANDROID_KEY_ALIAS")
             def keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
-            
+
             // Only configure signing if all required values are present (local builds)
             // On Codemagic with native signing, these will be null and Codemagic handles signing
-            if (keystorePath != null && keystorePassword != null && 
+            if (keystorePath != null && keystorePassword != null &&
                 keyAlias != null && keyPassword != null) {
                 storeFile file(keystorePath)
                 storePassword keystorePassword
@@ -68,6 +75,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Use shared debug keystore for consistent SHA fingerprints across all developers
+            signingConfig signingConfigs.debug
+        }
         release {
             // Only apply signing config if it's properly configured (local builds)
             // On Codemagic with native signing, this will be null and Codemagic handles signing
@@ -80,7 +91,7 @@ android {
             shrinkResources true
             // Specifies the ProGuard rules file
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            
+
             // Enable native debug symbols for release builds
             ndk {
                 debugSymbolLevel 'FULL'
