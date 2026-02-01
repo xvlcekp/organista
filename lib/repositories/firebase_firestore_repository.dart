@@ -645,7 +645,8 @@ class FirebaseFirestoreRepository {
   }
 
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
-    if (e is PlatformException && e.code == 'firebase_firestore' && e.details['code'] == 'unavailable') {
+    if (e is PlatformException &&
+        (e.code == 'unavailable' || (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
       logger.w('$logMessage: Service unavailable (offline)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {
