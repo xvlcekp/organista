@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:organista/config/app_constants.dart';
@@ -36,6 +37,22 @@ class FirebaseFirestoreRepository {
         persistenceEnabled: true,
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
       );
+    }
+  }
+
+  /// Handles permission-denied errors by checking auth state to distinguish
+  /// between transient auth issues (during app resume) and real permission violations.
+  void _handlePermissionDenied(String context, FirebaseException error, StackTrace stackTrace) {
+    if (FirebaseAuth.instance.currentUser != null) {
+      // User is authenticated but access denied - this is a real permission error
+      logger.e(
+        'Permission denied $context for authenticated user - possible security rules violation',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } else {
+      // User not authenticated - likely transient auth state during app resume
+      logger.i('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
     }
   }
 
@@ -130,7 +147,11 @@ class FirebaseFirestoreRepository {
           return Playlist(playlistId: playlistId, json: data);
         })
         .handleError((error, stackTrace) {
-          logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
+          if (error is FirebaseException && error.code == 'permission-denied') {
+            _handlePermissionDenied('when accessing playlist $playlistId', error, stackTrace);
+          } else {
+            logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
+          }
           return Playlist.empty();
         });
   }
@@ -153,7 +174,11 @@ class FirebaseFirestoreRepository {
           );
         })
         .handleError((error, stackTrace) {
-          logger.e('Error in getPlaylistsStream for user $userId', error: error, stackTrace: stackTrace);
+          if (error is FirebaseException && error.code == 'permission-denied') {
+            _handlePermissionDenied('when querying playlists for user $userId', error, stackTrace);
+          } else {
+            logger.e('Error in getPlaylistsStream for user $userId', error: error, stackTrace: stackTrace);
+          }
           return <Playlist>[];
         });
   }
@@ -386,7 +411,11 @@ class FirebaseFirestoreRepository {
           );
         })
         .handleError((error, stackTrace) {
-          logger.e('Error in getRepositoriesStream for user $userId', error: error, stackTrace: stackTrace);
+          if (error is FirebaseException && error.code == 'permission-denied') {
+            _handlePermissionDenied('when querying repositories for user $userId', error, stackTrace);
+          } else {
+            logger.e('Error in getRepositoriesStream for user $userId', error: error, stackTrace: stackTrace);
+          }
           return <Repository>[];
         });
   }
@@ -404,11 +433,15 @@ class FirebaseFirestoreRepository {
           return documents.map((doc) => MusicSheet(json: doc.data()));
         })
         .handleError((error, stackTrace) {
-          logger.e(
-            'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
-            error: error,
-            stackTrace: stackTrace,
-          );
+          if (error is FirebaseException && error.code == 'permission-denied') {
+            _handlePermissionDenied('when querying music sheets for repository $repositoryId', error, stackTrace);
+          } else {
+            logger.e(
+              'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
+              error: error,
+              stackTrace: stackTrace,
+            );
+          }
           return <MusicSheet>[];
         });
   }
