@@ -360,13 +360,13 @@ class FirebaseFirestoreRepository {
     }
   }
 
-  Future<bool> renameMusicSheetInPlaylist({
+  bool renameMusicSheetInPlaylist({
     required MusicSheet musicSheet,
     required String fileName,
     required Playlist playlist,
-  }) async {
+  }) {
     try {
-      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+      _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.renameSheet(musicSheet.musicSheetId, fileName).toJsonList(),
       });
       logger.i("musicSheetRename update successful");

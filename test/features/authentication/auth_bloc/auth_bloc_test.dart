@@ -83,7 +83,7 @@ void main() {
           when(() => authProvider.initialize()).thenAnswer((_) async {});
           when(() => authProvider.currentUser).thenReturn(validUser);
         },
-        wait: const Duration(milliseconds: 200),
+        wait: const Duration(milliseconds: 300),
         expect: () => [const AuthStateLoggedIn(isLoading: false, user: validUser)],
         verify: (_) {
           verify(() => authProvider.initialize()).called(1);

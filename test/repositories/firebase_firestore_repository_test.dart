@@ -462,7 +462,7 @@ void main() {
         );
         final musicSheet = MusicSheet(json: musicSheetJson);
 
-        final result = await repository.renameMusicSheetInPlaylist(
+        final result = repository.renameMusicSheetInPlaylist(
           musicSheet: musicSheet,
           fileName: 'New Name.pdf',
           playlist: playlist,

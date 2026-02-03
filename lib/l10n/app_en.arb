@@ -1,310 +1,299 @@
 {
-    "@@locale": "en",
-    "appTitle": "Organista",
-    "loading": "Loading...",
-    "modifyMusicSheet": "Modify music sheet",
-    "musicSheetName": "Music sheet name",
-    "discard": "Discard",
-    "save": "Save",
-    "noMusicSheetsYet": "No music sheets yet",
-    "addYourFirstMusicSheet": "Add your first music sheets with the + button below.\nYou can add music sheets from shared repositories, or your own.\nYou can rearrange music sheets by long pressing in the order you will play them.",
-    "selectImageFirst": "You have to select an image first",
-    "discardChanges": "Discard Changes",
-    "discardChangesMessage": "Are you sure you want to discard changes?",
-    "yes": "Yes",
-    "no": "No",
-    "cancel": "Cancel",
-    "create": "Create",
-    "delete": "Delete",
-    "deleteImage": "Delete image",
-    "deleteImageMessage": "Are you sure you want to delete this image? You cannot undo this operation!",
-    "logout": "Logout",
-    "logoutMessage": "Are you sure you want to logout?",
-    "deleteAccount": "Delete account",
-    "deleteAccountMessage": "Are you sure you want to delete your account? This action cannot be undone.",
-    "forgotPassword": "Forgot Password",
-    "resetPassword": "Reset Password",
-    "email": "Email",
-    "password": "Password",
-    "verifyPassword": "Verify Password",
-    "emailRequired": "Email is required",
-    "passwordRequired": "Password is required",
-    "verifyPasswordRequired": "Please verify your password",
-    "passwordsDoNotMatch": "Passwords do not match",
-    "login": "Login",
-    "signInWithGoogle": "Sign in with Google",
-    "signInWithApple": "Sign in with Apple",
-    "register": "Register",
-    "playlists": "Playlists",
-    "repositories": "Repositories",
-    "settings": "Settings",
-    "language": "Language",
-    "english": "English",
-    "slovak": "Slovak",
-    "error": "Error",
-    "success": "Success",
-    "passwordResetEmailSent": "Password reset email sent. Please check your inbox.",
-    "invalidEmail": "Invalid email",
-    "userNotFound": "User not found",
-    "wrongPassword": "Wrong password",
-    "emailAlreadyInUse": "Email already in use",
-    "weakPassword": "Weak password",
-    "networkError": "Network error",
-    "unknownError": "Unknown error",
-    "welcomeBack": "Welcome Back!",
-    "signInToContinue": "Sign in to continue",
-    "noAccount": "Don't have an account?",
-    "createAccount": "Create Account",
-    "signUpToGetStarted": "Sign up to get started",
-    "alreadyHaveAccount": "Already have an account?",
-    "download": "Download",
-    "downloadTooltip": "Download music sheet",
-    "deleteTooltip": "Delete music sheet",
-    "renamePlaylist": "Rename playlist",
-    "rename": "Rename",
-    "ok": "OK",
-    "musicSheet": "Music Sheet",
-    "musicSheetId": "Music Sheet ID",
-    "playlist": "Playlist",
-    "user": "User",
-    "category": "Category",
-    "repository": "Repository",
-    "displayName": "Display Name",
-    "name": "Name",
-    "createdAt": "Created At",
-    "fileUrl": "File URL",
-    "fileName": "File Name",
-    "mediaType": "Media Type",
-    "image": "Image",
-    "pdf": "PDF",
-    "unsupportedFileExtension": "Unsupported file extension",
-    "noMatchingMediaType": "No matching MediaType for: {mediaType}",
-    "myPlaylists": "My Playlists",
-    "newPlaylist": "New Playlist",
-    "noPlaylistsYet": "No playlists yet",
-    "createFirstPlaylist": "Create your first playlist.\nYou will add music sheets from repositories in the next step.",
-    "musicSheets": "Music sheets",
-    "searchMusicSheets": "Search music sheets...",
-    "noMusicSheetsFound": "No music sheets found",
-    "noGlobalRepositories": "No global repositories available.",
-    "createFirstPersonalRepository": "Create a new repository where you can upload your own music sheets.",
-    "noPersonalRepositories": "You don't have a personal repository yet",
-    "global": "Global",
-    "personal": "Personal",
-    "sheets": "{count, plural, =1{sheet} other{sheets}}",
-    "@sheets": {
-        "placeholders": {
-            "count": {
-                "type": "int"
-            }
-        }
-    },
-    "addMusicSheet": "Add music sheet",
-    "edit": "Edit",
-    "change": "Change",
-    "noMusicSheets": "No music sheets found",
-    "add": "Add",
-    "resetPasswordMessage": "Enter your email address and we'll send you a link to reset your password.",
-    "enterEmail": "Enter your email",
-    "enterEmailHint": "Enter your email",
-    "pleaseEnterEmail": "Please enter your email",
-    "passwordResetLinkSent": "Password reset link sent to your email",
-    "playlistName": "Playlist name",
-    "enterPlaylistName": "Enter playlist name",
-    "inputCannotBeEmpty": "Input cannot be empty",
-    "inputCannotBeSameAsCurrent": "Name cannot be the same as current",
-    "theme": "Theme",
-    "darkTheme": "Dark theme",
-    "lightTheme": "Light theme",
-    "systemTheme": "System theme",
-    "tapToView": "Tap to view",
-    "deletePlaylist": "Delete playlist",
-    "deletePlaylistMessage": "Are you sure you want to delete this playlist? You cannot undo this operation!",
-    "about": "About",
-    "aboutMessage": "A music sheet management application\nCreated by Pavol Vlček",
-    "appSettings": "App Settings",
-    "accountManagement": "Account Management",
-    "version": "Version",
-    "frequentlyAskedQuestions": "Frequently Asked Questions",
-    "couldNotOpenUrl": "Could not open the URL",
-    "errorOpeningUrl": "Error opening URL: {url}",
-    "@errorOpeningUrl": {
-        "description": "Error message when failing to open a URL",
-        "placeholders": {
-            "url": {
-                "type": "String",
-                "description": "The URL that failed to open"
-            }
-        }
-    },
-    "fileTooLarge": "File is too large. Maximum size is {maxSize}MB.",
-    "@fileTooLarge": {
-        "description": "Error message when a file exceeds the maximum allowed size",
-        "placeholders": {
-            "maxSize": {
-                "type": "int",
-                "description": "The maximum allowed file size in megabytes"
-            }
-        }
-    },
-    "anErrorHappened": "An error happened",
-    "showNavigationArrows": "Show navigation arrows",
-    "keepScreenOn": "Keep screen on",
-
-    "errorUnknownText": "Unknown error",
-    
-    "authGenericExceptionText": "An unknown error occurred",
-    
-    "authErrorUserNotLoggedInText": "No user is currently logged in!",
-    
-    "authErrorRequiresRecentLoginText": "You are performing a sensitive operation. Please log out and sign in again to verify that you have access to the account. Then repeat the operation.",
-    
-    "authErrorOperationNotAllowedText": "You cannot register using this method at this moment!",
-    
-    "authErrorUserNotFoundText": "The given user was not found on the server!",
-    
-    "authErrorWeakPasswordText": "Please choose a stronger password consisting of more characters!",
-    
-    "authErrorInvalidEmailText": "Please double check your email and try again!",
-    
-    "authErrorEmailAlreadyInUseText": "Please choose another email to register with!",
-    
-    "authErrorUserDisabledText": "This user has been disabled. Please contact support for help.",
-    
-    "authErrorInvalidCredentialText": "The supplied auth credential is incorrect, malformed or has expired.",
-    
-    "authErrorGoogleSignInFailedText": "Google Sign-In failed. Please try again.",
-    "authErrorAppleSignInFailedText": "Sign in with Apple failed. Please try again.",
-
-    "musicSheetAlreadyInPlaylist": "Music sheet '{musicSheetName}' already exists in playlist '{playlistName}'.",
-    "@musicSheetAlreadyInPlaylist": {
-        "description": "Error message when trying to add a music sheet that already exists in a playlist",
-        "placeholders": {
-            "musicSheetName": {
-                "type": "String",
-                "description": "The name of the music sheet file"
-            },
-            "playlistName": {
-                "type": "String", 
-                "description": "The name of the playlist"
-            }
-        }
-    },
-    "multipleMusicSheetsAlreadyInPlaylist": "The following music sheets already exist in playlist '{playlistName}': {musicSheetNames}",
-    "@multipleMusicSheetsAlreadyInPlaylist": {
-        "description": "Error message when trying to add multiple music sheets that already exist in a playlist",
-        "placeholders": {
-            "musicSheetNames": {
-                "type": "String",
-                "description": "Comma-separated list of music sheet names"
-            },
-            "playlistName": {
-                "type": "String", 
-                "description": "The name of the playlist"
-            }
-        }
-    },
-    "playlistCapacityExceeded": "Cannot add {attemptedToAdd} music sheets to playlist '{playlistName}'. Playlist currently has {currentCount}/{maxCapacity} music sheets. Maximum capacity is {maxCapacity} music sheets.",
-    "@playlistCapacityExceeded": {
-        "description": "Error message when trying to add music sheets that would exceed playlist capacity",
-        "placeholders": {
-            "attemptedToAdd": {
-                "type": "int",
-                "description": "Number of music sheets attempted to add"
-            },
-            "playlistName": {
-                "type": "String",
-                "description": "The name of the playlist"
-            },
-            "currentCount": {
-                "type": "int",
-                "description": "Current number of music sheets in playlist"
-            },
-            "maxCapacity": {
-                "type": "int",
-                "description": "Maximum allowed music sheets in playlist"
-            }
-        }
-    },
-    "musicSheetInitializationError": "An error happened while initialization.",
-    "selectAll": "Select all",
-    "unselectAll": "Unselect all",
-    "repositoryName": "Repository name",
-    "enterRepositoryName": "Enter repository name",
-    "newRepository": "New repository",
-    "renameRepository": "Rename repository",
-    "deleteRepository": "Delete repository",
-    "deleteRepositoryMessage": "Are you sure you want to delete repository '{repositoryName}'? This will also delete all music sheets in it. This action cannot be undone!",
-    "@deleteRepositoryMessage": {
-        "description": "Confirmation message when deleting a repository",
-        "placeholders": {
-            "repositoryName": {
-                "type": "String",
-                "description": "The name of the repository"
-            }
-        }
-    },
-    "repositoryGenericError": "An error occurred while performing the repository operation",
-    "repositoryNotFoundError": "Repository not found",
-    "repositoryCannotModifyPublicError": "Cannot modify public repositories",
-    "repositoryCannotModifyOtherUsersError": "You can only modify your own repositories",
-    "maximumRepositoriesCountExceededError": "You have reached the maximum number of repositories ({maximumRepositoriesCount}). Please delete some repositories before creating new ones.",
-    "@maximumRepositoriesCountExceededError": {
-        "description": "Error message when user tries to create more repositories than allowed",
-        "placeholders": {
-            "maximumRepositoriesCount": {
-                "type": "int",
-                "description": "The maximum number of repositories allowed"
-            }
-        }
-    },
-    "repositoryNetworkError": "Connectivity problem. Please check your internet connection.",
-    "noFileDataAvailable": "No file data available",
-    "storageManagement": "Storage Management",
-    "storedFiles": "Stored files",
-    "storageSize": "Storage size",
-    "clearStorage": "Clear storage",
-    "clearStorageConfirmTitle": "Clear Storage?",
-    "clearStorageConfirmMessage": "This will delete all stored files ({count} files, {size} MB). Music sheets will need to be re-downloaded when accessed again.",
-    "@clearStorageConfirmMessage": {
-        "description": "Confirmation message when clearing storage",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "description": "Number of stored files"
-            },
-            "size": {
-                "type": "String",
-                "description": "Total storage size"
-            }
-        }
-    },
-    "storageClearedSuccess": "Storage cleared successfully",
-    "storageSummary": "Storage Summary",
-    "aboutStorage": "About Storage",
-    "storageDescription": "Stored files allow faster loading of music sheets you've already viewed.",
-    "storageRemovalInfo": "Files are automatically removed when they haven't been accessed for {days} days or when the storage reaches its maximum capacity of {maxObjects} files.",
-    "@storageRemovalInfo": {
-        "description": "Information about when stored files are removed",
-        "placeholders": {
-            "days": {
-                "type": "int",
-                "description": "Number of days after which files become stale"
-            },
-            "maxObjects": {
-                "type": "int",
-                "description": "Maximum number of storage objects"
-            }
-        }
-    },
-    "manageStoredMusicSheets": "Manage stored music sheets",
-    "exportToPdf": "Export to PDF",
-    "exportSuccess": "Playlist exported successfully",
-    "exportFailed": "Failed to export playlist",
-    "noMusicSheetsToExport": "No music sheets to export",
-    "exportErrorSourceFileNotFound": "Source file not found",
-    "exportErrorSaveFailed": "Failed to save file",
-    "exportCancelled": "Export cancelled",
-    "fillAllFields": "Please fill in all fields",
-    "back": "Back"
+  "@@locale": "en",
+  "appTitle": "Organista",
+  "loading": "Loading...",
+  "modifyMusicSheet": "Modify music sheet",
+  "musicSheetName": "Music sheet name",
+  "discard": "Discard",
+  "save": "Save",
+  "noMusicSheetsYet": "No music sheets yet",
+  "addYourFirstMusicSheet": "Add your first music sheets with the + button below.\nYou can add music sheets from shared repositories, or your own.\nYou can rearrange music sheets by long pressing in the order you will play them.",
+  "selectImageFirst": "You have to select an image first",
+  "discardChanges": "Discard Changes",
+  "discardChangesMessage": "Are you sure you want to discard changes?",
+  "yes": "Yes",
+  "no": "No",
+  "cancel": "Cancel",
+  "create": "Create",
+  "delete": "Delete",
+  "deleteImage": "Delete image",
+  "deleteImageMessage": "Are you sure you want to delete this image? You cannot undo this operation!",
+  "logout": "Logout",
+  "logoutMessage": "Are you sure you want to logout?",
+  "deleteAccount": "Delete account",
+  "deleteAccountMessage": "Are you sure you want to delete your account? This action cannot be undone.",
+  "forgotPassword": "Forgot Password",
+  "resetPassword": "Reset Password",
+  "email": "Email",
+  "password": "Password",
+  "verifyPassword": "Verify Password",
+  "emailRequired": "Email is required",
+  "passwordRequired": "Password is required",
+  "verifyPasswordRequired": "Please verify your password",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "login": "Login",
+  "signInWithGoogle": "Sign in with Google",
+  "signInWithApple": "Sign in with Apple",
+  "register": "Register",
+  "playlists": "Playlists",
+  "repositories": "Repositories",
+  "settings": "Settings",
+  "language": "Language",
+  "english": "English",
+  "slovak": "Slovak",
+  "error": "Error",
+  "success": "Success",
+  "passwordResetEmailSent": "Password reset email sent. Please check your inbox.",
+  "invalidEmail": "Invalid email",
+  "userNotFound": "User not found",
+  "wrongPassword": "Wrong password",
+  "emailAlreadyInUse": "Email already in use",
+  "weakPassword": "Weak password",
+  "networkError": "Network error",
+  "unknownError": "Unknown error",
+  "welcomeBack": "Welcome Back!",
+  "signInToContinue": "Sign in to continue",
+  "noAccount": "Don't have an account?",
+  "createAccount": "Create Account",
+  "signUpToGetStarted": "Sign up to get started",
+  "alreadyHaveAccount": "Already have an account?",
+  "download": "Download",
+  "downloadTooltip": "Download music sheet",
+  "deleteTooltip": "Delete music sheet",
+  "renamePlaylist": "Rename playlist",
+  "rename": "Rename",
+  "ok": "OK",
+  "musicSheet": "Music Sheet",
+  "musicSheetId": "Music Sheet ID",
+  "playlist": "Playlist",
+  "user": "User",
+  "category": "Category",
+  "repository": "Repository",
+  "displayName": "Display Name",
+  "name": "Name",
+  "createdAt": "Created At",
+  "fileUrl": "File URL",
+  "fileName": "File Name",
+  "mediaType": "Media Type",
+  "image": "Image",
+  "pdf": "PDF",
+  "unsupportedFileExtension": "Unsupported file extension",
+  "noMatchingMediaType": "No matching MediaType for: {mediaType}",
+  "myPlaylists": "My Playlists",
+  "newPlaylist": "New Playlist",
+  "noPlaylistsYet": "No playlists yet",
+  "createFirstPlaylist": "Create your first playlist.\nYou will add music sheets from repositories in the next step.",
+  "musicSheets": "Music sheets",
+  "searchMusicSheets": "Search music sheets...",
+  "noMusicSheetsFound": "No music sheets found",
+  "noGlobalRepositories": "No global repositories available.",
+  "createFirstPersonalRepository": "Create a new repository where you can upload your own music sheets.",
+  "noPersonalRepositories": "You don't have a personal repository yet",
+  "global": "Global",
+  "personal": "Personal",
+  "sheets": "{count, plural, =1{sheet} other{sheets}}",
+  "@sheets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addMusicSheet": "Add music sheet",
+  "edit": "Edit",
+  "change": "Change",
+  "noMusicSheets": "No music sheets found",
+  "add": "Add",
+  "resetPasswordMessage": "Enter your email address and we'll send you a link to reset your password.",
+  "enterEmail": "Enter your email",
+  "enterEmailHint": "Enter your email",
+  "pleaseEnterEmail": "Please enter your email",
+  "passwordResetLinkSent": "Password reset link sent to your email",
+  "playlistName": "Playlist name",
+  "enterPlaylistName": "Enter playlist name",
+  "inputCannotBeEmpty": "Input cannot be empty",
+  "inputCannotBeSameAsCurrent": "Name cannot be the same as current",
+  "theme": "Theme",
+  "darkTheme": "Dark theme",
+  "lightTheme": "Light theme",
+  "systemTheme": "System theme",
+  "tapToView": "Tap to view",
+  "deletePlaylist": "Delete playlist",
+  "deletePlaylistMessage": "Are you sure you want to delete this playlist? You cannot undo this operation!",
+  "about": "About",
+  "aboutMessage": "A music sheet management application\nCreated by Pavol Vlček",
+  "appSettings": "App Settings",
+  "accountManagement": "Account Management",
+  "version": "Version",
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "couldNotOpenUrl": "Could not open the URL",
+  "errorOpeningUrl": "Error opening URL: {url}",
+  "@errorOpeningUrl": {
+    "description": "Error message when failing to open a URL",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "description": "The URL that failed to open"
+      }
+    }
+  },
+  "fileTooLarge": "File is too large. Maximum size is {maxSize}MB.",
+  "@fileTooLarge": {
+    "description": "Error message when a file exceeds the maximum allowed size",
+    "placeholders": {
+      "maxSize": {
+        "type": "int",
+        "description": "The maximum allowed file size in megabytes"
+      }
+    }
+  },
+  "anErrorHappened": "An error happened",
+  "showNavigationArrows": "Show navigation arrows",
+  "keepScreenOn": "Keep screen on",
+  "errorUnknownText": "Unknown error",
+  "authGenericExceptionText": "An unknown error occurred",
+  "authErrorUserNotLoggedInText": "No user is currently logged in!",
+  "authErrorRequiresRecentLoginText": "You are performing a sensitive operation. Please log out and sign in again to verify that you have access to the account. Then repeat the operation.",
+  "authErrorOperationNotAllowedText": "You cannot register using this method at this moment!",
+  "authErrorUserNotFoundText": "The given user was not found on the server!",
+  "authErrorWeakPasswordText": "Please choose a stronger password consisting of more characters!",
+  "authErrorInvalidEmailText": "Please double check your email and try again!",
+  "authErrorEmailAlreadyInUseText": "Please choose another email to register with!",
+  "authErrorUserDisabledText": "This user has been disabled. Please contact support for help.",
+  "authErrorInvalidCredentialText": "The supplied auth credential is incorrect, malformed or has expired.",
+  "authErrorGoogleSignInFailedText": "Google Sign-In failed. Please try again.",
+  "authErrorAppleSignInFailedText": "Sign in with Apple failed. Please try again.",
+  "musicSheetAlreadyInPlaylist": "Music sheet '{musicSheetName}' already exists in playlist '{playlistName}'.",
+  "@musicSheetAlreadyInPlaylist": {
+    "description": "Error message when trying to add a music sheet that already exists in a playlist",
+    "placeholders": {
+      "musicSheetName": {
+        "type": "String",
+        "description": "The name of the music sheet file"
+      },
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist"
+      }
+    }
+  },
+  "multipleMusicSheetsAlreadyInPlaylist": "The following music sheets already exist in playlist '{playlistName}': {musicSheetNames}",
+  "@multipleMusicSheetsAlreadyInPlaylist": {
+    "description": "Error message when trying to add multiple music sheets that already exist in a playlist",
+    "placeholders": {
+      "musicSheetNames": {
+        "type": "String",
+        "description": "Comma-separated list of music sheet names"
+      },
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist"
+      }
+    }
+  },
+  "playlistCapacityExceeded": "Cannot add {attemptedToAdd} music sheets to playlist '{playlistName}'. Playlist currently has {currentCount}/{maxCapacity} music sheets. Maximum capacity is {maxCapacity} music sheets.",
+  "@playlistCapacityExceeded": {
+    "description": "Error message when trying to add music sheets that would exceed playlist capacity",
+    "placeholders": {
+      "attemptedToAdd": {
+        "type": "int",
+        "description": "Number of music sheets attempted to add"
+      },
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist"
+      },
+      "currentCount": {
+        "type": "int",
+        "description": "Current number of music sheets in playlist"
+      },
+      "maxCapacity": {
+        "type": "int",
+        "description": "Maximum allowed music sheets in playlist"
+      }
+    }
+  },
+  "musicSheetInitializationError": "An error happened while initialization.",
+  "selectAll": "Select all",
+  "unselectAll": "Unselect all",
+  "repositoryName": "Repository name",
+  "enterRepositoryName": "Enter repository name",
+  "newRepository": "New repository",
+  "renameRepository": "Rename repository",
+  "deleteRepository": "Delete repository",
+  "deleteRepositoryMessage": "Are you sure you want to delete repository '{repositoryName}'? This will also delete all music sheets in it. This action cannot be undone!",
+  "@deleteRepositoryMessage": {
+    "description": "Confirmation message when deleting a repository",
+    "placeholders": {
+      "repositoryName": {
+        "type": "String",
+        "description": "The name of the repository"
+      }
+    }
+  },
+  "repositoryGenericError": "An error occurred while performing the repository operation",
+  "repositoryNotFoundError": "Repository not found",
+  "repositoryCannotModifyPublicError": "Cannot modify public repositories",
+  "repositoryCannotModifyOtherUsersError": "You can only modify your own repositories",
+  "maximumRepositoriesCountExceededError": "You have reached the maximum number of repositories ({maximumRepositoriesCount}). Please delete some repositories before creating new ones.",
+  "@maximumRepositoriesCountExceededError": {
+    "description": "Error message when user tries to create more repositories than allowed",
+    "placeholders": {
+      "maximumRepositoriesCount": {
+        "type": "int",
+        "description": "The maximum number of repositories allowed"
+      }
+    }
+  },
+  "repositoryNetworkError": "Connectivity problem. Please check your internet connection.",
+  "noFileDataAvailable": "No file data available",
+  "storageManagement": "Storage Management",
+  "storedFiles": "Stored files",
+  "storageSize": "Storage size",
+  "clearStorage": "Clear storage",
+  "clearStorageConfirmTitle": "Clear Storage?",
+  "clearStorageConfirmMessage": "This will delete all stored files ({count} files, {size} MB). Music sheets will need to be re-downloaded when accessed again.",
+  "@clearStorageConfirmMessage": {
+    "description": "Confirmation message when clearing storage",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of stored files"
+      },
+      "size": {
+        "type": "String",
+        "description": "Total storage size"
+      }
+    }
+  },
+  "storageClearedSuccess": "Storage cleared successfully",
+  "storageSummary": "Storage Summary",
+  "aboutStorage": "About Storage",
+  "storageDescription": "Stored files allow faster loading of music sheets you've already viewed.",
+  "storageRemovalInfo": "Files are automatically removed when they haven't been accessed for {days} days or when the storage reaches its maximum capacity of {maxObjects} files.",
+  "@storageRemovalInfo": {
+    "description": "Information about when stored files are removed",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "description": "Number of days after which files become stale"
+      },
+      "maxObjects": {
+        "type": "int",
+        "description": "Maximum number of storage objects"
+      }
+    }
+  },
+  "manageStoredMusicSheets": "Manage stored music sheets",
+  "exportToPdf": "Export to PDF",
+  "exportSuccess": "Playlist exported successfully",
+  "exportFailed": "Failed to export playlist",
+  "noMusicSheetsToExport": "No music sheets to export",
+  "exportErrorSourceFileNotFound": "Source file not found",
+  "exportErrorSaveFailed": "Failed to save file",
+  "exportCancelled": "Export cancelled",
+  "fillAllFields": "Please fill in all fields",
+  "back": "Back",
+  "renameMusicSheetFailed": "Failed to rename music sheet. Please check your connection and try again.",
+  "uploadMusicSheetRecordFailed": "Failed to save music sheet record. Please check your connection and try again."
 }

@@ -1159,6 +1159,18 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Späť'**
   String get back;
+
+  /// No description provided for @renameMusicSheetFailed.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nepodarilo sa premenovať notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.'**
+  String get renameMusicSheetFailed;
+
+  /// No description provided for @uploadMusicSheetRecordFailed.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.'**
+  String get uploadMusicSheetRecordFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

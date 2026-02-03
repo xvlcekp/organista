@@ -1,310 +1,299 @@
 {
-    "@@locale": "sk",
-    "appTitle": "Organista",
-    "loading": "Načítanie...",
-    "modifyMusicSheet": "Upraviť notový záznam",
-    "musicSheetName": "Názov notového záznamu",
-    "discard": "Zrušiť",
-    "save": "Uložiť",
-    "noMusicSheetsYet": "Zatiaľ žiadne noty",
-    "addYourFirstMusicSheet": "Pridajte svoje prvé noty tlačidlom + nižšie.\nNoty si môžte pridať zo spoločných repozitárov, alebo vlastné.\nNoty si viete dlhým podržaním preusporiadať v poradí, v akom ich budete hrať.",
-    "selectImageFirst": "Najprv musíte vybrať obrázok",
-    "discardChanges": "Zrušiť zmeny",
-    "discardChangesMessage": "Ste si istý, že chcete zrušiť zmeny?",
-    "yes": "Áno",
-    "no": "Nie",
-    "cancel": "Zrušiť",
-    "create": "Vytvoriť",
-    "delete": "Vymazať",
-    "deleteImage": "Vymazať obrázok",
-    "deleteImageMessage": "Ste si istý, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!",
-    "logout": "Odhlásiť sa",
-    "logoutMessage": "Ste si istý, že sa chcete odhlásiť?",
-    "deleteAccount": "Odstrániť účet",
-    "deleteAccountMessage": "Ste si istý, že chcete vymazať svoj účet? Táto akcia sa nedá vrátiť späť.",
-    "forgotPassword": "Zabudli ste heslo",
-    "resetPassword": "Obnoviť heslo",
-    "email": "E-mail",
-    "password": "Heslo",
-    "verifyPassword": "Potvrďte heslo",
-    "emailRequired": "E-mail je povinný",
-    "passwordRequired": "Heslo je povinné",
-    "verifyPasswordRequired": "Prosím, potvrďte svoje heslo",
-    "passwordsDoNotMatch": "Heslá sa nezhodujú",
-    "login": "Prihlásiť sa",
-    "signInWithGoogle": "Prihlásiť sa pomocou Google",
-    "signInWithApple": "Prihlásiť sa pomocou Apple",
-    "register": "Registrovať sa",
-    "playlists": "Zoznamy skladieb",
-    "repositories": "Repozitáre",
-    "settings": "Nastavenia",
-    "language": "Jazyk",
-    "english": "Angličtina",
-    "slovak": "Slovenčina",
-    "error": "Chyba",
-    "success": "Úspech",
-    "passwordResetEmailSent": "E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.",
-    "invalidEmail": "Neplatný e-mail",
-    "userNotFound": "Používateľ nebol nájdený",
-    "wrongPassword": "Nesprávne heslo",
-    "emailAlreadyInUse": "E-mail je už používaný",
-    "weakPassword": "Slabé heslo",
-    "networkError": "Chyba siete",
-    "unknownError": "Neznáma chyba",
-    "welcomeBack": "Vitajte späť!",
-    "signInToContinue": "Prihláste sa, aby ste pokračovali",
-    "noAccount": "Nemáte účet?",
-    "createAccount": "Vytvoriť účet",
-    "signUpToGetStarted": "Zaregistrujte sa, aby ste začali",
-    "alreadyHaveAccount": "Už máte účet?",
-    "download": "Stiahnuť",
-    "downloadTooltip": "Stiahnuť notový zápis",
-    "deleteTooltip": "Vymazať notový zápis",
-    "renamePlaylist": "Premenovať zoznam skladieb",
-    "rename": "Premenovať",
-    "ok": "OK",
-    "musicSheet": "Notový záznam",
-    "musicSheetId": "ID notového záznamu",
-    "playlist": "Zoznam skladieb",
-    "user": "Používateľ",
-    "category": "Kategória",
-    "repository": "Repozitár",
-    "displayName": "Zobrazované meno",
-    "name": "Názov",
-    "createdAt": "Vytvorené",
-    "fileUrl": "URL súboru",
-    "fileName": "Názov súboru",
-    "mediaType": "Typ médiá",
-    "image": "Obrázok",
-    "pdf": "PDF",
-    "unsupportedFileExtension": "Nepodporovaná prípona súboru",
-    "noMatchingMediaType": "Žiadny zodpovedajúci typ médiá pre: {mediaType}",
-    "myPlaylists": "Moje zoznamy skladieb",
-    "newPlaylist": "Nový zoznam skladieb",
-    "noPlaylistsYet": "Zatiaľ žiadne zoznamy skladieb",
-    "createFirstPlaylist": "Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.",
-    "musicSheets": "Počet nôt",
-    "searchMusicSheets": "Vyhľadať noty...",
-    "noMusicSheetsFound": "Nenašli sa žiadne noty",
-    "noGlobalRepositories": "Žiadne globálne repozitáre nie sú k dispozícii.",
-    "createFirstPersonalRepository": "Vytvorte si nový repozitár, kam si viete nahrať vlastné noty.",
-    "noPersonalRepositories": "Ešte nemáte osobný repozitár",
-    "global": "Globálne",
-    "personal": "Osobné",
-    "sheets": "{count, plural, =1{položka} few{položky} other{položiek}}",
-    "@sheets": {
-        "placeholders": {
-            "count": {
-                "type": "int"
-            }
-        }
-    },
-    "addMusicSheet": "Pridať notový záznam",
-    "edit": "Upraviť",
-    "change": "Zmeniť",
-    "noMusicSheets": "Nenašli sa žiadne noty",
-    "add": "Pridať",
-    "resetPasswordMessage": "Zadajte svoju e-mailovú adresu a my vám pošleme odkaz na obnovenie hesla.",
-    "enterEmail": "Zadajte svoj e-mail",
-    "enterEmailHint": "Zadajte svoj e-mail",
-    "pleaseEnterEmail": "Prosím, zadajte svoj e-mail",
-    "passwordResetLinkSent": "Odkaz na obnovenie hesla bol odoslaný na váš e-mail",
-    "playlistName": "Názov zoznamu",
-    "enterPlaylistName": "Zadajte názov zoznamu",
-    "inputCannotBeEmpty": "Názov nemôže byť prázdny",
-    "inputCannotBeSameAsCurrent": "Názov nemôže byť rovnaký ako aktuálny",
-    "theme": "Téma",
-    "darkTheme": "Tmavá téma",
-    "lightTheme": "Svetlá téma",
-    "systemTheme": "Systémová téma",
-    "tapToView": "Kliknutím zobrazíte",
-    "deletePlaylist": "Vymazať zoznam skladieb",
-    "deletePlaylistMessage": "Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!",
-    "about": "O aplikácii",
-    "aboutMessage": "Aplikácia na správu notových záznamov\nVytvoril Pavol Vlček",
-    "appSettings": "Nastavenia aplikácie",
-    "accountManagement": "Správa účtu",
-    "version": "Verzia",
-    "frequentlyAskedQuestions": "Často kladené otázky",
-    "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",
-    "errorOpeningUrl": "Chyba pri otváraní URL: {url}",
-    "@errorOpeningUrl": {
-        "description": "Error message when failing to open a URL",
-        "placeholders": {
-            "url": {
-                "type": "String",
-                "description": "The URL that failed to open"
-            }
-        }
-    },
-    "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
-    "@fileTooLarge": {
-        "description": "Error message when a file exceeds the maximum allowed size",
-        "placeholders": {
-            "maxSize": {
-                "type": "int",
-                "description": "The maximum allowed file size in megabytes"
-            }
-        }
-    },
-    "anErrorHappened": "Nastala chyba",
-    "showNavigationArrows": "Zobraziť navigačné šípky",
-    "keepScreenOn": "Nechať obrazovku zapnutú",
-
-    "errorUnknownText": "Neznáma chyba",
-    
-    "authGenericExceptionText": "Vyskytla sa neznáma chyba",
-    
-    "authErrorUserNotLoggedInText": "Žiadny používateľ nie je momentálne prihlásený!",
-    
-    "authErrorRequiresRecentLoginText": "Robíte citlivú operáciu. Musíte sa odhlásiť a znova sa prihlásiť, aby sme overili, že ku kontu máte naozaj prístup. Následne zopakujte operáciu.",
-    
-    "authErrorOperationNotAllowedText": "Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!",
-    
-    "authErrorUserNotFoundText": "Zadaný používateľ nebol nájdený na serveri!",
-    
-    "authErrorWeakPasswordText": "Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!",
-    
-    "authErrorInvalidEmailText": "Prosím, skontrolujte svoj e-mail a skúste to znova!",
-    
-    "authErrorEmailAlreadyInUseText": "Prosím, použite iný e-mail na registráciu!",
-    
-    "authErrorUserDisabledText": "Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.",
-    
-    "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.",
-    
-    "authErrorGoogleSignInFailedText": "Prihlásenie cez Google zlyhalo. Skúste to znova.",
-    "authErrorAppleSignInFailedText": "Prihlásenie cez Apple zlyhalo. Skúste to znova.",
-
-    "musicSheetAlreadyInPlaylist": "Notový záznam '{musicSheetName}' už existuje v zozname skladieb '{playlistName}'.",
-    "@musicSheetAlreadyInPlaylist": {
-        "description": "Error message when trying to add a music sheet that already exists in a playlist",
-        "placeholders": {
-            "musicSheetName": {
-                "type": "String",
-                "description": "The name of the music sheet file"
-            },
-            "playlistName": {
-                "type": "String", 
-                "description": "The name of the playlist"
-            }
-        }
-    },
-    "multipleMusicSheetsAlreadyInPlaylist": "Nasledujúce notové záznamy už existujú v zozname skladieb '{playlistName}': {musicSheetNames}",
-    "@multipleMusicSheetsAlreadyInPlaylist": {
-        "description": "Error message when trying to add multiple music sheets that already exist in a playlist",
-        "placeholders": {
-            "musicSheetNames": {
-                "type": "String",
-                "description": "Comma-separated list of music sheet names"
-            },
-            "playlistName": {
-                "type": "String", 
-                "description": "The name of the playlist"
-            }
-        }
-    },
-    "playlistCapacityExceeded": "Nie je možné pridať {attemptedToAdd} notových záznamov do zoznamu skladieb '{playlistName}'. Zoznam skladieb má momentálne {currentCount}/{maxCapacity} notových záznamov. Maximálna kapacita je {maxCapacity} notových záznamov.",
-    "@playlistCapacityExceeded": {
-        "description": "Error message when trying to add music sheets that would exceed playlist capacity",
-        "placeholders": {
-            "attemptedToAdd": {
-                "type": "int",
-                "description": "Number of music sheets attempted to add"
-            },
-            "playlistName": {
-                "type": "String",
-                "description": "The name of the playlist"
-            },
-            "currentCount": {
-                "type": "int",
-                "description": "Current number of music sheets in playlist"
-            },
-            "maxCapacity": {
-                "type": "int",
-                "description": "Maximum allowed music sheets in playlist"
-            }
-        }
-    },
-    "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
-    "selectAll": "Vybrať všetko",
-    "unselectAll": "Zrušiť výber",
-    "repositoryName": "Názov repozitára",
-    "enterRepositoryName": "Zadajte názov repozitára",
-    "newRepository": "Nový repozitár",
-    "renameRepository": "Premenovať repozitár",
-    "deleteRepository": "Vymazať repozitár",
-    "deleteRepositoryMessage": "Ste si istý, že chcete vymazať repozitár '{repositoryName}'? Týmto sa vymažú aj všetky notové záznamy v ňom. Táto akcia sa nedá vrátiť späť!",
-    "@deleteRepositoryMessage": {
-        "description": "Confirmation message when deleting a repository",
-        "placeholders": {
-            "repositoryName": {
-                "type": "String",
-                "description": "The name of the repository"
-            }
-        }
-    },
-    "repositoryGenericError": "Pri vykonávaní operácie s repozitárom došlo k chybe!",
-    "repositoryNotFoundError": "Repozitár nebol nájdený!",
-    "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať!",
-    "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre!",
-    "maximumRepositoriesCountExceededError": "Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.",
-    "@maximumRepositoriesCountExceededError": {
-        "description": "Error message when user tries to create more repositories than allowed",
-        "placeholders": {
-            "maximumRepositoriesCount": {
-                "type": "int",
-                "description": "The maximum number of repositories allowed"
-            }
-        }
-    },
-    "repositoryNetworkError": "Problém s konektivitou. Skontrolujte pripojenie na internet.",
-    "noFileDataAvailable": "Súbor je poškodený",
-    "storageManagement": "Správa úložiska",
-    "storedFiles": "Počet súborov v úložisku",
-    "storageSize": "Veľkosť úložiska",
-    "clearStorage": "Vyčistiť úložisko",
-    "clearStorageConfirmTitle": "Chcete naozaj vyčistiť úložisko?",
-    "clearStorageConfirmMessage": "Týmto sa vymažú všetky súbory v úložisku ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.",
-    "@clearStorageConfirmMessage": {
-        "description": "Confirmation message when clearing storage",
-        "placeholders": {
-            "count": {
-                "type": "int",
-                "description": "Number of stored files"
-            },
-            "size": {
-                "type": "String",
-                "description": "Total storage size"
-            }
-        }
-    },
-    "storageClearedSuccess": "Úložisko úspešne vyčistené",
-    "storageSummary": "Úložisko",
-    "aboutStorage": "O úložisku",
-    "storageDescription": "Súbory v úložisku umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené.",
-    "storageRemovalInfo": "Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď úložisko dosiahne maximálnu kapacitu {maxObjects} súborov.",
-    "@storageRemovalInfo": {
-        "description": "Informácie o tom, kedy sú súbory v úložisku odstránené",
-        "placeholders": {
-            "days": {
-                "type": "int",
-                "description": "Počet dní, po ktorých sa súbory stanú zastaralými"
-            },
-            "maxObjects": {
-                "type": "int",
-                "description": "Maximálny počet objektov v úložisku"
-            }
-        }
-    },
-    "manageStoredMusicSheets": "Spravovať offline noty",
-    "exportToPdf": "Exportovať do PDF",
-    "exportSuccess": "Zoznam úspešne exportovaný",
-    "exportFailed": "Nepodarilo sa exportovať zoznam",
-    "noMusicSheetsToExport": "Žiadne noty na export",
-    "exportErrorSourceFileNotFound": "Zdrojový súbor nebol nájdený",
-    "exportErrorSaveFailed": "Nepodarilo sa uložiť súbor",
-    "exportCancelled": "Export zrušený",
-    "fillAllFields": "Prosím vyplňte všetky polia",
-    "back": "Späť"
+  "@@locale": "sk",
+  "appTitle": "Organista",
+  "loading": "Načítanie...",
+  "modifyMusicSheet": "Upraviť notový záznam",
+  "musicSheetName": "Názov notového záznamu",
+  "discard": "Zrušiť",
+  "save": "Uložiť",
+  "noMusicSheetsYet": "Zatiaľ žiadne noty",
+  "addYourFirstMusicSheet": "Pridajte svoje prvé noty tlačidlom + nižšie.\nNoty si môžte pridať zo spoločných repozitárov, alebo vlastné.\nNoty si viete dlhým podržaním preusporiadať v poradí, v akom ich budete hrať.",
+  "selectImageFirst": "Najprv musíte vybrať obrázok",
+  "discardChanges": "Zrušiť zmeny",
+  "discardChangesMessage": "Ste si istý, že chcete zrušiť zmeny?",
+  "yes": "Áno",
+  "no": "Nie",
+  "cancel": "Zrušiť",
+  "create": "Vytvoriť",
+  "delete": "Vymazať",
+  "deleteImage": "Vymazať obrázok",
+  "deleteImageMessage": "Ste si istý, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!",
+  "logout": "Odhlásiť sa",
+  "logoutMessage": "Ste si istý, že sa chcete odhlásiť?",
+  "deleteAccount": "Odstrániť účet",
+  "deleteAccountMessage": "Ste si istý, že chcete vymazať svoj účet? Táto akcia sa nedá vrátiť späť.",
+  "forgotPassword": "Zabudli ste heslo",
+  "resetPassword": "Obnoviť heslo",
+  "email": "E-mail",
+  "password": "Heslo",
+  "verifyPassword": "Potvrďte heslo",
+  "emailRequired": "E-mail je povinný",
+  "passwordRequired": "Heslo je povinné",
+  "verifyPasswordRequired": "Prosím, potvrďte svoje heslo",
+  "passwordsDoNotMatch": "Heslá sa nezhodujú",
+  "login": "Prihlásiť sa",
+  "signInWithGoogle": "Prihlásiť sa pomocou Google",
+  "signInWithApple": "Prihlásiť sa pomocou Apple",
+  "register": "Registrovať sa",
+  "playlists": "Zoznamy skladieb",
+  "repositories": "Repozitáre",
+  "settings": "Nastavenia",
+  "language": "Jazyk",
+  "english": "Angličtina",
+  "slovak": "Slovenčina",
+  "error": "Chyba",
+  "success": "Úspech",
+  "passwordResetEmailSent": "E-mail na obnovenie hesla bol odoslaný. Prosím, skontrolujte svoju doručenú poštu.",
+  "invalidEmail": "Neplatný e-mail",
+  "userNotFound": "Používateľ nebol nájdený",
+  "wrongPassword": "Nesprávne heslo",
+  "emailAlreadyInUse": "E-mail je už používaný",
+  "weakPassword": "Slabé heslo",
+  "networkError": "Chyba siete",
+  "unknownError": "Neznáma chyba",
+  "welcomeBack": "Vitajte späť!",
+  "signInToContinue": "Prihláste sa, aby ste pokračovali",
+  "noAccount": "Nemáte účet?",
+  "createAccount": "Vytvoriť účet",
+  "signUpToGetStarted": "Zaregistrujte sa, aby ste začali",
+  "alreadyHaveAccount": "Už máte účet?",
+  "download": "Stiahnuť",
+  "downloadTooltip": "Stiahnuť notový zápis",
+  "deleteTooltip": "Vymazať notový zápis",
+  "renamePlaylist": "Premenovať zoznam skladieb",
+  "rename": "Premenovať",
+  "ok": "OK",
+  "musicSheet": "Notový záznam",
+  "musicSheetId": "ID notového záznamu",
+  "playlist": "Zoznam skladieb",
+  "user": "Používateľ",
+  "category": "Kategória",
+  "repository": "Repozitár",
+  "displayName": "Zobrazované meno",
+  "name": "Názov",
+  "createdAt": "Vytvorené",
+  "fileUrl": "URL súboru",
+  "fileName": "Názov súboru",
+  "mediaType": "Typ médiá",
+  "image": "Obrázok",
+  "pdf": "PDF",
+  "unsupportedFileExtension": "Nepodporovaná prípona súboru",
+  "noMatchingMediaType": "Žiadny zodpovedajúci typ médiá pre: {mediaType}",
+  "myPlaylists": "Moje zoznamy skladieb",
+  "newPlaylist": "Nový zoznam skladieb",
+  "noPlaylistsYet": "Zatiaľ žiadne zoznamy skladieb",
+  "createFirstPlaylist": "Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.",
+  "musicSheets": "Počet nôt",
+  "searchMusicSheets": "Vyhľadať noty...",
+  "noMusicSheetsFound": "Nenašli sa žiadne noty",
+  "noGlobalRepositories": "Žiadne globálne repozitáre nie sú k dispozícii.",
+  "createFirstPersonalRepository": "Vytvorte si nový repozitár, kam si viete nahrať vlastné noty.",
+  "noPersonalRepositories": "Ešte nemáte osobný repozitár",
+  "global": "Globálne",
+  "personal": "Osobné",
+  "sheets": "{count, plural, =1{položka} few{položky} other{položiek}}",
+  "@sheets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addMusicSheet": "Pridať notový záznam",
+  "edit": "Upraviť",
+  "change": "Zmeniť",
+  "noMusicSheets": "Nenašli sa žiadne noty",
+  "add": "Pridať",
+  "resetPasswordMessage": "Zadajte svoju e-mailovú adresu a my vám pošleme odkaz na obnovenie hesla.",
+  "enterEmail": "Zadajte svoj e-mail",
+  "enterEmailHint": "Zadajte svoj e-mail",
+  "pleaseEnterEmail": "Prosím, zadajte svoj e-mail",
+  "passwordResetLinkSent": "Odkaz na obnovenie hesla bol odoslaný na váš e-mail",
+  "playlistName": "Názov zoznamu",
+  "enterPlaylistName": "Zadajte názov zoznamu",
+  "inputCannotBeEmpty": "Názov nemôže byť prázdny",
+  "inputCannotBeSameAsCurrent": "Názov nemôže byť rovnaký ako aktuálny",
+  "theme": "Téma",
+  "darkTheme": "Tmavá téma",
+  "lightTheme": "Svetlá téma",
+  "systemTheme": "Systémová téma",
+  "tapToView": "Kliknutím zobrazíte",
+  "deletePlaylist": "Vymazať zoznam skladieb",
+  "deletePlaylistMessage": "Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!",
+  "about": "O aplikácii",
+  "aboutMessage": "Aplikácia na správu notových záznamov\nVytvoril Pavol Vlček",
+  "appSettings": "Nastavenia aplikácie",
+  "accountManagement": "Správa účtu",
+  "version": "Verzia",
+  "frequentlyAskedQuestions": "Často kladené otázky",
+  "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",
+  "errorOpeningUrl": "Chyba pri otváraní URL: {url}",
+  "@errorOpeningUrl": {
+    "description": "Error message when failing to open a URL",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "description": "The URL that failed to open"
+      }
+    }
+  },
+  "fileTooLarge": "Súbor je príliš veľký. Maximálna veľkosť je {maxSize}MB.",
+  "@fileTooLarge": {
+    "description": "Error message when a file exceeds the maximum allowed size",
+    "placeholders": {
+      "maxSize": {
+        "type": "int",
+        "description": "The maximum allowed file size in megabytes"
+      }
+    }
+  },
+  "anErrorHappened": "Nastala chyba",
+  "showNavigationArrows": "Zobraziť navigačné šípky",
+  "keepScreenOn": "Nechať obrazovku zapnutú",
+  "errorUnknownText": "Neznáma chyba",
+  "authGenericExceptionText": "Vyskytla sa neznáma chyba",
+  "authErrorUserNotLoggedInText": "Žiadny používateľ nie je momentálne prihlásený!",
+  "authErrorRequiresRecentLoginText": "Robíte citlivú operáciu. Musíte sa odhlásiť a znova sa prihlásiť, aby sme overili, že ku kontu máte naozaj prístup. Následne zopakujte operáciu.",
+  "authErrorOperationNotAllowedText": "Nemôžete sa zaregistrovať pomocou tejto metódy v tomto momente!",
+  "authErrorUserNotFoundText": "Zadaný používateľ nebol nájdený na serveri!",
+  "authErrorWeakPasswordText": "Prosím, vyberte silnejšie heslo skladajúce sa z viacerých znakov!",
+  "authErrorInvalidEmailText": "Prosím, skontrolujte svoj e-mail a skúste to znova!",
+  "authErrorEmailAlreadyInUseText": "Prosím, použite iný e-mail na registráciu!",
+  "authErrorUserDisabledText": "Tento používateľský účet bol deaktivovaný. Prosím, kontaktujte podporu pre pomoc.",
+  "authErrorInvalidCredentialText": "Zadané prihlasovacie údaje sú nesprávne, skontrolujte email a heslo.",
+  "authErrorGoogleSignInFailedText": "Prihlásenie cez Google zlyhalo. Skúste to znova.",
+  "authErrorAppleSignInFailedText": "Prihlásenie cez Apple zlyhalo. Skúste to znova.",
+  "musicSheetAlreadyInPlaylist": "Notový záznam '{musicSheetName}' už existuje v zozname skladieb '{playlistName}'.",
+  "@musicSheetAlreadyInPlaylist": {
+    "description": "Error message when trying to add a music sheet that already exists in a playlist",
+    "placeholders": {
+      "musicSheetName": {
+        "type": "String",
+        "description": "The name of the music sheet file"
+      },
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist"
+      }
+    }
+  },
+  "multipleMusicSheetsAlreadyInPlaylist": "Nasledujúce notové záznamy už existujú v zozname skladieb '{playlistName}': {musicSheetNames}",
+  "@multipleMusicSheetsAlreadyInPlaylist": {
+    "description": "Error message when trying to add multiple music sheets that already exist in a playlist",
+    "placeholders": {
+      "musicSheetNames": {
+        "type": "String",
+        "description": "Comma-separated list of music sheet names"
+      },
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist"
+      }
+    }
+  },
+  "playlistCapacityExceeded": "Nie je možné pridať {attemptedToAdd} notových záznamov do zoznamu skladieb '{playlistName}'. Zoznam skladieb má momentálne {currentCount}/{maxCapacity} notových záznamov. Maximálna kapacita je {maxCapacity} notových záznamov.",
+  "@playlistCapacityExceeded": {
+    "description": "Error message when trying to add music sheets that would exceed playlist capacity",
+    "placeholders": {
+      "attemptedToAdd": {
+        "type": "int",
+        "description": "Number of music sheets attempted to add"
+      },
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist"
+      },
+      "currentCount": {
+        "type": "int",
+        "description": "Current number of music sheets in playlist"
+      },
+      "maxCapacity": {
+        "type": "int",
+        "description": "Maximum allowed music sheets in playlist"
+      }
+    }
+  },
+  "musicSheetInitializationError": "Nastala chyba pri inicializácii.",
+  "selectAll": "Vybrať všetko",
+  "unselectAll": "Zrušiť výber",
+  "repositoryName": "Názov repozitára",
+  "enterRepositoryName": "Zadajte názov repozitára",
+  "newRepository": "Nový repozitár",
+  "renameRepository": "Premenovať repozitár",
+  "deleteRepository": "Vymazať repozitár",
+  "deleteRepositoryMessage": "Ste si istý, že chcete vymazať repozitár '{repositoryName}'? Týmto sa vymažú aj všetky notové záznamy v ňom. Táto akcia sa nedá vrátiť späť!",
+  "@deleteRepositoryMessage": {
+    "description": "Confirmation message when deleting a repository",
+    "placeholders": {
+      "repositoryName": {
+        "type": "String",
+        "description": "The name of the repository"
+      }
+    }
+  },
+  "repositoryGenericError": "Pri vykonávaní operácie s repozitárom došlo k chybe!",
+  "repositoryNotFoundError": "Repozitár nebol nájdený!",
+  "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať!",
+  "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre!",
+  "maximumRepositoriesCountExceededError": "Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.",
+  "@maximumRepositoriesCountExceededError": {
+    "description": "Error message when user tries to create more repositories than allowed",
+    "placeholders": {
+      "maximumRepositoriesCount": {
+        "type": "int",
+        "description": "The maximum number of repositories allowed"
+      }
+    }
+  },
+  "repositoryNetworkError": "Problém s konektivitou. Skontrolujte pripojenie na internet.",
+  "noFileDataAvailable": "Súbor je poškodený",
+  "storageManagement": "Správa úložiska",
+  "storedFiles": "Počet súborov v úložisku",
+  "storageSize": "Veľkosť úložiska",
+  "clearStorage": "Vyčistiť úložisko",
+  "clearStorageConfirmTitle": "Chcete naozaj vyčistiť úložisko?",
+  "clearStorageConfirmMessage": "Týmto sa vymažú všetky súbory v úložisku ({count} súborov, {size} MB). Noty sa znova načítajú pri ďalšom otvorení.",
+  "@clearStorageConfirmMessage": {
+    "description": "Confirmation message when clearing storage",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "description": "Number of stored files"
+      },
+      "size": {
+        "type": "String",
+        "description": "Total storage size"
+      }
+    }
+  },
+  "storageClearedSuccess": "Úložisko úspešne vyčistené",
+  "storageSummary": "Úložisko",
+  "aboutStorage": "O úložisku",
+  "storageDescription": "Súbory v úložisku umožňujú zobrazenie notových záznamov bez internetu, ktoré ste už mali otvorené.",
+  "storageRemovalInfo": "Súbory sú automaticky odstránené, keď neboli otvorené {days} dní alebo keď úložisko dosiahne maximálnu kapacitu {maxObjects} súborov.",
+  "@storageRemovalInfo": {
+    "description": "Informácie o tom, kedy sú súbory v úložisku odstránené",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "description": "Počet dní, po ktorých sa súbory stanú zastaralými"
+      },
+      "maxObjects": {
+        "type": "int",
+        "description": "Maximálny počet objektov v úložisku"
+      }
+    }
+  },
+  "manageStoredMusicSheets": "Spravovať offline noty",
+  "exportToPdf": "Exportovať do PDF",
+  "exportSuccess": "Zoznam úspešne exportovaný",
+  "exportFailed": "Nepodarilo sa exportovať zoznam",
+  "noMusicSheetsToExport": "Žiadne noty na export",
+  "exportErrorSourceFileNotFound": "Zdrojový súbor nebol nájdený",
+  "exportErrorSaveFailed": "Nepodarilo sa uložiť súbor",
+  "exportCancelled": "Export zrušený",
+  "fillAllFields": "Prosím vyplňte všetky polia",
+  "back": "Späť",
+  "renameMusicSheetFailed": "Nepodarilo sa premenovať notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
+  "uploadMusicSheetRecordFailed": "Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova."
 }
