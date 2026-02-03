@@ -230,6 +230,46 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
+        'Google: emits [LoggedOut(loading), LoggedOut(genericError)] when user cancels',
+        build: () => AuthBloc(
+          authProvider: authProvider,
+          firebaseFirestoreRepository: firebaseFirestoreRepository,
+          firebaseStorageRepository: firebaseStorageRepository,
+        ),
+        act: (bloc) => bloc.add(const AuthEventSignInWithGoogle()),
+        setUp: () {
+          when(() => authProvider.signInWithGoogle()).thenThrow(const AuthErrorUserNotLoggedIn());
+        },
+        expect: () => [
+          const AuthStateLoggedOut(isLoading: true),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+        ],
+        verify: (_) {
+          verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
+        },
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'Google: emits [LoggedOut(loading), LoggedOut(genericError)] on sign-in failure',
+        build: () => AuthBloc(
+          authProvider: authProvider,
+          firebaseFirestoreRepository: firebaseFirestoreRepository,
+          firebaseStorageRepository: firebaseStorageRepository,
+        ),
+        act: (bloc) => bloc.add(const AuthEventSignInWithGoogle()),
+        setUp: () {
+          when(() => authProvider.signInWithGoogle()).thenThrow(const AuthErrorGoogleSignInFailed());
+        },
+        expect: () => [
+          const AuthStateLoggedOut(isLoading: true),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+        ],
+        verify: (_) {
+          verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
+        },
+      );
+
+      blocTest<AuthBloc, AuthState>(
         'Apple: emits [LoggedOut(loading), LoggedIn(user)] on success',
         build: () => AuthBloc(
           authProvider: authProvider,
@@ -246,6 +286,46 @@ void main() {
         ],
         verify: (_) {
           verify(() => firebaseFirestoreRepository.createUserDocument(user: validUser)).called(1);
+        },
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'Apple: emits [LoggedOut(loading), LoggedOut(genericError)] when user cancels',
+        build: () => AuthBloc(
+          authProvider: authProvider,
+          firebaseFirestoreRepository: firebaseFirestoreRepository,
+          firebaseStorageRepository: firebaseStorageRepository,
+        ),
+        act: (bloc) => bloc.add(const AuthEventSignInWithApple()),
+        setUp: () {
+          when(() => authProvider.signInWithApple()).thenThrow(const AuthErrorUserNotLoggedIn());
+        },
+        expect: () => [
+          const AuthStateLoggedOut(isLoading: true),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+        ],
+        verify: (_) {
+          verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
+        },
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'Apple: emits [LoggedOut(loading), LoggedOut(genericError)] on sign-in failure',
+        build: () => AuthBloc(
+          authProvider: authProvider,
+          firebaseFirestoreRepository: firebaseFirestoreRepository,
+          firebaseStorageRepository: firebaseStorageRepository,
+        ),
+        act: (bloc) => bloc.add(const AuthEventSignInWithApple()),
+        setUp: () {
+          when(() => authProvider.signInWithApple()).thenThrow(const AuthErrorAppleSignInFailed());
+        },
+        expect: () => [
+          const AuthStateLoggedOut(isLoading: true),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+        ],
+        verify: (_) {
+          verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
         },
       );
     });

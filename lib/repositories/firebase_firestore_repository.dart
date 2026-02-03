@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:organista/config/app_constants.dart';
@@ -37,6 +38,72 @@ class FirebaseFirestoreRepository {
         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
       );
     }
+  }
+
+  /// Checks if an error is a permission-denied error.
+  /// Handles both FirebaseException and PlatformException since cloud_firestore can throw either.
+  bool _isPermissionDeniedError(Object error) {
+    if (error is FirebaseException && error.code == 'permission-denied') {
+      return true;
+    }
+    if (error is PlatformException &&
+        error.code == 'firebase_firestore' &&
+        error.details is Map &&
+        error.details['code'] == 'permission-denied') {
+      return true;
+    }
+    return false;
+  }
+
+  /// Handles permission-denied errors by checking auth state to distinguish
+  /// between transient auth issues (during app resume) and real permission violations.
+  void _handlePermissionDenied(String context, Exception error, StackTrace stackTrace) {
+    if (FirebaseAuth.instance.currentUser != null) {
+      // User is authenticated but access denied - this is a real permission error
+      logger.e(
+        'Permission denied $context for authenticated user - possible security rules violation',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } else {
+      // User not authenticated - likely transient auth state during app resume
+      logger.i('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
+    }
+  }
+
+  /// Executes a Firestore operation with unified error handling for permission-denied errors.
+  /// Returns the default value if permission-denied occurs, otherwise rethrows for other error handlers.
+  Future<T> _executeWithPermissionHandling<T>({
+    required Future<T> Function() operation,
+    required T defaultValue,
+    required String context,
+  }) async {
+    try {
+      return await operation();
+    } on Exception catch (e, stackTrace) {
+      if (_isPermissionDeniedError(e)) {
+        _handlePermissionDenied(context, e, stackTrace);
+        return defaultValue;
+      }
+      rethrow;
+    }
+  }
+
+  /// Creates a unified error handler for streams that handles permission-denied errors.
+  /// Returns the empty value and logs appropriately based on auth state.
+  T Function(Object, StackTrace) _createStreamErrorHandler<T>({
+    required T emptyValue,
+    required String context,
+    required String errorMessage,
+  }) {
+    return (error, stackTrace) {
+      if (_isPermissionDeniedError(error)) {
+        _handlePermissionDenied(context, error as Exception, stackTrace);
+      } else {
+        logger.e(errorMessage, error: error, stackTrace: stackTrace);
+      }
+      return emptyValue;
+    };
   }
 
   // USER OPERATIONS
@@ -129,10 +196,13 @@ class FirebaseFirestoreRepository {
           logger.i("Got new update for playlist $playlistId");
           return Playlist(playlistId: playlistId, json: data);
         })
-        .handleError((error, stackTrace) {
-          logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
-          return Playlist.empty();
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: Playlist.empty(),
+            context: 'when accessing playlist $playlistId',
+            errorMessage: 'Error in getPlaylistStream',
+          ),
+        );
   }
 
   Stream<Iterable<Playlist>> getPlaylistsStream(String userId) {
@@ -152,10 +222,13 @@ class FirebaseFirestoreRepository {
             ),
           );
         })
-        .handleError((error, stackTrace) {
-          logger.e('Error in getPlaylistsStream for user $userId', error: error, stackTrace: stackTrace);
-          return <Playlist>[];
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: <Playlist>[],
+            context: 'when querying playlists for user $userId',
+            errorMessage: 'Error in getPlaylistsStream for user $userId',
+          ),
+        );
   }
 
   Future<bool> addNewPlaylist({
@@ -385,10 +458,13 @@ class FirebaseFirestoreRepository {
             ),
           );
         })
-        .handleError((error, stackTrace) {
-          logger.e('Error in getRepositoriesStream for user $userId', error: error, stackTrace: stackTrace);
-          return <Repository>[];
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: <Repository>[],
+            context: 'when querying repositories for user $userId',
+            errorMessage: 'Error in getRepositoriesStream for user $userId',
+          ),
+        );
   }
 
   Stream<Iterable<MusicSheet>> getRepositoryMusicSheetsStream(String repositoryId) {
@@ -403,14 +479,13 @@ class FirebaseFirestoreRepository {
           logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
           return documents.map((doc) => MusicSheet(json: doc.data()));
         })
-        .handleError((error, stackTrace) {
-          logger.e(
-            'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
-            error: error,
-            stackTrace: stackTrace,
-          );
-          return <MusicSheet>[];
-        });
+        .handleError(
+          _createStreamErrorHandler(
+            emptyValue: <MusicSheet>[],
+            context: 'when querying music sheets for repository $repositoryId',
+            errorMessage: 'Error in getRepositoryMusicSheetsStream for repository $repositoryId',
+          ),
+        );
   }
 
   Future<bool> createGlobalRepository({required String name}) {
@@ -419,12 +494,18 @@ class FirebaseFirestoreRepository {
 
   Future<int> getUserRepositoriesCount({required String userId}) async {
     try {
-      final snapshot = await _instance
-          .collection(FirebaseCollectionName.repositories)
-          .where(RepositoryKey.userId, isEqualTo: userId)
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      return await _executeWithPermissionHandling(
+        operation: () async {
+          final snapshot = await _instance
+              .collection(FirebaseCollectionName.repositories)
+              .where(RepositoryKey.userId, isEqualTo: userId)
+              .count()
+              .get();
+          return snapshot.count ?? 0;
+        },
+        defaultValue: 0,
+        context: 'when getting user repositories count for user $userId',
+      );
     } catch (e, stackTrace) {
       _handleRepositoryError(e, stackTrace, 'Error getting user repositories count for user $userId');
       return 0;
@@ -559,13 +640,19 @@ class FirebaseFirestoreRepository {
 
   Future<int> getRepositoryMusicSheetsCount(String repositoryId) async {
     try {
-      final AggregateQuerySnapshot snapshot = await _instance
-          .collection(FirebaseCollectionName.repositories)
-          .doc(repositoryId)
-          .collection(FirebaseCollectionName.musicSheets)
-          .count()
-          .get();
-      return snapshot.count ?? 0;
+      return await _executeWithPermissionHandling(
+        operation: () async {
+          final AggregateQuerySnapshot snapshot = await _instance
+              .collection(FirebaseCollectionName.repositories)
+              .doc(repositoryId)
+              .collection(FirebaseCollectionName.musicSheets)
+              .count()
+              .get();
+          return snapshot.count ?? 0;
+        },
+        defaultValue: 0,
+        context: 'when getting music sheets count for repository $repositoryId',
+      );
     } catch (e, stackTrace) {
       _handleRepositoryError(e, stackTrace, 'Error getting music sheets count for repository $repositoryId');
       return 0;
@@ -573,7 +660,8 @@ class FirebaseFirestoreRepository {
   }
 
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
-    if (e is PlatformException && e.code == 'firebase_firestore' && e.details['code'] == 'unavailable') {
+    if (e is PlatformException &&
+        (e.code == 'unavailable' || (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
       logger.w('$logMessage: Service unavailable (offline)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {

@@ -152,14 +152,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // of the auth state before any queries are triggered by the UI.
         await Future.delayed(const Duration(milliseconds: 200));
 
-        unawaited(_updateSentryUser(user));
-
         emit(
           AuthStateLoggedIn(
             isLoading: false,
             user: user,
           ),
         );
+
+        unawaited(_updateSentryUser(user));
       }
     } catch (e, stackTrace) {
       logger.e('Error during auth initialization', error: e, stackTrace: stackTrace);

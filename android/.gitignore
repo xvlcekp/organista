@@ -10,3 +10,6 @@ GeneratedPluginRegistrant.java
 # See https://flutter.dev/to/reference-keystore
 **/*.keystore
 **/*.jks
+
+# Exception: Allow shared debug keystore (safe to commit, only for development)
+!keystores/debug.keystore
