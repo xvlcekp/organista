@@ -576,4 +576,12 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get back => 'Späť';
+
+  @override
+  String get renameMusicSheetFailed =>
+      'Nepodarilo sa premenovať notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.';
+
+  @override
+  String get uploadMusicSheetRecordFailed =>
+      'Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.';
 }

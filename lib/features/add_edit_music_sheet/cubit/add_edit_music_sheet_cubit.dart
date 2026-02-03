@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:meta/meta.dart' show immutable;
-import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/features/add_edit_music_sheet/error/add_edit_music_sheet_error.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
@@ -73,13 +73,13 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
       ),
     );
 
-    try {
-      final Reference? reference = await _firebaseStorageRepository.uploadFile(
-        file: file,
-        bucket: user.id,
-      );
+    final Reference? reference = await _firebaseStorageRepository.uploadFile(
+      file: file,
+      bucket: user.id,
+    );
 
-      if (reference != null) {
+    final success =
+        reference != null &&
         await _firebaseFirestoreRepository.uploadMusicSheetRecord(
           reference: reference,
           userId: user.id,
@@ -87,38 +87,34 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
           mediaType: file.mediaType,
           repositoryId: repositoryId,
         );
-        if (!isClosed) {
-          emit(
-            UploadMusicSheetState(
-              file: file,
-              repositoryId: repositoryId,
-              isLoading: false,
-            ),
-          );
-        }
-      } else {
-        throw Exception('Failed to upload file, not uploading MusicSheet record to Firestore');
-      }
-    } catch (e, stackTrace) {
-      logger.e('Failed to upload file', error: e, stackTrace: stackTrace);
-      if (!isClosed) {
+
+    if (!isClosed) {
+      if (success) {
         emit(
           UploadMusicSheetState(
             file: file,
             repositoryId: repositoryId,
             isLoading: false,
-            error: e.toString(),
+          ),
+        );
+      } else {
+        emit(
+          UploadMusicSheetState(
+            file: file,
+            repositoryId: repositoryId,
+            isLoading: false,
+            error: const UploadMusicSheetRecordFailedError(),
           ),
         );
       }
     }
   }
 
-  Future<void> renameMusicSheetInPlaylist({
+  void renameMusicSheetInPlaylist({
     required Playlist playlist,
     required MusicSheet musicSheet,
     required String fileName,
-  }) async {
+  }) {
     if (isClosed) return;
 
     emit(
@@ -128,14 +124,14 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
         isLoading: true,
       ),
     );
+    final success = _firebaseFirestoreRepository.renameMusicSheetInPlaylist(
+      musicSheet: musicSheet,
+      fileName: fileName,
+      playlist: playlist,
+    );
 
-    try {
-      await _firebaseFirestoreRepository.renameMusicSheetInPlaylist(
-        musicSheet: musicSheet,
-        fileName: fileName,
-        playlist: playlist,
-      );
-      if (!isClosed) {
+    if (!isClosed) {
+      if (success) {
         emit(
           EditMusicSheetState(
             musicSheet: musicSheet,
@@ -143,16 +139,13 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
             isLoading: false,
           ),
         );
-      }
-    } catch (e, stackTrace) {
-      logger.e('Failed to rename music sheet', error: e, stackTrace: stackTrace);
-      if (!isClosed) {
+      } else {
         emit(
           EditMusicSheetState(
             musicSheet: musicSheet,
             playlist: playlist,
             isLoading: false,
-            error: e.toString(),
+            error: const RenameMusicSheetFailedError(),
           ),
         );
       }

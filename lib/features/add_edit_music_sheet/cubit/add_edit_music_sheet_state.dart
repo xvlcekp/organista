@@ -10,7 +10,7 @@ sealed class AddEditMusicSheetState extends Equatable {
 
   final String fileName;
   final bool isLoading;
-  final String? error;
+  final AddEditMusicSheetError? error;
 }
 
 @immutable

@@ -572,4 +572,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get back => 'Back';
+
+  @override
+  String get renameMusicSheetFailed => 'Failed to rename music sheet. Please check your connection and try again.';
+
+  @override
+  String get uploadMusicSheetRecordFailed =>
+      'Failed to save music sheet record. Please check your connection and try again.';
 }

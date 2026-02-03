@@ -151,7 +151,7 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
           as _i4.Future<bool>);
 
   @override
-  _i4.Future<bool> renameMusicSheetInPlaylist({
+  bool renameMusicSheetInPlaylist({
     required _i8.MusicSheet? musicSheet,
     required String? fileName,
     required _i6.Playlist? playlist,
@@ -162,9 +162,9 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
               #fileName: fileName,
               #playlist: playlist,
             }),
-            returnValue: _i4.Future<bool>.value(false),
+            returnValue: false,
           )
-          as _i4.Future<bool>);
+          as bool);
 
   @override
   _i4.Future<bool> deleteMusicSheetInPlaylist({

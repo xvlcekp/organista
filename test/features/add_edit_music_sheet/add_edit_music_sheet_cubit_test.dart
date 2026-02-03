@@ -107,7 +107,7 @@ void main() {
           file: anyNamed('file'),
           bucket: anyNamed('bucket'),
         ),
-      ).thenThrow(Exception('upload failed'));
+      ).thenAnswer((_) async => null);
 
       await cubit.uploadNewMusicSheet(
         user: user,
@@ -143,9 +143,9 @@ void main() {
           fileName: anyNamed('fileName'),
           playlist: anyNamed('playlist'),
         ),
-      ).thenAnswer((_) async => true);
+      ).thenReturn(true);
 
-      await cubit.renameMusicSheetInPlaylist(
+      cubit.renameMusicSheetInPlaylist(
         playlist: mockPlaylist,
         musicSheet: mockMusicSheet,
         fileName: 'renamed.pdf',
@@ -178,9 +178,9 @@ void main() {
           fileName: anyNamed('fileName'),
           playlist: anyNamed('playlist'),
         ),
-      ).thenThrow(Exception('rename failed'));
+      ).thenReturn(false);
 
-      await cubit.renameMusicSheetInPlaylist(
+      cubit.renameMusicSheetInPlaylist(
         playlist: mockPlaylist,
         musicSheet: mockMusicSheet,
         fileName: 'renamed.pdf',
