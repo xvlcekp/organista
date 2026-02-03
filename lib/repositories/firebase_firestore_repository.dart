@@ -40,9 +40,24 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  /// Checks if an error is a permission-denied error.
+  /// Handles both FirebaseException and PlatformException since cloud_firestore can throw either.
+  bool _isPermissionDeniedError(Object error) {
+    if (error is FirebaseException && error.code == 'permission-denied') {
+      return true;
+    }
+    if (error is PlatformException &&
+        error.code == 'firebase_firestore' &&
+        error.details is Map &&
+        error.details['code'] == 'permission-denied') {
+      return true;
+    }
+    return false;
+  }
+
   /// Handles permission-denied errors by checking auth state to distinguish
   /// between transient auth issues (during app resume) and real permission violations.
-  void _handlePermissionDenied(String context, FirebaseException error, StackTrace stackTrace) {
+  void _handlePermissionDenied(String context, Exception error, StackTrace stackTrace) {
     if (FirebaseAuth.instance.currentUser != null) {
       // User is authenticated but access denied - this is a real permission error
       logger.e(
@@ -65,8 +80,8 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       return await operation();
-    } on FirebaseException catch (e, stackTrace) {
-      if (e.code == 'permission-denied') {
+    } on Exception catch (e, stackTrace) {
+      if (_isPermissionDeniedError(e)) {
         _handlePermissionDenied(context, e, stackTrace);
         return defaultValue;
       }
@@ -82,8 +97,8 @@ class FirebaseFirestoreRepository {
     required String errorMessage,
   }) {
     return (error, stackTrace) {
-      if (error is FirebaseException && error.code == 'permission-denied') {
-        _handlePermissionDenied(context, error, stackTrace);
+      if (_isPermissionDeniedError(error)) {
+        _handlePermissionDenied(context, error as Exception, stackTrace);
       } else {
         logger.e(errorMessage, error: error, stackTrace: stackTrace);
       }
