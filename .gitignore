@@ -63,3 +63,4 @@ sentry.properties
 
 # iOS related
 ios/Podfile.lock
+functions/package-lock.json
