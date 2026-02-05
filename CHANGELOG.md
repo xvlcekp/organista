@@ -8,31 +8,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- 
+
+-
 
 ### Changed
-- 
+
+-
 
 ### Deprecated
-- 
+
+-
 
 ### Removed
-- 
+
+-
 
 ### Fixed
-- 
+
+-
 
 ### Security
-- 
+
+-
+
+## [1.2.0] - 2026-02-04
+
+### Added
+
+- Zobrazenie nôt na celý displej bez navigáčného panela (Android)
+- Pridaná podpora pre posúvanie nôt cez šípky na klávesnici / pedál
+
+### Fixed
+
+- Opravené mazanie offline nôt po týždni -> 365 dní
+- Zobrazovanie názvvu piesne aj pri obrázkoch (v režime celej obrazovky)
+- Opravené premenovanie piesne v offline režime
+- Opravené chyby na pozadí
+
+### Security
+
+- Aktualizované knižnice na Firebase Functions, balíky knižníc
 
 ## [1.1.1] - 2026-01-04
+
 ### Added
+
 - Pridané unit testy, widget testy, značné zlepšenie pokrytia
 - Zlepšenie logovania
 - Pridané Shorebird na zrýchlenie vývoja
 - Pridané tlačidlo späť pri zobrazení nôt na celú obrazovku
 - Jasnejšie inštrukcie pri prázdnom playliste / žiadnych playlistoch
+
 ### Fixed
+
 - Opravený chýbajúce ID piesne v Firebase
 - Opravená chyba s alokáciou pamäti pri zobrazovaní PDF
 - Zobrazenie chyby pri prihlasovaní s prázdným menom/heslom
@@ -40,92 +68,130 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Oprava chýb vlastých repozitárov, keď je aplikácia offline
 - Opravená chyba s odstránením užívateľa po kratšej a dlhšej dobe od prihlásenia
 - Refaktoring
+
 ### Security
+
 - Aktualizované knižnice na Firebase Functions, balíky knižníc
 
 ## [1.1.0] - 2025-12-22
+
 ### Added
+
 - Pridaná obrazovka na mazanie nôt z úložiska
 - Pridaná možnosť exportu playlistu do PDF
 - Nahradené Crashlytics za Sentry na monitorovanie chýb
 - Interné zmeny organizácie projektu
 - Používanie CodeMagic na deploy
+
 ### Fixed
+
 - Zlepšená obrazovka s nastaveniami
 - Opravené mazanie nôt, keď aplikácia nebola dlhšie pripojená k internetu
 - Počas nahrávania vlastného súboru bolo možno zrušiť proces tlačidlom späť, opravené
 - Aktualizované knižnice na Firebase Functions, balíky knižníc
 
 ## [1.0.7] - 2025-11-28
+
 ### Added
+
 - Pridaná podpora pre iOS
 - Pridaná možnosť prihlásenia cez Apple ID
+
 ### Fixed
+
 - Zrýchlenie aplikácie
 - Zmeny na pozadí, upratovanie kódu
+
 ### Security
+
 - Aktualizované knižnice na Firebase Functions
 
 ## [1.0.6] - 2025-10-04
+
 ### Added
+
 - Pridávanie viacerých skladieb z repozitára naraz do playlistu
 - Možnosť pridať vlastných repozitárov ako zložiek
 - Zlepšenie chybových hlášok
+
 ### Fixed
-- Opravená JKS 372 -> 371 
+
+- Opravená JKS 372 -> 371
 - Opravené náhľady piesní pri pridávaní nových
+
 ### Security
+
 - Aktualizované knižnice na Firebase Functions
 
 ## [1.0.5] - 2025-07-29
+
 ### Added
+
 - Pridané noty s Mariánskou kyticou a ďalšie svadobné
 - Automatizácia procesu vydávania aplikácie
+
 ### Fixed
+
 - Oprava chyby - po odstránení konta sa prejde na prihlasovaciu stránku
 - Pri viacerých skladbách sa nedala otvoriť posledná položka v zozname kvôli blokujúcemu elementu
 - Systémový panel vo farbe témy a nie stále biely
+
 ### Security
+
 - Aktualizované knižnice
 - Aktualizácia Flutteru na novšiu verziu
 
 ## [1.0.4] - 2025-06-28
+
 ### Added
+
 - Možnosť prihlásenia sa do aplikácie cez Google účet (Gmail)
 - Výrazné zrýchlenie prepínania strán
 - Pridané nastavenie, aby sa nezhasínala obrazovka
 - Neviditeľné zlepšenia v kóde, aktualizácie balíkov a iné
 - Pridaná CI/CD pipeline na automatické testy
 - Pridaná podpora pre JPEG obrázky
+
 ### Fixed
+
 - Preklad chybových hlášok pri prihlasovaní
 - Pridané unit testy
 - Opravené preklady
 - Optimalizácia a zrýchlenie aplikácie
+
 ### Security
+
 - Vylepšená bezpečnosť prístupu k repozitárom
 - Iné bezpečnostné zlepšenia
 
 ## [1.0.3] - 2025-05-11
+
 ### Added
-- Zlepšenie práce s aplikáciou v offline režime 
+
+- Zlepšenie práce s aplikáciou v offline režime
 - Zjednodušené prepínanie strán vrámci jednej skladby - kliknutím
 - Neviditeľné zlepšenia v kóde, aktualizácie balíkov a iné
 
 ## [1.0.2] - 2025-04-24
+
 ### Added
+
 - Pridaný textový vstup na zopakovanie hesla pri registrácii
 - Optimalizovaná ikona
 - Drobné úpravy
 
 ## [1.0.1] - 2025-04-22 [https://github.com/xvlcekp/organista/tree/release/1.0.1](https://github.com/xvlcekp/organista/tree/release/1.0.1)
+
 ### Added
+
 - Slovak language as default language
 - added FAQ to about
 - added organ icon
 
 ## [1.0.0] - 2025-04-21
+
 ### Added
+
 - Initial release
 - Basic functionality
 
