@@ -67,6 +67,18 @@ class UploadedMusicSheetFileView extends HookWidget {
               ),
             );
           }
+
+        case MediaType.musicxml:
+          child = const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.music_note, size: 64),
+                SizedBox(height: 16),
+                Text('MusicXML File'),
+              ],
+            ),
+          );
       }
     }
     return Row(

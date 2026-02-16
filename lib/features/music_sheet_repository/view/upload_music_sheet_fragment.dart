@@ -33,7 +33,7 @@ class UploadMusicSheetFragment extends StatelessWidget {
                 FilePicker.platform
                     .pickFiles(
                       type: FileType.custom,
-                      allowedExtensions: ['jpg', 'pdf', 'png'],
+                      allowedExtensions: ['jpg', 'pdf', 'png', 'musicxml', 'xml'],
                       withData: true,
                     )
                     .then((result) {

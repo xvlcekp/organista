@@ -6,6 +6,7 @@ import 'package:organista/features/show_music_sheet/view/music_sheet_title_overl
 import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_viewer_widget.dart';
+import 'package:organista/features/show_music_sheet/view/music_xml_viewer_widget.dart';
 
 class MusicSheetView extends HookWidget {
   const MusicSheetView({
@@ -26,6 +27,7 @@ class MusicSheetView extends HookWidget {
         switch (musicSheet.mediaType) {
           MediaType.image => CachedNetworkImageWidget(musicSheet: musicSheet, mode: mode),
           MediaType.pdf => PdfViewerWidget(musicSheet: musicSheet, mode: mode),
+          MediaType.musicxml => MusicXmlViewerWidget(musicSheet: musicSheet),
         },
         if (mode == MusicSheetViewMode.full) const BackButtonWidget(),
         // Show title overlay in full mode

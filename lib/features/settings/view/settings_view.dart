@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/settings/view/delete_account_dialog.dart';
 import 'package:organista/features/cache_management/view/cache_management_page.dart';
-import 'package:organista/features/musicxml_test/view/musicxml_test_view.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/features/settings/widgets/section_header.dart';
@@ -121,23 +120,6 @@ class SettingsView extends StatelessWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const CacheManagementPage(),
-                      ),
-                    );
-                  },
-                ),
-                // MusicXML Test Section
-                const SectionHeader(
-                  title: 'Development',
-                  icon: Icons.code,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.music_note),
-                  title: const Text('MusicXML Test'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const MusicXmlTestView(),
                       ),
                     );
                   },
