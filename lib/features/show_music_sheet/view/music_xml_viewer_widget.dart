@@ -231,16 +231,30 @@ $safeXml
                 });
 
                 osmd.setOptions({
-                    drawingParameters: "default", // Use default to allow manual spacing overrides
-                    drawPartNames: false,         // Hide instrument names (e.g., Organ)
-                    drawPartAbbreviations: false, // Hide instrument abbreviations
+                    drawingParameters: "all", // Changed to all to ensure credits/extra verses are processed
+                    drawPartNames: false,
+                    drawPartAbbreviations: false,
+                    drawTitle: true,              // Ensure title stays visible with "all"
+                    drawCredits: true,            // Enable rendering of extra verses/credits
+                    pageFormat: "A4_P",
+                    renderSingleHorizontalStaffline: false,
                     engravingRules: {
-                        StaffDistance: 12.0,       // Distance between staves (LH/RH)
-                        MinSystemDistance: 15.0,   // Distance between lines of music
+                        LyricsAlignment: 0,
+                        RenderVerseNumbers: false,
+                        RenderCredits: true,      // Explicitly render credits/verses
+                        CompactMode: false,
+                        VoiceSpacingMultiplier: 0.65,
+                        VoiceSpacingAddend: 2.0,
+                        MinSkyBottomDistBetweenStaves: 1.0,
+                        MinSkyBottomDistBetweenSystems: 1.0,
+                        BetweenStaffDistance: 2.5,
+                        StaffDistance: 3.5,
+                        MinSystemDistance: 1.0,
                         PageTopMargin: 10.0,
-                        PageBottomMargin: 10.0,
-                        VoiceSpacingMultiplier: 0.7, // Stable horizontal spacing
-                        MinNoteDistance: 1.0,       // Minimum distance to prevent measure overcrowding
+                        PageBottomMargin: 10.0, // Added margin
+                        PageLeftMargin: 2.0,
+                        PageRightMargin: 2.0,
+                        MinNoteDistance: 1.0,
                     }
                 });
 
@@ -279,14 +293,14 @@ $safeXml
         async function fitToPage() {
             if (!osmd) return;
             try {
-                // Use window.innerWidth for robust initial scaling
+                // Determine a stable width for A4 layout. 
                 const containerWidth = window.innerWidth - 40;
-                baseWidth = 1000; // Constant virtual page width 
-                currentZoom = containerWidth / 850;
+                // OSMD's internal base width for A4 is roughly 800-900 units.
+                // We use baseWidth = 1000 as a virtual reference.
+                // Subtract 0.1 to start one "zoom out" step smaller as requested.
+                currentZoom = (containerWidth / (baseWidth * 0.82)) - 0.1; 
                 
-                // Scale container to match zoom exactly to lock line breaks
-                document.getElementById('osmdContainer').style.width = (baseWidth * currentZoom) + "px";
-                osmd.zoom = currentZoom;
+                updateView();
             } catch (e) {
                 console.warn(e);
             }
@@ -295,16 +309,19 @@ $safeXml
         function zoomIn() {
             if (!osmd) return;
             currentZoom = Math.min(currentZoom + 0.1, 5.0);
-            document.getElementById('osmdContainer').style.width = (baseWidth * currentZoom) + "px";
-            osmd.zoom = currentZoom;
-            osmd.render();
+            updateView();
         }
         
         function zoomOut() {
             if (!osmd) return;
-            // Allow zooming out to 10% to see whole page
             currentZoom = Math.max(currentZoom - 0.1, 0.1);
-            document.getElementById('osmdContainer').style.width = (baseWidth * currentZoom) + "px";
+            updateView();
+        }
+
+        function updateView() {
+            // Don't constrain container width - let it grow/shrink naturally with zoom
+            // This allows newSystemFromXML and newPageFromXML to work properly
+            // The container will use 'width: fit-content' from CSS
             osmd.zoom = currentZoom;
             osmd.render();
         }
@@ -324,9 +341,7 @@ $safeXml
            try {
                osmd.Sheet.Transpose = currentTranspose;
                osmd.updateGraphic();
-               // Ensure width is correct
-               document.getElementById('osmdContainer').style.width = (baseWidth * currentZoom) + "px";
-               osmd.render();
+               updateView();
                FlutterChannel.postMessage('transpose:' + currentTranspose);
                // Re-apply visibility in single page mode if needed, though render might reset it
                // For now, let's assume specific visibility handling might be needed if render resets DOM
