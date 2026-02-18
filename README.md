@@ -171,11 +171,31 @@ In this project we use Firebase functions. As they use 3rd party JS libraries, t
 `cd functions/`  
 `npm update`
 
-## Release from pipeline
+## Android Signing
 
-For encoding, we will make use of the popular Base64 encoding scheme. Base64 doesn’t stand for specific but various encoding schemes that allow you to convert binary data into a text representation. We need to upload Keystore certificate to Github workflow in STRING format.
-Encoding keystore cert:
-`openssl base64 < your_signing_keystore.jks | tr -d '\n' | tee your_signing_keystore_base64_encoded.txt`
+Android signing is configured via property files in `android/`. Both files are gitignored and must be created locally.
+
+### `android/debug_signing.properties` (debug builds)
+
+```properties
+storeFile=keystore/debug.keystore
+storePassword=<keystore_password>
+keyAlias=androiddebugkey
+keyPassword=<key_password>
+```
+
+### `android/release_signing.properties` (release builds)
+
+```properties
+storeFile=keystore/organista.keystore
+storePassword=<keystore_password>
+keyAlias=organista
+keyPassword=<key_password>
+```
+
+### Codemagic
+
+Codemagic uses its own native code signing and ignores the Gradle signing config. No property files are needed on CI.
 
 If you modify `assets/config/credentials.json`, you need to change it also in the pipeline.
 
