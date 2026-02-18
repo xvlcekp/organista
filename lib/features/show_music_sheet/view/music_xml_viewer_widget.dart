@@ -190,6 +190,28 @@ class _MusicXmlViewerWidgetState extends State<MusicXmlViewerWidget> with Single
             display: block !important;
             max-width: none !important; /* Allow growth beyond viewport when zoomed */
         }
+        /* Make all note elements bolder */
+        svg path,
+        svg rect,
+        svg line,
+        svg circle,
+        svg ellipse {
+            stroke-width: 2.5 !important; /* Make all strokes thicker */
+            paint-order: stroke fill; /* Ensure stroke is visible */
+        }
+        /* Specifically target note heads to make them bolder */
+        svg path[d*="M"] {
+            stroke: black !important;
+            stroke-width: 1.5 !important;
+        }
+        /* Make staff lines and stems more prominent */
+        svg line {
+            stroke-width: 2.0 !important;
+        }
+        /* Apply a slight contrast boost to make everything crisper */
+        svg {
+            filter: contrast(1.15);
+        }
         .osmdPage {
             /* Handled by SVG selector above */
         }
@@ -254,7 +276,7 @@ $safeXml
                         PageBottomMargin: 10.0, // Added margin
                         PageLeftMargin: 2.0,
                         PageRightMargin: 2.0,
-                        MinNoteDistance: 1.0,
+                        MinNoteDistance: 1.0
                     }
                 });
 
@@ -281,7 +303,6 @@ $safeXml
                     }
                 }, 100);
                 
-                osmd.cursor.show();
                 document.getElementById('status').style.display = 'none';
             } catch (error) {
                 console.error('Error loading music:', error);
