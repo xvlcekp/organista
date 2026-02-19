@@ -173,9 +173,9 @@ In this project we use Firebase functions. As they use 3rd party JS libraries, t
 
 ## Android Signing
 
-Android signing is configured via property files in `android/`. Both files are gitignored and must be created locally.
+Android signing is configured via property files in `android/app/keystore/`. Both files are gitignored and must be created locally.
 
-### `android/debug_signing.properties` (debug builds)
+### `android/app/keystore/debug_signing.properties` (debug builds)
 
 ```properties
 storeFile=keystore/debug.keystore
@@ -184,7 +184,7 @@ keyAlias=androiddebugkey
 keyPassword=<key_password>
 ```
 
-### `android/release_signing.properties` (release builds)
+### `android/app/keystore/release_signing.properties` (release builds)
 
 ```properties
 storeFile=keystore/organista.keystore

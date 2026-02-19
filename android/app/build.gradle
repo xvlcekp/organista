@@ -50,7 +50,7 @@ android {
 
     signingConfigs {
         debug {
-            def keyPropsFile = rootProject.file("debug_signing.properties")
+            def keyPropsFile = file("keystore/debug_signing.properties")
             def keyProps = new Properties()
             keyProps.load(new FileInputStream(keyPropsFile))
             storeFile file(keyProps['storeFile'])
@@ -59,7 +59,7 @@ android {
             keyPassword keyProps['keyPassword']
         }
         release {
-            def keyPropsFile = rootProject.file("release_signing.properties")
+            def keyPropsFile = file("keystore/release_signing.properties")
             def keyProps = new Properties()
             keyProps.load(new FileInputStream(keyPropsFile))
             storeFile file(keyProps['storeFile'])
