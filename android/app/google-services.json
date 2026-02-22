@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "613500039629",
+    "project_id": "organista-project",
+    "storage_bucket": "organista-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613500039629:android:309c878b8223ac997fd484",
+        "android_client_info": {
+          "package_name": "sk.anickaapavol.organista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613500039629-g2r6fsk7eh2c6mssju0vo1g762jujhio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.anickaapavol.organista",
+            "certificate_hash": "c5d962628e62b01e2ea3a2e8c1eebd32f2034cff"
+          }
+        },
+        {
+          "client_id": "613500039629-o525het19gt8ta79jj6gtt3msulbmb6k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.anickaapavol.organista",
+            "certificate_hash": "d445f397fd0190788ca5416f3aca9c7787c2d366"
+          }
+        },
+        {
+          "client_id": "613500039629-gcu0ejlq7ofcr6d5tmdsul2gussjdljk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjw0EeiwN5Pklhv3PpYiHexB4n9Nv1Zu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613500039629-gcu0ejlq7ofcr6d5tmdsul2gussjdljk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "613500039629-53r67ad27vflravd77qnj9k8ag59pghs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "sk.anickaapavol.organista"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
