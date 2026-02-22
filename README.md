@@ -6,6 +6,10 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 ## Changelog
 
+### Version 1.2.1 - 22.2.2026
+
+- Opravené prihlasovanie cez Google na Androidoch
+
 ### Version 1.2.0 - 5.2.2026
 
 <table>
