@@ -50,41 +50,31 @@ android {
 
     signingConfigs {
         debug {
-            // Use shared debug keystore for all developers to ensure consistent SHA fingerprints
-            storeFile file('../keystores/debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            def keyPropsFile = file("keystore/debug_signing.properties")
+            def keyProps = new Properties()
+            keyProps.load(new FileInputStream(keyPropsFile))
+            storeFile file(keyProps['storeFile'])
+            storePassword keyProps['storePassword']
+            keyAlias keyProps['keyAlias']
+            keyPassword keyProps['keyPassword']
         }
         release {
-            def keystorePath = System.getenv("ANDROID_KEYSTORE_FILE")
-            def keystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
-            def keyAlias = System.getenv("ANDROID_KEY_ALIAS")
-            def keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
-
-            // Only configure signing if all required values are present (local builds)
-            // On Codemagic with native signing, these will be null and Codemagic handles signing
-            if (keystorePath != null && keystorePassword != null &&
-                keyAlias != null && keyPassword != null) {
-                storeFile file(keystorePath)
-                storePassword keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-            }
+            def keyPropsFile = file("keystore/release_signing.properties")
+            def keyProps = new Properties()
+            keyProps.load(new FileInputStream(keyPropsFile))
+            storeFile file(keyProps['storeFile'])
+            storePassword keyProps['storePassword']
+            keyAlias keyProps['keyAlias']
+            keyPassword keyProps['keyPassword']
         }
     }
 
     buildTypes {
         debug {
-            // Use shared debug keystore for consistent SHA fingerprints across all developers
             signingConfig signingConfigs.debug
         }
         release {
-            // Only apply signing config if it's properly configured (local builds)
-            // On Codemagic with native signing, this will be null and Codemagic handles signing
-            if (signingConfigs.release.storeFile != null) {
-                signingConfig signingConfigs.release
-            }
+            signingConfig signingConfigs.release
             // Enables code shrinking, obfuscation, and optimization
             minifyEnabled true
             // Enables resource shrinking

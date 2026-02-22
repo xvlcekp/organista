@@ -2,8 +2,6 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'package:organista/config/config_controller.dart';
-import 'dart:convert';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -16,9 +14,7 @@ import 'dart:convert';
 /// );
 /// ```
 class DefaultFirebaseOptions {
-  static Future<FirebaseOptions> get currentPlatform async {
-    await ConfigController.load();
-
+  static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
     }
@@ -49,44 +45,32 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static FirebaseOptions get web {
-    final firebaseConfig = jsonDecode(ConfigController.get('firebase') ?? '{}');
-    final webConfig = firebaseConfig['web'] ?? {};
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyD0cWoplvtRP0YhK5OVZAiEgrocX31llsw',
+    appId: '1:613500039629:web:7213a0f92d44390c7fd484',
+    messagingSenderId: '613500039629',
+    projectId: 'organista-project',
+    authDomain: 'organista-project.firebaseapp.com',
+    storageBucket: 'organista-project.firebasestorage.app',
+    measurementId: 'G-P56HQ5L6BE',
+  );
 
-    return FirebaseOptions(
-      apiKey: webConfig['apiKey'] ?? '',
-      appId: webConfig['appId'] ?? '',
-      messagingSenderId: webConfig['messagingSenderId'] ?? '',
-      projectId: webConfig['projectId'] ?? '',
-      authDomain: webConfig['authDomain'] ?? '',
-      storageBucket: webConfig['storageBucket'] ?? '',
-    );
-  }
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAjw0EeiwN5Pklhv3PpYiHexB4n9Nv1Zu0',
+    appId: '1:613500039629:android:309c878b8223ac997fd484',
+    messagingSenderId: '613500039629',
+    projectId: 'organista-project',
+    storageBucket: 'organista-project.firebasestorage.app',
+  );
 
-  static FirebaseOptions get android {
-    final firebaseConfig = jsonDecode(ConfigController.get('firebase') ?? '{}');
-    final androidConfig = firebaseConfig['android'] ?? {};
-
-    return FirebaseOptions(
-      apiKey: androidConfig['apiKey'] ?? '',
-      appId: androidConfig['appId'] ?? '',
-      messagingSenderId: androidConfig['messagingSenderId'] ?? '',
-      projectId: androidConfig['projectId'] ?? '',
-      storageBucket: androidConfig['storageBucket'] ?? '',
-    );
-  }
-
-  static FirebaseOptions get ios {
-    final firebaseConfig = jsonDecode(ConfigController.get('firebase') ?? '{}');
-    final iosConfig = firebaseConfig['ios'] ?? {};
-
-    return FirebaseOptions(
-      apiKey: iosConfig['apiKey'] ?? '',
-      appId: iosConfig['appId'] ?? '',
-      messagingSenderId: iosConfig['messagingSenderId'] ?? '',
-      projectId: iosConfig['projectId'] ?? '',
-      storageBucket: iosConfig['storageBucket'] ?? '',
-      iosBundleId: iosConfig['iosBundleId'] ?? '',
-    );
-  }
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDG_ch27eg9qXiCfH553rH-TV5eNx1vTw8',
+    appId: '1:613500039629:ios:0dd31356e1a75c9b7fd484',
+    messagingSenderId: '613500039629',
+    projectId: 'organista-project',
+    storageBucket: 'organista-project.firebasestorage.app',
+    androidClientId: '613500039629-g2r6fsk7eh2c6mssju0vo1g762jujhio.apps.googleusercontent.com',
+    iosClientId: '613500039629-53r67ad27vflravd77qnj9k8ag59pghs.apps.googleusercontent.com',
+    iosBundleId: 'sk.anickaapavol.organista',
+  );
 }

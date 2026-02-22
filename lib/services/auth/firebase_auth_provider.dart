@@ -94,12 +94,7 @@ class FirebaseAuthProvider implements AuthProvider {
       try {
         googleUser = await _googleSignIn.authenticate();
       } on GoogleSignInException catch (e, stackTrace) {
-        // Handle user cancellation gracefully (not an error, just normal user behavior)
-        if (e.code == GoogleSignInExceptionCode.canceled) {
-          logger.i('Google Sign-In was canceled by user');
-          Error.throwWithStackTrace(const AuthErrorUserNotLoggedIn(), stackTrace);
-        }
-        // Log actual errors (SHA fingerprint issues, OAuth config problems, etc.)
+        // Log actual errors (SHA fingerprint issues, OAuth config problems, GoogleSignInExceptionCode.canceled etc.)
         logger.e('Google authentication failed: ${e.code} - ${e.description}', error: e, stackTrace: stackTrace);
         Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
       } catch (e, stackTrace) {
