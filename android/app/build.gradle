@@ -51,21 +51,30 @@ android {
     signingConfigs {
         debug {
             def keyPropsFile = file("keystore/debug_signing.properties")
-            def keyProps = new Properties()
-            keyProps.load(new FileInputStream(keyPropsFile))
-            storeFile file(keyProps['storeFile'])
-            storePassword keyProps['storePassword']
-            keyAlias keyProps['keyAlias']
-            keyPassword keyProps['keyPassword']
+            if (keyPropsFile.exists()) {
+                def keyProps = new Properties()
+                keyProps.load(new FileInputStream(keyPropsFile))
+                storeFile file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
         }
         release {
             def keyPropsFile = file("keystore/release_signing.properties")
-            def keyProps = new Properties()
-            keyProps.load(new FileInputStream(keyPropsFile))
-            storeFile file(keyProps['storeFile'])
-            storePassword keyProps['storePassword']
-            keyAlias keyProps['keyAlias']
-            keyPassword keyProps['keyPassword']
+            if (keyPropsFile.exists()) {
+                def keyProps = new Properties()
+                keyProps.load(new FileInputStream(keyPropsFile))
+                storeFile file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            } else if (System.getenv("CM_KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("CM_KEYSTORE_PATH"))
+                storePassword System.getenv("CM_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("CM_KEY_ALIAS")
+                keyPassword System.getenv("CM_KEY_PASSWORD")
+            }
         }
     }
 
