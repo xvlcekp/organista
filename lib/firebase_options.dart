@@ -69,7 +69,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '613500039629',
     projectId: 'organista-project',
     storageBucket: 'organista-project.firebasestorage.app',
-    androidClientId: '613500039629-g2r6fsk7eh2c6mssju0vo1g762jujhio.apps.googleusercontent.com',
+    androidClientId: '613500039629-1oc3e05ds56s014blosji7ce4iqdtd48.apps.googleusercontent.com',
     iosClientId: '613500039629-53r67ad27vflravd77qnj9k8ag59pghs.apps.googleusercontent.com',
     iosBundleId: 'sk.anickaapavol.organista',
   );

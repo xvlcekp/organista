@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "613500039629-1oc3e05ds56s014blosji7ce4iqdtd48.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.anickaapavol.organista",
+            "certificate_hash": "06f8407bde0eeadd24ec93013bf730f29fd79e00"
+          }
+        },
+        {
           "client_id": "613500039629-g2r6fsk7eh2c6mssju0vo1g762jujhio.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -197,6 +197,18 @@ keyAlias=organista
 keyPassword=<key_password>
 ```
 
+### Google Play App Signing (Production)
+
+When the app is published to the Play Store, Google Play may re-sign the app with its own key. The fingerprints for the **Google Play App Signing** key must also be registered in Firebase to allow Google Sign-In for the Play Store version of the app.
+
+**SHA Fingerprints (Google Play):**
+
+- **SHA-1:** `06:F8:40:7B:DE:0E:EA:DD:24:EC:93:01:3B:F7:30:F2:9F:D7:9E:00`
+- **SHA-256:** `8C:84:30:D3:AE:0B:8A:85:9D:8A:28:2F:40:E9:1C:B6:D7:CB:3D:BA:2D:EC:6E:12:D3:6F:63:FD:81:67:45:40`
+
+**Security Note:**
+It is safe for these SHA fingerprints to be publicly visible. They are public identifiers of the certificate and cannot be used to recreate private keys.
+
 ### Codemagic
 
 Codemagic uses its own native code signing and ignores the Gradle signing config. No property files are needed on CI.
