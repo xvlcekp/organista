@@ -4,7 +4,7 @@
       "android": {
         "default": {
           "projectId": "organista-project",
-          "appId": "1:613500039629:android:8a1fda8cbbe165717fd484",
+          "appId": "1:613500039629:android:309c878b8223ac997fd484",
           "fileOutput": "android/app/google-services.json"
         }
       },
@@ -12,9 +12,18 @@
         "lib/firebase_options.dart": {
           "projectId": "organista-project",
           "configurations": {
-            "android": "1:613500039629:android:8a1fda8cbbe165717fd484",
+            "android": "1:613500039629:android:309c878b8223ac997fd484",
+            "ios": "1:613500039629:ios:0dd31356e1a75c9b7fd484",
             "web": "1:613500039629:web:7213a0f92d44390c7fd484"
           }
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "organista-project",
+          "appId": "1:613500039629:ios:0dd31356e1a75c9b7fd484",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }
       }
     }
