@@ -3,7 +3,8 @@ import 'package:path/path.dart';
 enum MediaType {
   image,
   pdf,
-  musicxml;
+  musicxml,
+  mscz;
 
   static MediaType fromPath(String path) {
     final fileExtension = extension(path);
@@ -13,6 +14,8 @@ enum MediaType {
       case '.musicxml':
       case '.xml':
         return MediaType.musicxml;
+      case '.mscz':
+        return MediaType.mscz;
       case '.png':
       case '.jpg':
       case '.jpeg':
