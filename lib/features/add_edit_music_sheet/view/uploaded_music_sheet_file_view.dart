@@ -79,18 +79,6 @@ class UploadedMusicSheetFileView extends HookWidget {
               ],
             ),
           );
-
-        case MediaType.mscz:
-          child = const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.music_note, size: 64),
-                SizedBox(height: 16),
-                Text('MuseScore File'),
-              ],
-            ),
-          );
       }
     }
     return Row(

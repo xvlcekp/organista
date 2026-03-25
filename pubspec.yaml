@@ -151,6 +151,7 @@ flutter:
     - assets/images/organista_icon_200x200.png
     - assets/images/gmail_icon.png
     - assets/js/
+    - assets/html/
     - shorebird.yaml
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
