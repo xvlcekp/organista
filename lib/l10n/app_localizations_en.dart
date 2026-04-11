@@ -579,4 +579,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get uploadMusicSheetRecordFailed =>
       'Failed to save music sheet record. Please check your connection and try again.';
+
+  @override
+  String transposeLabel(String value) {
+    return 'Transpose: $value';
+  }
+
+  @override
+  String get transposeUp => 'Transpose Up';
+
+  @override
+  String get resetTranspose => 'Reset Transpose';
+
+  @override
+  String get transposeDown => 'Transpose Down';
 }

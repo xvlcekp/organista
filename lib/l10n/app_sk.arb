@@ -295,5 +295,16 @@
   "fillAllFields": "Prosím vyplňte všetky polia",
   "back": "Späť",
   "renameMusicSheetFailed": "Nepodarilo sa premenovať notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
-  "uploadMusicSheetRecordFailed": "Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova."
+  "uploadMusicSheetRecordFailed": "Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
+  "transposeLabel": "Transpozícia: {value}",
+  "@transposeLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "transposeUp": "Transponovať vyššie",
+  "resetTranspose": "Resetovať transpozíciu",
+  "transposeDown": "Transponovať nižšie"
 }

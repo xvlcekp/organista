@@ -34,6 +34,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<InitPlaylistEvent>(_initPlaylistEvent);
     on<ExportPlaylistEvent>(_exportPlaylistEvent);
     on<SaveExportedPlaylistEvent>(_saveExportedPlaylistEvent);
+    on<UpdateMusicSheetTranspositionEvent>(_updateMusicSheetTranspositionEvent);
   }
 
   void _deleteMusicSheetInPlaylistEvent(DeleteMusicSheetInPlaylistEvent event, Emitter<PlaylistState> emit) async {
@@ -306,6 +307,17 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       // Always try to clean up the temporary file after save operation completes
       await _cleanupTempFile(sourceFile);
     }
+  }
+
+  Future<void> _updateMusicSheetTranspositionEvent(
+    UpdateMusicSheetTranspositionEvent event,
+    Emitter<PlaylistState> emit,
+  ) async {
+    await _firebaseFirestoreRepository.updateMusicSheetTransposition(
+      musicSheet: event.musicSheet,
+      transposition: event.transposition,
+      playlist: state.playlist,
+    );
   }
 
   /// Cleans up the temporary file

@@ -1171,6 +1171,30 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.'**
   String get uploadMusicSheetRecordFailed;
+
+  /// No description provided for @transposeLabel.
+  ///
+  /// In sk, this message translates to:
+  /// **'Transpozícia: {value}'**
+  String transposeLabel(String value);
+
+  /// No description provided for @transposeUp.
+  ///
+  /// In sk, this message translates to:
+  /// **'Transponovať vyššie'**
+  String get transposeUp;
+
+  /// No description provided for @resetTranspose.
+  ///
+  /// In sk, this message translates to:
+  /// **'Resetovať transpozíciu'**
+  String get resetTranspose;
+
+  /// No description provided for @transposeDown.
+  ///
+  /// In sk, this message translates to:
+  /// **'Transponovať nižšie'**
+  String get transposeDown;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
