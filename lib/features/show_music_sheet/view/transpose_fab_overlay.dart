@@ -27,7 +27,7 @@ class TransposeFabOverlay extends HookWidget {
       bottom: AppTheme.symmetricOverlayPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (currentTranspose != 0 && showTransposition.value)
             Container(
@@ -39,7 +39,10 @@ class TransposeFabOverlay extends HookWidget {
             ),
           if (showMenu.value) ...[
             Material(
-              borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                side: const BorderSide(color: Colors.grey),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
