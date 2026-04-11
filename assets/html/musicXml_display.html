@@ -101,11 +101,9 @@
                 osmd.render();
                 const systems = countSystems(osmd);
                 const fits = systems <= baseSystemCount;
-                console.log(`[perf] iter ${i}: mid=${mid}, systems=${systems}, fits=${fits}, lo=${lo}, hi=${hi}`);
                 if (fits) lo = mid; else hi = mid;
             }
             osmd.zoom = lo;
-            console.log("[perf] Osmd zoom is " + osmd.zoom);
             osmd.render();
         }
 
@@ -174,14 +172,11 @@
                 const t0 = performance.now();
 
                 await osmd.load(xmlContent);
-                console.log(`[perf] load: ${((performance.now() - t0) / 1000).toFixed(2)}s`);
 
                 // Count XML-defined systems statically — no render needed
                 baseSystemCount = countSystemsFromXml(xmlContent);
-                console.log(`[perf] baseSystemCount (xml): ${baseSystemCount} systems, ${((performance.now() - t0) / 1000).toFixed(2)}s`);
 
                 await autoFitAndRender();
-                console.log(`[perf] autoFitAndRender: ${((performance.now() - t0) / 1000).toFixed(2)}s`);
 
                 // Restore saved transposition without triggering the Flutter callback
                 if (currentTranspose !== 0) {
@@ -189,7 +184,7 @@
                 }
 
                 document.getElementById('spinner').style.display = 'none';
-                console.log(`[perf] total: ${((performance.now() - t0) / 1000).toFixed(2)}s`);
+                console.log(`[perf] total: ${((performance.now() - t0) / 1000).toFixed(2)}s, osmd zoom is ${osmd.zoom}, title: ${osmd.Sheet.Title?.text}`);
             } catch (error) {
                 console.error('Error loading MusicXML file:', error);
             }
@@ -207,6 +202,16 @@
             updateTranspose(0);
         }
 
+        async function shrinkZoomToFit() {
+            const step = 0.05;
+            let iterations = 0;
+            while (countSystems(osmd) > baseSystemCount && osmd.zoom > 0.1) {
+                osmd.zoom = Math.max(0.1, osmd.zoom - step);
+                osmd.render();
+                iterations++;
+            }
+        }
+
         async function updateTranspose(val) {
             if (!osmd) return;
             currentTranspose = Math.max(-12, Math.min(12, val));
@@ -214,6 +219,10 @@
                 osmd.Sheet.Transpose = currentTranspose;
                 osmd.updateGraphic();
                 osmd.render();
+                const systems = countSystems(osmd);
+                if (systems > baseSystemCount) {
+                    await shrinkZoomToFit();
+                }
                 TransposeChannel.postMessage(String(currentTranspose));
             } catch (e) {
                 console.error('Transpose error:', e);

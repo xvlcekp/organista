@@ -49,6 +49,10 @@ class MusicXmlViewerWidget extends HookWidget {
       // ignore: unawaited_futures Communication with the native platform
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       // ignore: unawaited_futures Communication with the native platform
+      ..setOnConsoleMessage((message) {
+        logger.w('[WebView] ${message.message}');
+      })
+      // ignore: unawaited_futures Communication with the native platform
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (_) {
