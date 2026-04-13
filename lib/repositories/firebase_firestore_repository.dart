@@ -690,8 +690,10 @@ class FirebaseFirestoreRepository {
 
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
     if (e is PlatformException &&
-        (e.code == 'unavailable' || (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
-      logger.w('$logMessage: Service unavailable (offline)');
+        (e.code == 'unavailable' ||
+            e.code == 'unknown' ||
+            (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
+      logger.w('$logMessage: Service unavailable or unknown platform error (likely transient)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {
       logger.w('$logMessage: Operation timed out');
