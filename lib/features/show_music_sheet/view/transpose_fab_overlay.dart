@@ -27,7 +27,7 @@ class TransposeFabOverlay extends HookWidget {
       bottom: AppTheme.symmetricOverlayPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (currentTranspose != 0 && showTransposition.value)
             Container(
