@@ -7,10 +7,8 @@ import 'dart:async' as _i5;
 import 'dart:ui' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
-    as _i6;
-import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
-    as _i4;
+import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart' as _i6;
+import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart' as _i4;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -37,20 +35,17 @@ class _FakePlatformWebViewControllerCreationParams_0 extends _i1.SmartFake
 }
 
 class _FakeObject_1 extends _i1.SmartFake implements Object {
-  _FakeObject_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeObject_1(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 class _FakeOffset_2 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+  _FakeOffset_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [PlatformWebViewController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPlatformWebViewController extends _i1.Mock
-    implements _i4.PlatformWebViewController {
+class MockPlatformWebViewController extends _i1.Mock implements _i4.PlatformWebViewController {
   MockPlatformWebViewController() {
     _i1.throwOnMissingStub(this);
   }
@@ -380,8 +375,7 @@ class MockPlatformWebViewController extends _i1.Mock
 
   @override
   _i5.Future<void> setOnJavaScriptAlertDialog(
-    _i5.Future<void> Function(_i2.JavaScriptAlertDialogRequest)?
-    onJavaScriptAlertDialog,
+    _i5.Future<void> Function(_i2.JavaScriptAlertDialogRequest)? onJavaScriptAlertDialog,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnJavaScriptAlertDialog, [
@@ -394,8 +388,7 @@ class MockPlatformWebViewController extends _i1.Mock
 
   @override
   _i5.Future<void> setOnJavaScriptConfirmDialog(
-    _i5.Future<bool> Function(_i2.JavaScriptConfirmDialogRequest)?
-    onJavaScriptConfirmDialog,
+    _i5.Future<bool> Function(_i2.JavaScriptConfirmDialogRequest)? onJavaScriptConfirmDialog,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnJavaScriptConfirmDialog, [
@@ -408,8 +401,7 @@ class MockPlatformWebViewController extends _i1.Mock
 
   @override
   _i5.Future<void> setOnJavaScriptTextInputDialog(
-    _i5.Future<String> Function(_i2.JavaScriptTextInputDialogRequest)?
-    onJavaScriptTextInputDialog,
+    _i5.Future<String> Function(_i2.JavaScriptTextInputDialogRequest)? onJavaScriptTextInputDialog,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setOnJavaScriptTextInputDialog, [

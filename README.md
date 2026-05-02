@@ -6,6 +6,12 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 ## Changelog
 
+### Version 1.3.0 - 2.5.2026
+
+<video src="docs/1.3.0/transpose_digital.mp4" width="100%" controls></video>
+
+Podpora digitálnych nôt vo formáte MusicXML. Noty sa zobrazujú priamo v aplikácii s možnosťou zoomovania a posúvania. Noty je možné transponovať priamo v aplikácii tlačidlami nahor/nadol/reset.
+
 ### Version 1.2.1 - 22.2.2026
 
 - Opravené prihlasovanie cez Google na Androidoch
