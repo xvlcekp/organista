@@ -1,4 +1,4 @@
-"""Tests for pipeline.py — step 4: lyricist credit → <creator type="lyricist">"""
+"""Tests for pipeline.py"""
 import unittest
 import xml.etree.ElementTree as ET
 
@@ -7,7 +7,47 @@ from pipeline import (
     _strip_xml_preamble,
     extract_lyricist_from_credits,
     insert_lyricist_as_creator,
+    jks_output_stem,
 )
+
+
+class TestJksOutputStem(unittest.TestCase):
+
+    def test_plain_number_strips_leading_zeros(self):
+        self.assertEqual(
+            jks_output_stem("A včera z večera (JKS036) – Pavlín Bajan"),
+            "36. A včera z večera – Pavlín Bajan",
+        )
+
+    def test_letter_suffix_preserved(self):
+        self.assertEqual(
+            jks_output_stem("Matka plače, ruky spína (JKS150a) – František Otto Matzenauer"),
+            "150a. Matka plače, ruky spína – František Otto Matzenauer",
+        )
+
+    def test_letter_suffix_b(self):
+        self.assertEqual(
+            jks_output_stem("Matka plače, ruky spína (JKS150b) – Mikuláš Schneider Trnavský"),
+            "150b. Matka plače, ruky spína – Mikuláš Schneider Trnavský",
+        )
+
+    def test_letter_suffix_later_in_alphabet(self):
+        self.assertEqual(
+            jks_output_stem("Tantum ergo (JKS536e) – Mikuláš Schneider Trnavský"),
+            "536e. Tantum ergo – Mikuláš Schneider Trnavský",
+        )
+
+    def test_uppercase_letter_suffix_normalised_to_lowercase(self):
+        self.assertEqual(
+            jks_output_stem("Song title (JKS100A) – Author"),
+            "100a. Song title – Author",
+        )
+
+    def test_no_jks_tag_returns_original(self):
+        self.assertEqual(
+            jks_output_stem("Some title without tag"),
+            "Some title without tag",
+        )
 
 
 def _wrap(body: str) -> str:

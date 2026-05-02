@@ -45,7 +45,7 @@ MUSESCORE_CANDIDATES = [
 # Helpers
 # ---------------------------------------------------------------------------
 
-_JKS_TAG_RE = re.compile(r'\s*\(JKS(\d+)\)', re.IGNORECASE)
+_JKS_TAG_RE = re.compile(r'\s*\(JKS(\d+)([a-z]?)\)', re.IGNORECASE)
 
 
 def jks_output_stem(mscz_stem: str) -> str:
@@ -53,14 +53,18 @@ def jks_output_stem(mscz_stem: str) -> str:
     Convert a .mscz stem like "A včera z večera (JKS036) – Pavlín Bajan"
     to an output stem like "36. A včera z večera – Pavlín Bajan".
 
+    When the JKS tag contains a letter suffix (e.g. JKS150a), it is preserved:
+    "Matka plače (JKS150a) – Author" → "150a. Matka plače – Author".
+
     Falls back to the original stem when no JKS tag is found.
     """
     m = _JKS_TAG_RE.search(mscz_stem)
     if not m:
         return mscz_stem
     number = int(m.group(1))           # strip leading zeros: 036 → 36
+    letter = m.group(2).lower()        # optional variant letter: a, b, c …
     clean = _JKS_TAG_RE.sub("", mscz_stem).strip()
-    return f"{number}. {clean}"
+    return f"{number}{letter}. {clean}"
 
 
 def find_musescore() -> Optional[str]:
