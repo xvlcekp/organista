@@ -74,6 +74,7 @@ Future<void> firebaseInitialize() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseAppCheck.instance.activate(
+    providerWeb: kDebugMode ? WebDebugProvider() : ReCaptchaV3Provider(''),
     providerAndroid: kDebugMode ? const AndroidDebugProvider() : const AndroidPlayIntegrityProvider(),
     providerApple: kDebugMode ? const AppleDebugProvider() : const AppleDeviceCheckProvider(),
   );

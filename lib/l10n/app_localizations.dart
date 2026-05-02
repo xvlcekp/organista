@@ -1171,6 +1171,54 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.'**
   String get uploadMusicSheetRecordFailed;
+
+  /// No description provided for @transposeLabel.
+  ///
+  /// In sk, this message translates to:
+  /// **'Transpozícia: {value}'**
+  String transposeLabel(String value);
+
+  /// No description provided for @transposeUp.
+  ///
+  /// In sk, this message translates to:
+  /// **'Transponovať vyššie'**
+  String get transposeUp;
+
+  /// No description provided for @resetTranspose.
+  ///
+  /// In sk, this message translates to:
+  /// **'Resetovať transpozíciu'**
+  String get resetTranspose;
+
+  /// No description provided for @transposeDown.
+  ///
+  /// In sk, this message translates to:
+  /// **'Transponovať nižšie'**
+  String get transposeDown;
+
+  /// No description provided for @elongationFactorUp.
+  ///
+  /// In sk, this message translates to:
+  /// **'Rozšíriť medzery v texte'**
+  String get elongationFactorUp;
+
+  /// No description provided for @elongationFactorDown.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zúžiť medzery v texte'**
+  String get elongationFactorDown;
+
+  /// No description provided for @hideLyrics.
+  ///
+  /// In sk, this message translates to:
+  /// **'Skryť text'**
+  String get hideLyrics;
+
+  /// No description provided for @showLyrics.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zobraziť text'**
+  String get showLyrics;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

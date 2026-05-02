@@ -78,6 +78,71 @@ void main() {
         verify(mockCacheManager.getSingleFile(testMusicSheet.fileUrl)).called(1);
       });
 
+      test('skips MusicXML sheets without calling cache manager', () async {
+        final musicXmlSheet = MusicSheet(
+          json: {
+            MusicSheetKey.musicSheetId: 'xmlsheet1',
+            MusicSheetKey.userId: 'user1',
+            MusicSheetKey.createdAt: testTimestamp,
+            MusicSheetKey.fileUrl: 'https://example.com/sheet.musicxml',
+            MusicSheetKey.fileName: 'Test Sheet',
+            MusicSheetKey.originalFileStorageId: 'storage1',
+            MusicSheetKey.mediaType: 'musicxml',
+            MusicSheetKey.sequenceId: 1,
+          },
+        );
+
+        final xmlOnlyPlaylist = Playlist(
+          playlistId: 'playlist1',
+          json: {
+            PlaylistKey.userId: 'user1',
+            PlaylistKey.createdAt: testTimestamp,
+            PlaylistKey.name: 'Test Playlist',
+            PlaylistKey.musicSheets: [musicXmlSheet.toJson()],
+          },
+        );
+
+        final result = await service.exportPlaylistToPdf(playlist: xmlOnlyPlaylist);
+
+        expect(result, isNull);
+        verifyZeroInteractions(mockCacheManager);
+      });
+
+      test('skips MusicXML sheets but downloads PDF sheets in a mixed playlist', () async {
+        final musicXmlSheet = MusicSheet(
+          json: {
+            MusicSheetKey.musicSheetId: 'xmlsheet1',
+            MusicSheetKey.userId: 'user1',
+            MusicSheetKey.createdAt: testTimestamp,
+            MusicSheetKey.fileUrl: 'https://example.com/sheet.musicxml',
+            MusicSheetKey.fileName: 'Test XML Sheet',
+            MusicSheetKey.originalFileStorageId: 'storage_xml',
+            MusicSheetKey.mediaType: 'musicxml',
+            MusicSheetKey.sequenceId: 2,
+          },
+        );
+
+        final mixedPlaylist = Playlist(
+          playlistId: 'playlist1',
+          json: {
+            PlaylistKey.userId: 'user1',
+            PlaylistKey.createdAt: testTimestamp,
+            PlaylistKey.name: 'Mixed Playlist',
+            PlaylistKey.musicSheets: [
+              testMusicSheet.toJson(),
+              musicXmlSheet.toJson(),
+            ],
+          },
+        );
+
+        when(mockCacheManager.getSingleFile(testMusicSheet.fileUrl)).thenThrow(Exception('Mocked download failure'));
+
+        await service.exportPlaylistToPdf(playlist: mixedPlaylist);
+
+        verify(mockCacheManager.getSingleFile(testMusicSheet.fileUrl)).called(1);
+        verifyNever(mockCacheManager.getSingleFile(musicXmlSheet.fileUrl));
+      });
+
       test('handles multiple music sheets', () async {
         final additionalSheet = MusicSheet(
           json: {

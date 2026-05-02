@@ -584,4 +584,30 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get uploadMusicSheetRecordFailed =>
       'Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.';
+
+  @override
+  String transposeLabel(String value) {
+    return 'Transpozícia: $value';
+  }
+
+  @override
+  String get transposeUp => 'Transponovať vyššie';
+
+  @override
+  String get resetTranspose => 'Resetovať transpozíciu';
+
+  @override
+  String get transposeDown => 'Transponovať nižšie';
+
+  @override
+  String get elongationFactorUp => 'Rozšíriť medzery v texte';
+
+  @override
+  String get elongationFactorDown => 'Zúžiť medzery v texte';
+
+  @override
+  String get hideLyrics => 'Skryť text';
+
+  @override
+  String get showLyrics => 'Zobraziť text';
 }

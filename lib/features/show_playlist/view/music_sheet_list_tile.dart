@@ -37,7 +37,6 @@ class MusicSheetListTile extends HookWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => FullScreenImageGallery(
-                  musicSheets: playlist.musicSheets,
                   initialIndex: index,
                 ),
               ),

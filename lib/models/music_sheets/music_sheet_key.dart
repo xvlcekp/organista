@@ -11,6 +11,7 @@ class MusicSheetKey {
   static const originalFileStorageId = 'original_file_storage_id';
   static const mediaType = 'media_type';
   static const sequenceId = 'sequence_id';
+  static const transposition = 'transposition';
 
   const MusicSheetKey._();
 }

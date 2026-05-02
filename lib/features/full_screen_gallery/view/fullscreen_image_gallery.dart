@@ -3,21 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:pdfx/pdfx.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/full_screen_gallery/cubit/gallery_cubit.dart';
 import 'package:organista/features/full_screen_gallery/cubit/gallery_state.dart';
 import 'package:organista/features/full_screen_gallery/view/gallery_shortcuts.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 
 class FullScreenImageGallery extends HookWidget {
-  final List<MusicSheet> musicSheets;
   final int initialIndex;
 
   const FullScreenImageGallery({
     super.key,
-    required this.musicSheets,
     required this.initialIndex,
   });
 
@@ -25,7 +23,6 @@ class FullScreenImageGallery extends HookWidget {
   Widget build(BuildContext context) {
     final galleryPageController = usePageController(initialPage: initialIndex);
     final galleryCubit = useMemoized(() => GalleryCubit());
-
     useFullScreenMode();
 
     useEffect(() {
@@ -46,7 +43,8 @@ class FullScreenImageGallery extends HookWidget {
         turnPage(singlePageController.nextPage);
       } else if (galleryPageController.hasClients) {
         final currentIndex = galleryPageController.page?.round() ?? 0;
-        if (currentIndex < musicSheets.length - 1) {
+        final musicSheetsCount = context.read<PlaylistBloc>().state.playlist.musicSheets.length;
+        if (currentIndex < musicSheetsCount - 1) {
           galleryCubit.setNavigationDirection(GalleryNavigationDirection.forward);
           turnPage(galleryPageController.nextPage);
         }
@@ -75,22 +73,26 @@ class FullScreenImageGallery extends HookWidget {
         onPrevious: previousPage,
         child: Scaffold(
           backgroundColor: Colors.black,
-          body: PhotoViewGallery.builder(
-            pageController: galleryPageController,
-            scrollPhysics: const BouncingScrollPhysics(),
-            builder: (_, int index) {
-              logger.i("Index is $index");
-              final musicSheet = musicSheets[index];
-              return PhotoViewGalleryPageOptions.customChild(
-                disableGestures: true,
-                child: MusicSheetView(
-                  key: ValueKey(musicSheet.musicSheetId),
-                  musicSheet: musicSheet,
-                  mode: MusicSheetViewMode.full,
-                ),
+          body: BlocBuilder<PlaylistBloc, PlaylistState>(
+            builder: (context, state) {
+              final musicSheets = state.playlist.musicSheets;
+              return PhotoViewGallery.builder(
+                pageController: galleryPageController,
+                scrollPhysics: const BouncingScrollPhysics(),
+                builder: (_, int index) {
+                  logger.i("Index is $index");
+                  return PhotoViewGalleryPageOptions.customChild(
+                    disableGestures: true,
+                    child: MusicSheetView(
+                      key: ValueKey(musicSheets[index].musicSheetId),
+                      musicSheet: musicSheets[index],
+                      mode: MusicSheetViewMode.full,
+                    ),
+                  );
+                },
+                itemCount: musicSheets.length,
               );
             },
-            itemCount: musicSheets.length,
           ),
         ),
       ),
@@ -98,13 +100,10 @@ class FullScreenImageGallery extends HookWidget {
   }
 }
 
-/// Custom hook to manage immersive mode (hiding system UI)
 void useFullScreenMode() {
   useEffect(() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    return () {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    };
+    return () => SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }, []);
 }
 

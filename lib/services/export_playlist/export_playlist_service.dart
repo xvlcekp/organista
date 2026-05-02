@@ -1,5 +1,6 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:path_provider/path_provider.dart';
@@ -62,6 +63,12 @@ class ExportPlaylistService {
 
     for (var i = 0; i < totalSheets; i++) {
       final sheet = musicSheets[i];
+      if (sheet.mediaType == MediaType.musicxml) {
+        // TODO: implement support for conversion to PNG and then PDF export
+        // https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/wiki/Exporting-PNG,-SVG-and-PDF#pdf-export
+        logger.w('Skipping unsupported MusicXML file on export: ${sheet.fileName}');
+        continue;
+      }
       try {
         final file = await _cacheManager.getSingleFile(sheet.fileUrl);
         filePaths.add(file.path);

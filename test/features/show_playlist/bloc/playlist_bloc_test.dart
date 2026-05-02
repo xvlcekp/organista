@@ -358,6 +358,39 @@ void main() {
       );
     });
 
+    group('UpdateMusicSheetTranspositionEvent', () {
+      blocTest<PlaylistBloc, PlaylistState>(
+        'calls repository to update transposition and emits no new state',
+        setUp: () {
+          when(
+            mockFirebaseFirestoreRepository.updateMusicSheetTransposition(
+              musicSheet: testMusicSheet,
+              transposition: 3,
+              playlist: testPlaylist,
+            ),
+          ).thenAnswer((_) async => true);
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(
+          UpdateMusicSheetTranspositionEvent(
+            musicSheet: testMusicSheet,
+            transposition: 3,
+          ),
+        ),
+        verify: (_) {
+          verify(
+            mockFirebaseFirestoreRepository.updateMusicSheetTransposition(
+              musicSheet: testMusicSheet,
+              transposition: 3,
+              playlist: testPlaylist,
+            ),
+          ).called(1);
+        },
+        expect: () => [],
+      );
+    });
+
     // Tests for SaveExportedPlaylistEvent are omitted because FilePicker
     // requires platform channels that are not available in unit tests.
   });

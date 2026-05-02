@@ -167,6 +167,22 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
           as bool);
 
   @override
+  _i4.Future<bool> updateMusicSheetTransposition({
+    required _i8.MusicSheet? musicSheet,
+    required int? transposition,
+    required _i6.Playlist? playlist,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateMusicSheetTransposition, [], {
+              #musicSheet: musicSheet,
+              #transposition: transposition,
+              #playlist: playlist,
+            }),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
+
+  @override
   _i4.Future<bool> deleteMusicSheetInPlaylist({
     required _i8.MusicSheet? musicSheet,
     required _i6.Playlist? playlist,

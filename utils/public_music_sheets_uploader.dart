@@ -45,7 +45,7 @@ class UploadFolderScreen extends HookWidget {
   const UploadFolderScreen({super.key});
 
   String _mapFileName(String originalFileName, Map<String, String> mapping) {
-    String fileNameWithoutExt = originalFileName.trim().replaceAll(RegExp(r'\.(pdf|jpg|png)$'), '');
+    String fileNameWithoutExt = originalFileName.trim().replaceAll(RegExp(r'\.(pdf|jpg|png|musicxml)$'), '');
     String fileNameToUse = fileNameWithoutExt;
 
     // Case 1: Exact match - file name equals a key in the mapping

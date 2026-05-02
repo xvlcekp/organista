@@ -3,6 +3,12 @@ import 'package:organista/models/music_sheets/media_type.dart';
 
 void main() {
   group('MediaType', () {
+    test('should return correct MediaType for MusicXML files', () {
+      expect(MediaType.fromPath('sheet.musicxml'), MediaType.musicxml);
+      expect(MediaType.fromPath('song.MUSICXML'), MediaType.musicxml);
+      expect(MediaType.fromPath('music.MusicXML'), MediaType.musicxml);
+    });
+
     test('should return correct MediaType for PDF files', () {
       expect(MediaType.fromPath('document.pdf'), MediaType.pdf);
       expect(MediaType.fromPath('sheet.PDF'), MediaType.pdf);
@@ -52,6 +58,7 @@ void main() {
     test('should return correct MediaType from exact string representation', () {
       expect(MediaType.fromString('pdf'), MediaType.pdf);
       expect(MediaType.fromString('image'), MediaType.image);
+      expect(MediaType.fromString('musicxml'), MediaType.musicxml);
     });
 
     test('should throw NoMatchingMediaTypeException for case-sensitive strings', () {

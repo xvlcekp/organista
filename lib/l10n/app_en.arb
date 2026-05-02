@@ -295,5 +295,20 @@
   "fillAllFields": "Please fill in all fields",
   "back": "Back",
   "renameMusicSheetFailed": "Failed to rename music sheet. Please check your connection and try again.",
-  "uploadMusicSheetRecordFailed": "Failed to save music sheet record. Please check your connection and try again."
+  "uploadMusicSheetRecordFailed": "Failed to save music sheet record. Please check your connection and try again.",
+  "transposeLabel": "Transpose: {value}",
+  "@transposeLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "transposeUp": "Transpose Up",
+  "resetTranspose": "Reset Transpose",
+  "transposeDown": "Transpose Down",
+  "elongationFactorUp": "Elongation Factor Up",
+  "elongationFactorDown": "Elongation Factor Down",
+  "hideLyrics": "Hide Lyrics",
+  "showLyrics": "Show Lyrics"
 }

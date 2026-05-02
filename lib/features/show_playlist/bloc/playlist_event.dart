@@ -78,3 +78,17 @@ class SaveExportedPlaylistEvent extends PlaylistEvent {
   @override
   List<Object?> get props => [tempPath, fileName];
 }
+
+@immutable
+class UpdateMusicSheetTranspositionEvent extends PlaylistEvent {
+  final MusicSheet musicSheet;
+  final int transposition;
+
+  const UpdateMusicSheetTranspositionEvent({
+    required this.musicSheet,
+    required this.transposition,
+  });
+
+  @override
+  List<Object?> get props => [musicSheet, transposition];
+}

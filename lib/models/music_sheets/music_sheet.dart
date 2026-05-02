@@ -14,6 +14,7 @@ class MusicSheet extends Equatable {
   final String originalFileStorageId;
   final MediaType mediaType;
   final int sequenceId;
+  final int transposition;
 
   MusicSheet({
     required Map<String, dynamic> json,
@@ -26,7 +27,8 @@ class MusicSheet extends Equatable {
        fileName = json[MusicSheetKey.fileName],
        originalFileStorageId = json[MusicSheetKey.originalFileStorageId],
        mediaType = MediaType.fromString(json[MusicSheetKey.mediaType]),
-       sequenceId = json[MusicSheetKey.sequenceId] ?? 0;
+       sequenceId = json[MusicSheetKey.sequenceId] ?? 0,
+       transposition = json[MusicSheetKey.transposition] ?? 0;
 
   Map<String, dynamic> toJson() {
     return {
@@ -38,20 +40,22 @@ class MusicSheet extends Equatable {
       MusicSheetKey.originalFileStorageId: originalFileStorageId,
       MusicSheetKey.mediaType: mediaType.name,
       MusicSheetKey.sequenceId: sequenceId,
+      MusicSheetKey.transposition: transposition,
     };
   }
 
-  MusicSheet copyWith({String? fileName}) {
+  MusicSheet copyWith({String? fileName, int? transposition}) {
     return MusicSheet(
       json: {
         MusicSheetKey.musicSheetId: musicSheetId,
         MusicSheetKey.userId: userId,
         MusicSheetKey.createdAt: Timestamp.fromDate(createdAt),
         MusicSheetKey.fileUrl: fileUrl,
-        MusicSheetKey.fileName: fileName ?? this.fileName, // Update if provided
+        MusicSheetKey.fileName: fileName ?? this.fileName,
         MusicSheetKey.originalFileStorageId: originalFileStorageId,
         MusicSheetKey.mediaType: mediaType.name,
         MusicSheetKey.sequenceId: sequenceId,
+        MusicSheetKey.transposition: transposition ?? this.transposition,
       },
     );
   }
@@ -71,5 +75,6 @@ class MusicSheet extends Equatable {
     originalFileStorageId,
     mediaType,
     sequenceId,
+    transposition,
   ];
 }

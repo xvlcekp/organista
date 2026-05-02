@@ -381,6 +381,35 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  Future<bool> updateMusicSheetTransposition({
+    required MusicSheet musicSheet,
+    required int transposition,
+    required Playlist playlist,
+  }) async {
+    try {
+      final updatedMusicSheets = playlist.musicSheets
+          .map(
+            (sheet) =>
+                sheet.musicSheetId == musicSheet.musicSheetId ? sheet.copyWith(transposition: transposition) : sheet,
+          )
+          .toList();
+      await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
+      });
+      logger.i(
+        'musicSheetTransposition update successful for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
+      );
+      return true;
+    } catch (e, stackTrace) {
+      logger.e(
+        'Error updating transposition for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
   Future<bool> deleteMusicSheetInPlaylist({
     required MusicSheet musicSheet,
     required Playlist playlist,
@@ -661,8 +690,10 @@ class FirebaseFirestoreRepository {
 
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
     if (e is PlatformException &&
-        (e.code == 'unavailable' || (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
-      logger.w('$logMessage: Service unavailable (offline)');
+        (e.code == 'unavailable' ||
+            e.code == 'unknown' ||
+            (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
+      logger.w('$logMessage: Service unavailable or unknown platform error (likely transient)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {
       logger.w('$logMessage: Operation timed out');

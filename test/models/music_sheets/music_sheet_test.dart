@@ -30,6 +30,7 @@ void main() {
       expect(musicSheet.originalFileStorageId, 'storage-id-123');
       expect(musicSheet.mediaType, MediaType.pdf);
       expect(musicSheet.sequenceId, 5);
+      expect(musicSheet.transposition, 0);
     });
 
     test('should create MusicSheet with default values for missing fields', () {
@@ -47,6 +48,46 @@ void main() {
       expect(musicSheet.musicSheetId, 'firebase-generated-id');
       expect(musicSheet.userId, ''); // Default empty string
       expect(musicSheet.sequenceId, 0); // Default value
+      expect(musicSheet.transposition, 0); // Default value
+    });
+
+    test('should parse transposition from JSON', () {
+      final json = {
+        ...sampleJson,
+        MusicSheetKey.transposition: 3,
+      };
+      final musicSheet = MusicSheet(json: json);
+      expect(musicSheet.transposition, 3);
+    });
+
+    test('should include transposition in toJson()', () {
+      final json = {
+        ...sampleJson,
+        MusicSheetKey.transposition: -2,
+      };
+      final musicSheet = MusicSheet(json: json);
+      expect(musicSheet.toJson()[MusicSheetKey.transposition], -2);
+    });
+
+    test('should create copy with updated transposition', () {
+      final musicSheet = MusicSheet(json: sampleJson);
+      final copied = musicSheet.copyWith(transposition: 5);
+      expect(copied.transposition, 5);
+      expect(copied.musicSheetId, musicSheet.musicSheetId);
+      expect(copied.fileName, musicSheet.fileName);
+    });
+
+    test('should preserve transposition in copyWith when not provided', () {
+      final json = {...sampleJson, MusicSheetKey.transposition: 4};
+      final musicSheet = MusicSheet(json: json);
+      final copied = musicSheet.copyWith();
+      expect(copied.transposition, 4);
+    });
+
+    test('equality considers transposition', () {
+      final sheet1 = MusicSheet(json: {...sampleJson, MusicSheetKey.transposition: 0});
+      final sheet2 = MusicSheet(json: {...sampleJson, MusicSheetKey.transposition: 3});
+      expect(sheet1, isNot(equals(sheet2)));
     });
 
     test('should throw ArgumentError when musicSheetId is missing', () {
