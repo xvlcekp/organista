@@ -61,7 +61,9 @@
     <script>
         let osmd = null;
         let currentTranspose = 0;
+        let currentElongationFactor = 1.0;
         let baseSystemCount = null;
+        let lyricsVisible = true;
 
         // Maximum zoom to try. The binary search will find the highest zoom
         // where OSMD does not need to add systems beyond the XML-defined ones.
@@ -130,7 +132,7 @@
             er.RenderPartAbbreviations                 = false;
             er.SystemLabelsRightMargin                 = 0;
             er.PageTopMargin                           = 5;
-            er.PageLeftMargin                          = 5;
+            er.PageLeftMargin                          = 3;
             er.PageRightMargin                         = 5;
             er.SlurHeightFactor                        = 0.7;
             er.SlurHeightFlattenLongSlursFactorByWidth = 0.24;
@@ -146,6 +148,7 @@
             er.SheetTitleHeight                        = 3;
             er.SystemLyricistDistance                  = 10;
             er.StretchLastSystemLine                   = true;
+            er.MaximumLyricsElongationFactor           = 1.0;
         }
 
         async function waitForLayout() {
@@ -202,6 +205,38 @@
             updateTranspose(0);
         }
 
+        async function updateElongationFactor(newValue) {
+            if (!osmd) return;
+            currentElongationFactor = newValue;
+            osmd.EngravingRules.MaximumLyricsElongationFactor = currentElongationFactor;
+            osmd.updateGraphic();
+            await autoFitAndRender();
+            TransposeChannel.postMessage('e:' + currentElongationFactor);
+        }
+
+        function elongationFactorUp() {
+            return updateElongationFactor(Math.min(2.2, parseFloat((currentElongationFactor + 0.2).toFixed(1))));
+        }
+
+        async function toggleLyrics() {
+            if (!osmd) return;
+            lyricsVisible = !lyricsVisible;
+            osmd.EngravingRules.RenderLyrics = lyricsVisible;
+            osmd.EngravingRules.RenderCopyright = lyricsVisible;
+            osmd.EngravingRules.RenderComposer = lyricsVisible;
+            osmd.EngravingRules.RenderLyricist = lyricsVisible;
+            osmd.updateGraphic();
+            await autoFitAndRender();
+        }
+
+        function elongationFactorDown() {
+            return updateElongationFactor(Math.max(0.6, parseFloat((currentElongationFactor - 0.2).toFixed(1))));
+        }
+
+        function resetElongationFactor() {
+            return updateElongationFactor(1.0);
+        }
+
         async function shrinkZoomToFit() {
             const step = 0.05;
             let iterations = 0;
@@ -223,7 +258,7 @@
                 if (systems > baseSystemCount) {
                     await shrinkZoomToFit();
                 }
-                TransposeChannel.postMessage(String(currentTranspose));
+                TransposeChannel.postMessage('t:' + currentTranspose);
             } catch (e) {
                 console.error('Transpose error:', e);
             }

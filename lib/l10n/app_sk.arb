@@ -306,5 +306,9 @@
   },
   "transposeUp": "Transponovať vyššie",
   "resetTranspose": "Resetovať transpozíciu",
-  "transposeDown": "Transponovať nižšie"
+  "transposeDown": "Transponovať nižšie",
+  "elongationFactorUp": "Rozšíriť medzery v texte",
+  "elongationFactorDown": "Zúžiť medzery v texte",
+  "hideLyrics": "Skryť text",
+  "showLyrics": "Zobraziť text"
 }

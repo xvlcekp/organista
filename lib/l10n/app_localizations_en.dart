@@ -593,4 +593,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transposeDown => 'Transpose Down';
+
+  @override
+  String get elongationFactorUp => 'Elongation Factor Up';
+
+  @override
+  String get elongationFactorDown => 'Elongation Factor Down';
+
+  @override
+  String get hideLyrics => 'Hide Lyrics';
+
+  @override
+  String get showLyrics => 'Show Lyrics';
 }

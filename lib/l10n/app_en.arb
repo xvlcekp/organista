@@ -306,5 +306,9 @@
   },
   "transposeUp": "Transpose Up",
   "resetTranspose": "Reset Transpose",
-  "transposeDown": "Transpose Down"
+  "transposeDown": "Transpose Down",
+  "elongationFactorUp": "Elongation Factor Up",
+  "elongationFactorDown": "Elongation Factor Down",
+  "hideLyrics": "Hide Lyrics",
+  "showLyrics": "Show Lyrics"
 }

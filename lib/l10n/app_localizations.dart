@@ -1195,6 +1195,30 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Transponovať nižšie'**
   String get transposeDown;
+
+  /// No description provided for @elongationFactorUp.
+  ///
+  /// In sk, this message translates to:
+  /// **'Rozšíriť medzery v texte'**
+  String get elongationFactorUp;
+
+  /// No description provided for @elongationFactorDown.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zúžiť medzery v texte'**
+  String get elongationFactorDown;
+
+  /// No description provided for @hideLyrics.
+  ///
+  /// In sk, this message translates to:
+  /// **'Skryť text'**
+  String get hideLyrics;
+
+  /// No description provided for @showLyrics.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zobraziť text'**
+  String get showLyrics;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
