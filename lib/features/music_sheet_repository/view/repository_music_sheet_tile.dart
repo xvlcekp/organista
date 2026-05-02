@@ -67,7 +67,10 @@ class RepositoryMusicSheetTile extends HookWidget {
               Navigator.of(context)
                   .push(
                     MaterialPageRoute(
-                      builder: (context) => MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
+                      builder: (context) => SafeArea(
+                        top: false,
+                        child: MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
+                      ),
                     ),
                   )
                   .then((_) {

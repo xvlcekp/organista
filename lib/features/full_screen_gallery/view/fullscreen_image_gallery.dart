@@ -100,13 +100,10 @@ class FullScreenImageGallery extends HookWidget {
   }
 }
 
-/// Custom hook to manage immersive mode (hiding system UI)
 void useFullScreenMode() {
   useEffect(() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    return () {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    };
+    return () => SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }, []);
 }
 
