@@ -39,8 +39,11 @@ class MusicXmlViewerWidget extends HookWidget {
     try {
       final cachedFile = await cacheManager.getSingleFile(musicSheet.fileUrl);
       final bytes = await cachedFile.readAsBytes();
-      // Convert to base64 data URL for offline loading
-      fileData = 'data:application/octet-stream;base64,${base64Encode(bytes)}';
+      // Convert to base64 data URL for offline loading — offloaded to a
+      // background isolate because encoding large files on the main thread
+      // causes ANRs on budget devices.
+      final encoded = await compute(base64Encode, bytes);
+      fileData = 'data:application/octet-stream;base64,$encoded';
     } catch (e) {
       // Fallback to URL if cache is not available
       fileData = musicSheet.fileUrl;

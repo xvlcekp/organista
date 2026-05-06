@@ -69,10 +69,12 @@ Future<void> main() async {
 
 /// This function must be called before using any Firebase services also in tests
 Future<void> firebaseInitialize() async {
-  // Firebase.initializeApp must be called before using any Firebase services
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      name: 'organista-project',
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
   await FirebaseAppCheck.instance.activate(
     providerWeb: kDebugMode ? WebDebugProvider() : ReCaptchaV3Provider(''),
     providerAndroid: kDebugMode ? const AndroidDebugProvider() : const AndroidPlayIntegrityProvider(),
