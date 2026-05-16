@@ -242,9 +242,14 @@ If you modify `android/app/google_services.json`, you need to change it also in 
 ### To specific version
 
 - `git fetch`
-- `git checkout 3.32.5` (before it was 3.29.3)
+- `git checkout 3.32.5`
 
-The latest flutter upgrade was from 3.32.5 to 3.38.1
+Versions history:
+
+- 3.29.3
+- 3.32.5
+- 3.38.1
+- 3.41.9 - 16.5.2026
 
 ### iOS
 
