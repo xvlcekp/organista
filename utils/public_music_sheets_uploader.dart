@@ -145,8 +145,7 @@ class UploadFolderScreen extends HookWidget {
     }
 
     void pickJsonFile() {
-      FilePicker.platform
-          .pickFiles(
+      FilePicker.pickFiles(
             type: FileType.custom,
             allowedExtensions: ['json'],
           )
@@ -187,7 +186,7 @@ class UploadFolderScreen extends HookWidget {
       isUploading.value = true;
       uploadedFiles.value = [];
 
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         allowMultiple: true,
         type: FileType.any,
         withData: true,

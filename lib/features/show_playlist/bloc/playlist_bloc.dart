@@ -269,7 +269,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       logger.i('Read ${bytes.length} bytes from file');
 
       // Always show file picker to let user choose save location
-      final result = await FilePicker.platform.saveFile(
+      final result = await FilePicker.saveFile(
         dialogTitle: 'Export to PDF',
         fileName: fileName,
         type: FileType.custom,

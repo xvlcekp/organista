@@ -4,8 +4,8 @@ import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf_combiner/models/merge_input.dart';
 import 'package:pdf_combiner/pdf_combiner.dart';
-import 'package:pdf_combiner/responses/pdf_combiner_status.dart';
 
 /// Service for exporting playlist music sheets to a single PDF file
 class ExportPlaylistService {
@@ -36,18 +36,13 @@ class ExportPlaylistService {
       final outputPath = await _getOutputPath(playlist.name);
 
       // generatePDFFromDocuments handles both PDFs and images
-      final response = await PdfCombiner.generatePDFFromDocuments(
-        inputPaths: filePaths,
+      final resultPath = await PdfCombiner.generatePDFFromDocuments(
+        inputs: filePaths.map(MergeInput.path).toList(),
         outputPath: outputPath,
       );
 
-      if (response.status == PdfCombinerStatus.success) {
-        logger.i('Playlist exported successfully to: ${response.outputPath}');
-        return response.outputPath;
-      } else {
-        logger.e('Failed to merge files: ${response.message}');
-        return null;
-      }
+      logger.i('Playlist exported successfully to: $resultPath');
+      return resultPath;
     } catch (e, stackTrace) {
       logger.e('Error exporting playlist', error: e, stackTrace: stackTrace);
       return null;
