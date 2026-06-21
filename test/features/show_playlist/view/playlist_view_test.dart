@@ -10,6 +10,7 @@ import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
+import 'package:organista/widgets/scroll_aware_fab.dart';
 import 'package:provider/provider.dart';
 
 import '../bloc/playlist_bloc_test.mocks.dart';
@@ -147,28 +148,25 @@ void main() {
 
       expect(find.byIcon(Icons.music_off), findsOneWidget);
     });
-    testWidgets(
-      'shows floating action button and hide when in edit mode',
-      (tester) async {
-        bloc._setStateForTest(
-          PlaylistLoadedState(
-            isLoading: false,
-            playlist: Playlist.empty(),
-          ),
-        );
+    testWidgets('shows ScrollAwareFab and hides it when in edit mode', (tester) async {
+      bloc._setStateForTest(
+        PlaylistLoadedState(
+          isLoading: false,
+          playlist: Playlist.empty(),
+        ),
+      );
 
-        await tester.pumpWidget(createTestWidget());
-        await tester.pump();
+      await tester.pumpWidget(createTestWidget());
+      await tester.pump();
 
-        // Tap edit button to enter edit mode
-        expect(find.byType(FloatingActionButton), findsOneWidget);
-        await tester.tap(find.byIcon(Icons.edit));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byType(ScrollAwareFab), findsOneWidget);
 
-        expect(find.byType(FloatingActionButton), findsNothing);
-      },
-    );
+      await tester.tap(find.byIcon(Icons.edit));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(ScrollAwareFab), findsNothing);
+    });
 
     testWidgets(
       'shows check icon when in edit mode',

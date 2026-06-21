@@ -1,36 +1,50 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/config/app_constants.dart';
+import 'package:organista/dialogs/error_dialog.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/extensions/navigation/navigation_extensions.dart';
+import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
-import 'package:organista/features/music_sheet_repository/view/repository_music_sheet_tile.dart';
+import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_tile.dart';
 import 'package:organista/features/music_sheet_repository/view/repository_searchbar.dart';
-import 'package:organista/features/music_sheet_repository/view/upload_music_sheet_fragment.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
-import 'package:organista/models/repositories/repository.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
+import 'package:organista/models/music_sheets/media_type.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
+import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
-import 'package:organista/extensions/buildcontext/localization.dart';
+import 'package:organista/widgets/scroll_aware_fab.dart';
 
 class MusicSheetRepositoryView extends HookWidget {
   final Repository repository;
 
+  /// When true, suppresses playlist actions (long-press selection, download button)
+  /// and repository-level actions (rename/delete repository) at the tile level.
+  /// The upload FAB is controlled solely by [Repository.isPrivate] and selection mode.
+  final bool viewOnly;
+
   const MusicSheetRepositoryView({
     super.key,
     required this.repository,
+    this.viewOnly = false,
   });
 
   static Route<void> route({
     required Repository repository,
+    bool viewOnly = false,
   }) {
     return MaterialPageRoute<void>(
       builder: (_) => BlocProvider(
         create: (context) => MusicSheetRepositoryBloc(
           firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
         )..add(InitMusicSheetsRepositoryEvent(repositoryId: repository.repositoryId)),
-        child: MusicSheetRepositoryView(repository: repository),
+        child: MusicSheetRepositoryView(repository: repository, viewOnly: viewOnly),
       ),
     );
   }
@@ -44,6 +58,8 @@ class MusicSheetRepositoryView extends HookWidget {
     // Selection state using hooks - track by music sheet ID instead of index
     final isSelectionMode = useState<bool>(false);
     final selectedMusicSheetIds = useState<Set<String>>({});
+
+    final scrollController = useScrollController();
 
     // Helper functions
     void enterSelectionMode(String musicSheetId) {
@@ -126,6 +142,43 @@ class MusicSheetRepositoryView extends HookWidget {
       exitSelectionMode();
     }
 
+    void onUploadPressed() {
+      FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'pdf', 'png', 'musicxml'],
+        withData: true,
+      ).then((result) {
+        if (result != null) {
+          try {
+            final PlatformFile file = result.files.first;
+            final MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
+
+            if (file.size > AppConstants.maxFileSizeBytes) {
+              if (context.mounted) {
+                showErrorDialog(
+                  context: context,
+                  text: localizations.fileTooLarge(AppConstants.maxFileSizeMB),
+                );
+              }
+              return;
+            }
+
+            if (context.mounted) {
+              context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
+                file: musicSheetFile,
+                repositoryId: repositoryId,
+              );
+              Navigator.of(context).push<void>(AddEditMusicSheetView.route());
+            }
+          } on UnsupportedFileExtensionException {
+            if (context.mounted) {
+              showErrorDialog(context: context, text: localizations.unsupportedFileExtension);
+            }
+          }
+        }
+      });
+    }
+
     return PopScope<Object?>(
       canPop: !isSelectionMode.value,
       onPopInvokedWithResult: (didPop, result) {
@@ -179,9 +232,11 @@ class MusicSheetRepositoryView extends HookWidget {
           ],
         ),
         floatingActionButton: repository.isPrivate && !isSelectionMode.value
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 20.0, right: 8.0),
-                child: UploadMusicSheetFragment(repositoryId: repositoryId),
+            ? ScrollAwareFab(
+                icon: Icons.upload,
+                scrollController: scrollController,
+                onPressed: onUploadPressed,
+                label: localizations.uploadMusicSheet,
               )
             : null,
         body: Column(
@@ -224,27 +279,31 @@ class MusicSheetRepositoryView extends HookWidget {
 
                     return SafeArea(
                       child: ListView.builder(
+                        controller: scrollController,
                         itemCount: state.filteredMusicSheets.length,
                         itemBuilder: (context, index) {
                           final musicSheet = state.filteredMusicSheets[index];
                           final isSelected = selectedMusicSheetIds.value.contains(musicSheet.musicSheetId);
 
-                          return RepositoryMusicSheetTile(
+                          return MusicSheetRepositoryTile(
                             musicSheet: musicSheet,
                             searchBarController: searchBarController,
                             repositoryId: repositoryId,
                             isSelectionMode: isSelectionMode.value,
                             isSelected: isSelected,
+                            viewOnly: viewOnly,
                             onTap: () {
                               if (isSelectionMode.value) {
                                 toggleSelection(musicSheet.musicSheetId);
                               }
                             },
-                            onLongPress: () {
-                              if (!isSelectionMode.value) {
-                                enterSelectionMode(musicSheet.musicSheetId);
-                              }
-                            },
+                            onLongPress: viewOnly
+                                ? null
+                                : () {
+                                    if (!isSelectionMode.value) {
+                                      enterSelectionMode(musicSheet.musicSheetId);
+                                    }
+                                  },
                           );
                         },
                       ),

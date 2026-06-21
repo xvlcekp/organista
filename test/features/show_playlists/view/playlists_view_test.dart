@@ -9,11 +9,11 @@ import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlists_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/widgets/scroll_aware_fab.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/services/auth/auth_user.dart';
-import 'package:organista/features/popup_menu/main_popup_menu_button.dart';
 
 // Mock classes
 class MockShowPlaylistsCubit extends MockCubit<ShowPlaylistsState> implements ShowPlaylistsCubit {}
@@ -130,21 +130,13 @@ void main() {
     }
 
     group('Widget Structure', () {
-      testWidgets('should display app bar with correct title and icon', (tester) async {
+      testWidgets('should render without Scaffold or AppBar, but with FAB', (tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pump();
 
-        expect(find.byType(AppBar), findsOneWidget);
-        expect(find.byIcon(Icons.list_alt), findsOneWidget);
-        expect(find.text('My Playlists'), findsOneWidget);
-        expect(find.byType(MainPopupMenuButton), findsOneWidget);
-      });
-
-      testWidgets('should display floating action button', (tester) async {
-        await tester.pumpWidget(createTestWidget());
-
-        expect(find.byType(FloatingActionButton), findsOneWidget);
-        expect(find.byIcon(Icons.add), findsOneWidget);
-        expect(find.text('New Playlist'), findsOneWidget);
+        expect(find.byType(AppBar), findsNothing);
+        expect(find.byType(Scaffold), findsNothing);
+        expect(find.byType(ScrollAwareFab), findsOneWidget);
       });
     });
 
@@ -190,6 +182,18 @@ void main() {
 
         expect(find.byIcon(Icons.chevron_right), findsOneWidget);
       });
+
+      testWidgets('should show extended FAB in initial (non-scrolled) state', (tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1, testPlaylist2]),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.byType(ScrollAwareFab), findsOneWidget);
+        expect(find.byIcon(Icons.add), findsOneWidget);
+      });
     });
 
     group('Cubit Initialization', () {
@@ -229,14 +233,13 @@ void main() {
             initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
           ),
         );
+        await tester.pump();
 
-        // Verify the basic widget tree structure
-        expect(find.byType(Scaffold), findsOneWidget);
-        expect(find.byType(AppBar), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byType(Scaffold), findsNothing);
+        expect(find.byType(AppBar), findsNothing);
+        expect(find.byType(ScrollAwareFab), findsOneWidget);
         expect(find.byType(ListView), findsOneWidget);
         expect(find.byType(Card), findsOneWidget);
-        // Note: ListTile might not be used in the actual implementation
         expect(find.text('Sunday Service'), findsOneWidget);
       });
     });
@@ -277,9 +280,9 @@ void main() {
           ),
         );
 
-        // Should not crash and should display the scaffold
-        expect(find.byType(Scaffold), findsOneWidget);
-        expect(find.byType(AppBar), findsOneWidget);
+        // Should not crash; scaffold-free — no Scaffold or AppBar
+        expect(find.byType(Scaffold), findsNothing);
+        expect(find.byType(AppBar), findsNothing);
       });
 
       testWidgets('should handle empty playlists state', (tester) async {

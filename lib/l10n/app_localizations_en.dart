@@ -58,10 +58,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
-  String get deleteImage => 'Delete image';
+  String get deleteMusicSheet => 'Delete music sheet';
 
   @override
-  String get deleteImageMessage => 'Are you sure you want to delete this image? You cannot undo this operation!';
+  String get deleteMusicSheetMessage =>
+      'Are you sure you want to delete this music sheet? You cannot undo this operation!';
 
   @override
   String get logout => 'Logout';
@@ -298,6 +299,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addMusicSheet => 'Add music sheet';
+
+  @override
+  String get uploadMusicSheet => 'Upload music sheet';
 
   @override
   String get edit => 'Edit';

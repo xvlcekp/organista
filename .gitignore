@@ -1,3 +1,6 @@
+# Brainstorming session files
+.superpowers/
+
 # Miscellaneous
 *.class
 *.log
@@ -43,6 +46,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
 
 assets/config/credentials.json
 

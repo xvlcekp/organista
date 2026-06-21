@@ -2,16 +2,16 @@ import 'package:flutter/material.dart' show BuildContext;
 import 'package:organista/dialogs/generic_dialog.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
-Future<bool> showDeleteImageDialog(BuildContext context) {
+Future<bool> showDeleteMusicSheetDialog(BuildContext context) {
   final localizations = context.loc;
 
   return showGenericDialog<bool>(
     context: context,
-    title: localizations.deleteImage,
-    content: localizations.deleteImageMessage,
+    title: localizations.deleteMusicSheet,
+    content: localizations.deleteMusicSheetMessage,
     optionsBuilder: () => {
       localizations.cancel: false,
-      localizations.deleteImage: true,
+      localizations.deleteMusicSheet: true,
     },
   ).then(
     (value) => value ?? false,

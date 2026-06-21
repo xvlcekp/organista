@@ -40,7 +40,9 @@ dart run flutter_native_splash:create
 ## Architecture
 
 ### State Management
+
 BLoC/Cubit pattern throughout. Each feature follows the structure:
+
 - `bloc/` or `cubit/` — state, events, and the bloc/cubit class
 - `view/` — Flutter widgets that consume the bloc/cubit
 - `error/` — feature-specific error types (where applicable)
@@ -48,6 +50,7 @@ BLoC/Cubit pattern throughout. Each feature follows the structure:
 Global blocs provided at the `App` level: `AuthBloc`, `PlaylistBloc`, `AddEditMusicSheetCubit`, `SettingsCubit`.
 
 ### Layer Structure
+
 ```
 lib/
   main.dart               — Firebase/Sentry init, entry point
@@ -77,6 +80,7 @@ lib/
 **Error tracking**: Sentry. Captured via `Sentry.captureException()` in catch blocks and automatically via `SentryWidget` wrapper. `SentryWidget` wraps the root widget in `main.dart`.
 
 ### Testing Patterns
+
 - BLoC logic: `bloc_test` package
 - Firebase: `fake_cloud_firestore` for Firestore, `mockito`/`mocktail` for Storage/other services
 - Generated mocks: `.mocks.dart` files alongside test files, regenerated via `build_runner`
@@ -108,3 +112,5 @@ Keystore property files in `android/app/keystore/` are gitignored. Create them l
 ## Credentials in CI
 
 `assets/config/credentials.json` and `android/app/google_services.json` are stored as base64-encoded GitHub secrets (`CREDENTIALS_JSON_BASE64`, `GOOGLE_SERVICES_JSON_BASE64`). After changing either file locally, re-encode it with `openssl base64 < <file> | tr -d '\n'` and update the secret.
+
+Never commit anything, I always want to review the diffs and commit manually.

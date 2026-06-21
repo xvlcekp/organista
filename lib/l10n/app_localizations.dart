@@ -188,17 +188,17 @@ abstract class AppLocalizations {
   /// **'Vymazať'**
   String get delete;
 
-  /// No description provided for @deleteImage.
+  /// No description provided for @deleteMusicSheet.
   ///
   /// In sk, this message translates to:
-  /// **'Vymazať obrázok'**
-  String get deleteImage;
+  /// **'Vymazať notový záznam'**
+  String get deleteMusicSheet;
 
-  /// No description provided for @deleteImageMessage.
+  /// No description provided for @deleteMusicSheetMessage.
   ///
   /// In sk, this message translates to:
-  /// **'Ste si istý, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!'**
-  String get deleteImageMessage;
+  /// **'Ste si istý, že chcete vymazať tento notový záznam? Táto akcia sa nedá vrátiť späť!'**
+  String get deleteMusicSheetMessage;
 
   /// No description provided for @logout.
   ///
@@ -649,6 +649,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Pridať notový záznam'**
   String get addMusicSheet;
+
+  /// No description provided for @uploadMusicSheet.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nahrať notový záznam'**
+  String get uploadMusicSheet;
 
   /// No description provided for @edit.
   ///
