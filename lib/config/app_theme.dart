@@ -7,8 +7,11 @@ class AppTheme {
   static const double inputBorderRadius = 8.0;
   static const double buttonBorderRadius = 30.0;
   static const double dialogBorderRadius = 8.0;
-  static const int selectedColorAlpha = 50;
   static const double symmetricOverlayPadding = 16.0;
+
+  // FAB & navigation
+  static const double fabCollapseThreshold = 2.0;
+  static const double fabPositionOffset = 16.0;
 
   static ThemeData get lightTheme {
     return _buildTheme(

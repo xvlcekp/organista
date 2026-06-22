@@ -16,8 +16,8 @@
   "cancel": "Cancel",
   "create": "Create",
   "delete": "Delete",
-  "deleteImage": "Delete image",
-  "deleteImageMessage": "Are you sure you want to delete this image? You cannot undo this operation!",
+  "deleteMusicSheet": "Delete music sheet",
+  "deleteMusicSheetMessage": "Are you sure you want to delete this music sheet? You cannot undo this operation!",
   "logout": "Logout",
   "logoutMessage": "Are you sure you want to logout?",
   "deleteAccount": "Delete account",
@@ -100,6 +100,7 @@
     }
   },
   "addMusicSheet": "Add music sheet",
+  "uploadMusicSheet": "Upload music sheet",
   "edit": "Edit",
   "change": "Change",
   "noMusicSheets": "No music sheets found",

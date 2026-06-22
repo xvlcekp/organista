@@ -7,8 +7,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_repositories/cubit/show_repositories_cubit.dart';
 
+import 'package:organista/features/show_repositories/models/repositories_view_mode.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/widgets/scroll_aware_fab.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
@@ -32,6 +35,12 @@ void main() {
 
       // Mock the getRepositoryMusicSheetsCount method to return a Future<int>
       when(() => mockFirebaseRepository.getRepositoryMusicSheetsCount(any())).thenAnswer((_) async => 0);
+      // Mock the getRepositoryMusicSheetsStream to return an empty list (needed when navigating into a repository)
+      // Using Stream.value (not Stream.empty) so the bloc transitions out of loading state,
+      // avoiding an infinite CircularProgressIndicator that would cause pumpAndSettle to time out.
+      when(
+        () => mockFirebaseRepository.getRepositoryMusicSheetsStream(any()),
+      ).thenAnswer((_) => Stream<Iterable<MusicSheet>>.value(const <MusicSheet>[]));
     });
 
     Repository createTestRepository({
@@ -52,6 +61,7 @@ void main() {
 
     Widget createWidgetUnderTest({
       ShowRepositoriesState? initialState,
+      RepositoriesViewMode mode = RepositoriesViewMode.selection,
     }) {
       when(() => mockRepositoriesCubit.state).thenReturn(
         initialState ?? const InitRepositoryState(),
@@ -71,18 +81,27 @@ void main() {
         ),
       );
 
-      return MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: MultiBlocProvider(
+      final view = MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>.value(value: mockAuthBloc),
+          BlocProvider<ShowRepositoriesCubit>.value(value: mockRepositoriesCubit),
+        ],
+        child: RepositoriesView(mode: mode),
+      );
+
+      final home = mode == RepositoriesViewMode.management ? Scaffold(body: view) : view;
+
+      return RepositoryProvider<FirebaseFirestoreRepository>.value(
+        value: mockFirebaseRepository,
+        child: MultiBlocProvider(
           providers: [
             BlocProvider<AuthBloc>.value(value: mockAuthBloc),
-            BlocProvider<ShowRepositoriesCubit>.value(value: mockRepositoriesCubit),
-            RepositoryProvider<FirebaseFirestoreRepository>.value(
-              value: mockFirebaseRepository,
-            ),
           ],
-          child: const RepositoriesViewContent(),
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: home,
+          ),
         ),
       );
     }
@@ -95,10 +114,11 @@ void main() {
         expect(find.text('Repositories 📁'), findsOneWidget);
       });
 
-      testWidgets('should display bottom navigation bar with Global and Personal tabs', (tester) async {
+      testWidgets('should display filter chips with Global and Personal tabs', (tester) async {
         await tester.pumpWidget(createWidgetUnderTest());
 
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(find.byType(FilterChip), findsNWidgets(2));
+        expect(find.byType(NavigationBar), findsNothing);
         expect(find.text('Global'), findsOneWidget);
         expect(find.text('Personal'), findsOneWidget);
       });
@@ -106,17 +126,19 @@ void main() {
       testWidgets('should not display floating action button when Global tab is selected', (tester) async {
         await tester.pumpWidget(createWidgetUnderTest());
 
-        expect(find.byType(FloatingActionButton), findsNothing);
+        expect(find.byType(ScrollAwareFab), findsNothing);
       });
 
       testWidgets('should display floating action button when Personal tab is selected', (tester) async {
-        await tester.pumpWidget(createWidgetUnderTest());
+        await tester.pumpWidget(
+          createWidgetUnderTest(mode: RepositoriesViewMode.management),
+        );
 
         // Tap on Personal tab
         await tester.tap(find.text('Personal'));
         await tester.pump();
 
-        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byType(ScrollAwareFab), findsOneWidget);
         expect(find.text('New repository'), findsOneWidget);
       });
     });
@@ -134,7 +156,7 @@ void main() {
       });
 
       testWidgets(
-        'should display no personal repositories message when private repositories are empty and Personal tab is selected',
+        'should show no personal repos message when Personal tab selected and private repos empty',
         (tester) async {
           const state = RepositoriesState(
             publicRepositories: [],
@@ -188,6 +210,33 @@ void main() {
         expect(find.text('Private Repo 2'), findsOneWidget);
       });
 
+      testWidgets('should not show context menu on long press in selection mode', (tester) async {
+        const userId = 'test-user-id';
+        final privateRepo = createTestRepository(id: '6', name: 'My Repo Selection', userId: userId);
+
+        final state = RepositoriesState(
+          publicRepositories: const [],
+          privateRepositories: [privateRepo],
+        );
+
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            initialState: state,
+            mode: RepositoriesViewMode.selection,
+          ),
+        );
+
+        // Switch to Personal tab
+        await tester.tap(find.text('Personal'));
+        await tester.pump();
+
+        await tester.longPress(find.text('My Repo Selection'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Rename repository'), findsNothing);
+        expect(find.text('Delete repository'), findsNothing);
+      });
+
       testWidgets('should switch between Global and Personal tabs correctly', (tester) async {
         const userId = 'test-user-id';
         final publicRepo = createTestRepository(id: '1', name: 'Public Repo');
@@ -227,22 +276,161 @@ void main() {
           privateRepositories: [],
         );
 
-        await tester.pumpWidget(createWidgetUnderTest(initialState: state));
+        await tester.pumpWidget(
+          createWidgetUnderTest(
+            initialState: state,
+            mode: RepositoriesViewMode.management,
+          ),
+        );
 
         // Switch to Personal tab to show FAB
         await tester.tap(find.text('Personal'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byType(ScrollAwareFab), findsOneWidget);
 
         // Tap the FAB - suppress warning since the button might be positioned at edge
-        await tester.tap(find.byType(FloatingActionButton));
+        await tester.tap(find.byType(ScrollAwareFab));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
         // The dialog would appear here, but testing dialogs requires more complex setup
         // For now, we just verify the FAB can be tapped without errors
+      });
+    });
+
+    group('Management mode', () {
+      Widget createManagementModeWidget({
+        ShowRepositoriesState? initialState,
+      }) {
+        when(() => mockRepositoriesCubit.state).thenReturn(
+          initialState ?? const InitRepositoryState(),
+        );
+        when(() => mockRepositoriesCubit.stream).thenAnswer(
+          (_) => Stream.fromIterable([initialState ?? const InitRepositoryState()]),
+        );
+
+        when(() => mockAuthBloc.state).thenReturn(
+          const AuthStateLoggedIn(
+            isLoading: false,
+            user: AuthUser(
+              id: 'test-user-id',
+              email: 'test@example.com',
+              isEmailVerified: true,
+            ),
+          ),
+        );
+
+        return MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: MultiBlocProvider(
+              providers: [
+                BlocProvider<AuthBloc>.value(value: mockAuthBloc),
+                BlocProvider<ShowRepositoriesCubit>.value(value: mockRepositoriesCubit),
+                RepositoryProvider<FirebaseFirestoreRepository>.value(
+                  value: mockFirebaseRepository,
+                ),
+              ],
+              child: const RepositoriesView(mode: RepositoriesViewMode.management),
+            ),
+          ),
+        );
+      }
+
+      testWidgets('should contain no Scaffold, AppBar, or NavigationBar', (tester) async {
+        await tester.pumpWidget(createManagementModeWidget());
+
+        // The outer Scaffold belongs to the test harness, not to RepositoriesView
+        // management mode must not render its own Scaffold/AppBar/NavigationBar
+        expect(
+          find.byType(Scaffold),
+          findsOneWidget,
+        ); // only the harness scaffold, not one from RepositoriesView
+        expect(find.byType(AppBar), findsNothing);
+        expect(find.byType(NavigationBar), findsNothing);
+      });
+
+      testWidgets('should display FilterChip widgets for Global and Personal tabs', (tester) async {
+        await tester.pumpWidget(createManagementModeWidget());
+
+        expect(find.byType(FilterChip), findsNWidgets(2));
+        expect(find.text('Global'), findsOneWidget);
+        expect(find.text('Personal'), findsOneWidget);
+      });
+
+      testWidgets('should not display FAB when Global tab is selected', (tester) async {
+        await tester.pumpWidget(createManagementModeWidget());
+
+        // Default tab is Global — no FAB should be visible
+        expect(find.byType(ScrollAwareFab), findsNothing);
+      });
+
+      testWidgets('should display FAB when Personal tab is selected', (tester) async {
+        await tester.pumpWidget(createManagementModeWidget());
+
+        // Switch to Personal tab via the FilterChip
+        await tester.tap(find.text('Personal'));
+        await tester.pump();
+
+        expect(find.byType(ScrollAwareFab), findsOneWidget);
+        expect(find.text('New repository'), findsOneWidget);
+      });
+
+      testWidgets('should show context menu on long press for own private repo in management mode', (tester) async {
+        const userId = 'test-user-id';
+        final privateRepo = createTestRepository(id: '5', name: 'My Repo', userId: userId);
+
+        final state = RepositoriesState(
+          publicRepositories: const [],
+          privateRepositories: [privateRepo],
+        );
+
+        await tester.pumpWidget(createManagementModeWidget(initialState: state));
+
+        // Switch to Personal tab
+        await tester.tap(find.text('Personal'));
+        await tester.pump();
+
+        // Long-press the repository tile
+        await tester.longPress(find.text('My Repo'));
+        await tester.pumpAndSettle();
+
+        // Bottom sheet with Rename and Delete options should appear
+        expect(find.text('Rename repository'), findsOneWidget);
+        expect(find.text('Delete repository'), findsOneWidget);
+      });
+
+      testWidgets('should switch between Global and Personal tabs via FilterChip', (tester) async {
+        final publicRepo = createTestRepository(id: '1', name: 'Public Repo NS');
+        final privateRepo = createTestRepository(id: '2', name: 'Private Repo NS', userId: 'test-user-id');
+
+        final state = RepositoriesState(
+          publicRepositories: [publicRepo],
+          privateRepositories: [privateRepo],
+        );
+
+        await tester.pumpWidget(createManagementModeWidget(initialState: state));
+
+        // Initially on Global tab
+        expect(find.text('Public Repo NS'), findsOneWidget);
+        expect(find.text('Private Repo NS'), findsNothing);
+
+        // Tap the Personal FilterChip to switch tabs
+        await tester.tap(find.text('Personal'));
+        await tester.pump();
+
+        expect(find.text('Public Repo NS'), findsNothing);
+        expect(find.text('Private Repo NS'), findsOneWidget);
+
+        // Tap the Global FilterChip to switch back
+        await tester.tap(find.text('Global'));
+        await tester.pump();
+
+        expect(find.text('Public Repo NS'), findsOneWidget);
+        expect(find.text('Private Repo NS'), findsNothing);
       });
     });
   });

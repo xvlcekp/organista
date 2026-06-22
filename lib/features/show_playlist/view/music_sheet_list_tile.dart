@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/dialogs/delete_image_dialog.dart';
+import 'package:organista/dialogs/delete_music_sheet_dialog.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
@@ -83,8 +83,8 @@ class MusicSheetListTile extends HookWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        showDeleteImageDialog(context).then((shouldDeleteImage) {
-                          if (shouldDeleteImage && context.mounted) {
+                        showDeleteMusicSheetDialog(context).then((shouldDeleteMusicSheet) {
+                          if (shouldDeleteMusicSheet && context.mounted) {
                             context.read<PlaylistBloc>().add(
                               DeleteMusicSheetInPlaylistEvent(
                                 musicSheet: musicSheet,

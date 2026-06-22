@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
-import 'package:organista/config/app_theme.dart';
-import 'package:organista/dialogs/delete_image_dialog.dart';
+import 'package:organista/dialogs/delete_music_sheet_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
@@ -14,7 +13,7 @@ import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
-class RepositoryMusicSheetTile extends HookWidget {
+class MusicSheetRepositoryTile extends HookWidget {
   final MusicSheet musicSheet;
   final String repositoryId;
   final TextEditingController searchBarController;
@@ -22,8 +21,11 @@ class RepositoryMusicSheetTile extends HookWidget {
   final bool isSelected;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
+  final bool viewOnly;
 
-  const RepositoryMusicSheetTile({
+  static const int _selectedColorAlpha = 50;
+
+  const MusicSheetRepositoryTile({
     super.key,
     required this.musicSheet,
     required this.searchBarController,
@@ -32,6 +34,7 @@ class RepositoryMusicSheetTile extends HookWidget {
     this.isSelected = false,
     this.onTap,
     this.onLongPress,
+    this.viewOnly = false,
   });
 
   Future<bool> _checkIfCached(CacheManager cacheManager) async {
@@ -50,7 +53,7 @@ class RepositoryMusicSheetTile extends HookWidget {
     final theme = Theme.of(context);
     final localizations = context.loc;
     final isCached = useState<bool>(false);
-    final selectedColor = theme.colorScheme.primary.withAlpha(AppTheme.selectedColorAlpha);
+    final selectedColor = theme.colorScheme.primary.withAlpha(_selectedColorAlpha);
     final cacheManager = context.read<CacheManager>();
 
     useEffect(() {
@@ -108,18 +111,19 @@ class RepositoryMusicSheetTile extends HookWidget {
                       Icons.check_circle,
                       color: Colors.green,
                     ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.download_rounded,
-                      color: theme.colorScheme.primary,
+                  if (!viewOnly)
+                    IconButton(
+                      icon: Icon(
+                        Icons.download_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
+                      tooltip: localizations.downloadTooltip,
+                      onPressed: () {
+                        context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
+                        Navigator.of(context).push<void>(AddEditMusicSheetView.route());
+                      },
                     ),
-                    tooltip: localizations.downloadTooltip,
-                    onPressed: () {
-                      context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
-                      Navigator.of(context).push<void>(AddEditMusicSheetView.route());
-                    },
-                  ),
-                  if (musicSheet.userId == userId)
+                  if (musicSheet.userId == userId && viewOnly)
                     IconButton(
                       icon: Icon(
                         Icons.delete_outline_rounded,
@@ -127,7 +131,7 @@ class RepositoryMusicSheetTile extends HookWidget {
                       ),
                       tooltip: localizations.deleteTooltip,
                       onPressed: () {
-                        showDeleteImageDialog(context).then((shouldDeleteMusicSheet) {
+                        showDeleteMusicSheetDialog(context).then((shouldDeleteMusicSheet) {
                           if (shouldDeleteMusicSheet && context.mounted) {
                             context.read<MusicSheetRepositoryBloc>().add(
                               DeleteMusicSheet(

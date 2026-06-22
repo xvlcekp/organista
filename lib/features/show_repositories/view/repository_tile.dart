@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/config/app_theme.dart';
+import 'package:organista/features/show_repositories/models/repositories_view_mode.dart';
 import 'package:organista/features/show_repositories/view/delete_repository_dialog.dart';
 import 'package:organista/features/show_repositories/view/rename_repository_dialog.dart';
 import 'package:organista/features/show_repositories/view/show_repositories_error.dart';
@@ -17,11 +18,13 @@ import 'package:organista/extensions/buildcontext/localization.dart';
 class RepositoryTile extends StatelessWidget {
   final Repository repository;
   final int index;
+  final RepositoriesViewMode mode;
 
   const RepositoryTile({
     super.key,
     required this.repository,
     required this.index,
+    this.mode = RepositoriesViewMode.selection,
   });
 
   @override
@@ -33,12 +36,13 @@ class RepositoryTile extends StatelessWidget {
         Navigator.of(context).push(
           MusicSheetRepositoryView.route(
             repository: repository,
+            viewOnly: mode == RepositoriesViewMode.management,
           ),
         );
       },
-      onLongPress: () {
-        _showRepositoryContextMenu(context, currentUserId);
-      },
+      onLongPress: mode == RepositoriesViewMode.management
+          ? () => _showRepositoryContextMenu(context, currentUserId)
+          : null,
       child: Container(
         decoration: BoxDecoration(
           color: _getFixedColor(),

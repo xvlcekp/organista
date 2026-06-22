@@ -58,10 +58,11 @@ class AppLocalizationsSk extends AppLocalizations {
   String get delete => 'Vymazať';
 
   @override
-  String get deleteImage => 'Vymazať obrázok';
+  String get deleteMusicSheet => 'Vymazať notový záznam';
 
   @override
-  String get deleteImageMessage => 'Ste si istý, že chcete vymazať tento obrázok? Táto akcia sa nedá vrátiť späť!';
+  String get deleteMusicSheetMessage =>
+      'Ste si istý, že chcete vymazať tento notový záznam? Táto akcia sa nedá vrátiť späť!';
 
   @override
   String get logout => 'Odhlásiť sa';
@@ -300,6 +301,9 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get addMusicSheet => 'Pridať notový záznam';
+
+  @override
+  String get uploadMusicSheet => 'Nahrať notový záznam';
 
   @override
   String get edit => 'Upraviť';

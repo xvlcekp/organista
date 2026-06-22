@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/dialogs/error_dialog.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
+import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/loading/loading_screen.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
 import 'package:organista/widgets/empty_list_widget.dart';
-import 'package:organista/extensions/buildcontext/localization.dart';
+import 'package:organista/widgets/scroll_aware_fab.dart';
 
 class PlaylistView extends HookWidget {
   const PlaylistView({super.key});
@@ -25,6 +26,7 @@ class PlaylistView extends HookWidget {
     final isEditMode = useState(false);
     final localizations = context.loc;
     final primaryColor = theme.colorScheme.primary;
+    final scrollController = useScrollController();
 
     return BlocListener<PlaylistBloc, PlaylistState>(
       listener: (context, state) {
@@ -120,7 +122,7 @@ class PlaylistView extends HookWidget {
                     )
                   : SafeArea(
                       child: ReorderableListView.builder(
-                        padding: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
+                        scrollController: scrollController,
                         itemCount: playlist.musicSheets.length,
                         onReorderStart: (_) => HapticFeedback.heavyImpact(),
                         onReorder: (oldIndex, newIndex) {
@@ -144,13 +146,12 @@ class PlaylistView extends HookWidget {
                       ),
                     ),
               floatingActionButton: !isEditMode.value
-                  ? FloatingActionButton(
+                  ? ScrollAwareFab(
+                      scrollController: scrollController,
                       onPressed: () {
                         Navigator.of(context).push<void>(RepositoriesView.route());
                       },
-                      backgroundColor: primaryColor,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      child: const Icon(Icons.add),
+                      label: localizations.addMusicSheet,
                     )
                   : null,
             ),

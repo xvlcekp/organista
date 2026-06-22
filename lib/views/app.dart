@@ -6,7 +6,7 @@ import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
-import 'package:organista/features/show_playlists/view/playlist_page.dart';
+import 'package:organista/features/main/view/main_screen.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/l10n/app_localizations.dart';
@@ -94,7 +94,7 @@ class App extends StatelessWidget {
                 if (authState is AuthStateLoggedOut) {
                   return const LoginView();
                 } else if (authState is AuthStateLoggedIn) {
-                  return const PlaylistPage();
+                  return const MainScreen();
                 } else if (authState is AuthStateIsInRegistrationView) {
                   return const RegisterView();
                 } else {
