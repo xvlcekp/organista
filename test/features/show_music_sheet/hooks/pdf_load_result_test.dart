@@ -9,19 +9,18 @@ import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/show_music_sheet/hooks/pdf_load_result.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:provider/provider.dart';
 
 class MockCacheManager extends Mock implements CacheManager {}
 
 void main() {
   group('PDF Load Error Handling', () {
-    // Helper function to check if error is network-related
     bool isNetworkError(Object error) {
       return error is SocketException || error is http.ClientException || error is OSError;
     }
 
     group('Network Error Detection (Unit Tests)', () {
-      // Parameterized test for network errors
       final networkErrors = [
         (const SocketException('Network unreachable'), 'SocketException'),
         (http.ClientException('Connection failed'), 'ClientException'),
@@ -41,7 +40,6 @@ void main() {
         });
       }
 
-      // Parameterized test for non-network errors
       final nonNetworkErrors = [
         (Exception('File not found'), 'generic Exception'),
         (const FormatException('Invalid PDF format'), 'FormatException'),
@@ -58,11 +56,11 @@ void main() {
 
     group('usePdfDocument Hook (Widget Tests)', () {
       late MockCacheManager mockCacheManager;
-      late MusicSheet testMusicSheet;
+      late MusicSheetSource testSource;
 
       setUp(() {
         mockCacheManager = MockCacheManager();
-        testMusicSheet = MusicSheet(
+        final testMusicSheet = MusicSheet(
           json: {
             MusicSheetKey.musicSheetId: 'test-id',
             MusicSheetKey.userId: 'user-id',
@@ -74,18 +72,17 @@ void main() {
             MusicSheetKey.createdAt: Timestamp.now(),
           },
         );
-
-        // Register fallback values for mocktail
+        testSource = MusicSheetUrlSource(testMusicSheet);
         registerFallbackValue(Uri.parse('https://example.com/test.pdf'));
       });
 
-      Widget createTestWidget(MusicSheet musicSheet) {
+      Widget createTestWidget(MusicSheetSource source) {
         return Provider<CacheManager>.value(
           value: mockCacheManager,
           child: MaterialApp(
             home: HookBuilder(
               builder: (context) {
-                final result = usePdfDocument(musicSheet);
+                final result = usePdfDocument(source);
                 return Scaffold(
                   body: Column(
                     children: [
@@ -106,45 +103,41 @@ void main() {
           (_) async => Future.delayed(const Duration(seconds: 10)),
         );
 
-        await tester.pumpWidget(createTestWidget(testMusicSheet));
+        await tester.pumpWidget(createTestWidget(testSource));
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
         expect(find.byIcon(Icons.error), findsNothing);
       });
 
       testWidgets('should show error icon when network error occurs', (tester) async {
-        // Simulate network error (device offline)
         when(() => mockCacheManager.getSingleFile(any())).thenThrow(
           const SocketException('Failed host lookup'),
         );
 
-        await tester.pumpWidget(createTestWidget(testMusicSheet));
+        await tester.pumpWidget(createTestWidget(testSource));
         await tester.pumpAndSettle();
 
-        // Should show error state but NOT crash
         expect(find.byIcon(Icons.error), findsOneWidget);
         expect(find.byType(CircularProgressIndicator), findsNothing);
       });
 
       testWidgets('should show error icon when ClientException occurs', (tester) async {
-        // Simulate ClientException from http package
         when(() => mockCacheManager.getSingleFile(any())).thenThrow(
           http.ClientException('Network unreachable'),
         );
 
-        await tester.pumpWidget(createTestWidget(testMusicSheet));
+        await tester.pumpWidget(createTestWidget(testSource));
         await tester.pumpAndSettle();
 
         expect(find.byIcon(Icons.error), findsOneWidget);
       });
 
       testWidgets('should show error icon for non-network errors', (tester) async {
-        // Non-network error (e.g., file system error)
         when(() => mockCacheManager.getSingleFile(any())).thenThrow(
           Exception('File system error'),
         );
 
-        await tester.pumpWidget(createTestWidget(testMusicSheet));
+        await tester.pumpWidget(createTestWidget(testSource));
         await tester.pumpAndSettle();
 
         expect(find.byIcon(Icons.error), findsOneWidget);

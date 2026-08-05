@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/full_screen_gallery/cubit/gallery_cubit.dart';
@@ -85,7 +86,7 @@ class FullScreenImageGallery extends HookWidget {
                     disableGestures: true,
                     child: MusicSheetView(
                       key: ValueKey(musicSheets[index].musicSheetId),
-                      musicSheet: musicSheets[index],
+                      source: MusicSheetUrlSource(musicSheets[index]),
                       mode: MusicSheetViewMode.full,
                     ),
                   );
@@ -106,7 +107,3 @@ void useFullScreenMode() {
     return () => SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }, []);
 }
-
-// TODO:
-// 1. MusicSheetView should be able to handle both PDFs and images and should be able to work with bytes
-// 2. Replace MusicSheet with other object and pass it to classes (PDFView appears twice in the project)

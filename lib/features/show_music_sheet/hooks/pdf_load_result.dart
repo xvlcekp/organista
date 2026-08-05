@@ -8,7 +8,7 @@ import 'package:http/http.dart';
 import 'package:organista/features/full_screen_gallery/cubit/gallery_cubit.dart';
 import 'package:organista/features/full_screen_gallery/cubit/gallery_state.dart';
 import 'package:organista/logger/custom_logger.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:pdfx/pdfx.dart';
 
 /// Result of the usePdfDocument hook
@@ -20,8 +20,11 @@ class PdfLoadResult {
   PdfLoadResult({this.controller, this.isLoading = false, this.hasError = false});
 }
 
-/// Custom hook to manage PDF loading and coordination with GalleryCubit
-PdfLoadResult usePdfDocument(MusicSheet musicSheet) {
+/// Custom hook to manage PDF loading and coordination with GalleryCubit.
+///
+/// Accepts both [MusicSheetUrlSource] (fetches via cache/network) and
+/// [MusicSheetBytesSource] (opens directly from bytes, no GalleryCubit coordination).
+PdfLoadResult usePdfDocument(MusicSheetSource source) {
   final pdfControllerFuture = useState<PdfController?>(null);
   final isLoading = useState(true);
   final hasError = useState(false);
@@ -29,16 +32,23 @@ PdfLoadResult usePdfDocument(MusicSheet musicSheet) {
   final cacheManager = context.read<CacheManager>();
   final galleryCubit = useMemoized(() => context.read<GalleryCubit?>(), []);
 
-  // Helper to load document
   Future<PdfDocument> loadDoc() async {
-    if (kIsWeb) {
-      final response = await get(Uri.parse(musicSheet.fileUrl));
-      return await PdfDocument.openData(response.bodyBytes);
-    } else {
-      final pdfFile = await cacheManager.getSingleFile(musicSheet.fileUrl);
-      return await PdfDocument.openFile(pdfFile.path);
-    }
+    return switch (source) {
+      MusicSheetUrlSource(:final musicSheet) when kIsWeb => PdfDocument.openData(
+        (await get(Uri.parse(musicSheet.fileUrl))).bodyBytes,
+      ),
+      MusicSheetUrlSource(:final musicSheet) => PdfDocument.openFile(
+        (await cacheManager.getSingleFile(musicSheet.fileUrl)).path,
+      ),
+      MusicSheetBytesSource(:final bytes) => PdfDocument.openData(bytes),
+    };
   }
+
+  // Stable effect key: URL changes re-trigger loading; bytes sources run once.
+  final effectKey = switch (source) {
+    MusicSheetUrlSource(:final musicSheet) => musicSheet.fileUrl,
+    MusicSheetBytesSource() => 'bytes',
+  };
 
   useEffect(() {
     final completer = Completer<void>();
@@ -47,9 +57,8 @@ PdfLoadResult usePdfDocument(MusicSheet musicSheet) {
         final document = await loadDoc();
         if (!completer.isCompleted) {
           int initialPage = 1;
-          if (galleryCubit != null) {
-            final direction = galleryCubit.state.navigationDirection;
-            if (direction == GalleryNavigationDirection.backward) {
+          if (source is MusicSheetUrlSource && galleryCubit != null) {
+            if (galleryCubit.state.navigationDirection == GalleryNavigationDirection.backward) {
               initialPage = document.pagesCount;
             }
           }
@@ -62,15 +71,15 @@ PdfLoadResult usePdfDocument(MusicSheet musicSheet) {
           hasError.value = false;
           isLoading.value = false;
 
-          galleryCubit?.updateActiveSheet(musicSheet.musicSheetId, controller);
+          if (source is MusicSheetUrlSource) {
+            galleryCubit?.updateActiveSheet(source.musicSheet.musicSheetId, controller);
+          }
           completer.complete();
         }
       } catch (e, stackTrace) {
-        // Network errors are expected when device is offline - don't report to Sentry
         if (e is SocketException || e is ClientException || e is OSError) {
           logger.w("Failed to load PDF due to network error (device is offline)", error: e);
         } else {
-          // Real errors should be reported to Sentry
           logger.e("Failed to load PDF", error: e, stackTrace: stackTrace);
         }
 
@@ -82,16 +91,16 @@ PdfLoadResult usePdfDocument(MusicSheet musicSheet) {
       }
     }();
     return () => completer.isCompleted ? null : completer.complete();
-  }, [musicSheet.fileUrl]);
+  }, [effectKey]);
 
-  // Handle re-registration when active
-  if (galleryCubit != null) {
+  // Handle re-registration when active sheet changes (URL sources in gallery only).
+  if (galleryCubit != null && source is MusicSheetUrlSource) {
     final currentId = context.select<GalleryCubit, String?>((cubit) => cubit.state.currentMusicSheetId);
-    final isCurrent = currentId == musicSheet.musicSheetId;
+    final isCurrent = currentId == source.musicSheet.musicSheetId;
 
     useEffect(() {
       if (isCurrent && pdfControllerFuture.value != null) {
-        galleryCubit.updateActiveSheet(musicSheet.musicSheetId, pdfControllerFuture.value!);
+        galleryCubit.updateActiveSheet(source.musicSheet.musicSheetId, pdfControllerFuture.value!);
       }
       return null;
     }, [isCurrent, pdfControllerFuture.value]);

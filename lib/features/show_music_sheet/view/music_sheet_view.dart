@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/show_music_sheet/view/back_button_widget.dart';
-import 'package:organista/features/show_music_sheet/view/cached_network_image_widget.dart';
+import 'package:organista/features/show_music_sheet/view/image_viewer_widget.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_viewer_widget.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/features/show_music_sheet/view/dismissable_title.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_viewer_widget.dart';
 
 class MusicSheetView extends HookWidget {
@@ -14,11 +14,11 @@ class MusicSheetView extends HookWidget {
 
   const MusicSheetView({
     super.key,
-    required this.musicSheet,
-    this.mode = MusicSheetViewMode.thumbnail, // Default to thumbnail
+    required this.source,
+    this.mode = MusicSheetViewMode.thumbnail,
   });
 
-  final MusicSheet musicSheet;
+  final MusicSheetSource source;
   final MusicSheetViewMode mode;
 
   @override
@@ -26,21 +26,21 @@ class MusicSheetView extends HookWidget {
     final showTitle = useState(true);
 
     return Stack(
+      alignment: Alignment.center,
       children: [
-        switch (musicSheet.mediaType) {
-          MediaType.image => CachedNetworkImageWidget(musicSheet: musicSheet, mode: mode),
-          MediaType.pdf => PdfViewerWidget(musicSheet: musicSheet, mode: mode),
-          MediaType.musicxml => MusicXmlViewerWidget(musicSheet: musicSheet, mode: mode),
+        switch (source.mediaType) {
+          MediaType.image => ImageViewerWidget(source: source, mode: mode),
+          MediaType.pdf => PdfViewerWidget(source: source, mode: mode),
+          MediaType.musicxml => MusicXmlViewerWidget(source: source, mode: mode),
         },
         if (mode == MusicSheetViewMode.full) const BackButtonWidget(),
-        // Show title overlay in full mode
         if (mode == MusicSheetViewMode.full && showTitle.value)
           Positioned(
             bottom: AppTheme.symmetricOverlayPadding,
             left: AppTheme.symmetricOverlayPadding,
             right: AppTheme.symmetricOverlayPadding * _titleRightPaddingMultiplier,
             child: DismissableTitle(
-              title: musicSheet.fileName,
+              title: source.fileName,
               onDismiss: () => showTitle.value = false,
             ),
           ),

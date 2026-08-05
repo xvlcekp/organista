@@ -7,7 +7,7 @@ import 'package:organista/features/add_edit_music_sheet/view/discard_changes_upl
 import 'package:organista/extensions/navigation/navigation_extensions.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
-import 'package:organista/features/add_edit_music_sheet/view/uploaded_music_sheet_file_view.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/loading/loading_screen.dart';
@@ -87,13 +87,23 @@ class AddEditMusicSheetView extends HookWidget {
                       flex: previewFlex,
                       child: switch (state) {
                         InitMusicSheetState() => const CircularProgressIndicator(),
-                        UploadMusicSheetState() => UploadedMusicSheetFileView(file: state.file),
+                        UploadMusicSheetState() =>
+                          state.file.bytes != null
+                              ? MusicSheetView(
+                                  source: MusicSheetBytesSource(
+                                    bytes: state.file.bytes!,
+                                    mediaType: state.file.mediaType,
+                                    fileName: state.file.name,
+                                  ),
+                                  mode: MusicSheetViewMode.preview,
+                                )
+                              : Center(child: Text(localizations.noFileDataAvailable)),
                         EditMusicSheetState() => MusicSheetView(
-                          musicSheet: state.musicSheet,
+                          source: MusicSheetUrlSource(state.musicSheet),
                           mode: MusicSheetViewMode.preview,
                         ),
                         AddMusicSheetToPlaylistState() => MusicSheetView(
-                          musicSheet: state.musicSheet,
+                          source: MusicSheetUrlSource(state.musicSheet),
                           mode: MusicSheetViewMode.preview,
                         ),
                       },
@@ -119,7 +129,7 @@ class AddEditMusicSheetView extends HookWidget {
                               onPressed: () {
                                 showDiscardUploadedMusicSheetChangesDialog(context).then((shouldDiscardChanges) {
                                   if (shouldDiscardChanges && context.mounted) {
-                                    resetMusicSheetCubitAndShowPlaylist(context);
+                                    resetMusicSheetCubitAndPop(context);
                                   }
                                 });
                               },
