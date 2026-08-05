@@ -7,6 +7,7 @@ import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/features/full_screen_gallery/view/fullscreen_image_gallery.dart';
 
@@ -52,7 +53,7 @@ class MusicSheetListTile extends HookWidget {
                 child: SizedBox.square(
                   dimension: musicSheetThumbnailSize,
                   child: MusicSheetView(
-                    musicSheet: musicSheet,
+                    source: MusicSheetUrlSource(musicSheet),
                     mode: MusicSheetViewMode.thumbnail,
                   ),
                 ),

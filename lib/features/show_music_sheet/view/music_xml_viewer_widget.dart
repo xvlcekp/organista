@@ -5,23 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_controls_overlay.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_thumbnail_widget.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class MusicXmlViewerWidget extends HookWidget {
   const MusicXmlViewerWidget({
     super.key,
-    required this.musicSheet,
+    required this.source,
     this.mode = MusicSheetViewMode.full,
   });
 
-  final MusicSheet musicSheet;
+  final MusicSheetSource source;
   final MusicSheetViewMode mode;
 
   static const int _kChannelPrefixLength = 2;
@@ -30,14 +31,14 @@ class MusicXmlViewerWidget extends HookWidget {
     BuildContext context,
     ValueNotifier<int> currentTranspose,
     ValueNotifier<double> currentElongationFactor,
+    MusicSheetUrlSource urlSource,
   ) async {
     // Capture context-dependent objects BEFORE any await
     final cacheManager = context.read<CacheManager>();
     final playlistBloc = context.read<PlaylistBloc>();
-    // Get cached file bytes for offline support
     String fileData;
     try {
-      final cachedFile = await cacheManager.getSingleFile(musicSheet.fileUrl);
+      final cachedFile = await cacheManager.getSingleFile(urlSource.musicSheet.fileUrl);
       final bytes = await cachedFile.readAsBytes();
       // Convert to base64 data URL for offline loading — offloaded to a
       // background isolate because encoding large files on the main thread
@@ -45,8 +46,7 @@ class MusicXmlViewerWidget extends HookWidget {
       final encoded = await compute(base64Encode, bytes);
       fileData = 'data:application/octet-stream;base64,$encoded';
     } catch (e) {
-      // Fallback to URL if cache is not available
-      fileData = musicSheet.fileUrl;
+      fileData = urlSource.musicSheet.fileUrl;
     }
 
     final controller = WebViewController();
@@ -62,7 +62,7 @@ class MusicXmlViewerWidget extends HookWidget {
         NavigationDelegate(
           onPageFinished: (_) {
             controller.runJavaScript(
-              'initSheet(${jsonEncode(fileData)}, ${musicSheet.transposition})',
+              'initSheet(${jsonEncode(fileData)}, ${urlSource.musicSheet.transposition})',
             );
           },
         ),
@@ -78,7 +78,7 @@ class MusicXmlViewerWidget extends HookWidget {
               currentTranspose.value = val;
               playlistBloc.add(
                 UpdateMusicSheetTranspositionEvent(
-                  musicSheet: musicSheet,
+                  musicSheet: urlSource.musicSheet,
                   transposition: val,
                 ),
               );
@@ -99,10 +99,11 @@ class MusicXmlViewerWidget extends HookWidget {
     ValueNotifier<WebViewController?> controller,
     ValueNotifier<int> currentTranspose,
     ValueNotifier<double> currentElongationFactor,
+    MusicSheetUrlSource urlSource,
   ) async {
     try {
       if (context.mounted) {
-        controller.value = await _initializeWebView(context, currentTranspose, currentElongationFactor);
+        controller.value = await _initializeWebView(context, currentTranspose, currentElongationFactor, urlSource);
       }
     } catch (e, st) {
       logger.e('Failed to initialize MusicXML viewer', error: e, stackTrace: st);
@@ -111,18 +112,32 @@ class MusicXmlViewerWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentTranspose = useState(musicSheet.transposition);
+    final urlSource = source is MusicSheetUrlSource ? source as MusicSheetUrlSource : null;
+    final currentTranspose = useState(urlSource?.musicSheet.transposition ?? 0);
     final currentElongationFactor = useState(1.0);
     final controller = useState<WebViewController?>(null);
 
     useEffect(() {
-      if (mode == MusicSheetViewMode.thumbnail) return null;
-      _initialize(context, controller, currentTranspose, currentElongationFactor);
+      if (mode == MusicSheetViewMode.thumbnail || urlSource == null) return null;
+      _initialize(context, controller, currentTranspose, currentElongationFactor, urlSource);
       return null;
     }, const []);
 
+    if (source is MusicSheetBytesSource) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.music_note, size: 64),
+            const SizedBox(height: 16),
+            Text(context.loc.noFileDataAvailable),
+          ],
+        ),
+      );
+    }
+
     if (mode == MusicSheetViewMode.thumbnail) {
-      return MusicXmlThumbnailWidget(sequenceId: musicSheet.sequenceId);
+      return MusicXmlThumbnailWidget(sequenceId: urlSource!.musicSheet.sequenceId);
     }
 
     final wvc = controller.value;

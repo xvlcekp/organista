@@ -11,6 +11,7 @@ import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repos
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 
 class MusicSheetRepositoryTile extends HookWidget {
@@ -72,7 +73,7 @@ class MusicSheetRepositoryTile extends HookWidget {
                     MaterialPageRoute(
                       builder: (context) => SafeArea(
                         top: false,
-                        child: MusicSheetView(musicSheet: musicSheet, mode: MusicSheetViewMode.full),
+                        child: MusicSheetView(source: MusicSheetUrlSource(musicSheet), mode: MusicSheetViewMode.full),
                       ),
                     ),
                   )

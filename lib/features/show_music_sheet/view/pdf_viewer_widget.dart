@@ -7,13 +7,13 @@ import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_page_counter.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_navigation_arrows.dart';
-import 'package:organista/models/music_sheets/music_sheet.dart';
+import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:pdfx/pdfx.dart';
 
 import 'package:organista/features/show_music_sheet/hooks/pdf_load_result.dart';
 
 class PdfViewerWidget extends HookWidget {
-  final MusicSheet musicSheet;
+  final MusicSheetSource source;
   final MusicSheetViewMode mode;
   final Color backgroundColor = Colors.white;
 
@@ -28,13 +28,13 @@ class PdfViewerWidget extends HookWidget {
 
   const PdfViewerWidget({
     super.key,
-    required this.musicSheet,
+    required this.source,
     this.mode = MusicSheetViewMode.full,
   });
 
   @override
   Widget build(BuildContext context) {
-    final loadResult = usePdfDocument(musicSheet);
+    final loadResult = usePdfDocument(source);
 
     if (loadResult.isLoading) {
       return const Center(child: CircularProgressIndicator());
