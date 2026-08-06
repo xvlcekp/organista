@@ -14,7 +14,7 @@ abstract class AuthState {
 }
 
 @immutable
-class AuthStateLoggedIn extends AuthState with EquatableMixin {
+class AuthStateLoggedIn extends AuthState with Equatable {
   final AuthUser user;
   const AuthStateLoggedIn({
     required super.isLoading,
@@ -30,7 +30,7 @@ class AuthStateLoggedIn extends AuthState with EquatableMixin {
 }
 
 @immutable
-class AuthStateLoggedOut extends AuthState with EquatableMixin {
+class AuthStateLoggedOut extends AuthState with Equatable {
   const AuthStateLoggedOut({
     required super.isLoading,
     super.authError,
@@ -46,7 +46,7 @@ class AuthStateLoggedOut extends AuthState with EquatableMixin {
 }
 
 @immutable
-class AuthStateIsInRegistrationView extends AuthState with EquatableMixin {
+class AuthStateIsInRegistrationView extends AuthState with Equatable {
   const AuthStateIsInRegistrationView({
     required super.isLoading,
     super.authError,

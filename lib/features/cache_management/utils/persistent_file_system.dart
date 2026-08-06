@@ -1,7 +1,6 @@
 import 'package:file/file.dart' hide FileSystem;
 import 'package:file/local.dart';
-// We need to be able to use deleteCacheDir from not officially merged PR https://github.com/Baseflow/flutter_cache_manager/commit/3d1995f175087475e6c2d8f78fd59a0683e773f7
-// ignore: implementation_imports, Required to implement custom FileSystem for persistent caching mentioned above.
+// ignore: implementation_imports, Required to implement custom FileSystem for persistent caching mentioned below.
 import 'package:flutter_cache_manager/src/storage/file_system/file_system.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -42,14 +41,5 @@ class PersistentFileSystem implements FileSystem {
     }
 
     return directory.childFile(name);
-  }
-
-  @override
-  Future<void> deleteCacheDir() async {
-    final directory = await _fileDir;
-
-    if (await directory.exists()) {
-      await directory.delete(recursive: true);
-    }
   }
 }
