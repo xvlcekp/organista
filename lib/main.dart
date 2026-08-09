@@ -77,8 +77,11 @@ const _appCheckDebugToken = bool.hasEnvironment('APP_CHECK_DEBUG_TOKEN')
 /// This function must be called before using any Firebase services also in tests
 Future<void> firebaseInitialize() async {
   if (Firebase.apps.isEmpty) {
+    // No `name:` — every Firebase service in the app resolves via `.instance`, which is the
+    // `[DEFAULT]` app. Passing a name creates a secondary app instead, which goes unnoticed on
+    // Android/iOS (the native SDK already created `[DEFAULT]`, so this branch never runs) but
+    // breaks web, where nothing else creates `[DEFAULT]`.
     await Firebase.initializeApp(
-      name: 'organista-project',
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
