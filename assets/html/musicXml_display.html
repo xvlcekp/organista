@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>MusicXML Display</title>
-    <script src="OSMD_1_9_7.min.js"></script>
+    <script src="OSMD_2_1_2.min.js"></script>
     <style>
         html {
             background-color: #f0f0f0;
@@ -65,9 +65,24 @@
         let baseSystemCount = null;
         let lyricsVisible = true;
 
-        // Maximum zoom to try. The binary search will find the highest zoom
-        // where OSMD does not need to add systems beyond the XML-defined ones.
+        // Zoom bounds for the fit search. The goal is the highest zoom where
+        // OSMD does not need to add systems beyond the XML-defined ones.
         const MAX_ZOOM = 1.0;
+        const MIN_ZOOM = 0.1;
+        // Zoom for the single measurement layout — low enough that no
+        // XML-defined system can overflow, so what we measure is the score's
+        // own system grouping.
+        const MEASURE_ZOOM = 0.1;
+        // The analytic prediction is an upper bound: it overshoots because
+        // lyrics widen measures beyond minimumStaffEntriesWidth. Measured
+        // fit/prediction ratio across the JKS corpus was 0.83–0.90, so the
+        // true fit sits inside [PREDICTION_LOW * predicted, predicted].
+        const PREDICTION_LOW = 0.80;
+        const REFINE_PROBES = 2;
+        const SHRINK_STEP = 0.05;
+
+        const clampZoom = z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
+        const osmdContainer = () => document.getElementById('osmdContainer');
 
         function countSystems(o) {
             return o.graphic.MusicPages.reduce(
@@ -91,23 +106,109 @@
             return 1 + breaks;
         }
 
-        // Finds and applies the maximum zoom where system count stays at baseSystemCount.
-        // Starts binary search from lo=0.1, hi=MAX_ZOOM — no wasted MAX_ZOOM probe render.
+        // Lays the whole score out without drawing it: mirrors OSMD's own
+        // render() page setup, then calls reCalculate() only, skipping SVG
+        // generation. Roughly half the cost of a full render and enough to
+        // count systems, which is all the fit search needs. Requires OSMD 2.x.
+        function layoutOnly(zoom) {
+            const rules = osmd.EngravingRules;
+            osmd.zoom = zoom;
+            osmd.Sheet.pageWidth = osmdContainer().offsetWidth / zoom / 10.0;
+            if (rules.PageFormat && !rules.PageFormat.IsUndefined) {
+                rules.PageHeight = osmd.Sheet.pageWidth / rules.PageFormat.aspectRatio;
+            } else {
+                rules.PageHeight = 100001;
+            }
+            osmd.graphic.reCalculate();
+        }
+
+        // Width a system needs, in OSMD's zoom-independent layout units.
+        // minimumStaffEntriesWidth is normalised across staves by OSMD, so
+        // reading the first staff line is sufficient.
+        function systemRequiredWidth(system) {
+            const lines = system.StaffLines;
+            if (!lines || !lines.length || !lines[0].Measures) return 0;
+            let width = 0;
+            for (const measure of lines[0].Measures) {
+                width += (measure.beginInstructionsWidth || 0)
+                       + (measure.minimumStaffEntriesWidth || 0)
+                       + (measure.endInstructionsWidth || 0);
+            }
+            return width;
+        }
+
+        function widestSystemWidth() {
+            let widest = 0;
+            for (const page of osmd.graphic.MusicPages) {
+                for (const system of page.MusicSystems) {
+                    widest = Math.max(widest, systemRequiredWidth(system));
+                }
+            }
+            return widest;
+        }
+
+        // Returns the largest zoom that keeps the layout on the score's own
+        // system breaks, using whole-score layouts that never draw.
+        //
+        // Page width in layout units is containerPx / zoom / 10 while a
+        // system's required width is fixed by the music, so a single
+        // measurement layout gives an upper bound for the fitting zoom
+        // analytically. Two probes then close in on it from below.
+        //
+        // Costs 3 layouts, none of which draw, against the 5 full renders a
+        // plain binary search over [MIN_ZOOM, MAX_ZOOM] needs — and lands
+        // closer to the true maximum, so notes come out slightly larger.
+        function computeFitZoom() {
+            layoutOnly(MEASURE_ZOOM);
+            if (countSystems(osmd) > baseSystemCount) return MIN_ZOOM;
+
+            const rules = osmd.EngravingRules;
+            const required = widestSystemWidth() + rules.PageLeftMargin + rules.PageRightMargin;
+            if (!(required > 0)) return MIN_ZOOM;
+
+            const predicted = clampZoom(osmdContainer().offsetWidth / 10.0 / required);
+            let lo = clampZoom(predicted * PREDICTION_LOW);
+            let hi = predicted;
+            let fitted = null;
+            for (let i = 0; i < REFINE_PROBES; i++) {
+                const mid = (lo + hi) / 2;
+                layoutOnly(mid);
+                if (countSystems(osmd) <= baseSystemCount) {
+                    fitted = mid;
+                    lo = mid;
+                } else {
+                    hi = mid;
+                }
+            }
+            if (fitted !== null) return fitted;
+
+            // Every probe overflowed, so even the lower bracket was too
+            // generous for this score. Verify it and step down until it fits.
+            let zoom = lo;
+            layoutOnly(zoom);
+            while (countSystems(osmd) > baseSystemCount && zoom > MIN_ZOOM) {
+                zoom = Math.max(MIN_ZOOM, zoom - SHRINK_STEP);
+                layoutOnly(zoom);
+            }
+            return zoom;
+        }
+
+        // Full redraw at the computed fit zoom. Used after transposition or
+        // engraving changes, where the whole sheet has to be redrawn anyway.
         async function autoFitAndRender() {
             if (!osmd || baseSystemCount === null) return;
-
-            let lo = 0.1, hi = MAX_ZOOM;
-            for (let i = 0; i < 4; i++) {
-                const mid = (lo + hi) / 2;
-                osmd.zoom = mid;
-                osmd.render();
-                const systems = countSystems(osmd);
-                const fits = systems <= baseSystemCount;
-                if (fits) lo = mid; else hi = mid;
-            }
-            osmd.zoom = lo;
+            osmd.zoom = computeFitZoom();
             osmd.render();
         }
+
+        // NOTE: OSMD 2.x's incremental renderNext() API is deliberately not
+        // used here. It paints before the whole score is laid out, but this
+        // sheet's layout depends on the whole score: copyright and credit text
+        // is positioned against the page extent, so text drawn during the
+        // first batch ends up stranded in the middle once later systems are
+        // appended below it. The zoom fit has the same dependency.
+        // Created an issue on Github https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/issues/1710 
+        // Check once fixed and think about improvement
 
         async function initializeDisplay() {
             const opts = {
@@ -179,11 +280,18 @@
                 // Count XML-defined systems statically — no render needed
                 baseSystemCount = countSystemsFromXml(xmlContent);
 
+                // Apply the saved transposition before the fit search so the
+                // zoom accounts for transposed content and the sheet is laid
+                // out once rather than rendered and then re-rendered.
+                if (currentTranspose !== 0) {
+                    osmd.Sheet.Transpose = currentTranspose;
+                    osmd.updateGraphic();
+                }
+
                 await autoFitAndRender();
 
-                // Restore saved transposition without triggering the Flutter callback
                 if (currentTranspose !== 0) {
-                    await updateTranspose(currentTranspose);
+                    TransposeChannel.postMessage('t:' + currentTranspose);
                 }
 
                 document.getElementById('spinner').style.display = 'none';

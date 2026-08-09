@@ -17,6 +17,7 @@ Usage:
   python3 pipeline.py file1.mscz ...  # Process specific files
 """
 
+import html
 import os
 import re
 import subprocess
@@ -319,7 +320,10 @@ def extract_svg_text_from_mscz(mscz_path: Path) -> list:
                 except Exception:
                     continue
                 for m in _ARIA_LABEL_RE.finditer(content):
-                    for line in m.group(1).split("\n"):
+                    # MuseScore separates lines with either a literal LF or a
+                    # &#10; character reference — sometimes both in one archive.
+                    # Decode first so that split() sees real newlines either way.
+                    for line in html.unescape(m.group(1)).split("\n"):
                         trimmed = line.strip()
                         if trimmed:
                             lines.append(trimmed)

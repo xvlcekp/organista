@@ -14,6 +14,17 @@ class GalleryCubit extends Cubit<GalleryState> {
     );
   }
 
+  /// Drops the reference to the active controller. Called when the controller's
+  /// owner releases it, so navigation callbacks can never reach a disposed one.
+  void clearActiveSheet() {
+    emit(
+      state.copyWith(
+        currentMusicSheetId: () => null,
+        currentController: () => null,
+      ),
+    );
+  }
+
   /// Explicitly set navigation direction (used by buttons before swiping).
   void setNavigationDirection(GalleryNavigationDirection direction) {
     if (state.navigationDirection == direction) return;

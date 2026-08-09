@@ -29,7 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  sentry_flutter: ">=9.8.0 <9.17.0"
+  sentry_flutter: ^9.26.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -48,7 +48,7 @@ dependencies:
   firebase_storage: ^13.0.4
   flutter_hooks: ^0.21.2
   collection: ^1.18.0
-  equatable: ^2.0.7
+  equatable: ^2.1.0
   provider: ^6.1.2
   intl: ^0.20.2
   # Logging to google cloud console
@@ -56,9 +56,9 @@ dependencies:
   googleapis_auth: ^2.0.0
   logger: ^2.5.0
   cached_network_image: ^3.4.1
-  file_picker: ^11.0.2
+  file_picker: ^11.0.3
   pdfx: ^2.8.0
-  flutter_cache_manager: ^3.4.1
+  flutter_cache_manager: ^3.4.2
   photo_view: ^0.15.0
   path: ^1.9.0
   mime: ^2.0.0
@@ -78,20 +78,6 @@ dependencies:
   file: ^7.0.1
   pdf_combiner: ^6.0.4 # For exporting playlist to PDF
   firebase_app_check: ^0.4.1+4
-
-# Override dependencies to use git version with cache cleanup fix
-# The flutter_cache_manager is not maintained anymore, so these fixes are applied manually:
-# 1. Files are not deleted from the cache directory when the cache is cleared, but only JSON file is deleted with references, thus the cache is not cleared physically.
-# 2. stalePeriod is not respected, so files were not deleted after the period. It is event-based cleanup so it clears cache only when accessing a file or downloading a new file
-# More details:
-# https://github.com/Baseflow/flutter_cache_manager/issues/490
-# https://github.com/Baseflow/flutter_cache_manager/issues/476
-dependency_overrides:
-  flutter_cache_manager:
-    git:
-      url: https://github.com/Baseflow/flutter_cache_manager.git
-      path: flutter_cache_manager
-      ref: "3d1995f175087475e6c2d8f78fd59a0683e773f7"
 
 # Config for generating app icons, on config change, it needs to be run again `dart run flutter_launcher_icons:generate`
 flutter_launcher_icons:

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,12 @@ import 'package:organista/features/show_music_sheet/hooks/pdf_load_result.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/music_sheets/music_sheet_source.dart';
+import 'package:pdfx/pdfx.dart';
 import 'package:provider/provider.dart';
 
 class MockCacheManager extends Mock implements CacheManager {}
+
+class MockPdfDocument extends Mock implements PdfDocument {}
 
 void main() {
   group('PDF Load Error Handling', () {
@@ -141,6 +145,100 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byIcon(Icons.error), findsOneWidget);
+      });
+    });
+
+    group('usePdfDocument Resource Release', () {
+      late MockCacheManager mockCacheManager;
+
+      setUp(() {
+        mockCacheManager = MockCacheManager();
+      });
+
+      MusicSheetSource sourceForUrl(String url) {
+        return MusicSheetUrlSource(
+          MusicSheet(
+            json: {
+              MusicSheetKey.musicSheetId: 'test-id',
+              MusicSheetKey.userId: 'user-id',
+              MusicSheetKey.fileName: 'test.pdf',
+              MusicSheetKey.fileUrl: url,
+              MusicSheetKey.mediaType: 'pdf',
+              MusicSheetKey.originalFileStorageId: 'storage-id',
+              MusicSheetKey.sequenceId: 0,
+              MusicSheetKey.createdAt: Timestamp.now(),
+            },
+          ),
+        );
+      }
+
+      MockPdfDocument openableDocument() {
+        final document = MockPdfDocument();
+        when(() => document.pagesCount).thenReturn(3);
+        when(() => document.close()).thenAnswer((_) async {});
+        return document;
+      }
+
+      Widget hostWidget(MusicSheetSource source, PdfDocumentOpener opener) {
+        return Provider<CacheManager>.value(
+          value: mockCacheManager,
+          child: MaterialApp(
+            home: HookBuilder(
+              builder: (context) {
+                final result = usePdfDocument(source, documentOpener: opener);
+                return Scaffold(
+                  body: result.controller != null ? const Text('Loaded') : const SizedBox(),
+                );
+              },
+            ),
+          ),
+        );
+      }
+
+      testWidgets('closes the document when the widget is unmounted', (tester) async {
+        final document = openableDocument();
+
+        await tester.pumpWidget(hostWidget(sourceForUrl('https://example.com/a.pdf'), () async => document));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Loaded'), findsOneWidget);
+        verifyNever(() => document.close());
+
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpAndSettle();
+
+        verify(() => document.close()).called(1);
+      });
+
+      testWidgets('closes the previous document when the source file changes', (tester) async {
+        final first = openableDocument();
+        final second = openableDocument();
+
+        await tester.pumpWidget(hostWidget(sourceForUrl('https://example.com/a.pdf'), () async => first));
+        await tester.pumpAndSettle();
+
+        await tester.pumpWidget(hostWidget(sourceForUrl('https://example.com/b.pdf'), () async => second));
+        await tester.pumpAndSettle();
+
+        verify(() => first.close()).called(1);
+        verifyNever(() => second.close());
+        expect(find.text('Loaded'), findsOneWidget);
+      });
+
+      testWidgets('closes a document that arrives after the widget is gone', (tester) async {
+        final document = openableDocument();
+        final gate = Completer<PdfDocument>();
+
+        await tester.pumpWidget(hostWidget(sourceForUrl('https://example.com/a.pdf'), () => gate.future));
+        await tester.pump();
+
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpAndSettle();
+
+        gate.complete(document);
+        await tester.pumpAndSettle();
+
+        verify(() => document.close()).called(1);
       });
     });
   });

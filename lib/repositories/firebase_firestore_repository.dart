@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/string_extensions.dart';
@@ -214,7 +215,9 @@ class FirebaseFirestoreRepository {
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
           final documents = snapshot.docs;
-          logger.i("Got new playlist data with length: ${documents.length}");
+          if (kDebugMode) {
+            logger.d("Got new playlist data with length: ${documents.length}");
+          }
           return documents.map(
             (doc) => Playlist(
               playlistId: doc.id,
@@ -477,7 +480,9 @@ class FirebaseFirestoreRepository {
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
           final documents = snapshot.docs;
-          logger.i("Got repositories data with length: ${documents.length}");
+          if (kDebugMode) {
+            logger.d("Got repositories data with length: ${documents.length}");
+          }
           return documents.map(
             (doc) => Repository(
               json: {

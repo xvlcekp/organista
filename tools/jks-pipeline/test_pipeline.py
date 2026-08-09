@@ -1,11 +1,15 @@
 """Tests for pipeline.py"""
+import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+import zipfile
+from pathlib import Path
 
 from pipeline import (
     _musicxml_header,
     _strip_xml_preamble,
     extract_lyricist_from_credits,
+    extract_svg_text_from_mscz,
     insert_lyricist_as_creator,
     jks_output_stem,
 )
@@ -208,6 +212,71 @@ class TestInsertLyricistAsCreator(unittest.TestCase):
         bad = "not xml"
         result = insert_lyricist_as_creator(bad, "x")
         self.assertEqual(result, bad)
+
+
+class TestExtractSvgTextFromMscz(unittest.TestCase):
+    """
+    MuseScore writes line breaks inside aria-label two different ways —
+    a literal LF, or a &#10; character reference — sometimes in the same
+    archive.  Both must yield one entry per line.
+    """
+
+    def _mscz(self, *svg_bodies: str) -> Path:
+        """Build a .mscz archive containing one SVG per body and return its path."""
+        tmp_dir = tempfile.mkdtemp()
+        self.addCleanup(lambda: [p.unlink() for p in Path(tmp_dir).iterdir()])
+        path = Path(tmp_dir) / "test.mscz"
+        with zipfile.ZipFile(path, "w") as zf:
+            for i, body in enumerate(svg_bodies):
+                zf.writestr(f"Pictures/{i}.svg", body)
+        return path
+
+    @staticmethod
+    def _svg(aria_label: str) -> str:
+        return f'<svg xmlns="http://www.w3.org/2000/svg"><g aria-label="{aria_label}"/></svg>'
+
+    def test_char_reference_separators_are_split(self):
+        mscz = self._mscz(self._svg("Ako dcéra Stvoriteľa &#10;Matkou budeš Spasiteľa &#10;a nevestou Tešiteľa. "))
+        self.assertEqual(
+            extract_svg_text_from_mscz(mscz),
+            ["Ako dcéra Stvoriteľa", "Matkou budeš Spasiteľa", "a nevestou Tešiteľa."],
+        )
+
+    def test_hex_char_reference_separators_are_split(self):
+        mscz = self._mscz(self._svg("prvý riadok&#xA;druhý riadok"))
+        self.assertEqual(extract_svg_text_from_mscz(mscz), ["prvý riadok", "druhý riadok"])
+
+    def test_literal_newline_separators_still_split(self):
+        mscz = self._mscz(self._svg("Kam sa mám obrátiť? \nmôj vlastný učeník \nTí ma nájdu "))
+        self.assertEqual(
+            extract_svg_text_from_mscz(mscz),
+            ["Kam sa mám obrátiť?", "môj vlastný učeník", "Tí ma nájdu"],
+        )
+
+    def test_mixed_forms_in_one_archive(self):
+        mscz = self._mscz(
+            self._svg("Čo stanica prvá &#10;tu vyobrazuje?"),
+            self._svg("Kam sa mám obrátiť? \nJudáš ma už zrádza,"),
+        )
+        self.assertEqual(
+            extract_svg_text_from_mscz(mscz),
+            ["Čo stanica prvá", "tu vyobrazuje?", "Kam sa mám obrátiť?", "Judáš ma už zrádza,"],
+        )
+
+    def test_escaped_ampersand_decoded_to_single_character(self):
+        mscz = self._mscz(self._svg("Peter &amp; Pavol"))
+        self.assertEqual(extract_svg_text_from_mscz(mscz), ["Peter & Pavol"])
+
+    def test_archive_without_svg_returns_empty(self):
+        mscz = self._mscz()
+        self.assertEqual(extract_svg_text_from_mscz(mscz), [])
+
+    def test_corrupt_archive_returns_empty(self):
+        tmp_dir = tempfile.mkdtemp()
+        path = Path(tmp_dir) / "broken.mscz"
+        path.write_text("this is not a zip archive", encoding="utf-8")
+        self.addCleanup(path.unlink)
+        self.assertEqual(extract_svg_text_from_mscz(path), [])
 
 
 class TestRoundTrip(unittest.TestCase):

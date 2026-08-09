@@ -65,17 +65,33 @@ Future<void> main() async {
   );
 }
 
+/// Fixed App Check debug token, supplied via `--dart-define=APP_CHECK_DEBUG_TOKEN=<uuid>`.
+///
+/// Without it the SDK generates a random token and stores it in local app storage, so a
+/// reinstall, a "clear data" or a fresh emulator produces a new one that has to be
+/// re-registered in the Firebase Console. Falls back to that behaviour when unset.
+const _appCheckDebugToken = bool.hasEnvironment('APP_CHECK_DEBUG_TOKEN')
+    ? String.fromEnvironment('APP_CHECK_DEBUG_TOKEN')
+    : null;
+
 /// This function must be called before using any Firebase services also in tests
 Future<void> firebaseInitialize() async {
   if (Firebase.apps.isEmpty) {
+    // No `name:` — every Firebase service in the app resolves via `.instance`, which is the
+    // `[DEFAULT]` app. Passing a name creates a secondary app instead, which goes unnoticed on
+    // Android/iOS (the native SDK already created `[DEFAULT]`, so this branch never runs) but
+    // breaks web, where nothing else creates `[DEFAULT]`.
     await Firebase.initializeApp(
-      name: 'organista-project',
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
   await FirebaseAppCheck.instance.activate(
     providerWeb: kDebugMode ? WebDebugProvider() : ReCaptchaV3Provider(''),
-    providerAndroid: kDebugMode ? const AndroidDebugProvider() : const AndroidPlayIntegrityProvider(),
-    providerApple: kDebugMode ? const AppleDebugProvider() : const AppleDeviceCheckProvider(),
+    providerAndroid: kDebugMode
+        ? const AndroidDebugProvider(debugToken: _appCheckDebugToken)
+        : const AndroidPlayIntegrityProvider(),
+    providerApple: kDebugMode
+        ? const AppleDebugProvider(debugToken: _appCheckDebugToken)
+        : const AppleDeviceCheckProvider(),
   );
 }

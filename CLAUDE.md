@@ -73,7 +73,7 @@ lib/
 
 **Music sheet types**: `MediaType` enum (`image`, `pdf`, `musicxml`). MusicXML is rendered in a WebView with transpose controls. PDFs use `pdfx`. Images use `cached_network_image`/`photo_view`.
 
-**Cache management**: `PersistentCacheManager` wraps a patched fork of `flutter_cache_manager` (see `dependency_overrides` in `pubspec.yaml`). Files are stored in the app's files directory (not the OS temp cache) via `PersistentFileSystem` to prevent OS-initiated eviction. Do not upgrade `flutter_cache_manager` without checking the override is still needed.
+**Cache management**: `PersistentCacheManager` uses the stock `flutter_cache_manager` package from pub.dev (no override needed since 3.4.2, which fixed upstream cache-cleanup bugs). Files are stored in the app's Application Support directory (not the OS temp cache) via `PersistentFileSystem` to prevent OS-initiated eviction — that part is unrelated to the cleanup fix and still required.
 
 **Firebase Streams**: `StreamManager.instance` tracks active Firestore listeners so they can all be cancelled before account deletion (prevents permission-denied errors).
 
