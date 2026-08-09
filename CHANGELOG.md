@@ -31,6 +31,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
+## [1.3.1] - 2026-08-09
+
+### Added
+
+- Nová hlavná obrazovka so spodným navigačným panelom (playlisty / repozitáre)
+- Zjednotená obrazovka repozitárov – prehliadanie aj správa vlastných nôt na jednom mieste
+- Tlačidlo na pridávanie sa automaticky skrýva pri posúvaní zoznamu
+
+### Changed
+
+- Rýchlejšie zobrazovanie digitálnych nôt MusicXML a presnejšie prispôsobenie veľkosti obrazovke
+- Zjednotené názvoslovie v slovenčine – „notový záznam“ namiesto „obrázok“
+
+### Fixed
+
+- Opravená chyba pri inicializácii Firebase, ktorá mohla spôsobiť pád aplikácie pri štarte
+- Opravené uvoľňovanie pamäte po zatvorení PDF nôt
+- Opravené delenie textu do riadkov pri spracovaní nôt z JKS
+
+### Security
+
+- Aktualizované knižnice, Gradle a Kotlin
+
 ## [1.3.0] - 2026-05-02
 
 ### Added

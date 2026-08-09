@@ -6,6 +6,17 @@ Info about project for organists: https://sites.google.com/view/organista-app/do
 
 ## Changelog
 
+### Version 1.3.1 - 9.8.2026
+
+- Možnosť zobraziť pieseň bez nutnosti pridávať do repozitára - spodný navigačný panel (playlisty / repozitáre)
+- Opravené texty v digitálnych JKS, kde sa zobrazovali znaky ako "&#10;" (46 súborov)
+- Digitálna verzia JKS59 nešla načítať - opravené
+- Pridané digitálne verzie JKS 436a a 436b
+- Zjednotená obrazovka repozitárov – prehliadanie aj správa vlastných nôt na jednom mieste
+- Výrazné zrýchlenie načítavania digitálnych nôt MusicXML a presnejšie prispôsobenie veľkosti obrazovke
+- Opravené uvoľňovanie pamäte po zatvorení PDF nôt a ďalšie chyby
+- Aktualizované knižnice
+
 ### Version 1.3.0 - 2.5.2026
 
 <video src="docs/1.3.0/transpose_digital.mp4" width="100%" controls></video>
