@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
+import 'dart:io' as _i10;
 import 'dart:typed_data' as _i7;
 
 import 'package:file/file.dart' as _i5;
@@ -11,6 +12,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart' as _i2;
 import 'package:flutter_cache_manager/src/cache_store.dart' as _i3;
 import 'package:flutter_cache_manager/src/web/web_helper.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:organista/models/music_sheets/music_sheet.dart' as _i9;
+import 'package:organista/services/music_xml_converter/music_xml_to_png_converter.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -284,4 +287,29 @@ class MockCacheManager extends _i1.Mock implements _i2.CacheManager {
             returnValueForMissingStub: _i6.Future<void>.value(),
           )
           as _i6.Future<void>);
+}
+
+/// A class which mocks [MusicXmlToPngConverter].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMusicXmlToPngConverter extends _i1.Mock implements _i8.MusicXmlToPngConverter {
+  MockMusicXmlToPngConverter() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i6.Future<List<String>> convertToPngFiles({
+    required _i9.MusicSheet? musicSheet,
+    required _i7.Uint8List? fileBytes,
+    _i10.Directory? outputDirectory,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#convertToPngFiles, [], {
+              #musicSheet: musicSheet,
+              #fileBytes: fileBytes,
+              #outputDirectory: outputDirectory,
+            }),
+            returnValue: _i6.Future<List<String>>.value(<String>[]),
+          )
+          as _i6.Future<List<String>>);
 }

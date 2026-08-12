@@ -58,7 +58,7 @@ lib/
   views/app.dart          — Provides global blocs, routes between Login/Register/PlaylistPage
   features/               — Feature modules (auth, playlists, repositories, music sheets, settings, etc.)
   repositories/           — Firebase data layer (FirebaseFirestoreRepository, FirebaseStorageRepository, SettingsRepository)
-  services/               — Auth, wakelock, export-to-PDF services
+  services/               — Auth, wakelock, playlist-to-PDF export, MusicXML→PNG conversion
   managers/               — PersistentCacheManager, StreamManager
   models/                 — Domain models (MusicSheet, Playlist, Repository, MediaType, etc.)
   config/                 — AppTheme, AppConstants, ConfigController
@@ -73,6 +73,8 @@ lib/
 
 **Music sheet types**: `MediaType` enum (`image`, `pdf`, `musicxml`). MusicXML is rendered in a WebView with transpose controls. PDFs use `pdfx`. Images use `cached_network_image`/`photo_view`.
 
+**Playlist PDF export**: `ExportPlaylistService` resolves each sheet to a *list* of local file paths and hands them to `PdfCombiner`, which accepts PDFs and images directly. MusicXML has no such path, so `MusicXmlToPngConverter` renders it with OSMD in a headless `WebViewController` and rasterizes one PNG per page, honoring the sheet's saved transposition. The export WebView is never attached to the widget tree, so the export page lays itself out at a fixed pixel width (A4 portrait) instead of relying on the viewport. `assets/html/musicXml_display.html` is shared by the viewer and the export: `exportSheetToPng()` posts pages over `ExportChannel` as chunked base64 (platform messages have a size limit), and `MusicXmlExportMessageAssembler` reassembles the chunks. Because that file is shared, viewer-only JS channels such as `TransposeChannel` must be guarded with `typeof ... !== 'undefined'`. A sheet that fails to download or convert is logged and skipped; the export continues with the remaining sheets.
+
 **Cache management**: `PersistentCacheManager` uses the stock `flutter_cache_manager` package from pub.dev (no override needed since 3.4.2, which fixed upstream cache-cleanup bugs). Files are stored in the app's Application Support directory (not the OS temp cache) via `PersistentFileSystem` to prevent OS-initiated eviction — that part is unrelated to the cleanup fix and still required.
 
 **Firebase Streams**: `StreamManager.instance` tracks active Firestore listeners so they can all be cancelled before account deletion (prevents permission-denied errors).
@@ -84,6 +86,8 @@ lib/
 - BLoC logic: `bloc_test` package
 - Firebase: `fake_cloud_firestore` for Firestore, `mockito`/`mocktail` for Storage/other services
 - Generated mocks: `.mocks.dart` files alongside test files, regenerated via `build_runner`
+- WebView-backed code: swap `WebViewPlatform.instance` for a fake that replays scripted JS-channel messages (see `test/services/music_xml_converter/music_xml_to_png_converter_test.dart`) — no real WebView or platform channel needed
+- The JavaScript in `assets/html/` has no test harness; it is only exercised manually in the app
 - `firebaseInitialize()` is factored out of `main()` for reuse in integration tests
 
 ## Code Style
