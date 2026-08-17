@@ -378,6 +378,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get accountManagement => 'Správa účtu';
 
   @override
+  String get signedInAs => 'Prihlásený ako';
+
+  @override
   String get version => 'Verzia';
 
   @override

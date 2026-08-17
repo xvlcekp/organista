@@ -125,6 +125,7 @@
   "aboutMessage": "Aplikácia na správu notových záznamov\nVytvoril Pavol Vlček",
   "appSettings": "Nastavenia aplikácie",
   "accountManagement": "Správa účtu",
+  "signedInAs": "Prihlásený ako",
   "version": "Verzia",
   "frequentlyAskedQuestions": "Často kladené otázky",
   "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",

@@ -15,6 +15,7 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = context.loc;
     final settingsCubit = context.read<SettingsCubit>();
+    final authState = context.read<AuthBloc>().state;
     final theme = Theme.of(context);
     final errorColor = theme.colorScheme.error;
 
@@ -129,6 +130,12 @@ class SettingsView extends StatelessWidget {
                   title: localizations.accountManagement,
                   icon: Icons.person,
                 ),
+                if (authState is AuthStateLoggedIn)
+                  ListTile(
+                    leading: const Icon(Icons.account_circle),
+                    title: Text(localizations.signedInAs),
+                    subtitle: Text(authState.user.email),
+                  ),
                 ListTile(
                   leading: Icon(Icons.delete_forever, color: errorColor),
                   title: Text(
