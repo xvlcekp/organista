@@ -376,6 +376,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountManagement => 'Account Management';
 
   @override
+  String get signedInAs => 'Signed in as';
+
+  @override
   String get version => 'Version';
 
   @override

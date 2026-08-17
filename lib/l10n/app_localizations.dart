@@ -800,6 +800,12 @@ abstract class AppLocalizations {
   /// **'Správa účtu'**
   String get accountManagement;
 
+  /// No description provided for @signedInAs.
+  ///
+  /// In sk, this message translates to:
+  /// **'Prihlásený ako'**
+  String get signedInAs;
+
   /// No description provided for @version.
   ///
   /// In sk, this message translates to:

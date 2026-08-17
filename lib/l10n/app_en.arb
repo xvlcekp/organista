@@ -125,6 +125,7 @@
   "aboutMessage": "A music sheet management application\nCreated by Pavol Vlček",
   "appSettings": "App Settings",
   "accountManagement": "Account Management",
+  "signedInAs": "Signed in as",
   "version": "Version",
   "frequentlyAskedQuestions": "Frequently Asked Questions",
   "couldNotOpenUrl": "Could not open the URL",
