@@ -400,6 +400,59 @@ void main() {
       });
     });
 
+    group('Signed In As Tile', () {
+      testWidgets('should display signed in as label with user email when logged in', (tester) async {
+        await tester.pumpWidget(createTestWidget());
+
+        expect(find.text('Signed in as'), findsOneWidget);
+        expect(find.text('test@example.com'), findsOneWidget);
+      });
+
+      testWidgets('should display account icon in signed in as tile', (tester) async {
+        await tester.pumpWidget(createTestWidget());
+
+        final signedInAsTile = find.ancestor(
+          of: find.text('Signed in as'),
+          matching: find.byType(ListTile),
+        );
+        expect(signedInAsTile, findsOneWidget);
+
+        final accountIcon = find.descendant(
+          of: signedInAsTile,
+          matching: find.byIcon(Icons.account_circle),
+        );
+        expect(accountIcon, findsOneWidget);
+      });
+
+      testWidgets('should place signed in as tile after account management section header', (tester) async {
+        await tester.pumpWidget(createTestWidget());
+
+        await tester.drag(find.byType(ListView), const Offset(0, -500));
+        await tester.pumpAndSettle();
+
+        final accountManagementPosition = tester.getTopLeft(find.text('Account Management'));
+        final signedInAsPosition = tester.getTopLeft(find.text('Signed in as'));
+        final deleteAccountPosition = tester.getTopLeft(find.text('Delete account'));
+
+        expect(signedInAsPosition.dy, greaterThan(accountManagementPosition.dy));
+        expect(signedInAsPosition.dy, lessThan(deleteAccountPosition.dy));
+      });
+
+      testWidgets('should not display signed in as tile when user is not logged in', (tester) async {
+        // State is logged out and the stream stays silent so the BlocListener
+        // never triggers the pop-on-logout navigation.
+        when(() => mockAuthBloc.state).thenReturn(
+          const AuthStateLoggedOut(isLoading: false),
+        );
+        when(() => mockAuthBloc.stream).thenAnswer((_) => const Stream.empty());
+
+        await tester.pumpWidget(createTestWidget());
+
+        expect(find.text('Signed in as'), findsNothing);
+        expect(find.text('test@example.com'), findsNothing);
+      });
+    });
+
     group('Delete Account Functionality', () {
       testWidgets('should display delete account button with correct styling', (tester) async {
         await tester.pumpWidget(createTestWidget());
