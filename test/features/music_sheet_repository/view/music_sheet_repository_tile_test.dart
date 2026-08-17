@@ -104,5 +104,41 @@ void main() {
 
       expect(find.byIcon(Icons.download_rounded), findsOneWidget);
     });
+
+    testWidgets('shows rename button for own sheet when viewOnly is true', (tester) async {
+      await tester.pumpWidget(buildTile(viewOnly: true));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
+    });
+
+    testWidgets('hides rename button when viewOnly is false', (tester) async {
+      await tester.pumpWidget(buildTile());
+      await tester.pump();
+
+      expect(find.byIcon(Icons.edit_outlined), findsNothing);
+    });
+
+    testWidgets('renaming via dialog dispatches RenameMusicSheet event', (tester) async {
+      await tester.pumpWidget(buildTile(viewOnly: true));
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.edit_outlined));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'New Sheet Name');
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => mockRepoBloc.add(
+          RenameMusicSheet(
+            musicSheet: testMusicSheet,
+            fileName: 'New Sheet Name',
+            repositoryId: 'repo-1',
+          ),
+        ),
+      ).called(1);
+    });
   });
 }

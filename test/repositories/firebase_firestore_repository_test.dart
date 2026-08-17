@@ -553,6 +553,46 @@ void main() {
         expect(doc.exists, false);
       });
     });
+
+    group('renameMusicSheetInRepository', () {
+      test('should rename music sheet in repository and keep sequence id unchanged', () async {
+        const repositoryId = 'repo-123';
+        await createTestRepository(repositoryId: repositoryId);
+
+        final sheetJson = createTestMusicSheetJson(
+          musicSheetId: 'sheet-123',
+          fileName: '12 Old Name.pdf',
+          sequenceId: 12,
+        );
+        await fakeFirestore
+            .collection(FirebaseCollectionName.repositories)
+            .doc(repositoryId)
+            .collection(FirebaseCollectionName.musicSheets)
+            .doc('sheet-123')
+            .set(sheetJson);
+
+        final musicSheet = MusicSheet(json: sheetJson);
+
+        final result = await repository.renameMusicSheetInRepository(
+          musicSheet: musicSheet,
+          fileName: '34 New Name.pdf',
+          repositoryId: repositoryId,
+        );
+
+        expect(result, true);
+
+        final doc = await fakeFirestore
+            .collection(FirebaseCollectionName.repositories)
+            .doc(repositoryId)
+            .collection(FirebaseCollectionName.musicSheets)
+            .doc('sheet-123')
+            .get();
+
+        expect(doc.data()?[MusicSheetKey.fileName], '34 New Name.pdf');
+        // sequenceId is strictly "set at upload" — rename must not touch it
+        expect(doc.data()?[MusicSheetKey.sequenceId], 12);
+      });
+    });
   });
 
   group('FirebaseFirestoreRepository - Repository Operations', () {
