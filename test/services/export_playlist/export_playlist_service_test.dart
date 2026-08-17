@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file/local.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -8,21 +11,27 @@ import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/services/export_playlist/export_playlist_service.dart';
+import 'package:organista/services/music_xml_converter/music_xml_to_png_converter.dart';
 
 import 'export_playlist_service_test.mocks.dart';
 
-@GenerateMocks([CacheManager])
+@GenerateMocks([CacheManager, MusicXmlToPngConverter])
 void main() {
   group('ExportPlaylistService', () {
     late ExportPlaylistService service;
     late MockCacheManager mockCacheManager;
+    late MockMusicXmlToPngConverter mockMusicXmlConverter;
     late Playlist testPlaylist;
     late MusicSheet testMusicSheet;
     late Timestamp testTimestamp;
 
     setUp(() {
       mockCacheManager = MockCacheManager();
-      service = ExportPlaylistService(cacheManager: mockCacheManager);
+      mockMusicXmlConverter = MockMusicXmlToPngConverter();
+      service = ExportPlaylistService(
+        cacheManager: mockCacheManager,
+        musicXmlConverter: mockMusicXmlConverter,
+      );
       testTimestamp = Timestamp.fromDate(DateTime(2024, 1, 15, 10, 30));
 
       testMusicSheet = MusicSheet(
@@ -78,7 +87,7 @@ void main() {
         verify(mockCacheManager.getSingleFile(testMusicSheet.fileUrl)).called(1);
       });
 
-      test('skips MusicXML sheets without calling cache manager', () async {
+      test('downloads MusicXML sheets and passes their bytes to the converter', () async {
         final musicXmlSheet = MusicSheet(
           json: {
             MusicSheetKey.musicSheetId: 'xmlsheet1',
@@ -102,13 +111,35 @@ void main() {
           },
         );
 
+        final tempDir = await Directory.systemTemp.createTemp('export_service_test');
+        addTearDown(() => tempDir.delete(recursive: true));
+        final xmlFile = File('${tempDir.path}/sheet.musicxml');
+        await xmlFile.writeAsString('<score-partwise/>');
+        when(
+          mockCacheManager.getSingleFile(musicXmlSheet.fileUrl),
+        ).thenAnswer((_) async => const LocalFileSystem().file(xmlFile.path));
+        // Conversion fails so the export stops before touching platform channels
+        when(
+          mockMusicXmlConverter.convertToPngFiles(
+            musicSheet: anyNamed('musicSheet'),
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        ).thenThrow(Exception('Mocked conversion failure'));
+
         final result = await service.exportPlaylistToPdf(playlist: xmlOnlyPlaylist);
 
         expect(result, isNull);
-        verifyZeroInteractions(mockCacheManager);
+        verify(mockCacheManager.getSingleFile(musicXmlSheet.fileUrl)).called(1);
+        final captured = verify(
+          mockMusicXmlConverter.convertToPngFiles(
+            musicSheet: anyNamed('musicSheet'),
+            fileBytes: captureAnyNamed('fileBytes'),
+          ),
+        ).captured;
+        expect(String.fromCharCodes(captured.single as List<int>), '<score-partwise/>');
       });
 
-      test('skips MusicXML sheets but downloads PDF sheets in a mixed playlist', () async {
+      test('downloads every sheet in a mixed playlist and skips the converter for failed downloads', () async {
         final musicXmlSheet = MusicSheet(
           json: {
             MusicSheetKey.musicSheetId: 'xmlsheet1',
@@ -135,12 +166,19 @@ void main() {
           },
         );
 
-        when(mockCacheManager.getSingleFile(testMusicSheet.fileUrl)).thenThrow(Exception('Mocked download failure'));
+        // Both downloads fail so the export stops before touching platform channels
+        when(mockCacheManager.getSingleFile(any)).thenThrow(Exception('Mocked download failure'));
 
         await service.exportPlaylistToPdf(playlist: mixedPlaylist);
 
         verify(mockCacheManager.getSingleFile(testMusicSheet.fileUrl)).called(1);
-        verifyNever(mockCacheManager.getSingleFile(musicXmlSheet.fileUrl));
+        verify(mockCacheManager.getSingleFile(musicXmlSheet.fileUrl)).called(1);
+        verifyNever(
+          mockMusicXmlConverter.convertToPngFiles(
+            musicSheet: anyNamed('musicSheet'),
+            fileBytes: anyNamed('fileBytes'),
+          ),
+        );
       });
 
       test('handles multiple music sheets', () async {
