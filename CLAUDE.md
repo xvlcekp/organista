@@ -98,9 +98,19 @@ lib/
 - No magic numbers — extract to `AppConstants`
 - One class per file
 
+## User Guide (docs/user-guide/)
+
+The Slovak end-user guide lives in `docs/user-guide/` (MkDocs Material, config in `mkdocs.yml`). It is deployed to GitHub Pages by `.github/workflows/docs.yml` on every push to `main` that touches it.
+
+**IMPORTANT: every user-facing feature change (new feature, changed flow, renamed UI label) must update the corresponding page in `docs/user-guide/` in the same branch.** Use the exact Slovak strings from `lib/l10n/app_sk.arb` when referring to UI elements. Screenshots live in `docs/user-guide/assets/screenshots/` (540px wide, captured on an Android emulator with the `demo@organista.app` account), short screen recordings in `docs/user-guide/assets/videos/` (MP4, embedded with `<video autoplay loop muted playsinline controls>`).
+
+Preview locally: `pip install mkdocs-material && mkdocs serve` → http://127.0.0.1:8000/organista/. Verify with `mkdocs build --strict` before pushing.
+
+`docs/user-guide/whats-new.md` is the **single source of truth for product highlights/release notes** (per-version feature showcases with images/videos in `docs/user-guide/assets/whats-new/<version>/`). README deliberately only links to it — do not re-add a changelog section to README. Raw HTML `<img>`/`<video>` tags in MkDocs pages need `../assets/...` paths (MkDocs only rewrites Markdown image paths, not raw HTML).
+
 ## Releasing
 
-1. Update `CHANGELOG.md`
+1. Update `CHANGELOG.md` and add a version section to `docs/user-guide/whats-new.md` (product highlights)
 2. Bump version in `pubspec.yaml`
 3. Commit and push, then create a GitHub release tag
 4. Codemagic automatically builds and distributes on a release tag (via Shorebird integration)
