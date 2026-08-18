@@ -64,3 +64,4 @@ sentry.properties
 # iOS related
 ios/Podfile.lock
 tools/jks-pipeline/fixed_files.txt
+site/

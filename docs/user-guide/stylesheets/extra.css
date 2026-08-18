@@ -1,0 +1,12 @@
+/* Frame app screenshots and screen recordings */
+.md-typeset img[src*="screenshots/"],
+.md-typeset video {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-md-color-scheme="slate"] .md-typeset img[src*="screenshots/"],
+[data-md-color-scheme="slate"] .md-typeset video {
+  border-color: rgba(255, 255, 255, 0.16);
+}

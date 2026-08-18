@@ -1,0 +1,63 @@
+site_name: Organista
+site_description: Používateľská príručka k aplikácii Organista
+site_url: https://xvlcekp.github.io/organista/
+repo_url: https://github.com/xvlcekp/organista
+repo_name: xvlcekp/organista
+
+docs_dir: docs/user-guide
+
+nav:
+  - Úvod: index.md
+  - Začíname: getting-started.md
+  - Zoznamy skladieb: playlists.md
+  - Pridávanie nôt: adding-music-sheets.md
+  - Repozitáre: repositories.md
+  - Zobrazenie nôt: viewing-music-sheets.md
+  - Export do PDF: export-pdf.md
+  - Nastavenia: settings.md
+  - Zdroje nôt: music-sheet-sources.md
+  - Časté otázky: faq.md
+  - Novinky: whats-new.md
+
+theme:
+  name: material
+  language: sk
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Prepnúť na tmavý režim
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Prepnúť na svetlý režim
+  features:
+    - navigation.instant
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
