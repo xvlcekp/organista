@@ -440,17 +440,35 @@ abstract class AppLocalizations {
   /// **'Stiahnuť'**
   String get download;
 
-  /// No description provided for @downloadTooltip.
+  /// No description provided for @downloadMusicSheetTooltip.
   ///
   /// In sk, this message translates to:
   /// **'Stiahnuť notový zápis'**
-  String get downloadTooltip;
+  String get downloadMusicSheetTooltip;
 
-  /// No description provided for @deleteTooltip.
+  /// No description provided for @deleteMusicSheetTooltip.
   ///
   /// In sk, this message translates to:
   /// **'Vymazať notový zápis'**
-  String get deleteTooltip;
+  String get deleteMusicSheetTooltip;
+
+  /// No description provided for @renameMusicSheetTooltip.
+  ///
+  /// In sk, this message translates to:
+  /// **'Premenovať notový zápis'**
+  String get renameMusicSheetTooltip;
+
+  /// No description provided for @renameMusicSheet.
+  ///
+  /// In sk, this message translates to:
+  /// **'Premenovať notový záznam'**
+  String get renameMusicSheet;
+
+  /// No description provided for @enterMusicSheetName.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zadajte názov notového záznamu'**
+  String get enterMusicSheetName;
 
   /// No description provided for @renamePlaylist.
   ///

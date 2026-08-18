@@ -8,6 +8,7 @@ import 'package:organista/dialogs/delete_music_sheet_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/add_edit_music_sheet/view/add_edit_music_sheet_view.dart';
 import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
+import 'package:organista/features/music_sheet_repository/view/rename_music_sheet_dialog.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
@@ -54,7 +55,8 @@ class MusicSheetRepositoryTile extends HookWidget {
     final theme = Theme.of(context);
     final localizations = context.loc;
     final isCached = useState<bool>(false);
-    final selectedColor = theme.colorScheme.primary.withAlpha(_selectedColorAlpha);
+    final primaryColor = theme.colorScheme.primary;
+    final selectedColor = primaryColor.withAlpha(_selectedColorAlpha);
     final cacheManager = context.read<CacheManager>();
 
     useEffect(() {
@@ -116,21 +118,44 @@ class MusicSheetRepositoryTile extends HookWidget {
                     IconButton(
                       icon: Icon(
                         Icons.download_rounded,
-                        color: theme.colorScheme.primary,
+                        color: primaryColor,
                       ),
-                      tooltip: localizations.downloadTooltip,
+                      tooltip: localizations.downloadMusicSheetTooltip,
                       onPressed: () {
                         context.read<AddEditMusicSheetCubit>().addMusicSheetToPlaylist(musicSheet: musicSheet);
                         Navigator.of(context).push<void>(AddEditMusicSheetView.route());
                       },
                     ),
-                  if (musicSheet.userId == userId && viewOnly)
+                  if (musicSheet.userId == userId && viewOnly) ...[
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: primaryColor,
+                      ),
+                      tooltip: localizations.renameMusicSheetTooltip,
+                      onPressed: () {
+                        showRenameMusicSheetDialog(
+                          context: context,
+                          musicSheetName: musicSheet.fileName,
+                        ).then((newName) {
+                          if (newName != null && context.mounted) {
+                            context.read<MusicSheetRepositoryBloc>().add(
+                              RenameMusicSheet(
+                                musicSheet: musicSheet,
+                                fileName: newName,
+                                repositoryId: repositoryId,
+                              ),
+                            );
+                          }
+                        });
+                      },
+                    ),
                     IconButton(
                       icon: Icon(
                         Icons.delete_outline_rounded,
                         color: theme.colorScheme.error,
                       ),
-                      tooltip: localizations.deleteTooltip,
+                      tooltip: localizations.deleteMusicSheetTooltip,
                       onPressed: () {
                         showDeleteMusicSheetDialog(context).then((shouldDeleteMusicSheet) {
                           if (shouldDeleteMusicSheet && context.mounted) {
@@ -145,6 +170,7 @@ class MusicSheetRepositoryTile extends HookWidget {
                         });
                       },
                     ),
+                  ],
                 ],
               ),
           ],

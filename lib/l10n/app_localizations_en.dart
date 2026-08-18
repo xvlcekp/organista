@@ -185,10 +185,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get download => 'Download';
 
   @override
-  String get downloadTooltip => 'Download music sheet';
+  String get downloadMusicSheetTooltip => 'Download music sheet';
 
   @override
-  String get deleteTooltip => 'Delete music sheet';
+  String get deleteMusicSheetTooltip => 'Delete music sheet';
+
+  @override
+  String get renameMusicSheetTooltip => 'Rename music sheet';
+
+  @override
+  String get renameMusicSheet => 'Rename music sheet';
+
+  @override
+  String get enterMusicSheetName => 'Enter music sheet name';
 
   @override
   String get renamePlaylist => 'Rename playlist';

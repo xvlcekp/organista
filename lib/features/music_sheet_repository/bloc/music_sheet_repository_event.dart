@@ -47,3 +47,18 @@ class DeleteMusicSheet extends MusicSheetRepositoryEvent {
   @override
   List<Object> get props => [musicSheet, repositoryId];
 }
+
+class RenameMusicSheet extends MusicSheetRepositoryEvent {
+  final MusicSheet musicSheet;
+  final String fileName;
+  final String repositoryId;
+
+  const RenameMusicSheet({
+    required this.musicSheet,
+    required this.fileName,
+    required this.repositoryId,
+  });
+
+  @override
+  List<Object> get props => [musicSheet, fileName, repositoryId];
+}

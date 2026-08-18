@@ -25,6 +25,7 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     on<UpdateMusicSheetsEvent>(_onUpdateMusicSheets);
     on<SearchMusicSheets>(_onSearchMusicSheets);
     on<DeleteMusicSheet>(_onDeleteMusicSheet);
+    on<RenameMusicSheet>(_onRenameMusicSheet);
   }
 
   List<MusicSheet> _sortMusicSheetsByAlphabet(List<MusicSheet> musicSheets) {
@@ -55,6 +56,14 @@ class MusicSheetRepositoryBloc extends Bloc<MusicSheetRepositoryEvent, MusicShee
     await _firebaseFirestoreRepository.deleteMusicSheetFromRepository(
       musicSheet: musicSheetToDelete,
       repositoryId: repositoryId,
+    );
+  }
+
+  Future<void> _onRenameMusicSheet(RenameMusicSheet event, Emitter<MusicSheetRepositoryState> emit) async {
+    await _firebaseFirestoreRepository.renameMusicSheetInRepository(
+      musicSheet: event.musicSheet,
+      fileName: event.fileName,
+      repositoryId: event.repositoryId,
     );
   }
 

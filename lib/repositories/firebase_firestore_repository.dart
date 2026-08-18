@@ -470,6 +470,34 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  Future<bool> renameMusicSheetInRepository({
+    required MusicSheet musicSheet,
+    required String fileName,
+    required String repositoryId,
+  }) async {
+    try {
+      await _instance
+          .collection(FirebaseCollectionName.repositories)
+          .doc(repositoryId)
+          .collection(FirebaseCollectionName.musicSheets)
+          .doc(musicSheet.musicSheetId)
+          .update({
+            MusicSheetKey.fileName: fileName,
+          });
+      logger.i(
+        "Renaming musicSheet ${musicSheet.fileName} with id ${musicSheet.musicSheetId} to $fileName in repository $repositoryId",
+      );
+      return true;
+    } catch (e, stackTrace) {
+      logger.e(
+        'Error renaming music sheet ${musicSheet.musicSheetId} in repository $repositoryId to $fileName',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
   // REPOSITORY OPERATIONS
 
   Stream<Iterable<Repository>> getRepositoriesStream({required String userId}) {

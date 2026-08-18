@@ -186,10 +186,19 @@ class AppLocalizationsSk extends AppLocalizations {
   String get download => 'Stiahnuť';
 
   @override
-  String get downloadTooltip => 'Stiahnuť notový zápis';
+  String get downloadMusicSheetTooltip => 'Stiahnuť notový zápis';
 
   @override
-  String get deleteTooltip => 'Vymazať notový zápis';
+  String get deleteMusicSheetTooltip => 'Vymazať notový zápis';
+
+  @override
+  String get renameMusicSheetTooltip => 'Premenovať notový zápis';
+
+  @override
+  String get renameMusicSheet => 'Premenovať notový záznam';
+
+  @override
+  String get enterMusicSheetName => 'Zadajte názov notového záznamu';
 
   @override
   String get renamePlaylist => 'Premenovať zoznam skladieb';
