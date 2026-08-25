@@ -10,12 +10,6 @@ pod jeho účtom, keď je prihlásený.
 Ďalej, aby sa playlisty dali zobrazovať na viacerých zariadeniach (na tablete / mobile)
 s rovnakým účtom.
 
-### Je aplikácia dostupná pre iPady, resp. platformu iOS?
-
-Aktualizácia: Od 30.11.2025 je aplikácia k dispozícií aj pre iOS.
-
-Pred tým bola k dispozícii iba pre platformu Android.
-
 ### Je aplikácia zadarmo?
 
 Aplikáciu je možné bezplatne stiahnuť z obchodu Google Play. Mojím zámerom je, aby
@@ -39,14 +33,16 @@ Prikladám tipy na cenovo dostupné tablety zoradené podľa veľkosti displeja:
 Osobné skúsenosti nemám ani s jedným z uvedených. Pre cca porovnanie, formát A4 má 14.32",
 ale pomer šírka/výška má každý tablet inak.
 
-Tento zoznam nie je úplný, existuje veľa čínských značiek, avšak objednávať tablet
+Tento zoznam nie je úplný, existuje veľa čínskych značiek, avšak objednávať tablet
 z Aliexpresu a pod. odporúčam len skúsenejším užívateľom.
 
 Ďalší tip je kúpiť výhodnejšie používaný tablet napr. cez bazoš.
 
-V princípe môže byť hociaký tablet, na ktorom sa vám bude dobre hrať. Aktuálne su
-podporované len Androidy. Ak máte tip, resp. osobné skúsenosti s jedným z týchto tabletov,
-alebo iných a chceli by ste sa o ne podeliť, napíšte na
+V princípe môže byť hocijaký tablet, na ktorom sa vám bude dobre hrať. Aplikácia je
+dostupná pre Android aj iOS, takže do úvahy pripadajú aj iPady —
+napr. **iPad Pro 13"** (špičkový, ale drahý) alebo **iPad Air 13"** (rozumnejšia cena). Ak máte tip,
+resp. osobné skúsenosti s jedným z týchto tabletov, alebo iných a chceli by ste sa
+o ne podeliť, napíšte na
 [rozpravaciaappka@gmail.com](mailto:rozpravaciaappka@gmail.com) a informácie sem doplním.
 
 ### Ako môžem pomôcť s rozvojom aplikácie?
@@ -55,22 +51,10 @@ Možností je viac:
 
 - hľadať a nahlasovať chyby v apklikácii
 - ohodnotením aplikácie na Google Play, resp. inej platforme
-- spolu-vyvíjať (aplikácia je napísaná vo Flutteri, ak vieš programovať, zadieľam
+- spolu-vyvíjať (aplikácia je napísaná vo Flutteri, ak vieš programovať, tu je
   [Github repozitár](https://github.com/xvlcekp/organista))
 - ak si s aplikáciou spokojný, robiť osvetu vo svojom okolí ľuďom, ktorým by mohla uľahčiť život
 - finančným príspevkom
-
-### Zhasne displej počas používania aplikácie?
-
-Časovač vypnutia displeja je možné zrušiť v nastaveniach aplikácie, počas behu aplikácia
-nezhasne. Ak je to vypnuté, zariadenie sa riadi nastavením systému.
-
-### Funguje aplikácia bez internetu?
-
-Pre stiahnutie nôt je potrebný internet (wifi / mobilné dáta). Ak už raz noty stiahnete
-a máte ich uložené v playliste, noty sa budú zobrazovať aj bez internetu. Najlepšie je si
-to doma vyskúšať s vypnutou wifi, aby vás v kostole nič neprekvapilo. Do budúcna zvažujem
-implementovať technicky náročnejšiu možnosť, aby aplikácia fungovala plne offline.
 
 ### Z čoho je aplikácia financovaná?
 
@@ -85,21 +69,28 @@ Ak sa Vám aplikácia páči, budem vďačný za akúkoľvek, aj symbolickú fin
 
 **IBAN: SK9365000000003651026785**
 
-## Noty
+Platbu môžete jednoducho zadať aj naskenovaním QR kódu (PAY by square) v mobilnej
+aplikácii vašej banky:
 
-### Aké noty sú dostupné v globálnom repozitári?
+![PAY by square QR kód](assets/screenshots/paybysquare.png){ width="300" }
 
-K dispozícii sú noty, ktoré sú dostupné verejne na internete.
+### Zhasne displej počas používania aplikácie?
 
-- **JKS** - zo stránky <http://www.notypreorgan.comehere.cz/>, resp. <https://zenodo.org/records/6476043>
-- **JKS transponované** - zo stránky <http://www.notypreorgan.comehere.cz/>
-- **Žalmy** - zo stránky <https://gospel.spevy.sk/>. Za poskytnutie medzispevov vďačím pánovi Jurajovi Kubekovi.
-- **Ordinárium** - z Liturgického spevníka 1., Odpovede, Otče nás - Embolizmus
-- **Svadba** - výber z knihy: „A budú dvaja jedno telo" (Amantius Akimjak)
-- **Predohry JKS** - od Petra Franyena zo stránky <https://organspaniadolina.sk/na-stiahnutie/>
-- **Mariánska kytica** - <http://notypreorgan.comehere.cz/files/Marianska_kytica-cela.pdf>
+Časovač vypnutia displeja je možné zrušiť v nastaveniach aplikácie, počas behu aplikácia
+nezhasne. Ak je to vypnuté, zariadenie sa riadi nastavením systému.
 
-Postupne je v pláne pridávať ďalší obsah.
+### Funguje aplikácia bez internetu?
+
+Pre stiahnutie nôt je potrebný internet (wifi / mobilné dáta). Ak už raz noty stiahnete
+a máte ich uložené v playliste, noty sa budú zobrazovať aj bez internetu. Najlepšie je si
+to doma vyskúšať s vypnutou wifi, aby vás v kostole nič neprekvapilo. Do budúcna zvažujem
+implementovať technicky náročnejšiu možnosť, aby aplikácia fungovala plne offline.
+
+### Je aplikácia dostupná pre iPady, resp. platformu iOS?
+
+Aktualizácia: Od 30.11.2025 je aplikácia k dispozícií aj pre iOS.
+
+Pred tým bola k dispozícii iba pre platformu Android.
 
 ### Je možné zdieľať noty s ostatnými?
 
@@ -112,7 +103,7 @@ byť ucelené a kvalitne oskenované / priamo PDF.
 ### Prečo neviem transponovať niektoré noty?
 
 Digitálna transpozícia funguje len pri notách vo formáte **MusicXML**
-(napr. repozitár *JKS - digitálne*). Obrázky a PDF súbory sú „statické" —
+(napr. repozitár _JKS - digitálne_). Obrázky a PDF súbory sú „statické" —
 aplikácia ich zobrazí, ale noty v nich prepísať nevie.
 
 ### Aké súbory si môžem nahrať do osobného repozitára?
