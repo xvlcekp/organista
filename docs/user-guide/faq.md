@@ -22,13 +22,16 @@ rušivé reklamy, ktoré by mohli narušiť priebeh hrania počas liturgie.
 Ideálne čo najväčší, aby sa na ňom dalo pohodlne hrať. Ostatné parametre nie sú tak
 dôležité, nakoľko aplikácia je výpočtovo nenáročná.
 
-Prikladám tipy na cenovo dostupné tablety zoradené podľa veľkosti displeja:
+Prikladám tipy na cenovo dostupné tablety zoradené podľa veľkosti displeja
+(ceny orientačné, aktualizované 8/2026):
 
-- **Samsung Galaxy Tab S10 Ultra** - 14,6" - high-end tablet od Samsungu, dosť drahý, ale fakt kvalitný (850€+)
-- **TCL NXTPAPER 14** - 14,3" - tablet porovnateľný s A4, trochu drahší (380-420€)
-- **Teclast T65 Max** - 12,95" - na Alze sa dá zohnať okolo 210€ s kupónom, ideálny pomer cena veľkosť
-- **Lenovo Tab P12** - 12,7″ - cena okolo 300 - 350€
-- **HONOR Pad 9** - 12,1" - cena okolo 250 - 300€
+- **Samsung Galaxy Tab S10 Ultra** - 14,6" - high-end tablet od Samsungu, dosť drahý, ale fakt kvalitný (od cca 830€)
+- **TCL NXTPAPER 14** - 14,3" - tablet porovnateľný s A4, trochu drahší (cca 350 - 400€)
+- **Teclast T65 2026** - 13,4" - nástupca modelu T65 Max, veľký displej za málo peňazí (cca 175 - 200€)
+- **Teclast T65 Max** - 12,95" - ideálny pomer cena veľkosť (cca 220 - 240€)
+- **Lenovo Idea Tab Pro** - 12,7" - nástupca modelu Tab P12 (od cca 315€)
+- **HONOR Pad 9** - 12,1" - cena okolo 230 - 250€
+- **Xiaomi Redmi Pad Pro** - 12,1" - cena okolo 230 - 260€
 
 Osobné skúsenosti nemám ani s jedným z uvedených. Pre cca porovnanie, formát A4 má 14.32",
 ale pomer šírka/výška má každý tablet inak.
@@ -50,7 +53,7 @@ o ne podeliť, napíšte na
 Možností je viac:
 
 - hľadať a nahlasovať chyby v apklikácii
-- ohodnotením aplikácie na Google Play, resp. inej platforme
+- ohodnotením aplikácie na Google Play, resp. na App Store
 - spolu-vyvíjať (aplikácia je napísaná vo Flutteri, ak vieš programovať, tu je
   [Github repozitár](https://github.com/xvlcekp/organista))
 - ak si s aplikáciou spokojný, robiť osvetu vo svojom okolí ľuďom, ktorým by mohla uľahčiť život
@@ -62,7 +65,7 @@ Aplikáciu robím nezištne vo svojom voľnom čase, bez akejkoľvek podpory (po
 organisti, vďaka vám 🙂)
 
 Všetky finančné náklady potrebné na chod a uverejnenie aplikácie, čas strávený s vývojom
-platím z osobného účtu.
+robím bezodplatne.
 
 Ak sa Vám aplikácia páči, budem vďačný za akúkoľvek, aj symbolickú finančnú podporu na
 číslo účtu:
@@ -76,8 +79,8 @@ aplikácii vašej banky:
 
 ### Zhasne displej počas používania aplikácie?
 
-Časovač vypnutia displeja je možné zrušiť v nastaveniach aplikácie, počas behu aplikácia
-nezhasne. Ak je to vypnuté, zariadenie sa riadi nastavením systému.
+Časovač vypnutia displeja je možné zrušiť v nastaveniach aplikácie, čo zapríčiní aby aplikácia počas používania
+nezhasla. Ak je toto nastavenie vypnuté, zariadenie sa riadi nastavením systému.
 
 ### Funguje aplikácia bez internetu?
 
