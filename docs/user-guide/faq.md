@@ -10,12 +10,6 @@ pod jeho účtom, keď je prihlásený.
 Ďalej, aby sa playlisty dali zobrazovať na viacerých zariadeniach (na tablete / mobile)
 s rovnakým účtom.
 
-### Je aplikácia dostupná pre iPady, resp. platformu iOS?
-
-Aktualizácia: Od 30.11.2025 je aplikácia k dispozícií aj pre iOS.
-
-Pred tým bola k dispozícii iba pre platformu Android.
-
 ### Je aplikácia zadarmo?
 
 Aplikáciu je možné bezplatne stiahnuť z obchodu Google Play. Mojím zámerom je, aby
@@ -28,25 +22,30 @@ rušivé reklamy, ktoré by mohli narušiť priebeh hrania počas liturgie.
 Ideálne čo najväčší, aby sa na ňom dalo pohodlne hrať. Ostatné parametre nie sú tak
 dôležité, nakoľko aplikácia je výpočtovo nenáročná.
 
-Prikladám tipy na cenovo dostupné tablety zoradené podľa veľkosti displeja:
+Prikladám tipy na cenovo dostupné tablety zoradené podľa veľkosti displeja
+(ceny orientačné, aktualizované 8/2026):
 
-- **Samsung Galaxy Tab S10 Ultra** - 14,6" - high-end tablet od Samsungu, dosť drahý, ale fakt kvalitný (850€+)
-- **TCL NXTPAPER 14** - 14,3" - tablet porovnateľný s A4, trochu drahší (380-420€)
-- **Teclast T65 Max** - 12,95" - na Alze sa dá zohnať okolo 210€ s kupónom, ideálny pomer cena veľkosť
-- **Lenovo Tab P12** - 12,7″ - cena okolo 300 - 350€
-- **HONOR Pad 9** - 12,1" - cena okolo 250 - 300€
+- **Samsung Galaxy Tab S10 Ultra** - 14,6" - high-end tablet od Samsungu, dosť drahý, ale fakt kvalitný (od cca 830€)
+- **TCL NXTPAPER 14** - 14,3" - tablet porovnateľný s A4, trochu drahší (cca 350 - 400€)
+- **Teclast T65 2026** - 13,4" - nástupca modelu T65 Max, veľký displej za málo peňazí (cca 175 - 200€)
+- **Teclast T65 Max** - 12,95" - ideálny pomer cena veľkosť (cca 220 - 240€)
+- **Lenovo Idea Tab Pro** - 12,7" - nástupca modelu Tab P12 (od cca 315€)
+- **HONOR Pad 9** - 12,1" - cena okolo 230 - 250€
+- **Xiaomi Redmi Pad Pro** - 12,1" - cena okolo 230 - 260€
 
 Osobné skúsenosti nemám ani s jedným z uvedených. Pre cca porovnanie, formát A4 má 14.32",
 ale pomer šírka/výška má každý tablet inak.
 
-Tento zoznam nie je úplný, existuje veľa čínských značiek, avšak objednávať tablet
+Tento zoznam nie je úplný, existuje veľa čínskych značiek, avšak objednávať tablet
 z Aliexpresu a pod. odporúčam len skúsenejším užívateľom.
 
 Ďalší tip je kúpiť výhodnejšie používaný tablet napr. cez bazoš.
 
-V princípe môže byť hociaký tablet, na ktorom sa vám bude dobre hrať. Aktuálne su
-podporované len Androidy. Ak máte tip, resp. osobné skúsenosti s jedným z týchto tabletov,
-alebo iných a chceli by ste sa o ne podeliť, napíšte na
+V princípe môže byť hocijaký tablet, na ktorom sa vám bude dobre hrať. Aplikácia je
+dostupná pre Android aj iOS, takže do úvahy pripadajú aj iPady —
+napr. **iPad Pro 13"** (špičkový, ale drahý) alebo **iPad Air 13"** (rozumnejšia cena). Ak máte tip,
+resp. osobné skúsenosti s jedným z týchto tabletov, alebo iných a chceli by ste sa
+o ne podeliť, napíšte na
 [rozpravaciaappka@gmail.com](mailto:rozpravaciaappka@gmail.com) a informácie sem doplním.
 
 ### Ako môžem pomôcť s rozvojom aplikácie?
@@ -54,16 +53,34 @@ alebo iných a chceli by ste sa o ne podeliť, napíšte na
 Možností je viac:
 
 - hľadať a nahlasovať chyby v apklikácii
-- ohodnotením aplikácie na Google Play, resp. inej platforme
-- spolu-vyvíjať (aplikácia je napísaná vo Flutteri, ak vieš programovať, zadieľam
+- ohodnotením aplikácie na Google Play, resp. na App Store
+- spolu-vyvíjať (aplikácia je napísaná vo Flutteri, ak vieš programovať, tu je
   [Github repozitár](https://github.com/xvlcekp/organista))
 - ak si s aplikáciou spokojný, robiť osvetu vo svojom okolí ľuďom, ktorým by mohla uľahčiť život
 - finančným príspevkom
 
+### Z čoho je aplikácia financovaná?
+
+Aplikáciu robím nezištne vo svojom voľnom čase, bez akejkoľvek podpory (podobne ak vy,
+organisti, vďaka vám 🙂)
+
+Všetky finančné náklady potrebné na chod a uverejnenie aplikácie, čas strávený s vývojom
+robím bezodplatne.
+
+Ak sa Vám aplikácia páči, budem vďačný za akúkoľvek, aj symbolickú finančnú podporu na
+číslo účtu:
+
+**IBAN: SK9365000000003651026785**
+
+Platbu môžete jednoducho zadať aj naskenovaním QR kódu (PAY by square) v mobilnej
+aplikácii vašej banky:
+
+![PAY by square QR kód](assets/screenshots/paybysquare.png){ width="300" }
+
 ### Zhasne displej počas používania aplikácie?
 
-Časovač vypnutia displeja je možné zrušiť v nastaveniach aplikácie, počas behu aplikácia
-nezhasne. Ak je to vypnuté, zariadenie sa riadi nastavením systému.
+Časovač vypnutia displeja je možné zrušiť v nastaveniach aplikácie, čo zapríčiní aby aplikácia počas používania
+nezhasla. Ak je toto nastavenie vypnuté, zariadenie sa riadi nastavením systému.
 
 ### Funguje aplikácia bez internetu?
 
@@ -72,34 +89,11 @@ a máte ich uložené v playliste, noty sa budú zobrazovať aj bez internetu. N
 to doma vyskúšať s vypnutou wifi, aby vás v kostole nič neprekvapilo. Do budúcna zvažujem
 implementovať technicky náročnejšiu možnosť, aby aplikácia fungovala plne offline.
 
-### Z čoho je aplikácia financovaná?
+### Je aplikácia dostupná pre iPady, resp. platformu iOS?
 
-Aplikáciu robím nezištne vo svojom voľnom čase, bez akejkoľvek podpory (podobne ak vy,
-organisti, vďaka vám 🙂)
+Aktualizácia: Od 30.11.2025 je aplikácia k dispozícií aj pre iOS.
 
-Všetky finančné náklady potrebné na chod a uverejnenie aplikácie, čas strávený s vývojom
-platím z osobného účtu.
-
-Ak sa Vám aplikácia páči, budem vďačný za akúkoľvek, aj symbolickú finančnú podporu na
-číslo účtu:
-
-**IBAN: SK9365000000003651026785**
-
-## Noty
-
-### Aké noty sú dostupné v globálnom repozitári?
-
-K dispozícii sú noty, ktoré sú dostupné verejne na internete.
-
-- **JKS** - zo stránky <http://www.notypreorgan.comehere.cz/>, resp. <https://zenodo.org/records/6476043>
-- **JKS transponované** - zo stránky <http://www.notypreorgan.comehere.cz/>
-- **Žalmy** - zo stránky <https://gospel.spevy.sk/>. Za poskytnutie medzispevov vďačím pánovi Jurajovi Kubekovi.
-- **Ordinárium** - z Liturgického spevníka 1., Odpovede, Otče nás - Embolizmus
-- **Svadba** - výber z knihy: „A budú dvaja jedno telo" (Amantius Akimjak)
-- **Predohry JKS** - od Petra Franyena zo stránky <https://organspaniadolina.sk/na-stiahnutie/>
-- **Mariánska kytica** - <http://notypreorgan.comehere.cz/files/Marianska_kytica-cela.pdf>
-
-Postupne je v pláne pridávať ďalší obsah.
+Pred tým bola k dispozícii iba pre platformu Android.
 
 ### Je možné zdieľať noty s ostatnými?
 
@@ -112,7 +106,7 @@ byť ucelené a kvalitne oskenované / priamo PDF.
 ### Prečo neviem transponovať niektoré noty?
 
 Digitálna transpozícia funguje len pri notách vo formáte **MusicXML**
-(napr. repozitár *JKS - digitálne*). Obrázky a PDF súbory sú „statické" —
+(napr. repozitár _JKS - digitálne_). Obrázky a PDF súbory sú „statické" —
 aplikácia ich zobrazí, ale noty v nich prepísať nevie.
 
 ### Aké súbory si môžem nahrať do osobného repozitára?
