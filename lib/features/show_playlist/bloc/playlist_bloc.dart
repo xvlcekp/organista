@@ -313,10 +313,24 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     UpdateMusicSheetTranspositionEvent event,
     Emitter<PlaylistState> emit,
   ) async {
+    // Transposition is stored per playlist entry. The viewer can also be opened directly from a repository
+    // (no playlist loaded, state still holds Playlist.empty()) or for a sheet that is not in the current
+    // playlist. In both cases there is nothing to persist, and writing would target a non-existent document.
+    final playlist = state.playlist;
+    final isInCurrentPlaylist = playlist.musicSheets.any(
+      (sheet) => sheet.musicSheetId == event.musicSheet.musicSheetId,
+    );
+    if (!isInCurrentPlaylist) {
+      logger.d(
+        'Skipping transposition persist for music sheet ${event.musicSheet.musicSheetId}: not in playlist ${playlist.playlistId}',
+      );
+      return;
+    }
+
     await _firebaseFirestoreRepository.updateMusicSheetTransposition(
       musicSheet: event.musicSheet,
       transposition: event.transposition,
-      playlist: state.playlist,
+      playlist: playlist,
     );
   }
 

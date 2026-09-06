@@ -389,6 +389,60 @@ void main() {
         },
         expect: () => [],
       );
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'does not call repository when no playlist has been loaded (initial state)',
+        build: () => bloc,
+        act: (bloc) => bloc.add(
+          UpdateMusicSheetTranspositionEvent(
+            musicSheet: testMusicSheet,
+            transposition: 3,
+          ),
+        ),
+        verify: (_) {
+          verifyNever(
+            mockFirebaseFirestoreRepository.updateMusicSheetTransposition(
+              musicSheet: anyNamed('musicSheet'),
+              transposition: anyNamed('transposition'),
+              playlist: anyNamed('playlist'),
+            ),
+          );
+        },
+        expect: () => [],
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'does not call repository when the music sheet is not part of the current playlist',
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(
+          UpdateMusicSheetTranspositionEvent(
+            musicSheet: MusicSheet(
+              json: {
+                MusicSheetKey.musicSheetId: 'sheet_not_in_playlist',
+                MusicSheetKey.userId: 'user1',
+                MusicSheetKey.createdAt: testTimestamp,
+                MusicSheetKey.fileUrl: 'https://example.com/other.musicxml',
+                MusicSheetKey.fileName: 'Other Sheet',
+                MusicSheetKey.originalFileStorageId: 'storage2',
+                MusicSheetKey.mediaType: 'musicxml',
+                MusicSheetKey.sequenceId: 2,
+              },
+            ),
+            transposition: 3,
+          ),
+        ),
+        verify: (_) {
+          verifyNever(
+            mockFirebaseFirestoreRepository.updateMusicSheetTransposition(
+              musicSheet: anyNamed('musicSheet'),
+              transposition: anyNamed('transposition'),
+              playlist: anyNamed('playlist'),
+            ),
+          );
+        },
+        expect: () => [],
+      );
     });
 
     // Tests for SaveExportedPlaylistEvent are omitted because FilePicker

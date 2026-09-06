@@ -9,6 +9,22 @@ K dispozícii sú noty, ktoré sú dostupné verejne na internete.
 - **Ordinárium** - z Liturgického spevníka 1.,
   [Odpovede](http://www.notypreorgan.comehere.cz/files/Responsoria-missae-odpovede.pdf),
   [Otče nás - Embolizmus](http://www.notypreorgan.comehere.cz/files/Otce-nasEmbolizmus-C-Dur-az-G-Dur.pdf)
+- **Ordinárium sv. omše - digitálne** - odpovede a spevy omšového ordinária z knihy _Liturgický spevník I._,
+  ktoré zdigitalizoval **Tomáš Polonec** - dajú sa transponovať priamo v aplikácii.
+  **Tieto noty zatiaľ neprešli kontrolou a slúžia na testovanie** (pozri upozornenie nižšie)
+
+!!! warning "Digitálne noty z Liturgického spevníka I. sú zatiaľ testovacie"
+Noty z _Liturgického spevníka I._ zdigitalizoval **Tomáš Polonec**, ktorému za túto prácu patrí veľká
+vďaka. Pri exporte do formátu MusicXML a následnom zobrazení v aplikácii (knižnica OSMD) však vznikli
+nepresnosti a chyby - napríklad v texte, či rozložení taktov. Noty preto zatiaľ neprešli
+kontrolou a slúžia na testovanie. Materiálu je veľa, preto sa budeme postupne venovať najprv tým
+najdôležitejším častiam. Pri hraní si ich radšej porovnajte s tlačeným _Liturgickým spevníkom I._
+
+    **Má zmysel v opravách pokračovať?** Radi by sme vedeli, či tieto digitálne noty niekto používa a či sa
+    oplatí venovať čas ich opravám. Za akúkoľvek spätnú väzbu (či ich používate, ktoré časti sú pre vás
+    najdôležitejšie, aké chyby ste našli) budeme vďační - napíšte na
+    [rozpravaciaappka@gmail.com](mailto:rozpravaciaappka@gmail.com).
+
 - **Svadba** - výber z knihy: „A budú dvaja jedno telo" (Amantius Akimjak)
 - **Predohry JKS** - od Petra Franyena zo stránky <https://organspaniadolina.sk/na-stiahnutie/>
 - **Mariánska kytica** - <http://notypreorgan.comehere.cz/files/Marianska_kytica-cela.pdf>
@@ -20,6 +36,18 @@ Postupne je v pláne pridávať ďalší obsah.
 ### 6.9.2026
 
 Pridané digitálne noty pre JKS 118 a 518
+
+Nový repozitár **Ordinárium sv. omše - digitálne** - 85 digitálnych nôt z knihy _Liturgický spevník I._
+(odpovede a omšové ordinárium), ktoré zdigitalizoval **Tomáš Polonec** a ktoré sa dajú v aplikácii
+transponovať. **Noty zatiaľ neprešli kontrolou a slúžia na testovanie** - pri exporte do MusicXML a zobrazení
+v aplikácii vznikli chyby. Najprv sa budeme venovať najdôležitejším častiam a radi by sme vedeli, či sa
+oplatí v opravách pokračovať - za spätnú väzbu budeme vďační. Napríklad:
+
+- Úvodné obrady (Modus DO a Modus RE) vo všetkých tóninách
+- Aklamácia po premenení vo viacerých tóninách, Obrad pokoja, Ecce, agnus Dei, Záverečné obrady
+- Kyrie, Gloria, Sanctus a Agnus zo zostáv I–VII a z Missa Catholica
+- Adventná, vianočná, pôstna, veľkonočná, mariánska a zádušná zostava
+- Modlitba Pána (gregoriánsky, mozarabský a slávnostný nápev), Krédo I a Apoštolské vyznanie viery I
 
 ### 9.8.2026
 

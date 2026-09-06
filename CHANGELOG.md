@@ -31,14 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -
 
-## [1.3.2]
+## [1.3.2] - 2026-09-06
 
 ### Added
 
 - Export playlistu do PDF teraz zahŕňa aj digitálne noty vo formáte MusicXML (vrátane uloženej transpozície)
 - Možnosť premenovať notové záznamy vo vlastnom repozitári
 - V nastaveniach sa zobrazuje e-mail prihláseného používateľa („Prihlásený ako“)
-- Nová používateľská príručka v slovenčine na [xvlcekp.github.io/organista](https://xvlcekp.github.io/organista/)
+- Nová používateľská príručka na [xvlcekp.github.io/organista](https://xvlcekp.github.io/organista/)
 
 ## [1.3.1] - 2026-08-09
 
