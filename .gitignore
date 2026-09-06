@@ -53,6 +53,11 @@ content/
 # JKS pipeline
 tools/jks-pipeline/output/
 tools/jks-pipeline/.claude/
+
+# Odpovede pipeline
+tools/odpovede-pipeline/output/
+tools/odpovede-pipeline/preview/node_modules/
+tools/odpovede-pipeline/preview/package-lock.json
 # Files created after upgrade to flutter 3.29.3
 /android/app/.cxx
 
