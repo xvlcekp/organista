@@ -2,6 +2,14 @@
 
 Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 
+## Verzia 1.3.2
+
+- Pri exporte zoznamu skladieb do PDF sa už vyexportujú aj digitálne noty (MusicXML) — a to presne v tónine, v ktorej ich máte transponované
+- Noty vo vlastnom repozitári si viete premenovať — ťuknite na ikonu ceruzky pri note
+- V nastaveniach vidíte, pod akým účtom ste prihlásení („Prihlásený ako“)
+- Pridané digitálne verzie JKS 118 a 518
+- Spustili sme túto používateľskú príručku — nájdete v nej návody ku všetkým funkciám aplikácie
+
 ## Verzia 1.3.1 - 9.8.2026
 
 - Možnosť zobraziť pieseň bez nutnosti pridávať do repozitára - spodný navigačný panel (playlisty / repozitáre)
