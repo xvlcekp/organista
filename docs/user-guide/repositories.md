@@ -67,4 +67,5 @@ repozitárov — pozri [Pridávanie nôt](adding-music-sheets.md).
 
 - **Premenovanie / vymazanie repozitára** — dlho podržte prst na karte repozitára.
   Vymazaním repozitára sa vymažú aj všetky noty v ňom!
+- **Premenovanie noty** — ťuknite na ikonu ceruzky pri note.
 - **Vymazanie noty** — ťuknite na ikonu koša pri note.

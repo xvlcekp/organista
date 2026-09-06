@@ -17,6 +17,10 @@ Postupne je v pláne pridávať ďalší obsah.
 
 ## História úprav
 
+### 6.9.2026
+
+Pridané digitálne noty pre JKS 118 a 518
+
 ### 9.8.2026
 
 Pridané digitálne noty pre JKS 436a a 436b
