@@ -14,7 +14,7 @@ vždy po ruke — usporiadané presne v poradí, v akom ich budete hrať.
   o ľubovoľný počet poltónov vyššie alebo nižšie.
 - **Export do PDF** — celý zoznam skladieb si vyexportujete do jedného PDF súboru, napríklad pre
   spevákov alebo na tlač.
-- **Funguje aj bez internetu** — noty, ktoré ste už mali otvorené, sa zobrazia aj offline.
+- **Funguje aj bez internetu** — noty, ktoré ste už raz otvorili (s internetom), sa zobrazia aj offline.
 
 <div class="grid" markdown>
 ![Zobrazenie nôt](assets/screenshots/sheet-musicxml.png){ width="300" }

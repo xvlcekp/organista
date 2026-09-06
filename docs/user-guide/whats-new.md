@@ -15,7 +15,9 @@ Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 
 ## Verzia 1.3.0 - 2.5.2026
 
-<video src="../assets/whats-new/1.3.0/transpose_digital.mp4" style="width:100%;max-width:300px" controls muted playsinline></video>
+<video loop muted playsinline controls width="300">
+  <source src="../assets/whats-new/1.3.0/transpose_digital.mp4" type="video/mp4">
+</video>
 
 Podpora digitálnych nôt vo formáte MusicXML. Noty sa zobrazujú priamo v aplikácii
 s možnosťou zoomovania a posúvania. Noty je možné transponovať priamo v aplikácii
