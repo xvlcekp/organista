@@ -1,0 +1,8 @@
+{
+  "name": "odpovede-preview",
+  "private": true,
+  "description": "Renders pipeline output with the app's OSMD viewer in headless Chrome",
+  "dependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}
