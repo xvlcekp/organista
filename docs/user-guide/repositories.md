@@ -6,15 +6,17 @@ Repozitár je knižnica notových záznamov. Nájdete ich na spodnej lište pod 
 
 Spoločné knižnice dostupné všetkým používateľom — napríklad **JKS - digitálne**
 (Jednotný katolícky spevník v digitálnej podobe s možnosťou transpozície), žalmy pre
-jednotlivé liturgické obdobia, **Mariánska kytica** či **Ordinárium sv. omše**.
+jednotlivé liturgické obdobia, **Mariánska kytica**, **Ordinárium sv. omše** či jeho digitálna verzia
+**Ordinárium sv. omše - digitálne** (zdigitalizoval Tomáš Polonec pre MuseScore; zatiaľ testovacia verzia, noty neprešli
+kontrolou - viac v [Zdrojoch nôt](music-sheet-sources.md)).
 
 ![Globálne repozitáre](assets/screenshots/repositories-global.png){ width="300" }
 
 Globálne repozitáre sa nedajú upravovať — noty z nich si pridávate do svojich zoznamov skladieb.
 
 !!! info "Odkiaľ noty pochádzajú"
-    Prehľad všetkých zdrojov aj históriu pridávania nôt nájdete na stránke
-    [Zdroje nôt](music-sheet-sources.md).
+Prehľad všetkých zdrojov aj históriu pridávania nôt nájdete na stránke
+[Zdroje nôt](music-sheet-sources.md).
 
 ### Vyhľadávanie
 
@@ -26,8 +28,8 @@ V repozitári píšte do políčka **Vyhľadať noty...** — výsledky sa filtr
 </div>
 
 !!! info "Zelená fajka"
-    Zelená fajka pri piesni znamená, že notový záznam je uložený v pamäti telefónu
-    a zobrazí sa **aj bez internetu**.
+Zelená fajka pri piesni znamená, že notový záznam je uložený v pamäti telefónu
+a zobrazí sa **aj bez internetu**.
 
 ## Osobný repozitár
 

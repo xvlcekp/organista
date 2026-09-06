@@ -2,13 +2,43 @@
 
 Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 
-## Verzia 1.3.2
+## Verzia 1.3.2 - 6.9.2026
 
-- Pri exporte zoznamu skladieb do PDF sa už vyexportujú aj digitálne noty (MusicXML) — a to presne v tónine, v ktorej ich máte transponované
-- Noty vo vlastnom repozitári si viete premenovať — ťuknite na ikonu ceruzky pri note
-- V nastaveniach vidíte, pod akým účtom ste prihlásení („Prihlásený ako“)
+<table>
+<tr>
+<th width="33.33%">Digitálne noty v PDF exporte</th>
+<th width="33.33%">Premenovanie vlastných nôt</th>
+<th width="33.33%">Prihlásený účet v nastaveniach</th>
+</tr>
+<tr>
+<td width="33.33%"><img src="../assets/whats-new/1.3.2/export_musicxml_transposed.png"></td>
+<td width="33.33%"><img src="../assets/whats-new/1.3.2/rename_music_sheet.png"></td>
+<td width="33.33%"><img src="../assets/whats-new/1.3.2/signed_in_as.png"></td>
+</tr>
+<tr>
+<td width="33.33%">Pri exporte zoznamu skladieb do PDF sa už vyexportujú aj digitálne noty (MusicXML) — a to presne v tónine, v ktorej ich máte transponované.</td>
+<td width="33.33%">Noty vo vlastnom repozitári si viete premenovať — ťuknite na ikonu ceruzky pri note.</td>
+<td width="33.33%">V nastaveniach vidíte, pod akým účtom ste prihlásení („Prihlásený ako“).</td>
+</tr>
+</table>
+
+### Nové noty
+
+- Nový repozitár **Ordinárium sv. omše - digitálne** — 85 digitálnych nôt z knihy _Liturgický spevník I._,
+  ktoré zdigitalizoval **Tomáš Polonec**: úvodné obrady vo všetkých tóninách, aklamácie po premenení, Kyrie,
+  Gloria, Sanctus a Agnus zo zostáv I–VII aj z adventnej, vianočnej, pôstnej či veľkonočnej zostavy, Modlitba
+  Pána a Krédo. Všetky sa dajú transponovať priamo v aplikácii. Podrobnosti v
+  [Zdrojoch nôt](music-sheet-sources.md#692026).
+  **Upozornenie:** tieto noty zatiaľ neprešli kontrolou a slúžia na testovanie - pri exporte do MusicXML
+  a zobrazení v aplikácii vznikli nepresnosti a chyby. Materiálu je veľa, preto sa postupne budeme venovať
+  najprv najdôležitejším častiam. Radi by sme vedeli, či tieto noty niekto používa a či sa oplatí v opravách
+  pokračovať - za akúkoľvek spätnú väzbu budeme vďační, napíšte na
+  [rozpravaciaappka@gmail.com](mailto:rozpravaciaappka@gmail.com)
 - Pridané digitálne verzie JKS 118 a 518
-- Spustili sme túto používateľskú príručku — nájdete v nej návody ku všetkým funkciám aplikácie
+
+### Ďalšie zmeny
+
+- Spustená táto používateľská príručka — nájdete v nej návody ku všetkým funkciám aplikácie
 
 ## Verzia 1.3.1 - 9.8.2026
 
