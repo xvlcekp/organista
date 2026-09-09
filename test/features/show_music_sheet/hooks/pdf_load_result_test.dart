@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
@@ -239,6 +240,26 @@ void main() {
         await tester.pumpAndSettle();
 
         verify(() => document.close()).called(1);
+      });
+
+      testWidgets('swallows a failed document close so the error is not reported as unhandled', (tester) async {
+        // pdfx surfaces Android's "Current page not closed" IllegalStateException as this PlatformException
+        // when the document is closed while a page render is still in flight.
+        final document = MockPdfDocument();
+        when(() => document.id).thenReturn('doc-1');
+        when(() => document.pagesCount).thenReturn(3);
+        when(() => document.close()).thenAnswer(
+          (_) async => throw PlatformException(code: 'pdf_renderer', message: 'Unknown error'),
+        );
+
+        await tester.pumpWidget(hostWidget(sourceForUrl('https://example.com/a.pdf'), () async => document));
+        await tester.pumpAndSettle();
+
+        await tester.pumpWidget(const SizedBox());
+        await tester.pumpAndSettle();
+
+        verify(() => document.close()).called(1);
+        expect(tester.takeException(), isNull);
       });
     });
   });
