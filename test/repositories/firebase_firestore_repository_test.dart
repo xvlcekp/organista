@@ -970,6 +970,29 @@ void main() {
           throwsA(isA<RepositoryNetworkException>()),
         );
       });
+
+      test('should throw RepositoryNetworkException for PlatformException with UNAUTHENTICATED code', () async {
+        // The Firestore Android SDK fails a call with UNAUTHENTICATED when the auth token cannot be
+        // refreshed, which happens when the device goes offline with an expired token.
+        final mockFirestore = MockFirebaseFirestore();
+        final repo = FirebaseFirestoreRepository(
+          instance: mockFirestore,
+          skipSettingsConfiguration: true,
+        );
+
+        when(() => mockFirestore.collection(any())).thenThrow(
+          PlatformException(
+            code: 'firebase_firestore',
+            message: 'com.google.firebase.firestore.FirebaseFirestoreException: UNAUTHENTICATED',
+            details: {'code': 'unauthenticated', 'message': 'UNAUTHENTICATED'},
+          ),
+        );
+
+        expect(
+          () => repo.getRepositoryMusicSheetsCount('any'),
+          throwsA(isA<RepositoryNetworkException>()),
+        );
+      });
     });
   });
 }

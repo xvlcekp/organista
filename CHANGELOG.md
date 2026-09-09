@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--
+- Firestore `unauthenticated` errors (auth token could not be refreshed while offline) are now treated as transient network errors instead of being reported to Sentry
 
 ### Security
 

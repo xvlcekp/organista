@@ -721,12 +721,22 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  /// Firestore error codes that indicate a transient connectivity problem rather than a bug.
+  /// `unauthenticated` is included because the Firestore SDK fails a call with UNAUTHENTICATED when the
+  /// auth token cannot be refreshed, which is what happens when the device goes offline with an expired token.
+  static const Set<String> _transientFirestoreErrorCodes = {'unavailable', 'unknown', 'unauthenticated'};
+
+  bool _isTransientFirestoreError(Object e) {
+    if (e is! PlatformException) return false;
+    if (_transientFirestoreErrorCodes.contains(e.code)) return true;
+    return e.code == 'firebase_firestore' &&
+        e.details is Map &&
+        _transientFirestoreErrorCodes.contains(e.details['code']);
+  }
+
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
-    if (e is PlatformException &&
-        (e.code == 'unavailable' ||
-            e.code == 'unknown' ||
-            (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
-      logger.w('$logMessage: Service unavailable or unknown platform error (likely transient)');
+    if (_isTransientFirestoreError(e)) {
+      logger.w('$logMessage: Service unavailable, unauthenticated or unknown platform error (likely transient)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {
       logger.w('$logMessage: Operation timed out');
