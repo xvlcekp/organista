@@ -993,6 +993,27 @@ void main() {
           throwsA(isA<RepositoryNetworkException>()),
         );
       });
+
+      test('should return default value for iOS-shaped permission-denied PlatformException', () async {
+        // On iOS the Firestore plugin puts the Firestore error code at the top level of the
+        // PlatformException, unlike Android which uses 'firebase_firestore' with the code in details.
+        final mockFirestore = MockFirebaseFirestore();
+        final repo = FirebaseFirestoreRepository(
+          instance: mockFirestore,
+          skipSettingsConfiguration: true,
+          isUserSignedIn: () => false,
+        );
+
+        when(() => mockFirestore.collection(any())).thenThrow(
+          PlatformException(
+            code: 'permission-denied',
+            message: 'Missing or insufficient permissions.',
+            details: {'message': 'Missing or insufficient permissions.', 'code': 'permission-denied'},
+          ),
+        );
+
+        expect(await repo.getRepositoryMusicSheetsCount('any'), 0);
+      });
     });
   });
 }

@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Firestore `unauthenticated` errors (auth token could not be refreshed while offline) are now treated as transient network errors instead of being reported to Sentry
 - Leaving a PDF sheet while a page was still rendering no longer raises an unhandled `PlatformException(pdf_renderer, Unknown error)` from the document close on Android
+- Firestore `permission-denied` errors on iOS are now recognised (the iOS plugin reports the code at the top level of the `PlatformException`) and handled like on Android instead of being reported as generic errors
 
 ### Security
 

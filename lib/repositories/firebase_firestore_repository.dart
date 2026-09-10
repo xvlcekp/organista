@@ -29,10 +29,18 @@ import 'package:organista/services/auth/auth_user.dart';
 class FirebaseFirestoreRepository {
   final FirebaseFirestore _instance;
 
+  /// Whether a Firebase user is currently signed in. Injectable so tests can exercise
+  /// the permission-denied handling without a Firebase app.
+  final bool Function() _isUserSignedIn;
+
+  static bool _defaultIsUserSignedIn() => FirebaseAuth.instance.currentUser != null;
+
   FirebaseFirestoreRepository({
     required FirebaseFirestore instance,
     bool skipSettingsConfiguration = false,
-  }) : _instance = instance {
+    bool Function() isUserSignedIn = _defaultIsUserSignedIn,
+  }) : _instance = instance,
+       _isUserSignedIn = isUserSignedIn {
     if (!skipSettingsConfiguration) {
       _instance.settings = const Settings(
         persistenceEnabled: true,
@@ -41,25 +49,26 @@ class FirebaseFirestoreRepository {
     }
   }
 
-  /// Checks if an error is a permission-denied error.
-  /// Handles both FirebaseException and PlatformException since cloud_firestore can throw either.
-  bool _isPermissionDeniedError(Object error) {
-    if (error is FirebaseException && error.code == 'permission-denied') {
-      return true;
-    }
-    if (error is PlatformException &&
-        error.code == 'firebase_firestore' &&
-        error.details is Map &&
-        error.details['code'] == 'permission-denied') {
-      return true;
-    }
-    return false;
+  /// Extracts the Firestore error code (e.g. `permission-denied`) from an error, or null if it has none.
+  ///
+  /// cloud_firestore throws either a [FirebaseException] or a [PlatformException], and the
+  /// PlatformException shape differs per platform: Android uses the generic code `firebase_firestore`
+  /// with the Firestore code in `details['code']`, while iOS puts the Firestore code at the top level.
+  String? _firestoreErrorCode(Object error) {
+    if (error is FirebaseException) return error.code;
+    if (error is! PlatformException) return null;
+    final details = error.details;
+    if (details is Map && details['code'] is String) return details['code'] as String;
+    return error.code;
   }
+
+  /// Checks if an error is a permission-denied error.
+  bool _isPermissionDeniedError(Object error) => _firestoreErrorCode(error) == 'permission-denied';
 
   /// Handles permission-denied errors by checking auth state to distinguish
   /// between transient auth issues (during app resume) and real permission violations.
   void _handlePermissionDenied(String context, Exception error, StackTrace stackTrace) {
-    if (FirebaseAuth.instance.currentUser != null) {
+    if (_isUserSignedIn()) {
       // User is authenticated but access denied - this is a real permission error
       logger.e(
         'Permission denied $context for authenticated user - possible security rules violation',
@@ -728,10 +737,8 @@ class FirebaseFirestoreRepository {
 
   bool _isTransientFirestoreError(Object e) {
     if (e is! PlatformException) return false;
-    if (_transientFirestoreErrorCodes.contains(e.code)) return true;
-    return e.code == 'firebase_firestore' &&
-        e.details is Map &&
-        _transientFirestoreErrorCodes.contains(e.details['code']);
+    return _transientFirestoreErrorCodes.contains(e.code) ||
+        _transientFirestoreErrorCodes.contains(_firestoreErrorCode(e));
   }
 
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
