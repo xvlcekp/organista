@@ -306,6 +306,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: authUser,
         ),
       );
+    } on AuthErrorSignInCanceled {
+      // The user dismissed the sign-in UI: back to idle, no error dialog.
+      emit(
+        const AuthStateLoggedOut(isLoading: false),
+      );
+    } on AuthError catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: e,
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       emit(
         AuthStateLoggedOut(
@@ -343,6 +355,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AuthStateLoggedIn(
           isLoading: false,
           user: authUser,
+        ),
+      );
+    } on AuthErrorSignInCanceled {
+      // The user dismissed the sign-in UI: back to idle, no error dialog.
+      emit(
+        const AuthStateLoggedOut(isLoading: false),
+      );
+    } on AuthError catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: e,
         ),
       );
     } on FirebaseAuthException catch (e) {

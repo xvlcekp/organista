@@ -100,6 +100,13 @@ class AuthErrorGoogleSignInFailed extends AuthError {
   const AuthErrorGoogleSignInFailed() : super();
 }
 
+/// The user dismissed a third-party sign-in UI (Google account picker, Apple sheet).
+/// Not a failure: callers should return to the idle logged-out state without showing an error.
+@immutable
+class AuthErrorSignInCanceled extends AuthError {
+  const AuthErrorSignInCanceled() : super();
+}
+
 @immutable
 class AuthErrorAppleSignInFailed extends AuthError {
   const AuthErrorAppleSignInFailed() : super();
