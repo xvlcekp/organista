@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/config/app_theme.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_playlists/view/add_playlist_dialog.dart';
 import 'package:organista/features/show_playlists/view/playlist_tile.dart';
+import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/widgets/empty_list_widget.dart';
@@ -28,7 +30,12 @@ class PlaylistsView extends HookWidget {
 
     return Stack(
       children: [
-        BlocBuilder<ShowPlaylistsCubit, ShowPlaylistsState>(
+        BlocConsumer<ShowPlaylistsCubit, ShowPlaylistsState>(
+          listener: (context, state) {
+            if (state case PlaylistsLoadedState(error: final PlaylistError _)) {
+              showErrorDialog(context: context, text: localizations.errorUnknownText);
+            }
+          },
           builder: (context, state) {
             if (state.playlists.isEmpty) {
               return EmptyListWidget(

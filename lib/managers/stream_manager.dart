@@ -155,7 +155,7 @@ class StreamManager {
             if (kDebugMode) {
               logger.d('Cleaning up unused stream: $identifier (keeping cached value)');
             }
-            _cleanupStream(identifier);
+            unawaited(_cleanupStream(identifier));
           }
         });
       }
@@ -174,17 +174,22 @@ class StreamManager {
   }
 
   /// Clean up a specific stream but keep cached value
-  void _cleanupStream(String identifier) {
-    final streamController = _streamControllers[identifier];
+  Future<void> _cleanupStream(String identifier) async {
+    final streamController = _streamControllers.remove(identifier);
     if (streamController != null) {
-      streamController.firestoreSubscription.cancel();
-      if (!streamController.controller.isClosed) {
-        streamController.controller.close();
-      }
-      _streamControllers.remove(identifier);
       _allSubscriptions.remove(streamController.firestoreSubscription);
+      await streamController.firestoreSubscription.cancel();
+      if (!streamController.controller.isClosed) {
+        await streamController.controller.close();
+      }
       // Note: We keep the cached value in _cachedValues for future use
     }
+  }
+
+  /// Cancels the stream behind [identifier] and forgets its cached value, regardless of listeners.
+  Future<void> cancelStream(String identifier) {
+    _cachedValues.remove(identifier);
+    return _cleanupStream(identifier);
   }
 
   /// Cancel all streams and clear cache (called on logout)

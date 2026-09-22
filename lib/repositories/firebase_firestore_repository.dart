@@ -20,7 +20,6 @@ import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/models/playlists/playlist_payload.dart';
 import 'package:organista/models/repositories/repository_payload.dart';
-import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/models/repositories/repository_key.dart';
@@ -67,7 +66,7 @@ class FirebaseFirestoreRepository {
 
   /// Handles permission-denied errors by checking auth state to distinguish
   /// between transient auth issues (during app resume) and real permission violations.
-  void _handlePermissionDenied(String context, Exception error, StackTrace stackTrace) {
+  void _handlePermissionDenied(String context, Object error, StackTrace stackTrace) {
     if (_isUserSignedIn()) {
       // User is authenticated but access denied - this is a real permission error
       logger.e(
@@ -79,6 +78,16 @@ class FirebaseFirestoreRepository {
       // User not authenticated - likely transient auth state during app resume
       logger.i('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
     }
+  }
+
+  /// Logs a failed playlist write. The rules allow owner writes, so `permission-denied` normally means the session
+  /// ended (which `AuthBloc` handles) and goes through [_handlePermissionDenied]; anything else is a real error.
+  void _logPlaylistWriteFailure(Object e, StackTrace stackTrace, String context) {
+    if (_isPermissionDeniedError(e)) {
+      _handlePermissionDenied('when $context', e, stackTrace);
+      return;
+    }
+    logger.e('Error $context', error: e, stackTrace: stackTrace);
   }
 
   /// Executes a Firestore operation with unified error handling for permission-denied errors.
@@ -108,7 +117,7 @@ class FirebaseFirestoreRepository {
   }) {
     return (error, stackTrace) {
       if (_isPermissionDeniedError(error)) {
-        _handlePermissionDenied(context, error as Exception, stackTrace);
+        _handlePermissionDenied(context, error, stackTrace);
       } else {
         logger.e(errorMessage, error: error, stackTrace: stackTrace);
       }
@@ -165,10 +174,13 @@ class FirebaseFirestoreRepository {
   Future<void> _deleteUserData(String userId) async {
     try {
       await Future.wait([
-        _deleteDocuments(FirebaseCollectionName.users, UserInfoKey.userId, userId),
+        // The users rule is keyed on the document id (`request.auth.uid == userId`), which a field query cannot
+        // prove to the rules engine, so the document has to be addressed by id.
+        _instance.collection(FirebaseCollectionName.users).doc(userId).delete(),
         _deleteDocuments(FirebaseCollectionName.playlists, PlaylistKey.userId, userId),
         _deleteDocuments(FirebaseCollectionName.repositories, RepositoryKey.userId, userId),
       ]);
+      logger.i('${FirebaseCollectionName.users} document $userId was deleted.');
     } catch (e, stackTrace) {
       logger.e('Error in _deleteUserData', error: e, stackTrace: stackTrace);
       rethrow;
@@ -206,11 +218,18 @@ class FirebaseFirestoreRepository {
           logger.i("Got new update for playlist $playlistId");
           return Playlist(playlistId: playlistId, json: data);
         })
-        .handleError(
-          _createStreamErrorHandler(
-            emptyValue: Playlist.empty(),
-            context: 'when accessing playlist $playlistId',
-            errorMessage: 'Error in getPlaylistStream',
+        .transform(
+          StreamTransformer<Playlist, Playlist>.fromHandlers(
+            handleError: (error, stackTrace, sink) {
+              if (_isPermissionDeniedError(error)) {
+                // Denied for a deleted playlist (the owner-only rule reads `resource.data`) or an ended session
+                // (handled by AuthBloc). Neither is a rules violation, so treat it like a missing document.
+                logger.i('Playlist $playlistId is no longer accessible (deleted, or the session ended)');
+                sink.add(Playlist.empty());
+                return;
+              }
+              logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
+            },
           ),
         );
   }
@@ -257,7 +276,7 @@ class FirebaseFirestoreRepository {
       logger.i("Uploading new playlist");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error adding new playlist for user $userId', error: e, stackTrace: stackTrace);
+      _logPlaylistWriteFailure(e, stackTrace, 'adding new playlist for user $userId');
       return false;
     }
   }
@@ -273,11 +292,7 @@ class FirebaseFirestoreRepository {
       logger.i("Renaming playlist ${playlist.name} to $newPlaylistName");
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error renaming playlist ${playlist.playlistId} to $newPlaylistName',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logPlaylistWriteFailure(e, stackTrace, 'renaming playlist ${playlist.playlistId} to $newPlaylistName');
       return false;
     }
   }
@@ -288,7 +303,7 @@ class FirebaseFirestoreRepository {
       logger.i("Removing playlist ${playlist.name} with id ${playlist.playlistId}");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error deleting playlist ${playlist.playlistId}', error: e, stackTrace: stackTrace);
+      _logPlaylistWriteFailure(e, stackTrace, 'deleting playlist ${playlist.playlistId}');
       return false;
     }
   }
@@ -363,11 +378,7 @@ class FirebaseFirestoreRepository {
       // Re-throw validation errors so they can be handled by the caller
       rethrow;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error adding multiple music sheets to playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logPlaylistWriteFailure(e, stackTrace, 'adding multiple music sheets to playlist ${playlist.playlistId}');
       return false;
     }
   }
@@ -413,10 +424,10 @@ class FirebaseFirestoreRepository {
       );
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error updating transposition for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
+      _logPlaylistWriteFailure(
+        e,
+        stackTrace,
+        'updating transposition for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
       );
       return false;
     }
@@ -433,10 +444,10 @@ class FirebaseFirestoreRepository {
       });
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error deleting music sheet ${musicSheet.musicSheetId} from playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
+      _logPlaylistWriteFailure(
+        e,
+        stackTrace,
+        'deleting music sheet ${musicSheet.musicSheetId} from playlist ${playlist.playlistId}',
       );
       return false;
     }
@@ -450,11 +461,7 @@ class FirebaseFirestoreRepository {
       logger.i("musicSheetReorder update successful");
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error reordering music sheets in playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logPlaylistWriteFailure(e, stackTrace, 'reordering music sheets in playlist ${playlist.playlistId}');
       return false;
     }
   }

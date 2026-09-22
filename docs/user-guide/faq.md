@@ -123,6 +123,11 @@ a príde vám odkaz na nastavenie nového hesla.
 Nie. Zoznamy skladieb, osobné repozitáre aj nahraté noty sú viazané na váš účet —
 stačí sa na novom zariadení prihlásiť.
 
+### Prečo ma aplikácia sama odhlásila?
+
+Prihlásenie na zariadení bude nekatívne, keď si na inom zariadení zmeníte heslo alebo zmažete účet. Aplikácia vás vtedy vráti na prihlasovaciu obrazovku s hláškou
+„Žiadny používateľ nie je momentálne prihlásený!“. Po zmene hesla sa stačí znova prihlásiť – zoznamy skladieb aj noty zostávajú uložené v účte.
+
 ### Prečo je pri piesni v zozname iný názov ako v repozitári?
 
 Názov noty v zozname skladieb si môžete ľubovoľne upraviť (ceruzka v režime úprav) —

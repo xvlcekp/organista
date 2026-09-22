@@ -3,6 +3,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logger/logger.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/config/app_constants.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
@@ -24,11 +25,26 @@ class MockReference extends Mock implements Reference {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
+// Hand-written mocks of the sealed Firestore references, as the generated .mocks.dart files do as well.
+// ignore: subtype_of_sealed_class
+class MockCollectionReference extends Mock implements CollectionReference<Map<String, dynamic>> {}
+
+// ignore: subtype_of_sealed_class
+class MockDocumentReference extends Mock implements DocumentReference<Map<String, dynamic>> {}
+
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 
 void main() {
   late FakeFirebaseFirestore fakeFirestore;
   late FirebaseFirestoreRepository repository;
+  late List<OutputEvent> outputEvents;
+  void captureOutput(OutputEvent event) => outputEvents.add(event);
+
+  final deniedOnIos = PlatformException(
+    code: 'permission-denied',
+    message: 'Missing or insufficient permissions.',
+    details: {'message': 'Missing or insufficient permissions.', 'code': 'permission-denied'},
+  );
 
   setUp(() {
     fakeFirestore = FakeFirebaseFirestore();
@@ -36,6 +52,12 @@ void main() {
       instance: fakeFirestore,
       skipSettingsConfiguration: true,
     );
+    outputEvents = [];
+    Logger.addOutputListener(captureOutput);
+  });
+
+  tearDown(() {
+    Logger.removeOutputListener(captureOutput);
   });
 
   // Helper functions for creating test data
@@ -226,6 +248,49 @@ void main() {
         expect(repoDocs.docs, isEmpty);
       });
 
+      test('deletes the users document by id because the rules key it on the document id, not on a field', () async {
+        // Deployed rule: `match /users/{userId} { allow read, write: if request.auth.uid == userId; }`.
+        // A field query (`where uid == userId`) cannot prove the document id to the rules engine, so Firestore
+        // denies it; only addressing the document by id is allowed.
+        const userId = 'user-to-delete';
+        final usersCollection = MockCollectionReference();
+        final userDocument = MockDocumentReference();
+        final mockFirestore = MockFirebaseFirestore();
+        when(() => mockFirestore.collection(any())).thenAnswer((invocation) {
+          final name = invocation.positionalArguments.single as String;
+          return name == FirebaseCollectionName.users ? usersCollection : fakeFirestore.collection(name);
+        });
+        when(
+          () => usersCollection.where(any<Object>(), isEqualTo: any<Object?>(named: 'isEqualTo')),
+        ).thenThrow(
+          FirebaseException(
+            plugin: 'cloud_firestore',
+            code: 'permission-denied',
+            message: 'Missing or insufficient permissions.',
+          ),
+        );
+        when(() => usersCollection.doc(userId)).thenReturn(userDocument);
+        when(() => userDocument.delete()).thenAnswer((_) async {});
+        await fakeFirestore.collection(FirebaseCollectionName.playlists).add({
+          PlaylistKey.userId: userId,
+          PlaylistKey.name: 'Playlist 1',
+        });
+        final deletingRepository = FirebaseFirestoreRepository(
+          instance: mockFirestore,
+          skipSettingsConfiguration: true,
+        );
+
+        final result = await deletingRepository.deleteUser(userId: userId);
+
+        expect(result, isTrue);
+        verify(() => userDocument.delete()).called(1);
+        final playlistDocs = await fakeFirestore
+            .collection(FirebaseCollectionName.playlists)
+            .where(PlaylistKey.userId, isEqualTo: userId)
+            .get();
+        expect(playlistDocs.docs, isEmpty);
+      });
+
       test('should return true even when user has no data', () async {
         const userId = 'non-existent-user';
 
@@ -262,6 +327,38 @@ void main() {
           completion(
             predicate<Playlist>((p) => p.playlistId == '1' && p.name == ''),
           ),
+        );
+      });
+    });
+
+    group('getPlaylistStream when the listener is denied', () {
+      // After a playlist is deleted the owner-only read rule evaluates `resource.data` on a document that no
+      // longer exists, which Firestore reports to a live listener as permission-denied. For this stream that is
+      // the "playlist is gone" path, not a rules violation, so it must not be logged at error level.
+      test('emits an empty playlist without an error-level log for a signed-in user', () async {
+        const playlistId = 'deleted-playlist';
+        final mockFirestore = MockFirebaseFirestore();
+        final playlistsCollection = MockCollectionReference();
+        final playlistDocument = MockDocumentReference();
+        when(() => mockFirestore.collection(FirebaseCollectionName.playlists)).thenReturn(playlistsCollection);
+        when(() => playlistsCollection.doc(playlistId)).thenReturn(playlistDocument);
+        when(() => playlistDocument.snapshots(includeMetadataChanges: true)).thenAnswer(
+          (_) => Stream.error(deniedOnIos),
+        );
+        final deniedRepository = FirebaseFirestoreRepository(
+          instance: mockFirestore,
+          skipSettingsConfiguration: true,
+          isUserSignedIn: () => true,
+        );
+
+        final playlist = await deniedRepository.getPlaylistStream(playlistId).first;
+
+        expect(playlist.playlistId, Playlist.empty().playlistId);
+        expect(playlist.musicSheets, isEmpty);
+        expect(
+          outputEvents.where((event) => event.level == Level.error),
+          isEmpty,
+          reason: 'a listener on a deleted playlist is expected, not a security rules violation',
         );
       });
     });
@@ -1014,6 +1111,70 @@ void main() {
 
         expect(await repo.getRepositoryMusicSheetsCount('any'), 0);
       });
+    });
+  });
+
+  group('FirebaseFirestoreRepository - Playlist write permission handling', () {
+    // The deployed rules allow playlist writes for the owner, so a permission-denied on a playlist write for a
+    // signed-out user means the request carried no valid auth token: Firebase Auth dropped the session while the
+    // UI still showed cached data. That is handled by the auth flow, not an app error, so it must not be logged
+    // at error level (which is what reports it to Sentry).
+    FirebaseFirestoreRepository deniedRepository({required bool isUserSignedIn}) {
+      final mockFirestore = MockFirebaseFirestore();
+      when(() => mockFirestore.collection(any())).thenThrow(deniedOnIos);
+      return FirebaseFirestoreRepository(
+        instance: mockFirestore,
+        skipSettingsConfiguration: true,
+        isUserSignedIn: () => isUserSignedIn,
+      );
+    }
+
+    final playlistWrites = <String, Future<bool> Function(FirebaseFirestoreRepository, Playlist, MusicSheet)>{
+      'deleteMusicSheetInPlaylist': (repo, playlist, sheet) =>
+          repo.deleteMusicSheetInPlaylist(musicSheet: sheet, playlist: playlist),
+      'addMusicSheetsToPlaylist': (repo, playlist, sheet) => repo.addMusicSheetsToPlaylist(
+        playlist: playlist,
+        musicSheets: [createTestMusicSheet(musicSheetId: 'new')],
+      ),
+      'musicSheetReorder': (repo, playlist, sheet) => repo.musicSheetReorder(playlist: playlist),
+      'updateMusicSheetTransposition': (repo, playlist, sheet) =>
+          repo.updateMusicSheetTransposition(musicSheet: sheet, transposition: 2, playlist: playlist),
+      'addNewPlaylist': (repo, playlist, sheet) => repo.addNewPlaylist(playlistName: 'New', userId: playlist.userId),
+      'renamePlaylist': (repo, playlist, sheet) => repo.renamePlaylist(newPlaylistName: 'Renamed', playlist: playlist),
+      'deletePlaylist': (repo, playlist, sheet) => repo.deletePlaylist(playlist: playlist),
+    };
+
+    for (final write in playlistWrites.entries) {
+      test('${write.key} returns false without an error-level log when denied for a signed-out user', () async {
+        final sheetJson = createTestMusicSheetJson(musicSheetId: 'sheet-1');
+        final playlist = await createTestPlaylist(musicSheets: [sheetJson]);
+
+        final result = await write.value(
+          deniedRepository(isUserSignedIn: false),
+          playlist,
+          MusicSheet(json: sheetJson),
+        );
+
+        expect(result, isFalse);
+        expect(
+          outputEvents.where((event) => event.level == Level.error),
+          isEmpty,
+          reason: 'a permission-denied write for a signed-out user must not be reported as an error',
+        );
+      });
+    }
+
+    test('deleteMusicSheetInPlaylist keeps the error-level log when a signed-in user is denied', () async {
+      final sheetJson = createTestMusicSheetJson(musicSheetId: 'sheet-1');
+      final playlist = await createTestPlaylist(musicSheets: [sheetJson]);
+
+      final result = await deniedRepository(isUserSignedIn: true).deleteMusicSheetInPlaylist(
+        musicSheet: MusicSheet(json: sheetJson),
+        playlist: playlist,
+      );
+
+      expect(result, isFalse);
+      expect(outputEvents.where((event) => event.level == Level.error), isNotEmpty);
     });
   });
 }

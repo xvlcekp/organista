@@ -21,6 +21,9 @@ class AuthService implements AuthProvider {
   AuthUser? get currentUser => provider.currentUser;
 
   @override
+  Stream<AuthUser?> get authStateChanges => provider.authStateChanges;
+
+  @override
   Future<AuthUser> logIn({
     required String email,
     required String password,

@@ -19,8 +19,11 @@ class InitPlaylistState extends ShowPlaylistsState {
 
 @immutable
 class PlaylistsLoadedState extends ShowPlaylistsState {
-  const PlaylistsLoadedState({required super.playlists});
+  const PlaylistsLoadedState({required super.playlists, this.error});
+
+  /// Set when a playlist could not be created, renamed or deleted; the list itself stays valid.
+  final PlaylistError? error;
 
   @override
-  List<Object?> get props => [playlists];
+  List<Object?> get props => [playlists, error];
 }

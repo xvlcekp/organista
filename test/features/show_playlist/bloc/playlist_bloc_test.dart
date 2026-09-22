@@ -94,6 +94,30 @@ void main() {
 
     group('DeleteMusicSheetInPlaylistEvent', () {
       blocTest<PlaylistBloc, PlaylistState>(
+        'emits [PlaylistLoadedState(isLoading: true), PlaylistErrorState] when the repository reports the delete was not written',
+        setUp: () {
+          when(
+            mockFirebaseFirestoreRepository.deleteMusicSheetInPlaylist(
+              musicSheet: testMusicSheet,
+              playlist: testPlaylist,
+            ),
+          ).thenAnswer((_) async => false);
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(
+          DeleteMusicSheetInPlaylistEvent(
+            musicSheet: testMusicSheet,
+            playlist: testPlaylist,
+          ),
+        ),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: testPlaylist),
+        ],
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
         'emits [PlaylistLoadedState(isLoading: true), PlaylistLoadedState(isLoading: false)] when delete succeeds',
         setUp: () {
           when(
@@ -144,6 +168,22 @@ void main() {
 
     group('ReorderMusicSheetEvent', () {
       blocTest<PlaylistBloc, PlaylistState>(
+        'emits [PlaylistLoadedState(isLoading: true), PlaylistErrorState] when the repository reports the reorder was not written',
+        setUp: () {
+          when(
+            mockFirebaseFirestoreRepository.musicSheetReorder(playlist: testPlaylist),
+          ).thenAnswer((_) async => false);
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(ReorderMusicSheetEvent(playlist: testPlaylist)),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: testPlaylist),
+        ],
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
         'emits [PlaylistLoadedState(isLoading: true), PlaylistLoadedState(isLoading: false)] when reorder succeeds',
         setUp: () {
           when(mockFirebaseFirestoreRepository.musicSheetReorder(playlist: testPlaylist)).thenAnswer((_) async => true);
@@ -193,6 +233,30 @@ void main() {
           ),
         ];
       });
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'emits [PlaylistLoadedState(isLoading: true), PlaylistErrorState] when the repository reports the add was not written',
+        setUp: () {
+          when(
+            mockFirebaseFirestoreRepository.addMusicSheetsToPlaylist(
+              playlist: testPlaylist,
+              musicSheets: newMusicSheets,
+            ),
+          ).thenAnswer((_) async => false);
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(
+          AddMusicSheetsToPlaylistEvent(
+            musicSheets: newMusicSheets,
+            playlist: testPlaylist,
+          ),
+        ),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: testPlaylist),
+        ],
+      );
 
       blocTest<PlaylistBloc, PlaylistState>(
         'emits [PlaylistLoadedState(isLoading: true), PlaylistLoadedState(isLoading: false)] when add succeeds',

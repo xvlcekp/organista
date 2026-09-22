@@ -25,11 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Firestore `unauthenticated` errors (auth token could not be refreshed while offline) are now treated as transient network errors instead of being reported to Sentry
-- Leaving a PDF sheet while a page was still rendering no longer raises an unhandled `PlatformException(pdf_renderer, Unknown error)` from the document close on Android
-- Firestore `permission-denied` errors on iOS are now recognised (the iOS plugin reports the code at the top level of the `PlatformException`) and handled like on Android instead of being reported as generic errors
-- Dismissing the Google account picker or the Apple sign-in sheet no longer shows an "unknown error" dialog nor reports `GoogleSignInExceptionCode.canceled` to Sentry; only descriptions Google emits for genuine user dismissals are treated as cancellations, so configuration failures that Credential Manager also labels `canceled` (e.g. "Account reauth failed") stay visible
-- Google and Apple sign-in failures now show their specific error message instead of the generic "unknown error" text
+- Zobrazenie prihlasovacej obrazovky pri zmene účtu (napr. po zmene hesla alebo zmazaní účtu na inom zariadení)
+- Neúspešná zmena zoznamu skladieb (vytvorenie, premenovanie, vymazanie, pridanie, odstránenie či presun nôt) zobrazí chybovú hlášku namiesto tichého zlyhania
+- Zrušenie prihlásenia cez Google alebo Apple už nezobrazuje chybu; skutočná chyba prihlásenia zobrazí svoj konkrétny popis
+- Opravené odstránenie účtu – dáta sa vymažú úplne, a ak sa to nepodarí, účet zostane zachovaný a zobrazí sa chyba
+- Opravená chyba pri odchode z PDF noty počas vykresľovania strany (Android)
+- Menej falošných chýb hlásených na pozadí (výpadok siete, iOS, vymazaný zoznam skladieb)
 
 ### Security
 

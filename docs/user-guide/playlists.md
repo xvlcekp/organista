@@ -22,6 +22,9 @@ Pri každom zozname vidíte počet nôt, ktoré obsahuje.
 - **Premenovať** — dlho podržte prst na zozname a zadajte nový názov.
 - **Vymazať** — potiahnite zoznam prstom doľava a potvrďte. *Táto akcia sa nedá vrátiť späť.*
 
+Ak sa vytvorenie, premenovanie alebo vymazanie zoznamu nepodarí uložiť, aplikácia zobrazí hlášku
+**Nastala chyba** — zoznamy zostanú v pôvodnom stave a akciu môžete zopakovať.
+
 <video autoplay loop muted playsinline controls width="300">
   <source src="../assets/videos/deleting-playlist.mp4" type="video/mp4">
 </video>

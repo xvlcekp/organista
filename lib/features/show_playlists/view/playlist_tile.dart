@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/config/app_theme.dart';
@@ -51,7 +53,9 @@ class PlaylistTile extends StatelessWidget {
         confirmDismiss: (_) async {
           final shouldDelete = await showDeletePlaylistDialog(context);
           if (shouldDelete && context.mounted) {
-            context.read<ShowPlaylistsCubit>().deletePlaylist(playlist: playlist);
+            // Not awaited: a Firestore write only completes once the server acknowledges it, which offline may
+            // take until the next connection; the tile is removed by the playlists stream anyway.
+            unawaited(context.read<ShowPlaylistsCubit>().deletePlaylist(playlist: playlist));
           }
           return false;
         },

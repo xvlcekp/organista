@@ -15,6 +15,12 @@ class AuthEventLogOut implements AuthEvent {
   const AuthEventLogOut();
 }
 
+/// Firebase Auth ended the session without the app asking for it (see [AuthProvider.authStateChanges]).
+@immutable
+class AuthEventSessionExpired implements AuthEvent {
+  const AuthEventSessionExpired();
+}
+
 @immutable
 class AuthEventInitialize implements AuthEvent {
   const AuthEventInitialize();

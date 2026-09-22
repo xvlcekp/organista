@@ -229,6 +229,9 @@ class MockAuthProvider implements AuthProvider {
   AuthUser? get currentUser => _user;
 
   @override
+  Stream<AuthUser?> get authStateChanges => const Stream.empty();
+
+  @override
   Future<void> deleteUser() async {
     if (!isInitialized) throw NotInitializedException();
     if (_user == null) throw const AuthErrorUserNotFound();
