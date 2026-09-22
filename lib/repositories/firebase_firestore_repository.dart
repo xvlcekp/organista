@@ -76,7 +76,7 @@ class FirebaseFirestoreRepository {
       );
     } else {
       // User not authenticated - likely transient auth state during app resume
-      logger.i('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
+      logger.d('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
     }
   }
 
@@ -209,13 +209,14 @@ class FirebaseFirestoreRepository {
         .collection(FirebaseCollectionName.playlists)
         .doc(playlistId)
         .snapshots(includeMetadataChanges: true)
+        .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
           final data = snapshot.data();
           if (!snapshot.exists || data == null) {
             logger.w("Playlist document does not exist: $playlistId");
             return Playlist.empty();
           }
-          logger.i("Got new update for playlist $playlistId");
+          logger.d("Got new update for playlist $playlistId");
           return Playlist(playlistId: playlistId, json: data);
         })
         .transform(
@@ -392,7 +393,7 @@ class FirebaseFirestoreRepository {
       _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.renameSheet(musicSheet.musicSheetId, fileName).toJsonList(),
       });
-      logger.i("musicSheetRename update successful");
+      logger.d("musicSheetRename update successful");
       return true;
     } catch (e, stackTrace) {
       logger.e(
@@ -419,7 +420,7 @@ class FirebaseFirestoreRepository {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
-      logger.i(
+      logger.d(
         'musicSheetTransposition update successful for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
       );
       return true;
@@ -458,7 +459,7 @@ class FirebaseFirestoreRepository {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
       });
-      logger.i("musicSheetReorder update successful");
+      logger.d("musicSheetReorder update successful");
       return true;
     } catch (e, stackTrace) {
       _logPlaylistWriteFailure(e, stackTrace, 'reordering music sheets in playlist ${playlist.playlistId}');
@@ -554,7 +555,7 @@ class FirebaseFirestoreRepository {
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
           final documents = snapshot.docs;
-          logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
+          logger.d("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
           return documents.map((doc) => MusicSheet(json: doc.data()));
         })
         .handleError(
@@ -750,7 +751,7 @@ class FirebaseFirestoreRepository {
 
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
     if (_isTransientFirestoreError(e)) {
-      logger.w('$logMessage: Service unavailable, unauthenticated or unknown platform error (likely transient)');
+      logger.d('$logMessage: Service unavailable, unauthenticated or unknown platform error (likely transient)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {
       logger.w('$logMessage: Operation timed out');

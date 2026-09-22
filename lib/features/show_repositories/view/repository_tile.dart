@@ -192,8 +192,10 @@ class _RepositoryCardContent extends StatelessWidget {
   }
 }
 
-/// Displays the count of music sheets in a repository with loading state
-class _MusicSheetsCount extends StatelessWidget {
+/// Displays the count of music sheets in a repository with loading state.
+///
+/// Stateful so the count query runs once per repository, not on every rebuild of the tile.
+class _MusicSheetsCount extends StatefulWidget {
   final Repository repository;
 
   const _MusicSheetsCount({
@@ -201,11 +203,36 @@ class _MusicSheetsCount extends StatelessWidget {
   });
 
   @override
+  State<_MusicSheetsCount> createState() => _MusicSheetsCountState();
+}
+
+class _MusicSheetsCountState extends State<_MusicSheetsCount> {
+  Future<int>? _count;
+
+  @override
+  void initState() {
+    super.initState();
+    _count = _loadMusicSheetsCount();
+  }
+
+  @override
+  void didUpdateWidget(_MusicSheetsCount oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.repository.repositoryId != widget.repository.repositoryId) {
+      _count = _loadMusicSheetsCount();
+    }
+  }
+
+  Future<int> _loadMusicSheetsCount() {
+    return context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(widget.repository.repositoryId);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final localizations = context.loc;
 
     return FutureBuilder<int>(
-      future: _loadMusicSheetsCount(context),
+      future: _count,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox(
@@ -222,9 +249,5 @@ class _MusicSheetsCount extends StatelessWidget {
         );
       },
     );
-  }
-
-  Future<int> _loadMusicSheetsCount(BuildContext context) async {
-    return await context.read<FirebaseFirestoreRepository>().getRepositoryMusicSheetsCount(repository.repositoryId);
   }
 }

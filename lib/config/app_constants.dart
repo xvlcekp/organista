@@ -26,6 +26,10 @@ class AppConstants {
   // Playlist limits
   static const int maxPlaylistCapacity = 50;
 
+  // Cloud Logging: entries are buffered and sent in one request per batch
+  static const Duration cloudLoggingFlushInterval = Duration(seconds: 5);
+  static const int cloudLoggingBatchSize = 50;
+
   // Debug constants
   static const String debugRegisterEmail = 'test@test.com';
   static const String debugRegisterPassword = 'test123';

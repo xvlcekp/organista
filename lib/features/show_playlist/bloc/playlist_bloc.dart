@@ -86,7 +86,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   }
 
   Future<void> _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
-    logger.i("Init playlist was called");
+    logger.d("Init playlist was called");
 
     // Update current playlist ID to prevent old stream handlers from emitting states
     final playlistId = event.playlist.playlistId;
@@ -258,10 +258,10 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       }
 
       final fileSize = await sourceFile.length();
-      logger.i('File size: ${fileSize.bytesToMegaBytes} MB');
+      logger.d('File size: ${fileSize.bytesToMegaBytes} MB');
 
       final bytes = await sourceFile.readAsBytes();
-      logger.i('Read ${bytes.length} bytes from file');
+      logger.d('Read ${bytes.length} bytes from file');
 
       // Always show file picker to let user choose save location
       final result = await FilePicker.saveFile(
@@ -272,11 +272,11 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         bytes: bytes, // Required on Android & iOS
       );
 
-      logger.i('File picker result: $result');
+      logger.d('File picker result: $result');
 
       if (result != null && result.isNotEmpty) {
         // File was saved by file picker
-        logger.i('File saved to user-selected location: $result');
+        logger.d('File saved to user-selected location: $result');
         emit(
           PlaylistExportedState(isLoading: false, playlist: state.playlist),
         );
@@ -344,7 +344,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     try {
       if (await tempFile.exists()) {
         await tempFile.delete();
-        logger.i('Temporary file deleted: ${tempFile.path}');
+        logger.d('Temporary file deleted: ${tempFile.path}');
       }
     } catch (e) {
       logger.w('Failed to delete temporary file: ${tempFile.path}, error: $e');

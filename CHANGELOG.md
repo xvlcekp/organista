@@ -13,7 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--
+- Výrazne menej logovania na pozadí, hromadné odosielanie namiesto jednej požiadavky na každý záznam – nižšia spotreba dát a batérie
+- Počet nôt v repozitári sa načítava len raz namiesto pri každom prekreslení zoznamu repozitárov
+- Zoznam skladieb sa už neprekresľuje dvakrát pri každej zmene (napr. pri presune nôt)
+- Logy obsahujú verziu aplikácie, platformu a identifikátor relácie a používateľa, aby sa dali problémy ľahšie dohľadať
 
 ### Deprecated
 

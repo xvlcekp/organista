@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:organista/logger/custom_filter.dart';
 import 'package:organista/logger/google_cloud_logging_service.dart';
@@ -9,6 +12,10 @@ CustomLogger get logger => CustomLogger.instance;
 class CustomLogger extends Logger {
   final _googleCloudLoggingService = GoogleCloudLoggingService();
 
+  /// Flushes buffered Cloud Logging entries when the app leaves the foreground. Kept referenced so the
+  /// listener stays registered for the lifetime of the singleton.
+  AppLifecycleListener? _lifecycleListener;
+
   // Stack trace configuration for PrettyPrinter
   static const int _noStackTraceMethodCount = 0; // No stack traces for debug/info/warning
   static const int _errorStackTraceMethodCount = 8; // Show stack traces for errors
@@ -16,13 +23,14 @@ class CustomLogger extends Logger {
   CustomLogger._()
     : super(
         filter: CustomFilter(),
-        // Use SimplePrinter in release mode to reduce overhead
+        // Use SimplePrinter in release mode to reduce overhead. No colours: the output goes to Cloud Logging,
+        // where ANSI escape codes are just noise in every entry.
         printer: kDebugMode
             ? PrettyPrinter(
                 methodCount: _noStackTraceMethodCount,
                 errorMethodCount: _errorStackTraceMethodCount,
               )
-            : SimplePrinter(),
+            : SimplePrinter(colors: false),
       ) {
     Logger.addOutputListener((event) {
       if (kReleaseMode) {
@@ -33,7 +41,6 @@ class CustomLogger extends Logger {
             '\n',
           ), // Join the log lines with a new line, so that it is written as a single message
         );
-        debugPrint('App will log output to Cloud Logging');
       }
     });
   }
@@ -66,7 +73,14 @@ class CustomLogger extends Logger {
 
   static final instance = CustomLogger._();
 
+  /// Firebase uid attached to every Cloud Logging entry; set on login, cleared on logout.
+  set userId(String? id) => _googleCloudLoggingService.userId = id;
+
   Future<void> setup() async {
     await _googleCloudLoggingService.setupLoggingApi();
+    _lifecycleListener ??= AppLifecycleListener(
+      onPause: () => unawaited(_googleCloudLoggingService.flush()),
+      onDetach: () => unawaited(_googleCloudLoggingService.flush()),
+    );
   }
 }

@@ -48,6 +48,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return super.close();
   }
 
+  /// Tags Cloud Logging entries with the signed-in user so one user's session can be followed in Logs Explorer.
+  @override
+  void onChange(Change<AuthState> change) {
+    super.onChange(change);
+    final next = change.nextState;
+    logger.userId = next is AuthStateLoggedIn ? next.user.id : null;
+  }
+
   /// Watches Firebase Auth so a session that ends outside the app (revoked refresh token after an account
   /// deletion on another device, password reset, disabled account) sends the user back to the login screen.
   /// Without this the UI keeps showing Firestore-cached data while every request is denied.

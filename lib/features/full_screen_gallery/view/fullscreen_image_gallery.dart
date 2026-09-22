@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
-import 'package:organista/logger/custom_logger.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:organista/models/music_sheets/music_sheet_source.dart';
 
@@ -81,7 +80,6 @@ class FullScreenImageGallery extends HookWidget {
                 pageController: galleryPageController,
                 scrollPhysics: const BouncingScrollPhysics(),
                 builder: (_, int index) {
-                  logger.i("Index is $index");
                   return PhotoViewGalleryPageOptions.customChild(
                     disableGestures: true,
                     child: MusicSheetView(
