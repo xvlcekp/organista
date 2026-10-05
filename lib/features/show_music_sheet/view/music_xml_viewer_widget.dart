@@ -55,7 +55,12 @@ class MusicXmlViewerWidget extends HookWidget {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       // ignore: unawaited_futures Communication with the native platform
       ..setOnConsoleMessage((message) {
-        logger.w('[WebView] ${message.message}');
+        // Only JS errors are worth a warning; `console.log` output (e.g. render timings) stays at debug.
+        if (message.level == JavaScriptLogLevel.error) {
+          logger.w('[WebView] ${message.message}');
+        } else {
+          logger.d('[WebView] ${message.message}');
+        }
       })
       // ignore: unawaited_futures Communication with the native platform
       ..setNavigationDelegate(

@@ -20,7 +20,6 @@ import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/models/playlists/playlist_payload.dart';
 import 'package:organista/models/repositories/repository_payload.dart';
-import 'package:organista/models/users/user_info_key.dart';
 import 'package:organista/models/users/user_info_payload.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/models/repositories/repository_key.dart';
@@ -29,10 +28,18 @@ import 'package:organista/services/auth/auth_user.dart';
 class FirebaseFirestoreRepository {
   final FirebaseFirestore _instance;
 
+  /// Whether a Firebase user is currently signed in. Injectable so tests can exercise
+  /// the permission-denied handling without a Firebase app.
+  final bool Function() _isUserSignedIn;
+
+  static bool _defaultIsUserSignedIn() => FirebaseAuth.instance.currentUser != null;
+
   FirebaseFirestoreRepository({
     required FirebaseFirestore instance,
     bool skipSettingsConfiguration = false,
-  }) : _instance = instance {
+    bool Function() isUserSignedIn = _defaultIsUserSignedIn,
+  }) : _instance = instance,
+       _isUserSignedIn = isUserSignedIn {
     if (!skipSettingsConfiguration) {
       _instance.settings = const Settings(
         persistenceEnabled: true,
@@ -41,25 +48,26 @@ class FirebaseFirestoreRepository {
     }
   }
 
-  /// Checks if an error is a permission-denied error.
-  /// Handles both FirebaseException and PlatformException since cloud_firestore can throw either.
-  bool _isPermissionDeniedError(Object error) {
-    if (error is FirebaseException && error.code == 'permission-denied') {
-      return true;
-    }
-    if (error is PlatformException &&
-        error.code == 'firebase_firestore' &&
-        error.details is Map &&
-        error.details['code'] == 'permission-denied') {
-      return true;
-    }
-    return false;
+  /// Extracts the Firestore error code (e.g. `permission-denied`) from an error, or null if it has none.
+  ///
+  /// cloud_firestore throws either a [FirebaseException] or a [PlatformException], and the
+  /// PlatformException shape differs per platform: Android uses the generic code `firebase_firestore`
+  /// with the Firestore code in `details['code']`, while iOS puts the Firestore code at the top level.
+  String? _firestoreErrorCode(Object error) {
+    if (error is FirebaseException) return error.code;
+    if (error is! PlatformException) return null;
+    final details = error.details;
+    if (details is Map && details['code'] is String) return details['code'] as String;
+    return error.code;
   }
+
+  /// Checks if an error is a permission-denied error.
+  bool _isPermissionDeniedError(Object error) => _firestoreErrorCode(error) == 'permission-denied';
 
   /// Handles permission-denied errors by checking auth state to distinguish
   /// between transient auth issues (during app resume) and real permission violations.
-  void _handlePermissionDenied(String context, Exception error, StackTrace stackTrace) {
-    if (FirebaseAuth.instance.currentUser != null) {
+  void _handlePermissionDenied(String context, Object error, StackTrace stackTrace) {
+    if (_isUserSignedIn()) {
       // User is authenticated but access denied - this is a real permission error
       logger.e(
         'Permission denied $context for authenticated user - possible security rules violation',
@@ -68,8 +76,18 @@ class FirebaseFirestoreRepository {
       );
     } else {
       // User not authenticated - likely transient auth state during app resume
-      logger.i('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
+      logger.d('Permission denied $context - auth may be transitioning, Firestore will retry automatically');
     }
+  }
+
+  /// Logs a failed playlist write. The rules allow owner writes, so `permission-denied` normally means the session
+  /// ended (which `AuthBloc` handles) and goes through [_handlePermissionDenied]; anything else is a real error.
+  void _logPlaylistWriteFailure(Object e, StackTrace stackTrace, String context) {
+    if (_isPermissionDeniedError(e)) {
+      _handlePermissionDenied('when $context', e, stackTrace);
+      return;
+    }
+    logger.e('Error $context', error: e, stackTrace: stackTrace);
   }
 
   /// Executes a Firestore operation with unified error handling for permission-denied errors.
@@ -99,7 +117,7 @@ class FirebaseFirestoreRepository {
   }) {
     return (error, stackTrace) {
       if (_isPermissionDeniedError(error)) {
-        _handlePermissionDenied(context, error as Exception, stackTrace);
+        _handlePermissionDenied(context, error, stackTrace);
       } else {
         logger.e(errorMessage, error: error, stackTrace: stackTrace);
       }
@@ -156,10 +174,13 @@ class FirebaseFirestoreRepository {
   Future<void> _deleteUserData(String userId) async {
     try {
       await Future.wait([
-        _deleteDocuments(FirebaseCollectionName.users, UserInfoKey.userId, userId),
+        // The users rule is keyed on the document id (`request.auth.uid == userId`), which a field query cannot
+        // prove to the rules engine, so the document has to be addressed by id.
+        _instance.collection(FirebaseCollectionName.users).doc(userId).delete(),
         _deleteDocuments(FirebaseCollectionName.playlists, PlaylistKey.userId, userId),
         _deleteDocuments(FirebaseCollectionName.repositories, RepositoryKey.userId, userId),
       ]);
+      logger.i('${FirebaseCollectionName.users} document $userId was deleted.');
     } catch (e, stackTrace) {
       logger.e('Error in _deleteUserData', error: e, stackTrace: stackTrace);
       rethrow;
@@ -188,20 +209,28 @@ class FirebaseFirestoreRepository {
         .collection(FirebaseCollectionName.playlists)
         .doc(playlistId)
         .snapshots(includeMetadataChanges: true)
+        .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
           final data = snapshot.data();
           if (!snapshot.exists || data == null) {
             logger.w("Playlist document does not exist: $playlistId");
             return Playlist.empty();
           }
-          logger.i("Got new update for playlist $playlistId");
+          logger.d("Got new update for playlist $playlistId");
           return Playlist(playlistId: playlistId, json: data);
         })
-        .handleError(
-          _createStreamErrorHandler(
-            emptyValue: Playlist.empty(),
-            context: 'when accessing playlist $playlistId',
-            errorMessage: 'Error in getPlaylistStream',
+        .transform(
+          StreamTransformer<Playlist, Playlist>.fromHandlers(
+            handleError: (error, stackTrace, sink) {
+              if (_isPermissionDeniedError(error)) {
+                // Denied for a deleted playlist (the owner-only rule reads `resource.data`) or an ended session
+                // (handled by AuthBloc). Neither is a rules violation, so treat it like a missing document.
+                logger.i('Playlist $playlistId is no longer accessible (deleted, or the session ended)');
+                sink.add(Playlist.empty());
+                return;
+              }
+              logger.e('Error in getPlaylistStream', error: error, stackTrace: stackTrace);
+            },
           ),
         );
   }
@@ -248,7 +277,7 @@ class FirebaseFirestoreRepository {
       logger.i("Uploading new playlist");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error adding new playlist for user $userId', error: e, stackTrace: stackTrace);
+      _logPlaylistWriteFailure(e, stackTrace, 'adding new playlist for user $userId');
       return false;
     }
   }
@@ -264,11 +293,7 @@ class FirebaseFirestoreRepository {
       logger.i("Renaming playlist ${playlist.name} to $newPlaylistName");
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error renaming playlist ${playlist.playlistId} to $newPlaylistName',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logPlaylistWriteFailure(e, stackTrace, 'renaming playlist ${playlist.playlistId} to $newPlaylistName');
       return false;
     }
   }
@@ -279,7 +304,7 @@ class FirebaseFirestoreRepository {
       logger.i("Removing playlist ${playlist.name} with id ${playlist.playlistId}");
       return true;
     } catch (e, stackTrace) {
-      logger.e('Error deleting playlist ${playlist.playlistId}', error: e, stackTrace: stackTrace);
+      _logPlaylistWriteFailure(e, stackTrace, 'deleting playlist ${playlist.playlistId}');
       return false;
     }
   }
@@ -354,11 +379,7 @@ class FirebaseFirestoreRepository {
       // Re-throw validation errors so they can be handled by the caller
       rethrow;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error adding multiple music sheets to playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logPlaylistWriteFailure(e, stackTrace, 'adding multiple music sheets to playlist ${playlist.playlistId}');
       return false;
     }
   }
@@ -372,7 +393,7 @@ class FirebaseFirestoreRepository {
       _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.renameSheet(musicSheet.musicSheetId, fileName).toJsonList(),
       });
-      logger.i("musicSheetRename update successful");
+      logger.d("musicSheetRename update successful");
       return true;
     } catch (e, stackTrace) {
       logger.e(
@@ -399,15 +420,15 @@ class FirebaseFirestoreRepository {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
-      logger.i(
+      logger.d(
         'musicSheetTransposition update successful for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
       );
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error updating transposition for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
+      _logPlaylistWriteFailure(
+        e,
+        stackTrace,
+        'updating transposition for music sheet ${musicSheet.musicSheetId} in playlist ${playlist.playlistId}',
       );
       return false;
     }
@@ -424,10 +445,10 @@ class FirebaseFirestoreRepository {
       });
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error deleting music sheet ${musicSheet.musicSheetId} from playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
+      _logPlaylistWriteFailure(
+        e,
+        stackTrace,
+        'deleting music sheet ${musicSheet.musicSheetId} from playlist ${playlist.playlistId}',
       );
       return false;
     }
@@ -438,14 +459,10 @@ class FirebaseFirestoreRepository {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
         PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
       });
-      logger.i("musicSheetReorder update successful");
+      logger.d("musicSheetReorder update successful");
       return true;
     } catch (e, stackTrace) {
-      logger.e(
-        'Error reordering music sheets in playlist ${playlist.playlistId}',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      _logPlaylistWriteFailure(e, stackTrace, 'reordering music sheets in playlist ${playlist.playlistId}');
       return false;
     }
   }
@@ -538,7 +555,7 @@ class FirebaseFirestoreRepository {
         .where((event) => !event.metadata.hasPendingWrites)
         .map((snapshot) {
           final documents = snapshot.docs;
-          logger.i("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
+          logger.d("Got repository music sheets data for repository: $repositoryId with length: ${documents.length}");
           return documents.map((doc) => MusicSheet(json: doc.data()));
         })
         .handleError(
@@ -721,12 +738,20 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  /// Firestore error codes that indicate a transient connectivity problem rather than a bug.
+  /// `unauthenticated` is included because the Firestore SDK fails a call with UNAUTHENTICATED when the
+  /// auth token cannot be refreshed, which is what happens when the device goes offline with an expired token.
+  static const Set<String> _transientFirestoreErrorCodes = {'unavailable', 'unknown', 'unauthenticated'};
+
+  bool _isTransientFirestoreError(Object e) {
+    if (e is! PlatformException) return false;
+    return _transientFirestoreErrorCodes.contains(e.code) ||
+        _transientFirestoreErrorCodes.contains(_firestoreErrorCode(e));
+  }
+
   void _handleRepositoryError(Object e, StackTrace stackTrace, String logMessage) {
-    if (e is PlatformException &&
-        (e.code == 'unavailable' ||
-            e.code == 'unknown' ||
-            (e.code == 'firebase_firestore' && e.details?['code'] == 'unavailable'))) {
-      logger.w('$logMessage: Service unavailable or unknown platform error (likely transient)');
+    if (_isTransientFirestoreError(e)) {
+      logger.d('$logMessage: Service unavailable, unauthenticated or unknown platform error (likely transient)');
       throw const RepositoryNetworkException();
     } else if (e is TimeoutException) {
       logger.w('$logMessage: Operation timed out');

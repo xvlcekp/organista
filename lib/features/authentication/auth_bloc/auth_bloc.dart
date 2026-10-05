@@ -34,11 +34,57 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthEventLogOut>(_authEventLogOut);
     on<AuthEventDeleteAccount>(_authEventDeleteAccount);
     on<AuthEventForgotPassword>(_authEventForgotPassword);
+    on<AuthEventSessionExpired>(_authEventSessionExpired);
   }
 
   final AuthProvider _authProvider;
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   final FirebaseStorageRepository _firebaseStorageRepository;
+  StreamSubscription<AuthUser?>? _authStateSubscription;
+
+  @override
+  Future<void> close() async {
+    await _authStateSubscription?.cancel();
+    return super.close();
+  }
+
+  /// Tags Cloud Logging entries with the signed-in user so one user's session can be followed in Logs Explorer.
+  @override
+  void onChange(Change<AuthState> change) {
+    super.onChange(change);
+    final next = change.nextState;
+    logger.userId = next is AuthStateLoggedIn ? next.user.id : null;
+  }
+
+  /// Watches Firebase Auth so a session that ends outside the app (revoked refresh token after an account
+  /// deletion on another device, password reset, disabled account) sends the user back to the login screen.
+  /// Without this the UI keeps showing Firestore-cached data while every request is denied.
+  void _listenToAuthStateChanges() {
+    _authStateSubscription = _authProvider.authStateChanges.listen((user) {
+      if (user == null) {
+        add(const AuthEventSessionExpired());
+      }
+    });
+  }
+
+  Future<void> _authEventSessionExpired(AuthEventSessionExpired event, Emitter<AuthState> emit) async {
+    final current = state;
+    // Only a settled logged-in session can expire underneath us. While an auth operation is in flight
+    // (log-out, account deletion) the handler that started it owns the resulting state, and the stream
+    // also reports null after the app's own sign-out, when we are already logged out.
+    if (current is! AuthStateLoggedIn || current.isLoading) {
+      return;
+    }
+    logger.w('Firebase Auth ended the session for user ${current.user.id} outside the app, returning to login');
+    await StreamManager.instance.cancelAllStreams();
+    unawaited(_updateSentryUser(null));
+    emit(
+      const AuthStateLoggedOut(
+        isLoading: false,
+        authError: AuthErrorUserNotLoggedIn(),
+      ),
+    );
+  }
 
   void _authEventDeleteAccount(AuthEventDeleteAccount event, Emitter<AuthState> emit) async {
     final user = state.user;
@@ -63,7 +109,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       // Delete user data from Firestore and Storage
-      await _firebaseFirestoreRepository.deleteUser(userId: user.id);
+      final firestoreDataDeleted = await _firebaseFirestoreRepository.deleteUser(userId: user.id);
+      if (!firestoreDataDeleted) {
+        // Deleting the Auth account now would orphan the remaining documents: nobody could clean them up
+        // any more. The repository has already logged the cause.
+        emit(AuthStateLoggedIn(isLoading: false, user: user, authError: const AuthGenericException()));
+        return;
+      }
       await _firebaseStorageRepository.deleteFolder(user.id);
 
       // Delete the Firebase user account
@@ -140,6 +192,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _authEventInitialize(AuthEventInitialize event, Emitter<AuthState> emit) async {
     try {
+      _listenToAuthStateChanges();
       await _authProvider.initialize();
       final user = _authProvider.currentUser;
 
@@ -306,6 +359,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: authUser,
         ),
       );
+    } on AuthErrorSignInCanceled {
+      // The user dismissed the sign-in UI: back to idle, no error dialog.
+      emit(
+        const AuthStateLoggedOut(isLoading: false),
+      );
+    } on AuthError catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: e,
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       emit(
         AuthStateLoggedOut(
@@ -343,6 +408,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AuthStateLoggedIn(
           isLoading: false,
           user: authUser,
+        ),
+      );
+    } on AuthErrorSignInCanceled {
+      // The user dismissed the sign-in UI: back to idle, no error dialog.
+      emit(
+        const AuthStateLoggedOut(isLoading: false),
+      );
+    } on AuthError catch (e) {
+      emit(
+        AuthStateLoggedOut(
+          isLoading: false,
+          authError: e,
         ),
       );
     } on FirebaseAuthException catch (e) {

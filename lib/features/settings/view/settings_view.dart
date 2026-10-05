@@ -19,143 +19,137 @@ class SettingsView extends StatelessWidget {
     final theme = Theme.of(context);
     final errorColor = theme.colorScheme.error;
 
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, authState) {
-        // Pop the settings screen when user gets logged out (including account deletion)
-        if (authState is AuthStateLoggedOut) {
-          Navigator.of(context).pop();
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(localizations.settings),
-        ),
-        body: BlocBuilder<SettingsCubit, SettingsState>(
-          builder: (context, state) {
-            return ListView(
-              children: [
-                // App Settings Section
-                SectionHeader(
-                  title: localizations.appSettings,
-                  icon: Icons.settings,
+    // Leaving this screen on logout (including account deletion) is done by the auth-state listener in `App`,
+    // which pops everything above the root; popping here as well would remove the home route too.
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(localizations.settings),
+      ),
+      body: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, state) {
+          return ListView(
+            children: [
+              // App Settings Section
+              SectionHeader(
+                title: localizations.appSettings,
+                icon: Icons.settings,
+              ),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(localizations.language),
+                trailing: DropdownButton<String>(
+                  value: state.localeString,
+                  items: [
+                    DropdownMenuItem(
+                      value: 'en',
+                      child: Text(localizations.english),
+                    ),
+                    DropdownMenuItem(
+                      value: 'sk',
+                      child: Text(localizations.slovak),
+                    ),
+                  ],
+                  onChanged: (String? languageCode) {
+                    if (languageCode != null) {
+                      settingsCubit.changeLanguage(languageCode);
+                    }
+                  },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.language),
-                  title: Text(localizations.language),
-                  trailing: DropdownButton<String>(
-                    value: state.localeString,
-                    items: [
-                      DropdownMenuItem(
-                        value: 'en',
-                        child: Text(localizations.english),
-                      ),
-                      DropdownMenuItem(
-                        value: 'sk',
-                        child: Text(localizations.slovak),
-                      ),
-                    ],
-                    onChanged: (String? languageCode) {
-                      if (languageCode != null) {
-                        settingsCubit.changeLanguage(languageCode);
-                      }
-                    },
-                  ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.palette),
+                title: Text(localizations.theme),
+                trailing: DropdownButton<ThemeMode>(
+                  value: state.themeMode,
+                  items: [
+                    DropdownMenuItem(
+                      value: ThemeMode.system,
+                      child: Text(localizations.systemTheme),
+                    ),
+                    DropdownMenuItem(
+                      value: ThemeMode.light,
+                      child: Text(localizations.lightTheme),
+                    ),
+                    DropdownMenuItem(
+                      value: ThemeMode.dark,
+                      child: Text(localizations.darkTheme),
+                    ),
+                  ],
+                  onChanged: (ThemeMode? themeMode) {
+                    if (themeMode != null) {
+                      settingsCubit.changeTheme(themeMode.index);
+                    }
+                  },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.palette),
-                  title: Text(localizations.theme),
-                  trailing: DropdownButton<ThemeMode>(
-                    value: state.themeMode,
-                    items: [
-                      DropdownMenuItem(
-                        value: ThemeMode.system,
-                        child: Text(localizations.systemTheme),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.light,
-                        child: Text(localizations.lightTheme),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.dark,
-                        child: Text(localizations.darkTheme),
-                      ),
-                    ],
-                    onChanged: (ThemeMode? themeMode) {
-                      if (themeMode != null) {
-                        settingsCubit.changeTheme(themeMode.index);
-                      }
-                    },
-                  ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.expand_sharp),
+                title: Text(context.loc.showNavigationArrows),
+                trailing: Switch(
+                  value: state.showNavigationArrows,
+                  onChanged: (bool value) {
+                    settingsCubit.changeShowNavigationArrows(value);
+                  },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.expand_sharp),
-                  title: Text(context.loc.showNavigationArrows),
-                  trailing: Switch(
-                    value: state.showNavigationArrows,
-                    onChanged: (bool value) {
-                      settingsCubit.changeShowNavigationArrows(value);
-                    },
-                  ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.stay_current_portrait),
+                title: Text(context.loc.keepScreenOn),
+                trailing: Switch(
+                  value: state.keepScreenOn,
+                  onChanged: (bool value) {
+                    settingsCubit.changeKeepScreenOn(value);
+                  },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.stay_current_portrait),
-                  title: Text(context.loc.keepScreenOn),
-                  trailing: Switch(
-                    value: state.keepScreenOn,
-                    onChanged: (bool value) {
-                      settingsCubit.changeKeepScreenOn(value);
-                    },
-                  ),
-                ),
+              ),
 
-                // Storage Management Section
-                SectionHeader(
-                  title: localizations.storageManagement,
-                  icon: Icons.storage,
-                ),
+              // Storage Management Section
+              SectionHeader(
+                title: localizations.storageManagement,
+                icon: Icons.storage,
+              ),
+              ListTile(
+                leading: const Icon(Icons.wifi_off),
+                title: Text(localizations.manageStoredMusicSheets),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CacheManagementPage(),
+                    ),
+                  );
+                },
+              ),
+              // Account Management Section
+              SectionHeader(
+                title: localizations.accountManagement,
+                icon: Icons.person,
+              ),
+              if (authState is AuthStateLoggedIn)
                 ListTile(
-                  leading: const Icon(Icons.wifi_off),
-                  title: Text(localizations.manageStoredMusicSheets),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const CacheManagementPage(),
-                      ),
-                    );
-                  },
+                  leading: const Icon(Icons.account_circle),
+                  title: Text(localizations.signedInAs),
+                  subtitle: Text(authState.user.email),
                 ),
-                // Account Management Section
-                SectionHeader(
-                  title: localizations.accountManagement,
-                  icon: Icons.person,
+              ListTile(
+                leading: Icon(Icons.delete_forever, color: errorColor),
+                title: Text(
+                  localizations.deleteAccount,
+                  style: TextStyle(color: errorColor),
                 ),
-                if (authState is AuthStateLoggedIn)
-                  ListTile(
-                    leading: const Icon(Icons.account_circle),
-                    title: Text(localizations.signedInAs),
-                    subtitle: Text(authState.user.email),
-                  ),
-                ListTile(
-                  leading: Icon(Icons.delete_forever, color: errorColor),
-                  title: Text(
-                    localizations.deleteAccount,
-                    style: TextStyle(color: errorColor),
-                  ),
-                  onTap: () {
-                    showDeleteAccountDialog(context).then((shouldDeleteAccount) {
-                      if (shouldDeleteAccount && context.mounted) {
-                        context.read<AuthBloc>().add(
-                          const AuthEventDeleteAccount(),
-                        );
-                      }
-                    });
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+                onTap: () {
+                  showDeleteAccountDialog(context).then((shouldDeleteAccount) {
+                    if (shouldDeleteAccount && context.mounted) {
+                      context.read<AuthBloc>().add(
+                        const AuthEventDeleteAccount(),
+                      );
+                    }
+                  });
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }

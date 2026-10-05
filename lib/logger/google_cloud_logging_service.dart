@@ -1,16 +1,38 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:googleapis/logging/v2.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/config/config_controller.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:uuid/uuid.dart';
 
 class GoogleCloudLoggingService {
   LoggingApi? _loggingApi;
   http.Client? _authClient; // Store to allow cleanup
   String? _projectId;
+
+  /// Cloud Logging is only written in release, so `dev` marks debug/profile builds should that ever change.
+  static const String _environment = kReleaseMode ? 'prod' : 'dev';
+
+  /// Identifies one app launch, so all entries of a session can be filtered together in Logs Explorer.
+  final String _sessionId = const Uuid().v4();
+
+  /// Firebase uid of the signed-in user, set by `AuthBloc`; null while logged out.
+  String? userId;
+
+  /// Labels that are the same for the whole session (app version, platform), resolved during setup.
+  Map<String, String> _sessionLabels = const {};
+
+  /// Entries waiting to be sent. Every log line used to be its own authenticated HTTPS request, so entries are
+  /// buffered and written in one batch, either when the timer fires or right away for errors.
+  final List<LogEntry> _pendingEntries = [];
+  Timer? _flushTimer;
 
   bool get isSetup => _loggingApi != null && _projectId != null;
 
@@ -43,6 +65,13 @@ class GoogleCloudLoggingService {
 
       _loggingApi = LoggingApi(_authClient!);
 
+      final packageInfo = await PackageInfo.fromPlatform();
+      _sessionLabels = {
+        'app_version': '${packageInfo.version}+${packageInfo.buildNumber}',
+        'platform': Platform.operatingSystem,
+        'os_version': Platform.operatingSystemVersion,
+      };
+
       debugPrint('Cloud Logging API setup complete for project: $_projectId');
     } catch (error, stackTrace) {
       debugPrint('Error setting up Cloud Logging API: $error\n$stackTrace');
@@ -51,46 +80,53 @@ class GoogleCloudLoggingService {
     }
   }
 
-  Future<void> writeLog({
-    required Level level,
-    required String message,
-    String? userId,
-    String? appInstanceId,
-    String environment = 'dev',
-  }) async {
+  void writeLog({required Level level, required String message}) {
     if (!isSetup) {
       debugPrint('Cannot write log: Cloud Logging API is not setup');
       return;
     }
 
-    try {
-      final logName = 'projects/$_projectId/logs/$environment';
+    final labels = <String, String>{
+      'project_id': _projectId!,
+      'level': level.name.toUpperCase(),
+      'environment': _environment,
+      'session_id': _sessionId,
+      ..._sessionLabels,
+    };
 
-      final resource = MonitoredResource()..type = 'global';
+    if (userId != null) labels['user_id'] = userId!;
 
-      final severity = _mapLevelToSeverity(level);
-
-      final labels = <String, String>{
-        'project_id': _projectId!,
-        'level': level.name.toUpperCase(),
-        'environment': environment,
-      };
-
-      if (userId != null) labels['user_id'] = userId;
-      if (appInstanceId != null) labels['app_instance_id'] = appInstanceId;
-
-      final logEntry = LogEntry()
-        ..logName = logName
+    _pendingEntries.add(
+      LogEntry()
+        ..logName = 'projects/$_projectId/logs/$_environment'
         ..jsonPayload = {'message': message}
-        ..resource = resource
-        ..severity = severity
-        ..labels = labels;
+        ..resource = (MonitoredResource()..type = 'global')
+        ..severity = _mapLevelToSeverity(level)
+        ..labels = labels
+        ..timestamp = DateTime.now().toUtc().toIso8601String(),
+    );
 
-      final request = WriteLogEntriesRequest()..entries = [logEntry];
+    if (level.value >= Level.error.value || _pendingEntries.length >= AppConstants.cloudLoggingBatchSize) {
+      unawaited(flush());
+    } else {
+      _flushTimer ??= Timer(AppConstants.cloudLoggingFlushInterval, () => unawaited(flush()));
+    }
+  }
 
-      await _loggingApi!.entries.write(request);
+  /// Sends all buffered entries now. Also called when the app is paused, so entries are not lost if the OS
+  /// kills the backgrounded app before the timer fires.
+  Future<void> flush() async {
+    _flushTimer?.cancel();
+    _flushTimer = null;
+    if (_pendingEntries.isEmpty || !isSetup) return;
+
+    final entries = List<LogEntry>.of(_pendingEntries);
+    _pendingEntries.clear();
+
+    try {
+      await _loggingApi!.entries.write(WriteLogEntriesRequest()..entries = entries);
     } catch (error, stackTrace) {
-      debugPrint('Error writing log entry: $error\n$stackTrace');
+      debugPrint('Error writing ${entries.length} log entries: $error\n$stackTrace');
     }
   }
 
@@ -106,6 +142,9 @@ class GoogleCloudLoggingService {
   }
 
   void dispose() {
+    _flushTimer?.cancel();
+    _flushTimer = null;
+    _pendingEntries.clear();
     _authClient?.close();
     _authClient = null;
     _loggingApi = null;

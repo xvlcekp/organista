@@ -13,7 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--
+- Výrazne menej logovania na pozadí, hromadné odosielanie namiesto jednej požiadavky na každý záznam – nižšia spotreba dát a batérie
+- Počet nôt v repozitári sa načítava len raz namiesto pri každom prekreslení zoznamu repozitárov
+- Zoznam skladieb sa už neprekresľuje dvakrát pri každej zmene (napr. pri presune nôt)
+- Logy obsahujú verziu aplikácie, platformu a identifikátor relácie a používateľa, aby sa dali problémy ľahšie dohľadať
 
 ### Deprecated
 
@@ -25,7 +28,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--
+- Zobrazenie prihlasovacej obrazovky pri zmene účtu (napr. po zmene hesla alebo zmazaní účtu na inom zariadení)
+- Neúspešná zmena zoznamu skladieb (vytvorenie, premenovanie, vymazanie, pridanie, odstránenie či presun nôt) zobrazí chybovú hlášku namiesto tichého zlyhania
+- Zrušenie prihlásenia cez Google alebo Apple už nezobrazuje chybu; skutočná chyba prihlásenia zobrazí svoj konkrétny popis
+- Opravené odstránenie účtu – dáta sa vymažú úplne, a ak sa to nepodarí, účet zostane zachovaný a zobrazí sa chyba
+- Opravená chyba pri odchode z PDF noty počas vykresľovania strany (Android)
+- Menej falošných chýb hlásených na pozadí (výpadok siete, iOS, vymazaný zoznam skladieb)
 
 ### Security
 

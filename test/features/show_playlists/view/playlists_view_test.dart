@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
+import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlists_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
@@ -152,6 +153,27 @@ void main() {
         expect(find.text('No playlists yet'), findsOneWidget);
         expect(find.textContaining('Create your first playlist'), findsOneWidget);
         expect(find.byType(ListView), findsNothing);
+      });
+    });
+
+    group('Failed changes', () {
+      testWidgets('shows an error dialog when a playlist change could not be saved', (tester) async {
+        final loaded = PlaylistsLoadedState(playlists: [testPlaylist1]);
+        final widget = createTestWidget(initialState: loaded);
+        whenListen(
+          mockShowPlaylistsCubit,
+          Stream.fromIterable([
+            PlaylistsLoadedState(playlists: [testPlaylist1], error: const PlaylistErrorUnknown()),
+          ]),
+          initialState: loaded,
+        );
+
+        await tester.pumpWidget(widget);
+        await tester.pumpAndSettle();
+
+        expect(find.text('An error happened'), findsOneWidget);
+        expect(find.text('Unknown error'), findsOneWidget);
+        expect(find.text('Sunday Service'), findsOneWidget, reason: 'the list stays on screen behind the dialog');
       });
     });
 

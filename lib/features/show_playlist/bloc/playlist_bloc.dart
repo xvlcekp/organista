@@ -8,6 +8,7 @@ import 'package:organista/extensions/num_extensions.dart';
 import 'package:organista/services/export_playlist/export_playlist_service.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/logger/custom_logger.dart';
+import 'package:organista/managers/stream_identifier.dart';
 import 'package:organista/managers/stream_manager.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
@@ -49,16 +50,11 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     final Playlist playlist = event.playlist;
 
     try {
-      await _firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
+      final written = await _firebaseFirestoreRepository.deleteMusicSheetInPlaylist(
         musicSheet: musicSheetToDelete,
         playlist: playlist,
       );
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: state.playlist,
-        ),
-      );
+      _emitWriteResult(emit, written: written);
     } catch (e) {
       emit(
         PlaylistErrorState(
@@ -77,13 +73,8 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       ),
     );
     try {
-      await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
-      emit(
-        PlaylistLoadedState(
-          isLoading: false,
-          playlist: state.playlist,
-        ),
-      );
+      final written = await _firebaseFirestoreRepository.musicSheetReorder(playlist: event.playlist);
+      _emitWriteResult(emit, written: written);
     } catch (e) {
       emit(
         PlaylistErrorState(
@@ -95,7 +86,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   }
 
   Future<void> _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
-    logger.i("Init playlist was called");
+    logger.d("Init playlist was called");
 
     // Update current playlist ID to prevent old stream handlers from emitting states
     final playlistId = event.playlist.playlistId;
@@ -110,7 +101,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
 
     try {
       final broadcastStream = StreamManager.instance.getBroadcastStream<Playlist>(
-        'playlist_$playlistId',
+        StreamIdentifier.playlist(playlistId),
         () => _firebaseFirestoreRepository.getPlaylistStream(event.playlist.playlistId),
       );
 
@@ -178,10 +169,14 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     // Add new music sheets if any (repository will validate capacity)
     if (newMusicSheets.isNotEmpty) {
       try {
-        await _firebaseFirestoreRepository.addMusicSheetsToPlaylist(
+        final written = await _firebaseFirestoreRepository.addMusicSheetsToPlaylist(
           playlist: playlist,
           musicSheets: newMusicSheets,
         );
+        if (!written) {
+          emit(PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: state.playlist));
+          return;
+        }
       } on PlaylistCapacityExceededError catch (error) {
         emit(PlaylistErrorState(error: error, playlist: state.playlist));
         return;
@@ -263,10 +258,10 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       }
 
       final fileSize = await sourceFile.length();
-      logger.i('File size: ${fileSize.bytesToMegaBytes} MB');
+      logger.d('File size: ${fileSize.bytesToMegaBytes} MB');
 
       final bytes = await sourceFile.readAsBytes();
-      logger.i('Read ${bytes.length} bytes from file');
+      logger.d('Read ${bytes.length} bytes from file');
 
       // Always show file picker to let user choose save location
       final result = await FilePicker.saveFile(
@@ -277,11 +272,11 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         bytes: bytes, // Required on Android & iOS
       );
 
-      logger.i('File picker result: $result');
+      logger.d('File picker result: $result');
 
       if (result != null && result.isNotEmpty) {
         // File was saved by file picker
-        logger.i('File saved to user-selected location: $result');
+        logger.d('File saved to user-selected location: $result');
         emit(
           PlaylistExportedState(isLoading: false, playlist: state.playlist),
         );
@@ -334,12 +329,22 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     );
   }
 
+  /// The repository reports a write it could not perform with `false` (already logged there). The user
+  /// still has to learn that the change was not saved instead of seeing the spinner simply disappear.
+  void _emitWriteResult(Emitter<PlaylistState> emit, {required bool written}) {
+    if (written) {
+      emit(PlaylistLoadedState(isLoading: false, playlist: state.playlist));
+    } else {
+      emit(PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: state.playlist));
+    }
+  }
+
   /// Cleans up the temporary file
   Future<void> _cleanupTempFile(File tempFile) async {
     try {
       if (await tempFile.exists()) {
         await tempFile.delete();
-        logger.i('Temporary file deleted: ${tempFile.path}');
+        logger.d('Temporary file deleted: ${tempFile.path}');
       }
     } catch (e) {
       logger.w('Failed to delete temporary file: ${tempFile.path}, error: $e');

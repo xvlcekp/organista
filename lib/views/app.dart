@@ -73,6 +73,12 @@ class App extends StatelessWidget {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, authState) {
+                if (authState is AuthStateLoggedOut) {
+                  // Screens pushed over the main screen (playlist, settings) outlive the `home` swap below, so every
+                  // logout (manual, expired session, deleted account) closes them here.
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+
                 if (authState.isLoading) {
                   LoadingScreen.instance().show(
                     context: context,

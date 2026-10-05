@@ -9,7 +9,6 @@ import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_playlist/view/music_sheet_list_tile.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/loading/loading_screen.dart';
-import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/widgets/empty_list_widget.dart';
 import 'package:organista/widgets/scroll_aware_fab.dart';
 
@@ -65,7 +64,6 @@ class PlaylistView extends HookWidget {
       child: BlocBuilder<PlaylistBloc, PlaylistState>(
         builder: (context, state) {
           final playlist = state.playlist;
-          logger.i("Item count is ${playlist.musicSheets.length}");
 
           return PopScope(
             canPop: !state.isLoading,

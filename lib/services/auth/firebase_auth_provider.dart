@@ -17,6 +17,30 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 class FirebaseAuthProvider implements AuthProvider {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
+  /// Descriptions the native SDKs attach to [GoogleSignInExceptionCode.canceled] only when the user
+  /// dismissed the sign-in UI themselves (observed in production; first three are Android Credential
+  /// Manager, the last one is Google Sign-In for iOS).
+  ///
+  /// Credential Manager also reports some configuration failures (wrong SHA fingerprint, wrong OAuth
+  /// client type) with the `canceled` code but different descriptions such as "Account reauth failed"
+  /// or "activity is cancelled by the user", so anything not in this list is still treated as a failure.
+  static const List<String> _userCancelDescriptions = [
+    'Cancelled by user',
+    'User cancelled',
+    'The user canceled the sign-in flow',
+  ];
+
+  static bool _isUserCancellation(GoogleSignInException e) {
+    if (e.code != GoogleSignInExceptionCode.canceled) {
+      return false;
+    }
+    final description = e.description;
+    if (description == null) {
+      return false;
+    }
+    return _userCancelDescriptions.any(description.contains);
+  }
+
   @override
   Future<void> initialize() {
     return _googleSignIn.initialize().then((_) {
@@ -49,6 +73,10 @@ class FirebaseAuthProvider implements AuthProvider {
     }
     return null;
   }
+
+  @override
+  Stream<AuthUser?> get authStateChanges =>
+      FirebaseAuth.instance.authStateChanges().map((user) => user == null ? null : AuthUser.fromFirebase(user));
 
   @override
   Future<AuthUser> logIn({
@@ -94,7 +122,12 @@ class FirebaseAuthProvider implements AuthProvider {
       try {
         googleUser = await _googleSignIn.authenticate();
       } on GoogleSignInException catch (e, stackTrace) {
-        // Log actual errors (SHA fingerprint issues, OAuth config problems, GoogleSignInExceptionCode.canceled etc.)
+        if (_isUserCancellation(e)) {
+          // Dismissing the account picker is normal behaviour, not an error worth a Sentry report.
+          logger.i('Google Sign-In canceled by user: ${e.description}');
+          Error.throwWithStackTrace(const AuthErrorSignInCanceled(), stackTrace);
+        }
+        // Log actual errors (SHA fingerprint issues, OAuth config problems, ambiguous `canceled` results etc.)
         logger.e('Google authentication failed: ${e.code} - ${e.description}', error: e, stackTrace: stackTrace);
         Error.throwWithStackTrace(const AuthErrorGoogleSignInFailed(), stackTrace);
       } catch (e, stackTrace) {
@@ -179,7 +212,7 @@ class FirebaseAuthProvider implements AuthProvider {
       // Handle user cancellation gracefully
       if (e.code == AuthorizationErrorCode.canceled) {
         logger.i('Apple Sign-In was canceled by user');
-        Error.throwWithStackTrace(const AuthErrorUserNotLoggedIn(), stackTrace);
+        Error.throwWithStackTrace(const AuthErrorSignInCanceled(), stackTrace);
       }
       // Log detailed error information for debugging
       logger.e('Apple authorization failed', error: e, stackTrace: stackTrace);

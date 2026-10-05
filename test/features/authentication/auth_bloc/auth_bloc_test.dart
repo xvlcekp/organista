@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +21,7 @@ void main() {
   late AuthProvider authProvider;
   late FirebaseFirestoreRepository firebaseFirestoreRepository;
   late FirebaseStorageRepository firebaseStorageRepository;
+  late StreamController<AuthUser?> authStateController;
 
   const validUser = AuthUser(
     id: 'uid',
@@ -30,13 +33,19 @@ void main() {
     authProvider = MockAuthProvider();
     firebaseFirestoreRepository = MockFirebaseFirestoreRepository();
     firebaseStorageRepository = MockFirebaseStorageRepository();
+    authStateController = StreamController<AuthUser?>.broadcast();
 
     // Default stubs
+    when(() => authProvider.authStateChanges).thenAnswer((_) => authStateController.stream);
     registerFallbackValue(const AuthUser(id: 'id', email: 'email', isEmailVerified: true));
     when(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user'))).thenAnswer((_) async {});
     when(() => firebaseFirestoreRepository.deleteUser(userId: any(named: 'userId'))).thenAnswer((_) async => true);
     when(() => firebaseStorageRepository.deleteFolder(any())).thenAnswer((_) async {});
     when(() => authProvider.deleteUser()).thenAnswer((_) async {});
+  });
+
+  tearDown(() async {
+    await authStateController.close();
   });
 
   group('AuthBloc', () {
@@ -230,7 +239,7 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
-        'Google: emits [LoggedOut(loading), LoggedOut(genericError)] when user cancels',
+        'Google: emits [LoggedOut(loading), LoggedOut(no error)] when user cancels',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -238,11 +247,11 @@ void main() {
         ),
         act: (bloc) => bloc.add(const AuthEventSignInWithGoogle()),
         setUp: () {
-          when(() => authProvider.signInWithGoogle()).thenThrow(const AuthErrorUserNotLoggedIn());
+          when(() => authProvider.signInWithGoogle()).thenThrow(const AuthErrorSignInCanceled());
         },
         expect: () => [
           const AuthStateLoggedOut(isLoading: true),
-          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+          const AuthStateLoggedOut(isLoading: false),
         ],
         verify: (_) {
           verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
@@ -250,7 +259,7 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
-        'Google: emits [LoggedOut(loading), LoggedOut(genericError)] on sign-in failure',
+        'Google: emits [LoggedOut(loading), LoggedOut(googleSignInFailed)] on sign-in failure',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -262,7 +271,7 @@ void main() {
         },
         expect: () => [
           const AuthStateLoggedOut(isLoading: true),
-          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthErrorGoogleSignInFailed()),
         ],
         verify: (_) {
           verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
@@ -290,7 +299,7 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
-        'Apple: emits [LoggedOut(loading), LoggedOut(genericError)] when user cancels',
+        'Apple: emits [LoggedOut(loading), LoggedOut(no error)] when user cancels',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -298,11 +307,11 @@ void main() {
         ),
         act: (bloc) => bloc.add(const AuthEventSignInWithApple()),
         setUp: () {
-          when(() => authProvider.signInWithApple()).thenThrow(const AuthErrorUserNotLoggedIn());
+          when(() => authProvider.signInWithApple()).thenThrow(const AuthErrorSignInCanceled());
         },
         expect: () => [
           const AuthStateLoggedOut(isLoading: true),
-          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+          const AuthStateLoggedOut(isLoading: false),
         ],
         verify: (_) {
           verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
@@ -310,7 +319,7 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
-        'Apple: emits [LoggedOut(loading), LoggedOut(genericError)] on sign-in failure',
+        'Apple: emits [LoggedOut(loading), LoggedOut(appleSignInFailed)] on sign-in failure',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -322,7 +331,7 @@ void main() {
         },
         expect: () => [
           const AuthStateLoggedOut(isLoading: true),
-          const AuthStateLoggedOut(isLoading: false, authError: AuthGenericException()),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthErrorAppleSignInFailed()),
         ],
         verify: (_) {
           verifyNever(() => firebaseFirestoreRepository.createUserDocument(user: any(named: 'user')));
@@ -394,6 +403,76 @@ void main() {
       );
     });
 
+    group('Auth session ending outside the app', () {
+      // Firebase Auth can sign the user out on its own (revoked refresh token after an account deletion on
+      // another device, password reset, disabled account). Firestore keeps serving cached data, so without
+      // this the UI stays on a playlist where every request is denied.
+      AuthBloc buildBloc() => AuthBloc(
+        authProvider: authProvider,
+        firebaseFirestoreRepository: firebaseFirestoreRepository,
+        firebaseStorageRepository: firebaseStorageRepository,
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'returns to login when Firebase Auth reports the user signed out after initialization',
+        build: buildBloc,
+        setUp: () {
+          when(() => authProvider.initialize()).thenAnswer((_) async {});
+          when(() => authProvider.currentUser).thenReturn(validUser);
+        },
+        act: (bloc) async {
+          bloc.add(const AuthEventInitialize());
+          await Future<void>.delayed(const Duration(milliseconds: 300));
+          authStateController.add(null);
+        },
+        wait: const Duration(milliseconds: 50),
+        expect: () => [
+          const AuthStateLoggedIn(isLoading: false, user: validUser),
+          const AuthStateLoggedOut(isLoading: false, authError: AuthErrorUserNotLoggedIn()),
+        ],
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'keeps the logged-in state when the auth stream reports the same user',
+        build: buildBloc,
+        setUp: () {
+          when(() => authProvider.initialize()).thenAnswer((_) async {});
+          when(() => authProvider.currentUser).thenReturn(validUser);
+        },
+        act: (bloc) async {
+          bloc.add(const AuthEventInitialize());
+          await Future<void>.delayed(const Duration(milliseconds: 300));
+          authStateController.add(validUser);
+        },
+        wait: const Duration(milliseconds: 50),
+        expect: () => [const AuthStateLoggedIn(isLoading: false, user: validUser)],
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'ignores a signed-out report while already logged out',
+        build: buildBloc,
+        setUp: () {
+          when(() => authProvider.initialize()).thenAnswer((_) async {});
+          when(() => authProvider.currentUser).thenReturn(null);
+        },
+        act: (bloc) async {
+          bloc.add(const AuthEventInitialize());
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          authStateController.add(null);
+        },
+        wait: const Duration(milliseconds: 50),
+        expect: () => [const AuthStateLoggedOut(isLoading: false)],
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'ignores a signed-out report while an auth operation is in progress',
+        build: buildBloc,
+        seed: () => const AuthStateLoggedIn(isLoading: true, user: validUser),
+        act: (bloc) => bloc.add(const AuthEventSessionExpired()),
+        expect: () => <AuthState>[],
+      );
+    });
+
     group('AuthEventDeleteAccount', () {
       final recentUser = AuthUser(
         id: '123',
@@ -433,6 +512,32 @@ void main() {
           verify(() => firebaseFirestoreRepository.deleteUser(userId: recentUser.id)).called(1);
           verify(() => firebaseStorageRepository.deleteFolder(recentUser.id)).called(1);
           verify(() => authProvider.deleteUser()).called(1);
+        },
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'keeps the account and reports an error when the Firestore cleanup fails',
+        setUp: () {
+          when(
+            () => firebaseFirestoreRepository.deleteUser(userId: any(named: 'userId')),
+          ).thenAnswer((_) async => false);
+        },
+        build: () => AuthBloc(
+          authProvider: authProvider,
+          firebaseFirestoreRepository: firebaseFirestoreRepository,
+          firebaseStorageRepository: firebaseStorageRepository,
+        ),
+        seed: () => AuthStateLoggedIn(user: recentUser, isLoading: false),
+        act: (bloc) => bloc.add(const AuthEventDeleteAccount()),
+        expect: () => [
+          AuthStateLoggedIn(user: recentUser, isLoading: true),
+          AuthStateLoggedIn(user: recentUser, isLoading: false, authError: const AuthGenericException()),
+        ],
+        verify: (_) {
+          // Deleting the Auth account while its Firestore data is still there would leave orphaned documents
+          // that nobody can clean up any more.
+          verifyNever(() => firebaseStorageRepository.deleteFolder(any()));
+          verifyNever(() => authProvider.deleteUser());
         },
       );
 

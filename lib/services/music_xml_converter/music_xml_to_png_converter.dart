@@ -44,7 +44,11 @@ class MusicXmlToPngConverter {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       // ignore: unawaited_futures Communication with the native platform
       ..setOnConsoleMessage((message) {
-        logger.w('[Export WebView] ${message.message}');
+        if (message.level == JavaScriptLogLevel.error) {
+          logger.w('[Export WebView] ${message.message}');
+        } else {
+          logger.d('[Export WebView] ${message.message}');
+        }
       })
       // ignore: unawaited_futures Communication with the native platform
       ..addJavaScriptChannel(

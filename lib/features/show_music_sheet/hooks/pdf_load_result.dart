@@ -24,6 +24,22 @@ class PdfLoadResult {
 /// exercise the load/dispose lifecycle without the native pdfium bindings.
 typedef PdfDocumentOpener = Future<PdfDocument> Function();
 
+/// Closes [document], logging instead of throwing when the native side refuses.
+///
+/// On Android, pdfx reports `PlatformException(pdf_renderer, Unknown error)` when the
+/// document is closed while `PdfView` still has a page open for rendering, because
+/// `PdfRenderer.close()` throws "Current page not closed" (pdfx issue #140). That
+/// happens when the sheet is left mid-render, and the close is fire-and-forget from a
+/// disposed widget, so there is nothing to recover; an unhandled exception here would
+/// only surface as a fatal in Sentry.
+Future<void> _closeDocumentQuietly(PdfDocument document) async {
+  try {
+    await document.close();
+  } catch (e) {
+    logger.w('Failed to close PDF document ${document.id} (likely closed while a page render was in flight)', error: e);
+  }
+}
+
 /// Custom hook to manage PDF loading and coordination with GalleryCubit.
 ///
 /// Accepts both [MusicSheetUrlSource] (fetches via cache/network) and
@@ -79,7 +95,7 @@ PdfLoadResult usePdfDocument(MusicSheetSource source, {PdfDocumentOpener? docume
         // Torn down while loading: nothing will ever render this document, so
         // release it here instead of handing it to a controller.
         if (completer.isCompleted) {
-          await document.close();
+          await _closeDocumentQuietly(document);
           return;
         }
 
@@ -136,7 +152,10 @@ PdfLoadResult usePdfDocument(MusicSheetSource source, {PdfDocumentOpener? docume
       // PdfController.dispose() only releases its PageController, so the
       // native document has to be closed separately or its fd leaks.
       createdController?.dispose();
-      unawaited(openedDocument?.close() ?? Future<void>.value());
+      final document = openedDocument;
+      if (document != null) {
+        unawaited(_closeDocumentQuietly(document));
+      }
     };
   }, [effectKey]);
 

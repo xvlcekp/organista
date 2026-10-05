@@ -29,4 +29,5 @@ môžete pamäť uvoľniť ručne — noty sa pri ďalšom otvorení znova stiah
 - **Prihlásený ako** — e-mail aktuálne prihláseného účtu.
 - **Odhlásiť sa** — nájdete v menu **⋮** na domovskej obrazovke.
 - **Odstrániť účet** — natrvalo vymaže váš účet aj všetky vaše dáta (zoznamy skladieb,
-  osobné repozitáre a nahraté noty). *Táto akcia sa nedá vrátiť späť.*
+  osobné repozitáre a nahraté noty). *Táto akcia sa nedá vrátiť späť.* Ak sa dáta nepodarí
+  vymazať, účet zostane zachovaný a aplikácia zobrazí hlášku **Nastala chyba** — skúste to neskôr znova.

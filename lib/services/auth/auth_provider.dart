@@ -3,6 +3,9 @@ import 'package:organista/services/auth/auth_user.dart';
 abstract class AuthProvider {
   Future<void> initialize();
   AuthUser? get currentUser;
+
+  /// Emits the signed-in user, or null when the session ends, including sign-outs the app did not initiate.
+  Stream<AuthUser?> get authStateChanges;
   Future<AuthUser> logIn({
     required String email,
     required String password,

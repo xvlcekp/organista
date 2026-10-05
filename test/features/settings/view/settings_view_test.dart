@@ -100,77 +100,51 @@ void main() {
       );
     }
 
-    group('BlocListener Navigation Tests', () {
-      testWidgets('should contain BlocListener that listens to AuthBloc state changes', (tester) async {
-        await tester.pumpWidget(createTestWidget());
-
-        // Verify that BlocListener is present in the widget tree
-        expect(find.byType(BlocListener<AuthBloc, AuthState>), findsOneWidget);
-
-        // Verify that the BlocListener is listening to AuthBloc
-        final blocListener = tester.widget<BlocListener<AuthBloc, AuthState>>(
-          find.byType(BlocListener<AuthBloc, AuthState>),
+    group('Leaving the screen on logout', () {
+      /// The settings screen pushed over a home screen, the way `App` pushes it over the main screen.
+      Widget hostWithSettingsPushed(StreamController<AuthState> states) {
+        whenListen(
+          mockAuthBloc,
+          states.stream,
+          initialState: const AuthStateLoggedIn(isLoading: false, user: testUser),
         );
-        expect(blocListener.listener, isNotNull);
-      });
-
-      testWidgets('should have correct widget structure with BlocListener wrapping Scaffold', (tester) async {
-        await tester.pumpWidget(createTestWidget());
-
-        // Verify the widget hierarchy
-        final blocListener = find.byType(BlocListener<AuthBloc, AuthState>);
-        final scaffold = find.byType(Scaffold);
-
-        expect(blocListener, findsOneWidget);
-        expect(scaffold, findsOneWidget);
-
-        // Verify BlocListener is ancestor of Scaffold
-        expect(find.ancestor(of: scaffold, matching: blocListener), findsOneWidget);
-      });
-
-      testWidgets('should have listener function that checks for AuthStateLoggedOut', (tester) async {
-        // Create a simple test to verify the listener logic without complex navigation
-        bool listenerExecuted = false;
-
-        // Create a simple widget that mimics the BlocListener behavior
-        Widget testWidget = MaterialApp(
-          home: MultiBlocProvider(
-            providers: [
-              BlocProvider<AuthBloc>.value(value: mockAuthBloc),
-              BlocProvider<SettingsCubit>.value(value: mockSettingsCubit),
-            ],
-            child: BlocListener<AuthBloc, AuthState>(
-              listener: (context, authState) {
-                // This is the same logic as in SettingsView
-                if (authState is AuthStateLoggedOut) {
-                  listenerExecuted = true;
-                }
-              },
-              child: const Scaffold(body: Text('Test')),
+        // Providers sit above the MaterialApp so that the pushed settings route can reach them, as in `App`.
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>.value(value: mockAuthBloc),
+            BlocProvider<SettingsCubit>.value(value: mockSettingsCubit),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const SettingsView()),
+                ),
+                child: const Text('Home'),
+              ),
             ),
           ),
         );
+      }
 
-        await tester.pumpWidget(testWidget);
+      testWidgets('does not pop itself; the auth listener in App closes pushed screens', (tester) async {
+        // Regression: the settings screen used to pop itself on logout while the root listener popped pushed
+        // routes as well, so the second pop removed the home route and the app showed a black screen after
+        // deleting the account. Exactly one place may pop, and that is the root listener in `App`.
+        final states = StreamController<AuthState>();
+        addTearDown(states.close);
+        await tester.pumpWidget(hostWithSettingsPushed(states));
+        await tester.tap(find.text('Home'));
+        await tester.pumpAndSettle();
+        expect(find.byType(SettingsView), findsOneWidget);
 
-        // Initially, listener should not be executed
-        expect(listenerExecuted, false);
+        states.add(const AuthStateLoggedOut(isLoading: false));
+        await tester.pumpAndSettle();
 
-        // Mock the auth bloc to emit AuthStateLoggedOut
-        when(() => mockAuthBloc.state).thenReturn(
-          const AuthStateLoggedOut(isLoading: false),
-        );
-
-        // Simulate the state change by manually calling the listener
-        final blocListener = tester.widget<BlocListener<AuthBloc, AuthState>>(
-          find.byType(BlocListener<AuthBloc, AuthState>),
-        );
-
-        // Call the listener with AuthStateLoggedOut
-        blocListener.listener(tester.element(find.byType(Scaffold)), const AuthStateLoggedOut(isLoading: false));
-
-        // Verify that the listener logic was executed
-        expect(listenerExecuted, true);
+        expect(find.byType(SettingsView), findsOneWidget);
+        expect(find.text('Home'), findsNothing);
       });
     });
 
@@ -571,17 +545,8 @@ void main() {
         await tester.tap(dialogDeleteButton);
         await tester.pumpAndSettle();
 
-        // Verify delete event was sent
+        // Verify delete event was sent; leaving the screen afterwards is the root navigator reset's job.
         verify(() => mockAuthBloc.add(const AuthEventDeleteAccount())).called(1);
-
-        // Verify that the BlocListener exists and has correct structure
-        expect(find.byType(BlocListener<AuthBloc, AuthState>), findsOneWidget);
-
-        // Verify the listener function is not null
-        final settingsView = tester.widget<BlocListener<AuthBloc, AuthState>>(
-          find.byType(BlocListener<AuthBloc, AuthState>),
-        );
-        expect(settingsView.listener, isNotNull);
 
         // This test verifies the complete user flow:
         // 1. User taps delete account
