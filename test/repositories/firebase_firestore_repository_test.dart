@@ -298,6 +298,26 @@ void main() {
 
         expect(result, true);
       });
+
+      test('deletes the music sheets inside the users repositories, not only the repository documents', () async {
+        // Firestore never deletes a subcollection together with its parent document. Leaving the sheets behind
+        // keeps their Storage files alive too, because the Cloud Function only reacts to deleted sheet documents.
+        const userId = 'user-to-delete';
+        const repositoryId = 'repo-of-deleted-user';
+        await createTestRepository(repositoryId: repositoryId, userId: userId);
+        final sheets = fakeFirestore
+            .collection(FirebaseCollectionName.repositories)
+            .doc(repositoryId)
+            .collection(FirebaseCollectionName.musicSheets);
+        await sheets.doc('sheet-1').set(createTestMusicSheetJson(musicSheetId: 'sheet-1', userId: userId));
+        await sheets.doc('sheet-2').set(createTestMusicSheetJson(musicSheetId: 'sheet-2', userId: userId));
+
+        final result = await repository.deleteUser(userId: userId);
+
+        expect(result, isTrue);
+        final remainingSheets = await sheets.get();
+        expect(remainingSheets.docs, isEmpty);
+      });
     });
   });
 
