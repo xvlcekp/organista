@@ -178,13 +178,37 @@ class FirebaseFirestoreRepository {
         // prove to the rules engine, so the document has to be addressed by id.
         _instance.collection(FirebaseCollectionName.users).doc(userId).delete(),
         _deleteDocuments(FirebaseCollectionName.playlists, PlaylistKey.userId, userId),
-        _deleteDocuments(FirebaseCollectionName.repositories, RepositoryKey.userId, userId),
+        _deleteUserRepositories(userId),
       ]);
       logger.i('${FirebaseCollectionName.users} document $userId was deleted.');
     } catch (e, stackTrace) {
       logger.e('Error in _deleteUserData', error: e, stackTrace: stackTrace);
       rethrow;
     }
+  }
+
+  /// Firestore does not delete a subcollection with its parent, so each repository's music sheets are deleted
+  /// explicitly first. Deleting the sheet documents is also what triggers the Cloud Function that removes their
+  /// Storage files.
+  Future<void> _deleteUserRepositories(String userId) async {
+    final snapshot = await _instance
+        .collection(FirebaseCollectionName.repositories)
+        .where(RepositoryKey.userId, isEqualTo: userId)
+        .get();
+    await Future.wait(
+      snapshot.docs.map((doc) async {
+        await _deleteRepositoryWithMusicSheets(doc.reference);
+        logger.i('${FirebaseCollectionName.repositories} document ${doc.id} with user id $userId was deleted.');
+      }),
+    );
+  }
+
+  Future<void> _deleteRepositoryWithMusicSheets(DocumentReference<Map<String, dynamic>> repositoryRef) async {
+    final musicSheetsQuery = await repositoryRef.collection(FirebaseCollectionName.musicSheets).get();
+    for (final doc in musicSheetsQuery.docs) {
+      await doc.reference.delete().timeout(const Duration(seconds: 3));
+    }
+    await repositoryRef.delete();
   }
 
   Future<void> _deleteDocuments(String collectionName, String userKey, String userId) async {
@@ -695,19 +719,7 @@ class FirebaseFirestoreRepository {
         throw const RepositoryCannotModifyOtherUsers();
       }
 
-      // Delete all music sheets in the repository first
-      final musicSheetsQuery = await repositoriesCollection
-          .doc(repositoryId)
-          .collection(FirebaseCollectionName.musicSheets)
-          .get();
-
-      // Delete all music sheet documents
-      for (final doc in musicSheetsQuery.docs) {
-        await doc.reference.delete().timeout(const Duration(seconds: 3));
-      }
-
-      // Finally, delete the repository itself
-      await repositoriesCollection.doc(repositoryId).delete();
+      await _deleteRepositoryWithMusicSheets(repositoryDoc.reference);
 
       logger.i("Deleting repository $repositoryId by user $currentUserId");
       return true;
