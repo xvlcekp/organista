@@ -4,6 +4,7 @@ import 'package:organista/config/app_theme.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_music_sheet/view/dismissable_title.dart';
 import 'package:organista/features/show_music_sheet/view/lyrics_row.dart';
+import 'package:organista/features/show_music_sheet/view/page_counter_badge.dart';
 import 'package:organista/features/show_music_sheet/view/stepper_row.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -11,13 +12,17 @@ class MusicXmlControlsOverlay extends HookWidget {
   const MusicXmlControlsOverlay({
     super.key,
     required this.currentTranspose,
-    required this.currentElongationFactor,
+    required this.currentLyricsPadding,
     required this.wvc,
+    this.currentPage = 1,
+    this.pageCount = 1,
   });
 
   final int currentTranspose;
-  final double currentElongationFactor;
+  final double currentLyricsPadding;
   final WebViewController wvc;
+  final int currentPage;
+  final int pageCount;
 
   static const double _kItemSpacing = 8.0;
   static const double _kOverlayElevation = 5.0;
@@ -36,6 +41,11 @@ class MusicXmlControlsOverlay extends HookWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          if (pageCount > 1)
+            Container(
+              margin: const EdgeInsets.only(bottom: _kItemSpacing),
+              child: PageCounterBadge(currentPage: currentPage, pageCount: pageCount),
+            ),
           if (currentTranspose != 0 && showTransposition.value)
             Container(
               margin: const EdgeInsets.only(bottom: _kItemSpacing),
@@ -65,10 +75,10 @@ class MusicXmlControlsOverlay extends HookWidget {
                     const Divider(height: 1),
                     StepperRow(
                       icon: Icons.compress,
-                      value: currentElongationFactor.toStringAsFixed(1),
-                      onDecrease: () => wvc.runJavaScript('elongationFactorDown()'),
-                      onIncrease: () => wvc.runJavaScript('elongationFactorUp()'),
-                      onReset: () => wvc.runJavaScript('resetElongationFactor()'),
+                      value: currentLyricsPadding.toStringAsFixed(1),
+                      onDecrease: () => wvc.runJavaScript('lyricsPaddingDown()'),
+                      onIncrease: () => wvc.runJavaScript('lyricsPaddingUp()'),
+                      onReset: () => wvc.runJavaScript('resetLyricsPadding()'),
                       colorScheme: colorScheme,
                     ),
                     const Divider(height: 1),

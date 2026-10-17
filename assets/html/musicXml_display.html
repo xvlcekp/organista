@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>MusicXML Display</title>
-    <script src="OSMD_2_1_2.min.js"></script>
+    <script src="OSMD_2.2.1-c6e8e8e9.min.js"></script>
     <style>
         html {
             background-color: #f0f0f0;
@@ -42,6 +42,10 @@
             width: 100% !important;
             height: auto !important;
         }
+        /* Pages other than the current one in the paged viewer */
+        svg.hidden-page {
+            display: none !important;
+        }
         #spinner {
             position: fixed;
             top: 50%; left: 50%;
@@ -61,9 +65,16 @@
     <script>
         let osmd = null;
         let currentTranspose = 0;
-        let currentElongationFactor = 1.0;
+        // LyricsXPaddingFactorForLongLyrics of the current sheet; stepped by the reader, see LYRICS_PADDING_STEPS
+        let currentLyricsPadding = 0.5;
+        let defaultLyricsPadding = 0.5;
         let baseSystemCount = null;
         let lyricsVisible = true;
+        // Paged viewer: OSMD starts a new page at every <print new-page="yes">
+        // and draws one SVG per page; only the current one is shown and the
+        // app turns pages like for a PDF. The export keeps all pages visible.
+        let pagedView = false;
+        let currentPage = 1;
 
         // Zoom bounds for the fit search. The goal is the highest zoom where
         // OSMD does not need to add systems beyond the XML-defined ones.
@@ -83,6 +94,7 @@
 
         const clampZoom = z => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z));
         const osmdContainer = () => document.getElementById('osmdContainer');
+        const parseXml = xmlText => new DOMParser().parseFromString(xmlText, 'application/xml');
 
         function countSystems(o) {
             return o.graphic.MusicPages.reduce(
@@ -93,7 +105,7 @@
         // Counts XML-defined system breaks without rendering.
         // Uses getElementsByTagName to avoid XML namespace issues with querySelectorAll.
         function countSystemsFromXml(xmlText) {
-            const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+            const doc = parseXml(xmlText);
             const parts = doc.getElementsByTagName('part');
             if (!parts.length) return 1;
             const prints = parts[0].getElementsByTagName('print');
@@ -193,12 +205,391 @@
             return zoom;
         }
 
+        // ---- MusicXML fixes, applied to the text before osmd.load() (OSMD Sheet Lab, xmlfixes.js) ----
+
+        // OSMD reads the title from <work-title>, which MuseScore exports run together
+        // ("88.Tichá noc"), while the title credit holds "88." and "Tichá noc" on two lines.
+        // Writes "88. Tichá noc" on one line and keeps further credit lines (a heading, a
+        // subtitle in parentheses) as extra title lines. Pure XML transform; its real home is
+        // the jks-pipeline.
+        function compactTitle(xmlText) {
+            const doc = parseXml(xmlText);
+            if (doc.getElementsByTagName('parsererror').length) return xmlText;
+            const credits = Array.from(doc.getElementsByTagName('credit'));
+            const titleCredit = credits.find(c => (c.getElementsByTagName('credit-type')[0] || {}).textContent === 'title');
+            const workTitle = doc.getElementsByTagName('work-title')[0];
+            if (!titleCredit || !workTitle) return xmlText;
+            const lines = Array.from(titleCredit.getElementsByTagName('credit-words'))
+                .map(w => (w.textContent || '').trim()).filter(Boolean);
+            if (!lines.length) return xmlText;
+            const i = lines.findIndex(l => /^\d+[a-z]*\.?$/.test(l) || /^\d+\s*[a-z]\)\.?$/.test(l));
+            if (i >= 0 && i + 1 < lines.length) lines.splice(i, 2, lines[i].replace(/\.?$/, '.') + ' ' + lines[i + 1]);
+            const text = lines.join('\n');
+            if (text === workTitle.textContent) return xmlText;
+            workTitle.textContent = text;
+            return new XMLSerializer().serializeToString(doc);
+        }
+
+        // ---- lyric padding ----
+
+        // OSMD reserves only LyricsXPaddingFactorForLongLyrics of the overhang of a long
+        // lyric to the right of its note. Over the whole JKS corpus 0.5 removes 62 % of the
+        // visible syllable collisions of 0.3 for a median 2 % of zoom (OSMD Sheet Lab,
+        // 2026-10-14); 0.7 and 1.0 are offered to the reader as the next steps, each of
+        // them cheaper than lyric elongation for the same result (elongation stretches whole
+        // measures, padding only the long syllables), and 0.3 as the step down for sheets
+        // where nothing collides anyway. Above 1.0 the whole syllable already has room, so
+        // more padding only costs zoom; below 0.3 syllables touch. Chant and litany sheets put whole
+        // phrases on single notes ("Pána zvestoval" on one whole note) and start at the
+        // full padding or the phrase runs into the next notes.
+        const LYRICS_PADDING_DENSE = 0.5;
+        const LYRICS_PADDING_PHRASES = 1.0;
+        const LYRICS_PADDING_STEPS = [0.3, 0.5, 0.7, 1.0];
+        const LYRIC_LABEL = /^(?:[^\d:]{1,20}:\s*)?\d+[a-z]?\.(?:\s*[-–]\s*\d+\.)?\s*/;
+        const VOWEL = /[aeiouyáäéíóôúýľĺŕ]/i;
+        const VOWEL_G = /[aeiouyáäéíóôúýľĺŕ]/gi;
+
+        // True when a lyric holds two or more words on one note. Verse labels ("1. Moc"),
+        // no-break-space prepositions ("z ne") and section headings ("Dies irae:") don't count.
+        function hasPhraseLyrics(xmlText) {
+            const doc = parseXml(xmlText);
+            for (const lyric of doc.getElementsByTagName('lyric')) {
+                // join the parts of an elision ("Pochválené" + "Pochválené" on one note)
+                const text = Array.from(lyric.getElementsByTagName('text')).map(t => t.textContent || '').join(' ').trim();
+                if (text.endsWith(':')) continue;
+                const words = text.replace(LYRIC_LABEL, '').split(/\s+/).filter(w => VOWEL.test(w));
+                if (words.length >= 2 && (text.match(VOWEL_G) || []).length >= 4) return true;   // a real phrase, not "vstal, vstal,"
+            }
+            return false;
+        }
+
+        // OSMD's long-lyric padding (VexFlowConverter.StaveNote) is skipped whenever the next
+        // staff entry is more than a quarter away, so a half or whole note carrying a phrase
+        // ("Pána zvestoval") never gets any and the next syllable prints over it. OSMD's own
+        // remedy, MaximumLyricsElongationFactor, stretches the whole measure (sheet 2: -37 %
+        // zoom). This wraps StaveNote and gives such notes the padding OSMD would give a short
+        // note: the label's overhang beyond LyricsXPaddingWidthThreshold +
+        // LyricsXPaddingReductionForLongNotes, scaled by LyricsXPaddingFactorForLongLyrics
+        // (sheet 2: -9 % zoom instead, OSMD Sheet Lab 2026-10-08). A section name put back into
+        // the lyric (see drawVerseLabels) gets the full padding whatever the hymn factor.
+        function installLongNotePadding() {
+            const C = opensheetmusicdisplay.VexFlowConverter;
+            if (!C || C.__longNotePadding) return;
+            const orig = C.StaveNote;
+            C.StaveNote = function (gve) {
+                const vfnote = orig.call(C, gve);
+                try {
+                    const se = gve.parentStaffEntry;
+                    const rules = se.parentMeasure.parentSourceMeasure.Rules;
+                    if (!rules.RenderLyrics || !rules.LyricsUseXPaddingForLongLyrics || !se.LyricsEntries.length) return vfnote;
+                    // a section name put back into the lyric (see drawVerseLabels) needs the full padding
+                    const inlineLabel = se.LyricsEntries.find(le => le.LyricsEntry && le.LyricsEntry.__inlineLabel);
+                    if (inlineLabel) {
+                        const w = inlineLabel.GraphicalLabel.PositionAndShape.Size.width + (inlineLabel.hasDashFromLyricWord() ? 0.5 : 0);
+                        vfnote.paddingRight = Math.max(vfnote.paddingRight || 0, 10 * (w - rules.LyricsXPaddingWidthThreshold));
+                    }
+                    if (vfnote.paddingRight || gve.notes[0].sourceNote.Length.RealValue < 0.5) return vfnote;
+                    const reduce = rules.LyricsXPaddingWidthThreshold + rules.LyricsXPaddingReductionForLongNotes;
+                    let padding = 0;
+                    for (const le of se.LyricsEntries) {
+                        let w = le.GraphicalLabel.PositionAndShape.Size.width;
+                        if (le.hasDashFromLyricWord()) w += 0.5;
+                        if (w > reduce) padding = Math.max(padding, w - reduce);
+                    }
+                    if (padding > 0) vfnote.paddingRight = 10 * rules.LyricsXPaddingFactorForLongLyrics * padding;
+                } catch (e) {
+                    console.warn('long-note lyric padding', e);
+                }
+                return vfnote;
+            };
+            C.__longNotePadding = true;
+        }
+
+        // ---- verse labels (OSMD Sheet Lab, 2026-10-12 / 2026-10-16) ----
+        //
+        // The JKS sheets carry the verse number at the first syllable of every original line
+        // ("1. Moc", "1.-4. Na", "Kyrie: 1. Bo"). The number stays in the lyric text: OSMD
+        // (2.2.1 + c6e8e8e9, LyricsVerseNumberLeftOfLyric) puts a leading number left of the
+        // lyric wherever the verse starts a staff line, exactly where MuseScore puts it, and
+        // spaces the syllable as if it had no number. Section names ("Kyrie:", "Glória:") are
+        // not numbers: they are kept on the lyric entry (le.__verseLabel = { section, number })
+        // and drawn italic in the margin after each render, before the first syllable of the
+        // system (or before the number where a section starts mid-system).
+        //
+        // Sheets from jks-digitalne-noty carry the label as a tag:
+        //   <lyric number="1"><verse-label number="1." section="Kyrie:"/><text>Bo</text></lyric>
+        // Older files (the pipeline output) have it in the text, which is parsed as a fallback.
+        const LABEL = /^\s*(?:(\p{Lu}[^\d:]{0,24}?:)\s*)?(\d+[a-z]?\.(?:\s*[-–]\s*\d+\.)?)?\s*/u;
+        // Widening the left margin for a long section heading costs zoom ("Anjel ju pozdravil: 7."
+        // on sheet 18 would need 17 %); beyond this many units the label is shrunk instead.
+        const VERSE_LABEL_MARGIN_BUMP_MAX = 8;
+
+        // "1.", "1.-4.", "Kyrie: 1.", "Kyrie:" -> { section, number, rest }; null for plain text.
+        function parseLabel(text) {
+            const m = LABEL.exec(text || '');
+            if (!m || (!m[1] && !m[2])) return null;
+            const rest = text.slice(m[0].length);
+            // "Pane: ..." inside a lyric is text; a section name alone or with a number is a label
+            if (m[1] && !m[2] && rest) return null;
+            return { section: m[1] ? m[1].replace(/\s+/g, ' ') : null, number: m[2] ? m[2].replace(/\s+/g, '') : null, rest };
+        }
+
+        // Fallback for sheets without <verse-label> tags: lifts the section name out of the lyric
+        // text and leaves the number in it. A label alone on a note (MuseScore's own margin label
+        // on voice 2) is merged into the syllable of the same verse on the same beat and dropped;
+        // anything else stays as it is.
+        function stripVerseLabels() {
+            const containerOf = ve => ve.ParentSourceStaffEntry && ve.ParentSourceStaffEntry.VerticalContainerParent;
+            const candidates = [];
+            for (const part of osmd.Sheet.Parts) for (const voice of part.Voices) for (const ve of voice.VoiceEntries) {
+                const dict = ve.LyricsEntries; if (!dict) continue;
+                for (const le of dict.values()) {
+                    const l = parseLabel(le.Text);
+                    if (l && !l.rest) candidates.push({ le, dict, c: containerOf(ve), label: l, merged: false });
+                }
+            }
+            const byContainer = new Map();
+            for (const cand of candidates) {
+                if (!byContainer.has(cand.c)) byContainer.set(cand.c, {});
+                byContainer.get(cand.c)[cand.le.VerseNumber] = cand;
+            }
+            let changed = false;
+            for (const part of osmd.Sheet.Parts) for (const voice of part.Voices) for (const ve of voice.VoiceEntries) {
+                const dict = ve.LyricsEntries; if (!dict) continue;
+                const alone = byContainer.get(containerOf(ve)) || {};
+                for (const le of dict.values()) {
+                    const l = parseLabel(le.Text);
+                    if (l && !l.rest) continue; // a candidate itself
+                    const cand = alone[le.VerseNumber];
+                    if (!l && !cand) continue;
+                    const extra = cand && cand.label;
+                    const label = { section: (l && l.section) || (extra && extra.section) || null, number: (l && l.number) || (extra && extra.number) || null };
+                    le.Text = (label.number ? label.number + ' ' : '') + (l ? l.rest : le.Text);
+                    le.__verseLabel = label;
+                    changed = true;
+                    if (cand) cand.merged = true;
+                }
+            }
+            for (const cand of candidates) {
+                if (cand.merged) { cand.dict.remove(cand.le.VerseNumber); changed = true; }
+            }
+            return changed;
+        }
+
+        // Keyed by (measure index, verse, syllable) in document order; OSMD's lyric entries are
+        // matched in the same order, so the text never has to be parsed.
+        function readVerseLabelTags(xmlText) {
+            const doc = parseXml(xmlText);
+            const part = doc.getElementsByTagName('part')[0];
+            const map = new Map();
+            let count = 0;
+            if (!part) return { map, count };
+            Array.from(part.children).filter(e => e.tagName === 'measure').forEach((measure, mi) => {
+                for (const lyric of measure.getElementsByTagName('lyric')) {
+                    const tag = lyric.getElementsByTagName('verse-label')[0];
+                    if (!tag) continue;
+                    const text = Array.from(lyric.getElementsByTagName('text')).map(t => t.textContent || '').join('');
+                    const key = `${mi}|${lyric.getAttribute('number') || '1'}|${text}`;
+                    if (!map.has(key)) map.set(key, []);
+                    map.get(key).push({ section: tag.getAttribute('section') || null, number: tag.getAttribute('number') || null });
+                    count++;
+                }
+            });
+            return { map, count };
+        }
+
+        // The number goes into the lyric text for OSMD, the section name stays on the entry.
+        function attachVerseLabelTags(tags) {
+            const measures = osmd.Sheet.SourceMeasures;
+            let unmatched = 0;
+            for (const part of osmd.Sheet.Parts) for (const voice of part.Voices) for (const ve of voice.VoiceEntries) {
+                const dict = ve.LyricsEntries; if (!dict) continue;
+                const m = ve.ParentSourceStaffEntry && ve.ParentSourceStaffEntry.VerticalContainerParent.ParentMeasure;
+                const mi = m ? measures.indexOf(m) : -1;
+                for (const le of dict.values()) {
+                    const list = tags.map.get(`${mi}|${le.VerseNumber}|${le.Text}`);
+                    if (!list || !list.length) continue;
+                    le.__verseLabel = list.shift();
+                    if (le.__verseLabel.number) le.Text = le.__verseLabel.number + ' ' + le.Text;
+                }
+            }
+            for (const list of tags.map.values()) unmatched += list.length;
+            if (unmatched) console.warn(`[verse labels] ${unmatched} <verse-label> tags found no lyric entry`);
+        }
+
+        // Draws the section names into the rendered SVG, italic, right-aligned before the lyric
+        // (OSMD has already put the verse number left of the lyric, so the name lands before it).
+        // A section name is drawn where its tag is, and for a verse that has a section name but no
+        // number ("Glória:" on 58) again at every system start, like a number. Returns the entries
+        // whose name did not fit: at a system start (no room before the staff) or mid-system
+        // (over the previous syllable).
+        function drawVerseLabels(shrinkToFit) {
+            const stats = { drawn: 0, cramped: 0 };
+            const crampedEntries = [];
+            const current = {}; // verse -> section name to repeat at system starts, for a verse without numbers
+            for (const page of osmd.graphic.MusicPages) for (const system of page.MusicSystems) {
+                const seen = {}; // verse -> right edge (px) of the previous syllable in this system
+                for (const staffLine of system.StaffLines) for (const measure of staffLine.Measures) for (const se of measure.staffEntries) {
+                    for (const gle of se.LyricsEntries) {
+                        const le = gle.LyricsEntry, verse = le.VerseNumber, l = le.__verseLabel;
+                        let changed = false;
+                        if (l && l.section) changed = l.number ? true : current[verse] !== l.section; // a repeated name of a numberless verse is no change
+                        if (l) current[verse] = (l.section && !l.number) ? l.section : null;
+                        const first = !(verse in seen);
+                        const node = gle.GraphicalLabel.SVGNode, text = node && (node.tagName === 'text' ? node : node.querySelector('text'));
+                        if (!text) continue;
+                        const box = text.getBBox();
+                        const section = (l && l.section) || (first ? current[verse] : null);
+                        if (section && (first || changed) && !le.__inlineLabel) {
+                            const fontSize = parseFloat(text.getAttribute('font-size') || '10');
+                            const gap = 0.3 * fontSize;
+                            const n = text.cloneNode(false);
+                            n.setAttribute('font-style', 'italic');
+                            n.textContent = section;
+                            n.setAttribute('text-anchor', 'end');
+                            n.setAttribute('x', String(box.x - gap));
+                            n.classList.add('verse-label');
+                            text.parentNode.appendChild(n);
+                            const lb = n.getBBox();
+                            const leftLimit = first ? 1 : seen[verse] + gap; // the page edge, or the previous syllable
+                            let cramp = leftLimit - lb.x;
+                            stats.drawn++;
+                            if (cramp > 0.5 && first && shrinkToFit) { // second pass, margin already widened as far as allowed
+                                const scale = Math.max(0.6, (lb.width - cramp) / lb.width);
+                                n.setAttribute('font-size', (fontSize * scale) + 'px');
+                                cramp = leftLimit - n.getBBox().x;
+                            }
+                            if (cramp > 0.5) {
+                                stats.cramped++;
+                                if (first || l) crampedEntries.push({ le, first, cramp });
+                            }
+                        }
+                        seen[verse] = box.x + box.width;
+                    }
+                }
+            }
+            return { stats, crampedEntries };
+        }
+
+        // ---- title and author spacing ----
+
+        // OSMD places a multi-line title by its last line, so each extra line above the second
+        // needs its own height on top of TitleTopDistance (titles with a heading line are 3 lines).
+        // The lyricist label is centred at firstStaffTop - SystemLyricistDistance + height / 2 and
+        // clamped to the composer's height only when there is a composer, so a multi-line block
+        // would hang into the staff: grow the distance so its bottom lands one unit above the
+        // staff, like a one-line composer. Long author blocks (8 lyricist lines on 150a) would
+        // then reach above the page: push the first system down by the excess.
+        function applyAdaptiveDistances() {
+            const er = osmd.EngravingRules;
+            const lines = l => ((l && l.text) || '').split('\n').filter(t => t.trim()).length;
+            const titleLines = lines(osmd.Sheet.Title);
+            if (titleLines > 2) er.TitleTopDistance += er.SheetTitleHeight * (titleLines - 2);
+            const lyricistHeight = lines(osmd.Sheet.Lyricist) * er.SheetAuthorHeight;
+            if (lyricistHeight > 0) er.SystemLyricistDistance = Math.max(er.SystemLyricistDistance, lyricistHeight + 1);
+            const authorLines = Math.max(lines(osmd.Sheet.Lyricist), lines(osmd.Sheet.Composer));
+            if (authorLines > 3) er.TitleBottomDistance += er.SheetAuthorHeight * (authorLines - 3);
+        }
+
+        // How far (in units) the composer/lyricist labels reach up into the title's box, 0 if clear.
+        function titleAuthorOverlap() {
+            const page = osmd.graphic.MusicPages[0];
+            if (!page) return 0;
+            const box = l => {
+                const b = l.PositionAndShape;
+                return { x1: b.AbsolutePosition.x + b.BorderLeft, x2: b.AbsolutePosition.x + b.BorderRight,
+                         y1: b.AbsolutePosition.y + b.BorderTop, y2: b.AbsolutePosition.y + b.BorderBottom };
+            };
+            const find = gl => gl && page.Labels.find(l => l === gl || l.Label === gl.Label);
+            const title = find(osmd.graphic.Title), sub = find(osmd.graphic.Subtitle);
+            let push = 0;
+            for (const t of [title, sub].filter(Boolean)) {
+                const tb = box(t);
+                for (const a of [find(osmd.graphic.Composer), find(osmd.graphic.Lyricist)].filter(Boolean)) {
+                    const ab = box(a);
+                    if (ab.x1 < tb.x2 && ab.x2 > tb.x1 && ab.y1 < tb.y2 && ab.y2 > tb.y1) push = Math.max(push, tb.y2 - ab.y1);
+                }
+            }
+            return push;
+        }
+
+        // Fit zoom, then: with PageTopMargin 0 the composer/lyricist share the title's row and
+        // OSMD never checks them against the title, so on a narrow sheet with long author blocks
+        // they overprint it. Push the first system (and with it the authors) down by the overlap.
+        function fitZoom() {
+            osmd.zoom = computeFitZoom();
+            layoutOnly(osmd.zoom); // label positions at the chosen zoom (the fit search ends on a probe)
+            const push = titleAuthorOverlap();
+            if (push > 0) {
+                osmd.EngravingRules.TitleBottomDistance += push + 0.5;
+                osmd.zoom = computeFitZoom();
+            }
+        }
+
+        // ---- paging ----
+
+        function pageSvgs() {
+            return Array.from(osmdContainer().querySelectorAll('svg'));
+        }
+
+        // Shows only the current page and tells the app which page of how
+        // many is on screen. No-op for the export, which keeps every page.
+        function applyPageView() {
+            if (!pagedView) return;
+            const pages = pageSvgs();
+            currentPage = Math.min(Math.max(1, currentPage), Math.max(1, pages.length));
+            pages.forEach((svg, i) => svg.classList.toggle('hidden-page', pages.length > 1 && i + 1 !== currentPage));
+            window.scrollTo(0, 0);
+            // The channel exists only in the viewer, not in the export WebView
+            if (typeof PageChannel !== 'undefined') {
+                PageChannel.postMessage('p:' + currentPage + '/' + pages.length);
+            }
+        }
+
+        function showPage(page) {
+            currentPage = page;
+            applyPageView();
+        }
+
+        function nextPage() {
+            showPage(currentPage + 1);
+        }
+
+        function prevPage() {
+            showPage(currentPage - 1);
+        }
+
+
+        // Draws the sheet and the section names. A name that does not fit is handled once per
+        // sheet and then sticks: at a system start the left margin is widened by the shortfall
+        // (capped), mid-system the name goes back into the lyric so OSMD spaces it; then the
+        // sheet is fitted and drawn again.
+        function render() {
+            // OSMD reuses its SVG pages; getBBox() needs them displayed while the labels are drawn
+            pageSvgs().forEach(svg => svg.classList.remove('hidden-page'));
+            osmd.render();
+            let { stats, crampedEntries } = drawVerseLabels(false);
+            if (crampedEntries.length) {
+                const unit = 10 * osmd.zoom;
+                const bump = Math.min(VERSE_LABEL_MARGIN_BUMP_MAX, Math.max(0, ...crampedEntries.filter(c => c.first).map(c => c.cramp / unit)));
+                const inline = crampedEntries.filter(c => !c.first);
+                if (bump > 0) osmd.EngravingRules.PageLeftMargin += bump + 0.3;
+                for (const { le } of inline) { le.Text = le.__verseLabel.section + ' ' + le.Text; le.__inlineLabel = true; }
+                if (inline.length) osmd.updateGraphic();
+                osmd.zoom = computeFitZoom();
+                osmd.render();
+                stats = drawVerseLabels(true).stats;
+                console.log(`[verse labels] second pass: margin +${bump > 0 ? (bump + 0.3).toFixed(1) : 0}, ${inline.length} inline, ${stats.cramped} still cramped`);
+            }
+            applyPageView();
+        }
+
         // Full redraw at the computed fit zoom. Used after transposition or
         // engraving changes, where the whole sheet has to be redrawn anyway.
         async function autoFitAndRender() {
             if (!osmd || baseSystemCount === null) return;
-            osmd.zoom = computeFitZoom();
-            osmd.render();
+            fitZoom();
+            render();
         }
 
         // NOTE: OSMD 2.x's incremental renderNext() API is deliberately not
@@ -210,7 +601,8 @@
         // Created an issue on Github https://github.com/opensheetmusicdisplay/opensheetmusicdisplay/issues/1710 
         // Check once fixed and think about improvement
 
-        async function initializeDisplay(pageFormat = "Endless") {
+        async function initializeDisplay(pageFormat = "Endless", paged = false) {
+            pagedView = paged;
             const opts = {
                 backend:                                      "svg",
                 autoResize:                                   false,
@@ -223,33 +615,47 @@
                 pageFormat:                                   pageFormat,
                 newSystemFromXML:                             true,
                 newSystemFromNewPageInXML:                    true,
-                newPageFromXML:                               false,
+                newPageFromXML:                               paged,
             };
             osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmdContainer", opts);
             osmd.TransposeCalculator = new opensheetmusicdisplay.TransposeCalculator();
+            installLongNotePadding();
 
+            // Tuned against the MuseScore 3 originals in the OSMD Sheet Lab (../OSMD/viewer,
+            // "musescore-like (candidate)" preset, measured over all 550 JKS sheets at 393 px).
             const er = osmd.EngravingRules;
             er.RenderPartNames                         = false;
             er.RenderPartAbbreviations                 = false;
             er.SystemLabelsRightMargin                 = 0;
-            er.PageTopMargin                           = 5;
-            er.PageLeftMargin                          = 3;
-            er.PageRightMargin                         = 5;
+            // no blank band above the title on a phone
+            er.PageTopMargin                           = 0;
+            // 3 / 5 was empty space at phone width: 1 / 2 gives ~6 % larger notes on every sheet
+            // and the last syllable of a system still stays inside the page (OSMD Sheet Lab, 2026-10-07)
+            er.PageLeftMargin                          = 1;
+            er.PageRightMargin                         = 2;
             er.SlurHeightFactor                        = 0.7;
             er.SlurHeightFlattenLongSlursFactorByWidth = 0.24;
-            er.StaffDistance                           = 7.0;
+            // MuseScore keeps the bass staff close under the lyrics
+            er.StaffDistance                           = 5.0;
             er.BetweenStaffDistance                    = 10.0;
-            er.MinimumDistanceBetweenSystems           = 10.0;
-            er.MinSkyBottomDistBetweenSystems          = 3.0;
+            // tighter system gaps, like MuseScore's minSystemDistance
+            er.MinimumDistanceBetweenSystems           = 7.0;
+            er.MinSkyBottomDistBetweenSystems          = 2.0;
             er.LyricsHeight                            = 2.0;
             er.VerticalBetweenLyricsDistance           = 0.0;
             er.RenderCopyright                         = true;
-            er.SheetCopyrightHeight                    = 2.5;
+            // extra verses in the same size as the lyrics
+            er.SheetCopyrightHeight                    = 2.0;
             er.SheetCopyrightMargin                    = 2.5;
             er.SheetTitleHeight                        = 3;
-            er.SystemLyricistDistance                  = 10;
+            // lyricist at the same height as the composer, right above the first system; the
+            // minimum, raised per sheet to the lyricist block's height in applyAdaptiveDistances
+            er.SystemLyricistDistance                  = 2;
             er.StretchLastSystemLine                   = true;
             er.MaximumLyricsElongationFactor           = 1.0;
+            er.LyricsXPaddingFactorForLongLyrics       = LYRICS_PADDING_DENSE;
+            // tempo marks are invisible in the .mscz originals but exported visible
+            er.MetronomeMarksDrawn                     = false;
         }
 
         async function waitForLayout() {
@@ -259,10 +665,10 @@
             }
         }
 
-        async function loadMusicXmlFile(fileUrl, pageFormat = "Endless") {
+        async function loadMusicXmlFile(fileUrl, pageFormat = "Endless", paged = false) {
             try {
                 await waitForLayout();
-                await initializeDisplay(pageFormat);
+                await initializeDisplay(pageFormat, paged);
 
                 let xmlContent;
                 if (fileUrl.startsWith('data:')) {
@@ -275,7 +681,20 @@
 
                 const t0 = performance.now();
 
+                xmlContent = compactTitle(xmlContent);
+                defaultLyricsPadding = hasPhraseLyrics(xmlContent) ? LYRICS_PADDING_PHRASES : LYRICS_PADDING_DENSE;
+                currentLyricsPadding = defaultLyricsPadding;
+                osmd.EngravingRules.LyricsXPaddingFactorForLongLyrics = currentLyricsPadding;
                 await osmd.load(xmlContent);
+
+                const tags = readVerseLabelTags(xmlContent);
+                if (tags.count) {
+                    attachVerseLabelTags(tags);
+                    osmd.updateGraphic(); // graphical lyric entries are built at load time from LyricsEntry.Text
+                } else if (stripVerseLabels()) {
+                    osmd.updateGraphic();
+                }
+                applyAdaptiveDistances();
 
                 // Count XML-defined systems statically — no render needed
                 baseSystemCount = countSystemsFromXml(xmlContent);
@@ -291,8 +710,9 @@
                 await autoFitAndRender();
 
                 // The channel exists only in the viewer, not in the export WebView
-                if (currentTranspose !== 0 && typeof TransposeChannel !== 'undefined') {
-                    TransposeChannel.postMessage('t:' + currentTranspose);
+                if (typeof TransposeChannel !== 'undefined') {
+                    if (currentTranspose !== 0) TransposeChannel.postMessage('t:' + currentTranspose);
+                    TransposeChannel.postMessage('l:' + currentLyricsPadding);
                 }
 
                 document.getElementById('spinner').style.display = 'none';
@@ -314,17 +734,19 @@
             updateTranspose(0);
         }
 
-        async function updateElongationFactor(newValue) {
-            if (!osmd) return;
-            currentElongationFactor = newValue;
-            osmd.EngravingRules.MaximumLyricsElongationFactor = currentElongationFactor;
+        async function updateLyricsPadding(newValue) {
+            if (!osmd || newValue === currentLyricsPadding) return;
+            currentLyricsPadding = newValue;
+            osmd.EngravingRules.LyricsXPaddingFactorForLongLyrics = currentLyricsPadding;
             osmd.updateGraphic();
             await autoFitAndRender();
-            TransposeChannel.postMessage('e:' + currentElongationFactor);
+            TransposeChannel.postMessage('l:' + currentLyricsPadding);
         }
 
-        function elongationFactorUp() {
-            return updateElongationFactor(Math.min(2.2, parseFloat((currentElongationFactor + 0.2).toFixed(1))));
+        // The steps are offered around the sheet's own default (1.0 on chant sheets)
+        function lyricsPaddingUp() {
+            const next = LYRICS_PADDING_STEPS.find(v => v > currentLyricsPadding);
+            return updateLyricsPadding(next === undefined ? currentLyricsPadding : next);
         }
 
         async function toggleLyrics() {
@@ -338,12 +760,13 @@
             await autoFitAndRender();
         }
 
-        function elongationFactorDown() {
-            return updateElongationFactor(Math.max(0.6, parseFloat((currentElongationFactor - 0.2).toFixed(1))));
+        function lyricsPaddingDown() {
+            const lower = LYRICS_PADDING_STEPS.filter(v => v < currentLyricsPadding);
+            return updateLyricsPadding(lower.length ? lower[lower.length - 1] : currentLyricsPadding);
         }
 
-        function resetElongationFactor() {
-            return updateElongationFactor(1.0);
+        function resetLyricsPadding() {
+            return updateLyricsPadding(defaultLyricsPadding);
         }
 
         async function shrinkZoomToFit() {
@@ -351,7 +774,7 @@
             let iterations = 0;
             while (countSystems(osmd) > baseSystemCount && osmd.zoom > 0.1) {
                 osmd.zoom = Math.max(0.1, osmd.zoom - step);
-                osmd.render();
+                render();
                 iterations++;
             }
         }
@@ -362,7 +785,7 @@
             try {
                 osmd.Sheet.Transpose = currentTranspose;
                 osmd.updateGraphic();
-                osmd.render();
+                render();
                 const systems = countSystems(osmd);
                 if (systems > baseSystemCount) {
                     await shrinkZoomToFit();
@@ -375,7 +798,7 @@
 
         window.initSheet = async function(fileUrl, transposition) {
             currentTranspose = transposition;
-            await loadMusicXmlFile(fileUrl);
+            await loadMusicXmlFile(fileUrl, "Endless", true);
         };
 
         // --- PNG export, used by MusicXmlToPngConverter over the ExportChannel ---

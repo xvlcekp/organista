@@ -611,10 +611,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transposeDown => 'Transpose Down';
 
   @override
-  String get elongationFactorUp => 'Elongation Factor Up';
+  String get lyricsPaddingUp => 'Lyrics Padding Up';
 
   @override
-  String get elongationFactorDown => 'Elongation Factor Down';
+  String get lyricsPaddingDown => 'Lyrics Padding Down';
 
   @override
   String get hideLyrics => 'Hide Lyrics';
