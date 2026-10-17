@@ -6,6 +6,7 @@ import zipfile
 from pathlib import Path
 
 from pipeline import (
+    apply_system_breaks,
     collect_frame_headers,
     collect_title,
     hide_rests_of_empty_staves,
@@ -13,6 +14,7 @@ from pipeline import (
     promote_frame_headers,
     read_hide_empty_staves,
     read_mscx_name,
+    read_system_breaks,
     remove_empty_staves,
     set_work_title,
     staff_has_notes,
@@ -678,3 +680,85 @@ class TestPromoteFrameHeaders(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def musicxml_measures(*measures: str) -> str:
+    """A one-part MusicXML document around the given <measure> elements."""
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN"'
+        ' "http://www.musicxml.org/dtds/partwise.dtd">\n'
+        '<score-partwise version="4.0"><part-list><score-part id="P1"><part-name>P</part-name></score-part></part-list>'
+        '<part id="P1">' + "".join(measures) + "</part></score-partwise>"
+    )
+
+
+class SystemBreakTests(unittest.TestCase):
+    """The lines of the untouched original are written into the stripped score's export."""
+
+    ORIGINAL = musicxml_measures(
+        '<measure number="1"><print><system-layout/></print><note/></measure>',
+        '<measure number="2"><note/></measure>',
+        '<measure number="3"><print new-system="yes"/><note/></measure>',
+        '<measure number="4"><print new-page="yes"/><note/></measure>',
+    )
+
+    def test_read_system_breaks_lists_the_measures_that_start_a_system_or_page(self):
+        self.assertEqual(read_system_breaks(self.ORIGINAL), {"3": (True, False), "4": (False, True)})
+
+    def test_apply_system_breaks_moves_the_breaks_to_the_originals_measures(self):
+        stripped = musicxml_measures(
+            '<measure number="1"><print><system-layout/></print><note/></measure>',
+            '<measure number="2"><print new-system="yes"><system-layout/></print><note/></measure>',
+            '<measure number="3"><note/></measure>',
+            '<measure number="4"><print new-system="yes"/><note/></measure>',
+        )
+        out, changed = apply_system_breaks(stripped, read_system_breaks(self.ORIGINAL))
+        self.assertEqual(changed, 3)
+        self.assertEqual(read_system_breaks(out), {"3": (True, False), "4": (False, True)})
+        measures = ET.fromstring(out.split("?>", 1)[1].split(">", 1)[1] if out.startswith("<?xml") else out).find("part").findall("measure")
+        self.assertIsNotNone(measures[1].find("print/system-layout"), "the layout of a print that lost its break stays")
+        self.assertEqual(measures[2].find("print").get("new-system"), "yes")
+        self.assertEqual(list(measures[2])[0].tag, "print", "a print added to a measure comes first")
+
+    def test_apply_system_breaks_leaves_a_matching_export_alone(self):
+        out, changed = apply_system_breaks(self.ORIGINAL, read_system_breaks(self.ORIGINAL))
+        self.assertEqual(changed, 0)
+        self.assertEqual(read_system_breaks(out), read_system_breaks(self.ORIGINAL))
+
+
+class RepeatsAndVoltasTests(unittest.TestCase):
+    """Repeat marks and volta brackets of a dropped silent staff move to the surviving staff."""
+
+    VOLTA_START = ('<Spanner type="Volta"><Volta><endHookType>1</endHookType><beginText>1. 2.</beginText>'
+                   '<endings>1, 2</endings></Volta><next><location><measures>1</measures></location></next></Spanner>')
+    VOLTA_END = '<Spanner type="Volta"><prev><location><measures>-1</measures></location></prev></Spanner>'
+
+    def mscx_with_silent_first_staff(self):
+        silent = ('<Staff id="1"><Measure><voice><KeySig><concertKey>-2</concertKey></KeySig>' + self.VOLTA_START
+                  + '<Rest><durationType>measure</durationType></Rest></voice></Measure>'
+                  '<Measure><endRepeat>2</endRepeat><voice>' + self.VOLTA_END
+                  + '<Rest><durationType>measure</durationType></Rest></voice></Measure></Staff>')
+        sounding = ('<Staff id="2"><Measure><voice><KeySig><concertKey>-2</concertKey></KeySig>'
+                    '<Chord><durationType>whole</durationType><Note><pitch>60</pitch></Note></Chord></voice></Measure>'
+                    '<Measure><voice><Chord><durationType>whole</durationType><Note><pitch>62</pitch></Note></Chord></voice></Measure></Staff>')
+        parts = '<Part id="1"><Staff id="1"><StaffType group="pitched"/></Staff><Staff id="2"><StaffType group="pitched"/></Staff></Part>'
+        return mscx(parts, silent + sounding)
+
+    def test_repeats_and_voltas_move_to_the_surviving_staff(self):
+        cleaned, removed = remove_empty_staves(self.mscx_with_silent_first_staff())
+        self.assertEqual(removed, ["1"])
+        staff = ET.fromstring(cleaned).find("Score").findall("Staff")
+        staff = [s for s in staff if s.find("Measure") is not None][0]
+        first, second = staff.findall("Measure")
+        self.assertEqual(second.findtext("endRepeat"), "2")
+        self.assertEqual([c.tag for c in second][:2], ["endRepeat", "voice"], "the repeat comes before the voice")
+        first_voice = list(first.find("voice"))
+        self.assertEqual([c.tag for c in first_voice], ["KeySig", "Spanner", "Chord"], "the volta follows the key change")
+        self.assertEqual(first_voice[1].findtext("Volta/beginText"), "1. 2.")
+        self.assertEqual(list(second.find("voice"))[0].findtext("prev/location/measures"), "-1", "the volta's end marker")
+
+    def test_marks_the_surviving_staff_already_has_are_not_duplicated(self):
+        cleaned, _ = remove_empty_staves(self.mscx_with_silent_first_staff())
+        self.assertEqual(cleaned.count("endRepeat"), 2)   # one element: open and close tag
+        self.assertEqual(cleaned.count("<Volta>"), 1)

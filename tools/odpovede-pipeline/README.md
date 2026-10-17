@@ -7,7 +7,7 @@ that renders in the app's OSMD viewer the way the scores look in MuseScore.
 
 | File | Role |
 |------|------|
-| `pipeline.py` | The conversion. Three steps per `.mscz`: drop the silent staff, export with the MuseScore 4 CLI, post-process the MusicXML for OSMD. Run without arguments it converts every `.mscz` in `ODPOVEDE_DIR`. |
+| `pipeline.py` | The conversion. Three steps per `.mscz`: drop the silent staff, export with the MuseScore 4 CLI, post-process the MusicXML for OSMD. The untouched score is exported as well and its system and page breaks are written into the output, since MuseScore wraps the stripped score's lines differently (2026-10-17). Run without arguments it converts every `.mscz` in `ODPOVEDE_DIR`. |
 | `preview/render_osmd.js` | Verification harness. Renders a MusicXML file with the app's own viewer (`assets/html/musicXml_display.html`, OSMD 2.1.2) in headless Chrome and saves a PNG, so the output can be compared with MuseScore's PNG export. |
 | `test_pipeline.py` | Unit tests (`python3 -m unittest test_pipeline`). |
 | `output/` | Generated MusicXML, gitignored. |
