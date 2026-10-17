@@ -1226,17 +1226,17 @@ abstract class AppLocalizations {
   /// **'Transponovať nižšie'**
   String get transposeDown;
 
-  /// No description provided for @elongationFactorUp.
+  /// No description provided for @lyricsPaddingUp.
   ///
   /// In sk, this message translates to:
   /// **'Rozšíriť medzery v texte'**
-  String get elongationFactorUp;
+  String get lyricsPaddingUp;
 
-  /// No description provided for @elongationFactorDown.
+  /// No description provided for @lyricsPaddingDown.
   ///
   /// In sk, this message translates to:
   /// **'Zúžiť medzery v texte'**
-  String get elongationFactorDown;
+  String get lyricsPaddingDown;
 
   /// No description provided for @hideLyrics.
   ///

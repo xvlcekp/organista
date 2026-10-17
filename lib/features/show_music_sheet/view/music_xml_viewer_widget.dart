@@ -8,6 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_controls_overlay.dart';
+import 'package:organista/features/show_music_sheet/view/page_navigation.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_thumbnail_widget.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
@@ -27,10 +28,27 @@ class MusicXmlViewerWidget extends HookWidget {
 
   static const int _kChannelPrefixLength = 2;
 
+  /// LYRICS_PADDING_DENSE in `musicXml_display.html`; the page posts the sheet's value after loading.
+  static const double _kDefaultLyricsPadding = 0.5;
+
+  /// Parses the `p:<current>/<count>` message the page JavaScript posts after
+  /// every render and page turn; null when the message is malformed.
+  @visibleForTesting
+  static (int, int)? parsePageMessage(String message) {
+    if (!message.startsWith('p:')) return null;
+    final parts = message.substring(_kChannelPrefixLength).split('/');
+    if (parts.length != 2) return null;
+    final current = int.tryParse(parts[0]);
+    final count = int.tryParse(parts[1]);
+    if (current == null || count == null || count < 1 || current < 1 || current > count) return null;
+    return (current, count);
+  }
+
   Future<WebViewController> _initializeWebView(
     BuildContext context,
     ValueNotifier<int> currentTranspose,
-    ValueNotifier<double> currentElongationFactor,
+    ValueNotifier<double> currentLyricsPadding,
+    ValueNotifier<(int, int)> pages,
     MusicSheetUrlSource urlSource,
   ) async {
     // Capture context-dependent objects BEFORE any await
@@ -88,10 +106,18 @@ class MusicXmlViewerWidget extends HookWidget {
                 ),
               );
             }
-          } else if (msg.startsWith('e:')) {
+          } else if (msg.startsWith('l:')) {
             final val = double.tryParse(msg.characters.getRange(_kChannelPrefixLength).string);
-            if (val != null) currentElongationFactor.value = val;
+            if (val != null) currentLyricsPadding.value = val;
           }
+        },
+      )
+      // ignore: unawaited_futures Communication with the native platform
+      ..addJavaScriptChannel(
+        'PageChannel',
+        onMessageReceived: (JavaScriptMessage message) {
+          final parsed = parsePageMessage(message.message);
+          if (parsed != null) pages.value = parsed;
         },
       )
       // ignore: unawaited_futures Communication with the native platform
@@ -103,12 +129,19 @@ class MusicXmlViewerWidget extends HookWidget {
     BuildContext context,
     ValueNotifier<WebViewController?> controller,
     ValueNotifier<int> currentTranspose,
-    ValueNotifier<double> currentElongationFactor,
+    ValueNotifier<double> currentLyricsPadding,
+    ValueNotifier<(int, int)> pages,
     MusicSheetUrlSource urlSource,
   ) async {
     try {
       if (context.mounted) {
-        controller.value = await _initializeWebView(context, currentTranspose, currentElongationFactor, urlSource);
+        controller.value = await _initializeWebView(
+          context,
+          currentTranspose,
+          currentLyricsPadding,
+          pages,
+          urlSource,
+        );
       }
     } catch (e, st) {
       logger.e('Failed to initialize MusicXML viewer', error: e, stackTrace: st);
@@ -119,12 +152,14 @@ class MusicXmlViewerWidget extends HookWidget {
   Widget build(BuildContext context) {
     final urlSource = source is MusicSheetUrlSource ? source as MusicSheetUrlSource : null;
     final currentTranspose = useState(urlSource?.musicSheet.transposition ?? 0);
-    final currentElongationFactor = useState(1.0);
+    final currentLyricsPadding = useState(_kDefaultLyricsPadding);
+    // (current page, page count) of the rendered sheet
+    final pages = useState<(int, int)>((1, 1));
     final controller = useState<WebViewController?>(null);
 
     useEffect(() {
       if (mode == MusicSheetViewMode.thumbnail || urlSource == null) return null;
-      _initialize(context, controller, currentTranspose, currentElongationFactor, urlSource);
+      _initialize(context, controller, currentTranspose, currentLyricsPadding, pages, urlSource);
       return null;
     }, const []);
 
@@ -159,10 +194,19 @@ class MusicXmlViewerWidget extends HookWidget {
           },
         ),
         if (mode == MusicSheetViewMode.full)
+          PageNavigation(
+            currentPage: pages.value.$1,
+            pageCount: pages.value.$2,
+            onPrevious: () => wvc.runJavaScript('prevPage()'),
+            onNext: () => wvc.runJavaScript('nextPage()'),
+          ),
+        if (mode == MusicSheetViewMode.full)
           MusicXmlControlsOverlay(
             currentTranspose: currentTranspose.value,
-            currentElongationFactor: currentElongationFactor.value,
+            currentLyricsPadding: currentLyricsPadding.value,
             wvc: wvc,
+            currentPage: pages.value.$1,
+            pageCount: pages.value.$2,
           ),
       ],
     );

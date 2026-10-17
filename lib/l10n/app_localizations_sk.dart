@@ -616,10 +616,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get transposeDown => 'Transponovať nižšie';
 
   @override
-  String get elongationFactorUp => 'Rozšíriť medzery v texte';
+  String get lyricsPaddingUp => 'Rozšíriť medzery v texte';
 
   @override
-  String get elongationFactorDown => 'Zúžiť medzery v texte';
+  String get lyricsPaddingDown => 'Zúžiť medzery v texte';
 
   @override
   String get hideLyrics => 'Skryť text';

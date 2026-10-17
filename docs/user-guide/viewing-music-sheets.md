@@ -15,7 +15,7 @@ v akom ste si ich usporiadali:
 
 ## Viacstranové noty a navigačné šípky
 
-Pri viacstranových PDF notách vidíte vpravo dole **počítadlo strán** (napr. *1/2*).
+Pri viacstranových notách vidíte vpravo dole **počítadlo strán** (napr. _1/2_).
 Ak si v [Nastaveniach](settings.md) zapnete **Zobraziť navigačné šípky**, horný
 a dolný okraj obrazovky sa zmení na **zelenkasté dotykové plochy so šípkou** — ťuknutím
 na dolnú plochu otočíte na ďalšiu stranu, ťuknutím na hornú späť. Rýchlejšie
@@ -28,17 +28,22 @@ a spoľahlivejšie než posúvanie prstom; otočenie prebehne okamžite:
 Celý postup — vytvorenie zoznamu, pridanie nôt, zapnutie šípok v nastaveniach
 a hranie s otáčaním strán — ukazuje [video na úvodnej stránke](index.md).
 
+Platí to pre PDF ako aj pre **digitálne noty JKS**: piesne s viac ako tromi slohami
+majú ďalšie slohy na ďalších stranách pod rovnakými notami. Na obrazovke je vždy
+jedna strana; počítadlo strán je pri digitálnych notách nad modrým tlačidlom ovládania.
+Strany digitálnych nôt otočíte aj potiahnutím prstom nahor alebo nadol, rovnako ako pri PDF.
+
 !!! tip
-    V [Nastaveniach](settings.md) si zapnite aj **Nechať obrazovku zapnutú**,
-    aby počas hrania nezhasla.
+V [Nastaveniach](settings.md) si zapnite aj **Nechať obrazovku zapnutú**,
+aby počas hrania nezhasla.
 
 !!! note "Bluetooth pedál alebo klávesnica"
-    Na listovanie môžete použiť aj **Bluetooth pedál či klávesnicu** — šikovné,
-    keď máte obe ruky (aj nohy) zamestnané hraním.
+Na listovanie môžete použiť aj **Bluetooth pedál či klávesnicu** — šikovné,
+keď máte obe ruky (aj nohy) zamestnané hraním.
 
 ## Transpozícia (MusicXML)
 
-Noty vo formáte **MusicXML** (napr. repozitár *JKS - digitálne*) si viete digitálne
+Noty vo formáte **MusicXML** (napr. repozitár _JKS - digitálne_) si viete digitálne
 transponovať — celá skladba sa prepíše do novej tóniny, žiadne prelepovanie ani
 hranie z hlavy.
 
@@ -60,7 +65,7 @@ Transpozícia sa pri note v zozname skladieb **zapamätá** — pri ďalšom otv
 
 V paneli nájdete aj:
 
-- **Rozšíriť/zúžiť medzery v texte** (tlačidlá pri ikone **÷**) — upraví hustotu textu pod notami,
+- **Rozšíriť/zúžiť medzery v texte** (tlačidlá pri ikone **÷**) — vie pomocť zmenšiť noty ak sa prekrývajú, alebo zväčšiť noty aj je tam dosť voľného miesta,
 - **Skryť text / Zobraziť text** — schová alebo zobrazí text piesne pod notami.
 
 ## Práca bez internetu

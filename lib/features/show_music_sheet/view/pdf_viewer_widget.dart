@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/extensions/hex_color.dart';
-import 'package:organista/features/settings/cubit/settings_cubit.dart';
-import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_page_counter.dart';
-import 'package:organista/features/show_music_sheet/view/pdf_navigation_arrows.dart';
+import 'package:organista/features/show_music_sheet/view/pdf_page_navigation.dart';
 import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:pdfx/pdfx.dart';
 
@@ -52,28 +49,23 @@ class PdfViewerWidget extends HookWidget {
       MusicSheetViewMode.preview => previewQuality,
     };
 
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, settingsState) {
-        return Stack(
-          children: [
-            PdfView(
-              controller: pdfController,
-              scrollDirection: Axis.vertical,
-              renderer: (PdfPage page) {
-                return page.render(
-                  width: page.width * qualityMultiplier,
-                  height: page.height * qualityMultiplier,
-                  format: PdfPageImageFormat.jpeg,
-                  backgroundColor: backgroundColor.toHex(),
-                );
-              },
-            ),
-            if (mode == MusicSheetViewMode.full) PdfPageCounter(controller: pdfController),
-            if (mode == MusicSheetViewMode.full && settingsState.showNavigationArrows)
-              PdfNavigationArrows(controller: pdfController),
-          ],
-        );
-      },
+    return Stack(
+      children: [
+        PdfView(
+          controller: pdfController,
+          scrollDirection: Axis.vertical,
+          renderer: (PdfPage page) {
+            return page.render(
+              width: page.width * qualityMultiplier,
+              height: page.height * qualityMultiplier,
+              format: PdfPageImageFormat.jpeg,
+              backgroundColor: backgroundColor.toHex(),
+            );
+          },
+        ),
+        if (mode == MusicSheetViewMode.full) PdfPageCounter(controller: pdfController),
+        if (mode == MusicSheetViewMode.full) PdfPageNavigation(controller: pdfController),
+      ],
     );
   }
 }

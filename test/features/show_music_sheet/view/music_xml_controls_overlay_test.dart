@@ -4,6 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:organista/features/show_music_sheet/view/dismissable_title.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_controls_overlay.dart';
+import 'package:organista/features/show_music_sheet/view/page_counter_badge.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
@@ -12,6 +13,7 @@ import 'music_xml_controls_overlay_test.mocks.dart';
 
 @GenerateMocks([PlatformWebViewController])
 void main() {
+  pageCounterTests();
   late MockPlatformWebViewController mockPlatformController;
   late WebViewController wvc;
 
@@ -21,7 +23,7 @@ void main() {
     wvc = WebViewController.fromPlatform(mockPlatformController);
   });
 
-  Widget buildWidget({int currentTranspose = 0, double currentElongationFactor = 1.0}) {
+  Widget buildWidget({int currentTranspose = 0, double currentLyricsPadding = 0.5}) {
     return MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -30,7 +32,7 @@ void main() {
           children: [
             MusicXmlControlsOverlay(
               currentTranspose: currentTranspose,
-              currentElongationFactor: currentElongationFactor,
+              currentLyricsPadding: currentLyricsPadding,
               wvc: wvc,
             ),
           ],
@@ -47,7 +49,7 @@ void main() {
       expect(find.byIcon(Icons.close), findsNothing);
     });
 
-    testWidgets('tapping FAB shows both transpose and elongation factor columns', (tester) async {
+    testWidgets('tapping FAB shows both transpose and lyrics padding columns', (tester) async {
       await tester.pumpWidget(buildWidget());
 
       await tester.tap(find.byType(FloatingActionButton));
@@ -136,31 +138,31 @@ void main() {
       expect(find.textContaining('+-3'), findsNothing);
     });
 
-    testWidgets('shows elongation factor value when menu is open', (tester) async {
-      await tester.pumpWidget(buildWidget(currentElongationFactor: 1.0));
+    testWidgets('shows lyrics padding value when menu is open', (tester) async {
+      await tester.pumpWidget(buildWidget(currentLyricsPadding: 0.5));
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pump();
+
+      expect(find.text('0.5'), findsOneWidget);
+    });
+
+    testWidgets('shows updated lyrics padding value', (tester) async {
+      await tester.pumpWidget(buildWidget(currentLyricsPadding: 0.7));
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pump();
+
+      expect(find.text('0.7'), findsOneWidget);
+    });
+
+    testWidgets('shows max lyrics padding value', (tester) async {
+      await tester.pumpWidget(buildWidget(currentLyricsPadding: 1.0));
 
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pump();
 
       expect(find.text('1.0'), findsOneWidget);
-    });
-
-    testWidgets('shows updated elongation factor value', (tester) async {
-      await tester.pumpWidget(buildWidget(currentElongationFactor: 1.4));
-
-      await tester.tap(find.byType(FloatingActionButton));
-      await tester.pump();
-
-      expect(find.text('1.4'), findsOneWidget);
-    });
-
-    testWidgets('shows max elongation factor value', (tester) async {
-      await tester.pumpWidget(buildWidget(currentElongationFactor: 2.2));
-
-      await tester.tap(find.byType(FloatingActionButton));
-      await tester.pump();
-
-      expect(find.text('2.2'), findsOneWidget);
     });
 
     testWidgets('tapping transpose value resets transpose to 0', (tester) async {
@@ -176,19 +178,19 @@ void main() {
       verify(mockPlatformController.runJavaScript('resetTranspose()')).called(1);
     });
 
-    testWidgets('tapping elongation factor value resets to default', (tester) async {
-      await tester.pumpWidget(buildWidget(currentElongationFactor: 1.4));
+    testWidgets('tapping lyrics padding value resets to default', (tester) async {
+      await tester.pumpWidget(buildWidget(currentLyricsPadding: 0.7));
 
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pump();
 
-      await tester.tap(find.text('1.4'));
+      await tester.tap(find.text('0.7'));
       await tester.pump();
 
-      verify(mockPlatformController.runJavaScript('resetElongationFactor()')).called(1);
+      verify(mockPlatformController.runJavaScript('resetLyricsPadding()')).called(1);
     });
 
-    testWidgets('tapping elongation factor up calls elongationFactorUp JS', (tester) async {
+    testWidgets('tapping lyrics padding up calls lyricsPaddingUp JS', (tester) async {
       await tester.pumpWidget(buildWidget());
 
       await tester.tap(find.byType(FloatingActionButton));
@@ -198,21 +200,21 @@ void main() {
       await tester.tap(addButtons.last);
       await tester.pump();
 
-      verify(mockPlatformController.runJavaScript('elongationFactorUp()')).called(1);
+      verify(mockPlatformController.runJavaScript('lyricsPaddingUp()')).called(1);
     });
 
-    testWidgets('tapping elongation factor down calls elongationFactorDown JS', (tester) async {
+    testWidgets('tapping lyrics padding down calls lyricsPaddingDown JS', (tester) async {
       await tester.pumpWidget(buildWidget());
 
       await tester.tap(find.byType(FloatingActionButton));
       await tester.pump();
 
       final removeButtons = find.byIcon(Icons.remove);
-      // Second remove button is for elongation factor
+      // Second remove button is for lyrics padding
       await tester.tap(removeButtons.last);
       await tester.pump();
 
-      verify(mockPlatformController.runJavaScript('elongationFactorDown()')).called(1);
+      verify(mockPlatformController.runJavaScript('lyricsPaddingDown()')).called(1);
     });
 
     testWidgets('shows lyrics icon when menu is open', (tester) async {
@@ -262,6 +264,52 @@ void main() {
       await tester.pump();
 
       verify(mockPlatformController.runJavaScript('toggleLyrics()')).called(1);
+    });
+  });
+}
+
+void pageCounterTests() {
+  late MockPlatformWebViewController mockPlatformController;
+  late WebViewController wvc;
+
+  setUp(() {
+    mockPlatformController = MockPlatformWebViewController();
+    when(mockPlatformController.runJavaScript(any)).thenAnswer((_) async {});
+    wvc = WebViewController.fromPlatform(mockPlatformController);
+  });
+
+  Widget buildWidget({required int currentPage, required int pageCount}) {
+    return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: Stack(
+          children: [
+            MusicXmlControlsOverlay(
+              currentTranspose: 0,
+              currentLyricsPadding: 0.5,
+              wvc: wvc,
+              currentPage: currentPage,
+              pageCount: pageCount,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  group('MusicXmlControlsOverlay page counter', () {
+    testWidgets('shows the page counter when the sheet has more than one page', (tester) async {
+      await tester.pumpWidget(buildWidget(currentPage: 2, pageCount: 3));
+
+      expect(find.byType(PageCounterBadge), findsOneWidget);
+      expect(find.text('2/3'), findsOneWidget);
+    });
+
+    testWidgets('hides the page counter for a single-page sheet', (tester) async {
+      await tester.pumpWidget(buildWidget(currentPage: 1, pageCount: 1));
+
+      expect(find.byType(PageCounterBadge), findsNothing);
     });
   });
 }

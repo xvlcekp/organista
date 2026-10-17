@@ -312,8 +312,8 @@
   "transposeUp": "Transpose Up",
   "resetTranspose": "Reset Transpose",
   "transposeDown": "Transpose Down",
-  "elongationFactorUp": "Elongation Factor Up",
-  "elongationFactorDown": "Elongation Factor Down",
+  "lyricsPaddingUp": "Lyrics Padding Up",
+  "lyricsPaddingDown": "Lyrics Padding Down",
   "hideLyrics": "Hide Lyrics",
   "showLyrics": "Show Lyrics"
 }
