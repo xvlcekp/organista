@@ -33,6 +33,10 @@ Postupne je v pláne pridávať ďalší obsah.
 
 ## História úprav
 
+### 17.10.2026
+
+- Vylepšené digitálne Ordinárium sv. omše – zachované repetície a volty (napr. 655 Agnus) a riadky zalomené rovnako ako v pôvodnom zápise (napr. 642 Glória)
+
 ### 6.9.2026
 
 Pridané digitálne noty pre JKS 118 a 518

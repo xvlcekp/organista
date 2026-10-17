@@ -58,6 +58,19 @@ and they need a clean-up step the JKS hymns do not.
           a hidden staff. The systems are the ones MuseScore exported
           (<print new-system>), which include its automatic line wraps.
 
+          Repeats and voltas — MuseScore keeps the repeat marks and the volta
+          brackets ("1. 2.", "3.") on the first staff only; when that staff is
+          the silent one, they move to the first surviving staff with the
+          frames and layout breaks, or the export loses them (655 Agnus).
+
+          Line breaks — MuseScore wraps the lines of the two-staff score it
+          exports differently from the three-staff original (the silent staff
+          took part in the spacing), so the export's automatic <print
+          new-system> breaks drifted from the original's by a measure or an
+          extra line (642 Gloria: a lone "Amen" line). The untouched .mscz is
+          exported too, and its system and page breaks are written into the
+          output, measure by measure, so the lines are the original's.
+
   Known OSMD limitations that cannot be worked around in the MusicXML: lyrics
   placed above the staff are always drawn below it, and notes in parentheses
   lose their parentheses.
@@ -78,7 +91,7 @@ import time
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -271,6 +284,59 @@ def _move_layout_breaks(source: ET.Element, target: ET.Element) -> int:
     return moved
 
 
+SYSTEM_SPANNER_TYPES = ("Volta",)
+REPEAT_TAGS = ("startRepeat", "endRepeat")
+
+
+def _move_repeats_and_voltas(source: ET.Element, target: ET.Element) -> int:
+    """
+    Copy the repeat marks and volta brackets of a staff that is about to be
+    dropped onto the same measures of the target staff. MuseScore stores
+    <startRepeat>/<endRepeat> and the Volta spanners (their start with the
+    <Volta> body and <next>, and their end marker with <prev>) on the first
+    staff only, so dropping a silent first staff lost the repeat barlines and
+    the "1. 2." / "3." endings of 655 Agnus. The repeats go before the first
+    voice of the measure, the spanners to the start of its first voice, after
+    the key, time and clef changes there, where the source has them. Marks the
+    target already has are not duplicated. Returns the number of items moved.
+    """
+    target_measures = target.findall("Measure")
+    moved = 0
+    for index, measure in enumerate(source.findall("Measure")):
+        if index >= len(target_measures):
+            break
+        target_measure = target_measures[index]
+        for tag in REPEAT_TAGS:
+            element = measure.find(tag)
+            if element is None or target_measure.find(tag) is not None:
+                continue
+            voices = [i for i, child in enumerate(target_measure) if child.tag == "voice"]
+            target_measure.insert(voices[0] if voices else 0, element)
+            moved += 1
+        source_voice = measure.find("voice")
+        target_voice = target_measure.find("voice")
+        if source_voice is None or target_voice is None:
+            continue
+        spanners = [e for e in source_voice if e.tag == "Spanner" and e.get("type") in SYSTEM_SPANNER_TYPES]
+        if not spanners:
+            continue
+        existing = {ET.tostring(e, encoding="unicode").strip() for e in target_voice
+                    if e.tag == "Spanner" and e.get("type") in SYSTEM_SPANNER_TYPES}
+        insert_at = 0
+        for i, child in enumerate(target_voice):
+            if child.tag in ("KeySig", "TimeSig", "Clef"):
+                insert_at = i + 1
+            else:
+                break
+        for spanner in spanners:
+            if ET.tostring(spanner, encoding="unicode").strip() in existing:
+                continue
+            target_voice.insert(insert_at, spanner)
+            insert_at += 1
+            moved += 1
+    return moved
+
+
 def _fix_part_bracket(part: ET.Element) -> None:
     """
     Keep a part's brace consistent after some of its staves were dropped.
@@ -320,6 +386,7 @@ def remove_empty_staves(mscx_xml: str) -> Tuple[str, List[str]]:
     for staff in empty:
         _move_frames(staff, surviving[0])
         _move_layout_breaks(staff, surviving[0])
+        _move_repeats_and_voltas(staff, surviving[0])
         score.remove(staff)
 
     # Drop the matching staff definitions, then the parts left without staves.
@@ -612,6 +679,56 @@ def _systems(part: ET.Element) -> List[List[ET.Element]]:
     return systems
 
 
+def read_system_breaks(musicxml_str: str) -> Dict[str, Tuple[bool, bool]]:
+    """{measure number: (new system, new page)} of the first part's measures that start one."""
+    root = ET.fromstring(_strip_xml_preamble(musicxml_str))
+    part = root.find("part")
+    breaks: Dict[str, Tuple[bool, bool]] = {}
+    for measure in (part.findall("measure") if part is not None else []):
+        new_system = any(p.get("new-system") == "yes" for p in measure.findall("print"))
+        new_page = any(p.get("new-page") == "yes" for p in measure.findall("print"))
+        if new_system or new_page:
+            breaks[measure.get("number")] = (new_system, new_page)
+    return breaks
+
+
+def apply_system_breaks(musicxml_str: str, breaks: Dict[str, Tuple[bool, bool]]) -> Tuple[str, int]:
+    """
+    Return (MusicXML, number of measures changed) with the system and page breaks
+    of every part set to `breaks` (from read_system_breaks of the untouched
+    original's export): a measure in `breaks` starts a system or page, every
+    other measure does not. A <print> element is added where a measure has
+    none, other <print> attributes and children (layouts) are kept.
+    """
+    root = ET.fromstring(_strip_xml_preamble(musicxml_str))
+    changed = 0
+    for part in root.findall("part"):
+        for index, measure in enumerate(part.findall("measure")):
+            wanted_system, wanted_page = breaks.get(measure.get("number"), (False, False))
+            if index == 0:
+                wanted_system, wanted_page = False, False   # the first measure never carries a break
+            prints = measure.findall("print")
+            has_system = any(p.get("new-system") == "yes" for p in prints)
+            has_page = any(p.get("new-page") == "yes" for p in prints)
+            if (has_system, has_page) == (wanted_system, wanted_page):
+                continue
+            for p in prints:
+                for attribute in NEW_SYSTEM_ATTRIBUTES:
+                    p.attrib.pop(attribute, None)
+            if wanted_system or wanted_page:
+                if not prints:
+                    p = ET.Element("print")
+                    p.tail = measure.text if measure.text and measure.text.strip() == "" else "\n"
+                    measure.insert(0, p)
+                    prints = [p]
+                if wanted_system:
+                    prints[0].set("new-system", "yes")
+                if wanted_page:
+                    prints[0].set("new-page", "yes")
+            changed += 1
+    return _serialize(root), changed
+
+
 def _note_staff(note: ET.Element) -> str:
     return (note.findtext("staff") or "1").strip()
 
@@ -803,11 +920,24 @@ def process_file(mscz_path: Path, output_dir: Path, output_stem: str, musescore_
 
         musicxml_str = exported.read_text(encoding="utf-8")
 
+        breaks = None
+        if removed:
+            # the lines of the original: MuseScore wraps the stripped score differently
+            original_export = Path(tmp) / "original.musicxml"
+            print("        MuseScore 4 export of the untouched original, for its line breaks")
+            if convert_mscz_to_musicxml(mscz_path, original_export, musescore_cmd):
+                breaks = read_system_breaks(original_export.read_text(encoding="utf-8"))
+            else:
+                print("        WARNING: no export of the original, the lines are the stripped score's")
+
     hide_empty, keep_first_system = read_hide_empty_staves(mscz_path)
     try:
         finished = set_work_title(musicxml_str, title)
         finished, promoted = promote_frame_headers(finished, headers)
         finished, hidden = hide_tick_barlines(finished)
+        rewrapped = 0
+        if breaks is not None:
+            finished, rewrapped = apply_system_breaks(finished, breaks)
         emptied = 0
         if hide_empty:
             finished, emptied = hide_rests_of_empty_staves(finished, keep_first_system)
@@ -823,6 +953,8 @@ def process_file(mscz_path: Path, output_dir: Path, output_stem: str, musescore_
         print("        No section headers to anchor")
     if hidden:
         print(f"        Hid {hidden} tick barline(s)")
+    if breaks is not None:
+        print(f"        Line breaks of the original: {len(breaks)} ({rewrapped} measure(s) changed)")
     if emptied:
         print(f"        Emptied {emptied} staff-system(s) MuseScore hides")
     if finished != musicxml_str:
