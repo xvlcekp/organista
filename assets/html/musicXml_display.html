@@ -584,12 +584,16 @@
             applyPageView();
         }
 
-        // Full redraw at the computed fit zoom. Used after transposition or
-        // engraving changes, where the whole sheet has to be redrawn anyway.
-        async function autoFitAndRender() {
+        // Full redraw at the computed fit zoom: the first draw after loading and
+        // every transposition, lyric padding or lyrics visibility change. Logs the
+        // split between the fit search and the draw, next to the load total.
+        function autoFitAndRender() {
             if (!osmd || baseSystemCount === null) return;
+            const t0 = performance.now();
             fitZoom();
+            const t1 = performance.now();
             render();
+            console.log(`[perf] refit: fit ${((t1 - t0) / 1000).toFixed(2)}s, render ${((performance.now() - t1) / 1000).toFixed(2)}s, zoom ${osmd.zoom.toFixed(3)}`);
         }
 
         // NOTE: OSMD 2.x's incremental renderNext() API is deliberately not
@@ -749,17 +753,6 @@
             return updateLyricsPadding(next === undefined ? currentLyricsPadding : next);
         }
 
-        async function toggleLyrics() {
-            if (!osmd) return;
-            lyricsVisible = !lyricsVisible;
-            osmd.EngravingRules.RenderLyrics = lyricsVisible;
-            osmd.EngravingRules.RenderCopyright = lyricsVisible;
-            osmd.EngravingRules.RenderComposer = lyricsVisible;
-            osmd.EngravingRules.RenderLyricist = lyricsVisible;
-            osmd.updateGraphic();
-            await autoFitAndRender();
-        }
-
         function lyricsPaddingDown() {
             const lower = LYRICS_PADDING_STEPS.filter(v => v < currentLyricsPadding);
             return updateLyricsPadding(lower.length ? lower[lower.length - 1] : currentLyricsPadding);
@@ -769,27 +762,26 @@
             return updateLyricsPadding(defaultLyricsPadding);
         }
 
-        async function shrinkZoomToFit() {
-            const step = 0.05;
-            let iterations = 0;
-            while (countSystems(osmd) > baseSystemCount && osmd.zoom > 0.1) {
-                osmd.zoom = Math.max(0.1, osmd.zoom - step);
-                render();
-                iterations++;
-            }
+        function toggleLyrics() {
+            if (!osmd) return;
+            lyricsVisible = !lyricsVisible;
+            osmd.EngravingRules.RenderLyrics = lyricsVisible;
+            osmd.EngravingRules.RenderCopyright = lyricsVisible;
+            osmd.EngravingRules.RenderComposer = lyricsVisible;
+            osmd.EngravingRules.RenderLyricist = lyricsVisible;
+            osmd.updateGraphic();
+            autoFitAndRender();
         }
 
         async function updateTranspose(val) {
             if (!osmd) return;
             currentTranspose = Math.max(-12, Math.min(12, val));
             try {
+                // Transposing changes the accidentals and so the width of the measures,
+                // in both directions; fit the zoom afresh instead of only shrinking it.
                 osmd.Sheet.Transpose = currentTranspose;
                 osmd.updateGraphic();
-                render();
-                const systems = countSystems(osmd);
-                if (systems > baseSystemCount) {
-                    await shrinkZoomToFit();
-                }
+                await autoFitAndRender();
                 TransposeChannel.postMessage('t:' + currentTranspose);
             } catch (e) {
                 console.error('Transpose error:', e);

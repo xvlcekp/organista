@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Opravené odstránenie účtu – dáta sa vymažú úplne, a ak sa to nepodarí, účet zostane zachovaný a zobrazí sa chyba
 - Opravená chyba pri odchode z PDF noty počas vykresľovania strany (Android)
 - Menej falošných chýb hlásených na pozadí (výpadok siete, iOS, vymazaný zoznam skladieb)
+- Transpozícia digitálnych nôt nanovo prispôsobí zväčšenie oboma smermi – po transpozícii nahor a späť už noty neostávajú menšie
 
 ### Security
 
