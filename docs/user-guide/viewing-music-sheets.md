@@ -31,6 +31,7 @@ a hranie s otáčaním strán — ukazuje [video na úvodnej stránke](index.md)
 Platí to pre PDF ako aj pre **digitálne noty JKS**: piesne s viac ako tromi slohami
 majú ďalšie slohy na ďalších stranách pod rovnakými notami. Na obrazovke je vždy
 jedna strana; počítadlo strán je pri digitálnych notách nad modrým tlačidlom ovládania.
+Strany digitálnych nôt otočíte aj potiahnutím prstom nahor alebo nadol, rovnako ako pri PDF.
 
 !!! tip
 V [Nastaveniach](settings.md) si zapnite aj **Nechať obrazovku zapnutú**,

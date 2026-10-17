@@ -559,6 +559,32 @@
             showPage(currentPage - 1);
         }
 
+        // Swiping turns the page like the PDF viewer does: a swipe up on a page that is already
+        // scrolled to its bottom goes forward, a swipe down at the top goes back, so a page taller
+        // than the screen scrolls first. Pages that fit the screen are at both ends and turn on
+        // any vertical swipe. The export WebView loads this file too but never receives touches.
+        const SWIPE_MIN_PX = 60;
+        let swipe = null; // { y, x, atTop, atBottom } of the touch start
+        document.addEventListener('touchstart', e => {
+            if (!pagedView || e.touches.length !== 1) { swipe = null; return; }
+            const se = document.scrollingElement;
+            swipe = {
+                y: e.touches[0].clientY,
+                x: e.touches[0].clientX,
+                atTop: se.scrollTop <= 1,
+                atBottom: se.scrollTop + se.clientHeight >= se.scrollHeight - 1,
+            };
+        }, { passive: true });
+        document.addEventListener('touchend', e => {
+            if (!swipe) return;
+            const dy = e.changedTouches[0].clientY - swipe.y;
+            const dx = e.changedTouches[0].clientX - swipe.x;
+            const { atTop, atBottom } = swipe;
+            swipe = null;
+            if (Math.abs(dy) < SWIPE_MIN_PX || Math.abs(dx) > Math.abs(dy)) return;
+            if (dy < 0 && atBottom) nextPage();
+            else if (dy > 0 && atTop) prevPage();
+        }, { passive: true });
 
         // Draws the sheet and the section names. A name that does not fit is handled once per
         // sheet and then sticks: at a system start the left margin is widened by the shortfall
