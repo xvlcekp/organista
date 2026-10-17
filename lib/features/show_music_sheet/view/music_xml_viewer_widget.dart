@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_controls_overlay.dart';
 import 'package:organista/features/show_music_sheet/view/page_navigation.dart';
@@ -49,23 +48,12 @@ class MusicXmlViewerWidget extends HookWidget {
     ValueNotifier<int> currentTranspose,
     ValueNotifier<double> currentLyricsPadding,
     ValueNotifier<(int, int)> pages,
-    MusicSheetUrlSource urlSource,
+    MusicSheetUrlSource? urlSource,
   ) async {
     // Capture context-dependent objects BEFORE any await
     final cacheManager = context.read<CacheManager>();
     final playlistBloc = context.read<PlaylistBloc>();
-    String fileData;
-    try {
-      final cachedFile = await cacheManager.getSingleFile(urlSource.musicSheet.fileUrl);
-      final bytes = await cachedFile.readAsBytes();
-      // Convert to base64 data URL for offline loading — offloaded to a
-      // background isolate because encoding large files on the main thread
-      // causes ANRs on budget devices.
-      final encoded = await compute(base64Encode, bytes);
-      fileData = 'data:application/octet-stream;base64,$encoded';
-    } catch (e) {
-      fileData = urlSource.musicSheet.fileUrl;
-    }
+    final fileData = await _loadFileData(cacheManager);
 
     final controller = WebViewController();
     controller
@@ -85,7 +73,7 @@ class MusicXmlViewerWidget extends HookWidget {
         NavigationDelegate(
           onPageFinished: (_) {
             controller.runJavaScript(
-              'initSheet(${jsonEncode(fileData)}, ${urlSource.musicSheet.transposition})',
+              'initSheet(${jsonEncode(fileData)}, ${currentTranspose.value})',
             );
           },
         ),
@@ -99,12 +87,15 @@ class MusicXmlViewerWidget extends HookWidget {
             final val = int.tryParse(msg.characters.getRange(_kChannelPrefixLength).string);
             if (val != null) {
               currentTranspose.value = val;
-              playlistBloc.add(
-                UpdateMusicSheetTranspositionEvent(
-                  musicSheet: urlSource.musicSheet,
-                  transposition: val,
-                ),
-              );
+              // Only a stored sheet has a transposition to persist; picked bytes are not saved yet.
+              if (urlSource != null) {
+                playlistBloc.add(
+                  UpdateMusicSheetTranspositionEvent(
+                    musicSheet: urlSource.musicSheet,
+                    transposition: val,
+                  ),
+                );
+              }
             }
           } else if (msg.startsWith('l:')) {
             final val = double.tryParse(msg.characters.getRange(_kChannelPrefixLength).string);
@@ -125,13 +116,34 @@ class MusicXmlViewerWidget extends HookWidget {
     return controller;
   }
 
+  /// Resolves the sheet to a base64 data URL the page can load offline. A url source that cannot be
+  /// downloaded falls back to its remote URL.
+  Future<String> _loadFileData(CacheManager cacheManager) async {
+    final Uint8List bytes;
+    switch (source) {
+      case MusicSheetBytesSource(bytes: final fileBytes):
+        bytes = fileBytes;
+      case MusicSheetUrlSource(:final musicSheet):
+        try {
+          final cachedFile = await cacheManager.getSingleFile(musicSheet.fileUrl);
+          bytes = await cachedFile.readAsBytes();
+        } catch (e) {
+          return musicSheet.fileUrl;
+        }
+    }
+    // Offloaded to a background isolate because encoding large files on the main thread causes ANRs
+    // on budget devices.
+    final encoded = await compute(base64Encode, bytes);
+    return 'data:application/octet-stream;base64,$encoded';
+  }
+
   Future<void> _initialize(
     BuildContext context,
     ValueNotifier<WebViewController?> controller,
     ValueNotifier<int> currentTranspose,
     ValueNotifier<double> currentLyricsPadding,
     ValueNotifier<(int, int)> pages,
-    MusicSheetUrlSource urlSource,
+    MusicSheetUrlSource? urlSource,
   ) async {
     try {
       if (context.mounted) {
@@ -158,23 +170,10 @@ class MusicXmlViewerWidget extends HookWidget {
     final controller = useState<WebViewController?>(null);
 
     useEffect(() {
-      if (mode == MusicSheetViewMode.thumbnail || urlSource == null) return null;
+      if (mode == MusicSheetViewMode.thumbnail) return null;
       _initialize(context, controller, currentTranspose, currentLyricsPadding, pages, urlSource);
       return null;
     }, const []);
-
-    if (source is MusicSheetBytesSource) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.music_note, size: 64),
-            const SizedBox(height: 16),
-            Text(context.loc.noFileDataAvailable),
-          ],
-        ),
-      );
-    }
 
     if (mode == MusicSheetViewMode.thumbnail) {
       return MusicXmlThumbnailWidget(sequenceId: urlSource!.musicSheet.sequenceId);
