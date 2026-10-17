@@ -108,12 +108,25 @@ Preview locally: `pip install mkdocs-material && mkdocs serve` → http://127.0.
 
 `docs/user-guide/whats-new.md` is the **single source of truth for product highlights/release notes** (per-version feature showcases with images/videos in `docs/user-guide/assets/whats-new/<version>/`). README deliberately only links to it — do not re-add a changelog section to README. Raw HTML `<img>`/`<video>` tags in MkDocs pages need `../assets/...` paths (MkDocs only rewrites Markdown image paths, not raw HTML).
 
+## iOS CocoaPods lockfile (MANDATORY after any pubspec.yaml change)
+
+**Every time `pubspec.yaml` or `pubspec.lock` changes (adding/removing/upgrading a package, `flutter pub upgrade`, Flutter SDK bump, version bump before a release), `ios/Podfile.lock` MUST be regenerated in the same change and included in the diff.** A stale `Podfile.lock` is the #1 cause of failed Codemagic iOS release builds (see commit `8d94589` "forgot to update cocopods").
+
+```bash
+flutter pub get
+cd ios && pod install --repo-update && cd ..
+git status ios/Podfile.lock   # must show up as modified if any plugin/pod version changed
+```
+
+If `pod install` fails on a version conflict, run `pod update` for the offending pod (e.g. `pod update FirebaseAppCheck`). Never finish a pubspec-related task without having run this and mentioning the `Podfile.lock` state in the summary.
+
 ## Releasing
 
 1. Update `CHANGELOG.md` and add a version section to `docs/user-guide/whats-new.md` (product highlights)
 2. Bump version in `pubspec.yaml`
-3. Commit and push, then create a GitHub release tag
-4. Codemagic automatically builds and distributes on a release tag (via Shorebird integration)
+3. **Regenerate `ios/Podfile.lock`** (see the section above) and make sure it is part of the release diff
+4. Commit and push, then create a GitHub release tag
+5. Codemagic automatically builds and distributes on a release tag (via Shorebird integration)
 
 ## Android Signing (local only)
 

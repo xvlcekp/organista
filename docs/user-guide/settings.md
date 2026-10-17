@@ -11,7 +11,7 @@ Nastavenia otvoríte cez menu **⋮** vpravo hore → **Nastavenia**.
 - **Zobraziť navigačné šípky** — pri viacstranových PDF notách sa na okraji obrazovky
   zobrazí šípka na okamžité otočenie strany jedným ťuknutím.
 - **Nechať obrazovku zapnutú** — počas zobrazenia nôt obrazovka nezhasne.
-  Odporúčame zapnúť pri hraní.
+  Predvolene je zapnuté; ak chcete šetriť batériu, môžete ho vypnúť.
 
 ## Správa úložiska
 

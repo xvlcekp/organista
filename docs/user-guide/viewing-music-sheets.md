@@ -34,8 +34,8 @@ jedna strana; počítadlo strán je pri digitálnych notách nad modrým tlačid
 Strany digitálnych nôt otočíte aj potiahnutím prstom nahor alebo nadol, rovnako ako pri PDF.
 
 !!! tip
-V [Nastaveniach](settings.md) si zapnite aj **Nechať obrazovku zapnutú**,
-aby počas hrania nezhasla.
+Obrazovka počas hrania predvolene nezhasne. Ak to nechcete, v [Nastaveniach](settings.md)
+vypnite **Nechať obrazovku zapnutú**.
 
 !!! note "Bluetooth pedál alebo klávesnica"
 Na listovanie môžete použiť aj **Bluetooth pedál či klávesnicu** — šikovné,
