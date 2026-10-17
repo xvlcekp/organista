@@ -269,6 +269,42 @@ void main() {
       expect(find.text('No file data available'), findsNothing);
     });
 
+    testWidgets('gives the preview all the space the name field and buttons leave', (tester) async {
+      final mockFile = MusicSheetFile(
+        file: PlatformFile(name: 'test.png', size: validPngBytes.length, bytes: validPngBytes),
+        mediaType: MediaType.image,
+      );
+      final cubit =
+          AddEditMusicSheetViewTest(
+            firestoreRepository: mockFirestoreRepository,
+            storageRepository: mockStorageRepository,
+          )..setStateForTest(
+            UploadMusicSheetState(file: mockFile, repositoryId: 'repo-1'),
+          );
+      addTearDown(cubit.close);
+
+      await tester.pumpWidget(
+        BlocProvider<AddEditMusicSheetCubit>.value(
+          value: cubit,
+          child: Provider<CacheManager>.value(
+            value: DefaultCacheManager(),
+            child: const MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: AddEditMusicSheetView(),
+            ),
+          ),
+        ),
+      );
+
+      final preview = find.byType(MusicSheetView);
+      final screenHeight = tester.getSize(find.byType(Scaffold)).height;
+      // The preview is the only flexible child: it ends right above the padded name field
+      // and takes more than half of the screen, rather than a fixed third of it.
+      expect(tester.getSize(preview).height, greaterThan(screenHeight / 2));
+      expect(tester.getBottomLeft(preview).dy, closeTo(tester.getTopLeft(find.byType(TextField)).dy - 8, 1));
+    });
+
     group('AddMusicSheetToPlaylistState', () {
       late MockPlaylistBloc mockPlaylistBloc;
       late MockCacheManager mockCacheManager;

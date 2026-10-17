@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Počet nôt v repozitári sa načítava len raz namiesto pri každom prekreslení zoznamu repozitárov
 - Zoznam skladieb sa už neprekresľuje dvakrát pri každej zmene (napr. pri presune nôt)
 - Zlepšenie logovania
+- Obrazovka pridania notového záznamu (pridanie, premenovanie) využíva pre náhľad nôt celú voľnú plochu namiesto tretiny obrazovky
 
 ### Deprecated
 
@@ -40,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Opravená chyba pri odchode z PDF noty počas vykresľovania strany (Android)
 - Menej falošných chýb hlásených na pozadí (výpadok siete, iOS, vymazaný zoznam skladieb)
 - Transpozícia digitálnych nôt nanovo prispôsobí zväčšenie oboma smermi – po transpozícii nahor a späť už noty neostávajú menšie
+- Pri nahrávaní vlastného MusicXML súboru sa pred uložením zobrazí náhľad nôt namiesto chybného hlásenia „Súbor je poškodený“
+- Na iOS sa dajú MusicXML súbory vybrať pri nahrávaní vlastných nôt (predtým boli v okne výberu súboru neaktívne)
 
 ### Security
 
