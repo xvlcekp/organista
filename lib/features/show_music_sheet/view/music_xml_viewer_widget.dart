@@ -8,7 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_controls_overlay.dart';
-import 'package:organista/features/show_music_sheet/view/music_xml_page_navigation.dart';
+import 'package:organista/features/show_music_sheet/view/page_navigation.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_thumbnail_widget.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
@@ -194,7 +194,12 @@ class MusicXmlViewerWidget extends HookWidget {
           },
         ),
         if (mode == MusicSheetViewMode.full)
-          MusicXmlPageNavigation(wvc: wvc, currentPage: pages.value.$1, pageCount: pages.value.$2),
+          PageNavigation(
+            currentPage: pages.value.$1,
+            pageCount: pages.value.$2,
+            onPrevious: () => wvc.runJavaScript('prevPage()'),
+            onNext: () => wvc.runJavaScript('nextPage()'),
+          ),
         if (mode == MusicSheetViewMode.full)
           MusicXmlControlsOverlay(
             currentTranspose: currentTranspose.value,

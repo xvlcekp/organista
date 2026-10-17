@@ -3,22 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_navigation_touch_area.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 /// Tap areas at the top and bottom of the screen that turn the pages of a
-/// multi-page MusicXML sheet, the same way [PdfNavigationArrows] does for PDFs.
-/// The page itself is turned by the JavaScript in `musicXml_display.html`.
-class MusicXmlPageNavigation extends StatelessWidget {
-  const MusicXmlPageNavigation({
+/// multi-page sheet. Shown only when the user has enabled the navigation
+/// arrows in the settings and the sheet has more than one page; the top area
+/// appears from the second page on, the bottom area until the last page.
+/// How a page is turned is up to the caller: pdfx jumps the controller, the
+/// MusicXML viewer calls into the page's JavaScript.
+class PageNavigation extends StatelessWidget {
+  const PageNavigation({
     super.key,
-    required this.wvc,
     required this.currentPage,
     required this.pageCount,
+    required this.onPrevious,
+    required this.onNext,
   });
 
-  final WebViewController wvc;
   final int currentPage;
   final int pageCount;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +33,8 @@ class MusicXmlPageNavigation extends StatelessWidget {
         }
         return Stack(
           children: [
-            if (currentPage > 1)
-              PdfNavigationTouchArea(
-                direction: NavigationDirection.top,
-                onTap: () => wvc.runJavaScript('prevPage()'),
-              ),
-            if (currentPage < pageCount)
-              PdfNavigationTouchArea(
-                direction: NavigationDirection.bottom,
-                onTap: () => wvc.runJavaScript('nextPage()'),
-              ),
+            if (currentPage > 1) PdfNavigationTouchArea(direction: NavigationDirection.top, onTap: onPrevious),
+            if (currentPage < pageCount) PdfNavigationTouchArea(direction: NavigationDirection.bottom, onTap: onNext),
           ],
         );
       },
