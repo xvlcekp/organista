@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Nastavenie „Nechať obrazovku zapnutú“ je predvolene zapnuté
 - Menšie okraje strany a menšie medzery pri dlhých slabikách – noty na telefóne asi o 8 % väčšie
 - Čísla slôh („1.“, „1.-4.“) sú vľavo pred prvou slabikou každého riadku ako v tlačenom spevníku; názvy častí („Kyrie:“, „Glória:“) kurzívou pred číslom
 - Optimalizované rozloženie digitálnych nôt

@@ -18,7 +18,7 @@ class SettingsRepository {
 
   bool getShowNavigationArrows() => _prefs.getBool(_showNavigationArrowsKey) ?? true;
 
-  bool getKeepScreenOn() => _prefs.getBool(_keepScreenOnKey) ?? false;
+  bool getKeepScreenOn() => _prefs.getBool(_keepScreenOnKey) ?? true;
 
   // Write methods
   Future<void> saveThemeModeIndex(int index) async {
