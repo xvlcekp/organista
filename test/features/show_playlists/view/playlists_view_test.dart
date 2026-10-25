@@ -273,6 +273,23 @@ void main() {
         ).called(1);
       });
 
+      testWidgets('rename still rejects an unchanged name', (tester) async {
+        await openMenu(tester);
+
+        await tester.tap(find.text('Rename playlist'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Rename'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Name cannot be the same as current'), findsOneWidget);
+        verifyNever(
+          () => mockShowPlaylistsCubit.editPlaylistName(
+            newPlaylistName: any(named: 'newPlaylistName'),
+            playlist: any(named: 'playlist'),
+          ),
+        );
+      });
+
       testWidgets('duplicate suggests "<name> (copy)" and accepts the suggestion as it is', (tester) async {
         when(
           () => mockShowPlaylistsCubit.duplicatePlaylist(

@@ -1187,6 +1187,8 @@ void main() {
       'addNewPlaylist': (repo, playlist, sheet) => repo.addNewPlaylist(playlistName: 'New', userId: playlist.userId),
       'renamePlaylist': (repo, playlist, sheet) => repo.renamePlaylist(newPlaylistName: 'Renamed', playlist: playlist),
       'deletePlaylist': (repo, playlist, sheet) => repo.deletePlaylist(playlist: playlist),
+      'duplicatePlaylist': (repo, playlist, sheet) =>
+          repo.duplicatePlaylist(playlist: playlist, newPlaylistName: 'Copy'),
     };
 
     for (final write in playlistWrites.entries) {
