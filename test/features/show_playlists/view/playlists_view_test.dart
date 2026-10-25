@@ -230,25 +230,136 @@ void main() {
       });
     });
 
-    group('Basic Interactions', () {
-      testWidgets('should show dismissible widget for playlist deletion', (tester) async {
-        await tester.pumpWidget(
-          createTestWidget(
-            initialState: PlaylistsLoadedState(playlists: [testPlaylist1]),
-          ),
-        );
+    group('Long-press menu', () {
+      Future<void> openMenu(WidgetTester tester) async {
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [testPlaylist1])));
+        await tester.longPress(find.text('Sunday Service'));
+        await tester.pumpAndSettle();
+      }
 
-        final dismissible = find.byType(Dismissible);
-        expect(dismissible, findsOneWidget);
+      testWidgets('playlists can no longer be deleted by swiping', (tester) async {
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [testPlaylist1])));
 
-        // Start swipe gesture to reveal delete background
-        await tester.drag(dismissible, const Offset(-100, 0));
-        await tester.pump();
-
-        // Check if delete icon is visible in background
-        expect(find.byIcon(Icons.delete), findsOneWidget);
+        expect(find.byType(Dismissible), findsNothing);
       });
 
+      testWidgets('long press shows rename, duplicate and delete', (tester) async {
+        await openMenu(tester);
+
+        expect(find.text('Rename playlist'), findsOneWidget);
+        expect(find.text('Duplicate playlist'), findsOneWidget);
+        expect(find.text('Delete playlist'), findsOneWidget);
+      });
+
+      testWidgets('rename opens the dialog prefilled with the current name and renames the playlist', (tester) async {
+        when(
+          () => mockShowPlaylistsCubit.editPlaylistName(
+            newPlaylistName: any(named: 'newPlaylistName'),
+            playlist: any(named: 'playlist'),
+          ),
+        ).thenAnswer((_) async {});
+        await openMenu(tester);
+
+        await tester.tap(find.text('Rename playlist'));
+        await tester.pumpAndSettle();
+        expect(find.widgetWithText(TextField, 'Sunday Service'), findsOneWidget);
+
+        await tester.enterText(find.byType(TextField), 'Evening Service');
+        await tester.tap(find.text('Rename'));
+        await tester.pumpAndSettle();
+
+        verify(
+          () => mockShowPlaylistsCubit.editPlaylistName(newPlaylistName: 'Evening Service', playlist: testPlaylist1),
+        ).called(1);
+      });
+
+      testWidgets('rename still rejects an unchanged name', (tester) async {
+        await openMenu(tester);
+
+        await tester.tap(find.text('Rename playlist'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Rename'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Name cannot be the same as current'), findsOneWidget);
+        verifyNever(
+          () => mockShowPlaylistsCubit.editPlaylistName(
+            newPlaylistName: any(named: 'newPlaylistName'),
+            playlist: any(named: 'playlist'),
+          ),
+        );
+      });
+
+      testWidgets('duplicate suggests "<name> (copy)" and accepts the suggestion as it is', (tester) async {
+        when(
+          () => mockShowPlaylistsCubit.duplicatePlaylist(
+            newPlaylistName: any(named: 'newPlaylistName'),
+            playlist: any(named: 'playlist'),
+          ),
+        ).thenAnswer((_) async {});
+        await openMenu(tester);
+
+        await tester.tap(find.text('Duplicate playlist'));
+        await tester.pumpAndSettle();
+        expect(find.widgetWithText(TextField, 'Sunday Service (copy)'), findsOneWidget);
+
+        await tester.tap(find.text('Duplicate'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(AlertDialog), findsNothing, reason: 'the suggested name must not be rejected as unchanged');
+        verify(
+          () => mockShowPlaylistsCubit.duplicatePlaylist(
+            newPlaylistName: 'Sunday Service (copy)',
+            playlist: testPlaylist1,
+          ),
+        ).called(1);
+      });
+
+      testWidgets('duplicate rejects the name of the original playlist', (tester) async {
+        await openMenu(tester);
+
+        await tester.tap(find.text('Duplicate playlist'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Sunday Service');
+        await tester.tap(find.text('Duplicate'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Name cannot be the same as current'), findsOneWidget);
+        verifyNever(
+          () => mockShowPlaylistsCubit.duplicatePlaylist(
+            newPlaylistName: any(named: 'newPlaylistName'),
+            playlist: any(named: 'playlist'),
+          ),
+        );
+      });
+
+      testWidgets('delete asks for confirmation and deletes only after confirming', (tester) async {
+        when(() => mockShowPlaylistsCubit.deletePlaylist(playlist: any(named: 'playlist'))).thenAnswer((_) async {});
+        await openMenu(tester);
+
+        await tester.tap(find.text('Delete playlist'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('Are you sure you want to delete this playlist? You cannot undo this operation!'),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+        verifyNever(() => mockShowPlaylistsCubit.deletePlaylist(playlist: any(named: 'playlist')));
+
+        await tester.longPress(find.text('Sunday Service'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Delete playlist'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(TextButton, 'Delete playlist'));
+        await tester.pumpAndSettle();
+
+        verify(() => mockShowPlaylistsCubit.deletePlaylist(playlist: testPlaylist1)).called(1);
+      });
+    });
+
+    group('Basic Interactions', () {
       testWidgets('should have proper widget hierarchy', (tester) async {
         await tester.pumpWidget(
           createTestWidget(

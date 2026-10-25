@@ -375,6 +375,17 @@ class AppLocalizationsSk extends AppLocalizations {
   String get deletePlaylistMessage => 'Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!';
 
   @override
+  String get duplicatePlaylist => 'Duplikovať zoznam skladieb';
+
+  @override
+  String get duplicate => 'Duplikovať';
+
+  @override
+  String playlistCopyName(String playlistName) {
+    return '$playlistName (kópia)';
+  }
+
+  @override
   String get about => 'O aplikácii';
 
   @override

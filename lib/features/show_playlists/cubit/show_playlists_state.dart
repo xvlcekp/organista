@@ -21,7 +21,7 @@ class InitPlaylistState extends ShowPlaylistsState {
 class PlaylistsLoadedState extends ShowPlaylistsState {
   const PlaylistsLoadedState({required super.playlists, this.error});
 
-  /// Set when a playlist could not be created, renamed or deleted; the list itself stays valid.
+  /// Set when a playlist could not be created, renamed, duplicated or deleted; the list itself stays valid.
   final PlaylistError? error;
 
   @override

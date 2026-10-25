@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Duplikovanie zoznamu skladieb – dlhým podržaním zoznamu a voľbou „Duplikovať zoznam skladieb“ vznikne kópia so všetkými notami
 - Digitálne JKS majú všetky slohy pod notami a pribudlo pretáčanie strán podobne ako pri viac-stranových PDF
 
 ### Changed
 
+- Zoznam skladieb sa už nemaže potiahnutím doľava; premenovanie, duplikovanie aj vymazanie sú v ponuke po dlhom podržaní zoznamu
 - Nastavenie „Nechať obrazovku zapnutú“ je predvolene zapnuté
 - Menšie okraje strany a menšie medzery pri dlhých slabikách – noty na telefóne asi o 8 % väčšie
 - Čísla slôh („1.“, „1.-4.“) sú vľavo pred prvou slabikou každého riadku ako v tlačenom spevníku; názvy častí („Kyrie:“, „Glória:“) kurzívou pred číslom

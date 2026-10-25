@@ -471,6 +471,31 @@ void main() {
       });
     });
 
+    group('duplicatePlaylist', () {
+      test('creates a second playlist for the same user with the new name and the same music sheets', () async {
+        final sheetJson = createTestMusicSheetJson(musicSheetId: 'sheet-1', fileName: 'Amazing Grace.pdf');
+        final playlist = await createTestPlaylist(name: 'Sunday', musicSheets: [sheetJson]);
+
+        final result = await repository.duplicatePlaylist(playlist: playlist, newPlaylistName: 'Sunday (copy)');
+
+        expect(result, true);
+        final playlists = await fakeFirestore
+            .collection(FirebaseCollectionName.playlists)
+            .where(PlaylistKey.userId, isEqualTo: playlist.userId)
+            .get();
+        expect(playlists.docs, hasLength(2));
+        final copy = playlists.docs.singleWhere((doc) => doc.id != playlist.playlistId);
+        expect(copy.data()[PlaylistKey.name], 'Sunday (copy)');
+        expect(copy.data()[PlaylistKey.musicSheets], playlist.toMusicSheetJson());
+
+        final original = await fakeFirestore
+            .collection(FirebaseCollectionName.playlists)
+            .doc(playlist.playlistId)
+            .get();
+        expect(original.data()?[PlaylistKey.name], 'Sunday', reason: 'the original playlist is left untouched');
+      });
+    });
+
     group('deletePlaylist', () {
       test('should delete playlist successfully', () async {
         final playlist = await createTestPlaylist();
@@ -1162,6 +1187,8 @@ void main() {
       'addNewPlaylist': (repo, playlist, sheet) => repo.addNewPlaylist(playlistName: 'New', userId: playlist.userId),
       'renamePlaylist': (repo, playlist, sheet) => repo.renamePlaylist(newPlaylistName: 'Renamed', playlist: playlist),
       'deletePlaylist': (repo, playlist, sheet) => repo.deletePlaylist(playlist: playlist),
+      'duplicatePlaylist': (repo, playlist, sheet) =>
+          repo.duplicatePlaylist(playlist: playlist, newPlaylistName: 'Copy'),
     };
 
     for (final write in playlistWrites.entries) {

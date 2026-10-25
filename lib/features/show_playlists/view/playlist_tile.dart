@@ -8,6 +8,7 @@ import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/delete_playlist_dialog.dart';
+import 'package:organista/features/show_playlists/view/duplicate_playlist_dialog.dart';
 import 'package:organista/features/show_playlists/view/rename_playlist_dialog.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/services/auth/auth_user.dart';
@@ -38,84 +39,114 @@ class PlaylistTile extends StatelessWidget {
     final onSurfaceVariant = theme.colorScheme.onSurfaceVariant;
 
     return Card(
-      child: Dismissible(
-        key: ValueKey(playlist.playlistId),
-        direction: DismissDirection.endToStart,
-        background: Container(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.error,
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-          ),
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 24),
-          child: Icon(Icons.delete, color: theme.colorScheme.onError),
-        ),
-        confirmDismiss: (_) async {
-          final shouldDelete = await showDeletePlaylistDialog(context);
-          if (shouldDelete && context.mounted) {
-            // Not awaited: a Firestore write only completes once the server acknowledges it, which offline may
-            // take until the next connection; the tile is removed by the playlists stream anyway.
-            unawaited(context.read<ShowPlaylistsCubit>().deletePlaylist(playlist: playlist));
-          }
-          return false;
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        onLongPress: () => _showPlaylistContextMenu(context),
+        onTap: () {
+          context.read<PlaylistBloc>().add(
+            InitPlaylistEvent(playlist: playlist, user: user),
+          );
+          Navigator.of(context).push<void>(PlaylistView.route());
         },
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-          onLongPress: () {
-            showEditPlaylistDialog(context: context, playlistName: playlist.name).then((newName) {
-              if (newName != null && context.mounted) {
-                context.read<ShowPlaylistsCubit>().editPlaylistName(
-                  newPlaylistName: newName,
-                  playlist: playlist,
-                );
-              }
-            });
-          },
-          onTap: () {
-            context.read<PlaylistBloc>().add(
-              InitPlaylistEvent(playlist: playlist, user: user),
-            );
-            Navigator.of(context).push<void>(PlaylistView.route());
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              children: [
-                Container(
-                  width: _iconContainerSize,
-                  height: _iconContainerSize,
-                  decoration: BoxDecoration(
-                    color: tileColor,
-                    borderRadius: BorderRadius.circular(_iconContainerBorderRadius),
-                  ),
-                  child: Icon(Icons.music_note, color: theme.colorScheme.primary),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: _iconContainerSize,
+                height: _iconContainerSize,
+                decoration: BoxDecoration(
+                  color: tileColor,
+                  borderRadius: BorderRadius.circular(_iconContainerBorderRadius),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        playlist.name,
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${localizations.musicSheets}: ${playlist.musicSheets.length}',
-                        style: theme.textTheme.bodySmall?.copyWith(color: onSurfaceVariant),
-                      ),
-                    ],
-                  ),
+                child: Icon(Icons.music_note, color: theme.colorScheme.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      playlist.name,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${localizations.musicSheets}: ${playlist.musicSheets.length}',
+                      style: theme.textTheme.bodySmall?.copyWith(color: onSurfaceVariant),
+                    ),
+                  ],
                 ),
-                Icon(
-                  Icons.chevron_right,
-                  color: onSurfaceVariant,
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: onSurfaceVariant,
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  /// Bottom sheet with rename, duplicate and delete. The cubit is read before the sheet opens because the
+  /// follow-up dialogs run after the sheet (and its context) is gone.
+  void _showPlaylistContextMenu(BuildContext context) {
+    final localizations = context.loc;
+    final theme = Theme.of(context);
+    final playlistsCubit = context.read<ShowPlaylistsCubit>();
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: Text(localizations.renamePlaylist),
+                onTap: () {
+                  Navigator.of(bottomSheetContext).pop();
+                  showEditPlaylistDialog(context: context, playlistName: playlist.name).then((newName) {
+                    if (newName != null) {
+                      playlistsCubit.editPlaylistName(newPlaylistName: newName, playlist: playlist);
+                    }
+                  });
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: Text(localizations.duplicatePlaylist),
+                onTap: () {
+                  Navigator.of(bottomSheetContext).pop();
+                  showDuplicatePlaylistDialog(context: context, playlistName: playlist.name).then((newName) {
+                    if (newName != null) {
+                      playlistsCubit.duplicatePlaylist(newPlaylistName: newName, playlist: playlist);
+                    }
+                  });
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete, color: theme.colorScheme.error),
+                title: Text(
+                  localizations.deletePlaylist,
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+                onTap: () {
+                  Navigator.of(bottomSheetContext).pop();
+                  showDeletePlaylistDialog(context).then((shouldDelete) {
+                    if (shouldDelete) {
+                      // Not awaited: a Firestore write only completes once the server acknowledges it, which offline
+                      // may take until the next connection; the tile is removed by the playlists stream anyway.
+                      unawaited(playlistsCubit.deletePlaylist(playlist: playlist));
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

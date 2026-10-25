@@ -794,6 +794,24 @@ abstract class AppLocalizations {
   /// **'Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!'**
   String get deletePlaylistMessage;
 
+  /// No description provided for @duplicatePlaylist.
+  ///
+  /// In sk, this message translates to:
+  /// **'Duplikovať zoznam skladieb'**
+  String get duplicatePlaylist;
+
+  /// No description provided for @duplicate.
+  ///
+  /// In sk, this message translates to:
+  /// **'Duplikovať'**
+  String get duplicate;
+
+  /// Suggested name for a duplicated playlist
+  ///
+  /// In sk, this message translates to:
+  /// **'{playlistName} (kópia)'**
+  String playlistCopyName(String playlistName);
+
   /// No description provided for @about.
   ///
   /// In sk, this message translates to:

@@ -17,16 +17,24 @@ Obrazovka **Moje zoznamy skladieb** je domovská obrazovka aplikácie.
 
 Pri každom zozname vidíte počet nôt, ktoré obsahuje.
 
-## Premenovanie a vymazanie zoznamu
+## Premenovanie, duplikovanie a vymazanie zoznamu
 
-- **Premenovať** — dlho podržte prst na zozname a zadajte nový názov.
-- **Vymazať** — potiahnite zoznam prstom doľava a potvrďte. *Táto akcia sa nedá vrátiť späť.*
+Dlho podržte prst na zozname — zobrazí sa ponuka s troma možnosťami:
 
-Ak sa vytvorenie, premenovanie alebo vymazanie zoznamu nepodarí uložiť, aplikácia zobrazí hlášku
+![Ponuka zoznamu skladieb](assets/screenshots/playlist-context-menu.png){ width="300" }
+
+- **Premenovať zoznam skladieb** — zadajte nový názov a ťuknite na **Premenovať**.
+- **Duplikovať zoznam skladieb** — vytvorí kópiu zoznamu so všetkými notami v rovnakom poradí.
+  Aplikácia navrhne názov *pôvodný názov (kópia)*, ktorý môžete pred ťuknutím na **Duplikovať** zmeniť —
+  len nie na rovnaký názov, aký má pôvodný zoznam.
+  Hodí sa, keď hráte podobnú omšu opakovane a chcete si pripraviť variant bez toho, aby ste pôvodný zoznam menili.
+- **Vymazať zoznam skladieb** — potvrďte vymazanie. *Táto akcia sa nedá vrátiť späť.*
+
+Ak sa vytvorenie, premenovanie, duplikovanie alebo vymazanie zoznamu nepodarí uložiť, aplikácia zobrazí hlášku
 **Nastala chyba** — zoznamy zostanú v pôvodnom stave a akciu môžete zopakovať.
 
 <video autoplay loop muted playsinline controls width="300">
-  <source src="../assets/videos/deleting-playlist.mp4" type="video/mp4">
+  <source src="../assets/videos/playlist-menu.mp4" type="video/mp4">
 </video>
 
 ## Práca s notami v zozname

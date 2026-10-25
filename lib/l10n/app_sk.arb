@@ -124,6 +124,18 @@
   "tapToView": "Kliknutím zobrazíte",
   "deletePlaylist": "Vymazať zoznam skladieb",
   "deletePlaylistMessage": "Ste si istý, že chcete vymazať tento zoznam? Táto akcia sa nedá vrátiť späť!",
+  "duplicatePlaylist": "Duplikovať zoznam skladieb",
+  "duplicate": "Duplikovať",
+  "playlistCopyName": "{playlistName} (kópia)",
+  "@playlistCopyName": {
+    "description": "Suggested name for a duplicated playlist",
+    "placeholders": {
+      "playlistName": {
+        "type": "String",
+        "description": "The name of the playlist being duplicated"
+      }
+    }
+  },
   "about": "O aplikácii",
   "aboutMessage": "Aplikácia na správu notových záznamov\nVytvoril Pavol Vlček",
   "appSettings": "Nastavenia aplikácie",
