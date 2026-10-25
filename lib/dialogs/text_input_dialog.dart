@@ -9,7 +9,12 @@ Future<String?> showTextInputDialog({
   required String labelText,
   required String hintText,
   String initialText = '',
+
+  /// The name the input must differ from. Defaults to [initialText] (rename); a dialog that suggests a new name,
+  /// such as the copy name when duplicating, passes the original name instead.
+  String? currentText,
 }) {
+  final rejectedText = currentText ?? initialText;
   final localizations = context.loc;
   final theme = Theme.of(context);
   final TextEditingController textController = TextEditingController(text: initialText);
@@ -40,7 +45,7 @@ Future<String?> showTextInputDialog({
               if (input.isEmpty) {
                 showErrorDialog(context: context, text: localizations.inputCannotBeEmpty);
                 return; // Stop execution here
-              } else if (input == initialText) {
+              } else if (input == rejectedText) {
                 showErrorDialog(context: context, text: localizations.inputCannotBeSameAsCurrent);
                 return; // Stop execution here
               } else {

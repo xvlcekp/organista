@@ -88,6 +88,31 @@ void main() {
     );
 
     blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'duplicatePlaylist reports the error when the repository could not create the copy',
+      setUp: () => when(
+        () => repository.duplicatePlaylist(playlist: playlist, newPlaylistName: 'Sunday Service (copy)'),
+      ).thenAnswer((_) async => false),
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => seed,
+      act: (cubit) => cubit.duplicatePlaylist(newPlaylistName: 'Sunday Service (copy)', playlist: playlist),
+      expect: () => [failed, seed],
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'duplicatePlaylist emits nothing when the copy is written (the playlists stream delivers the new list)',
+      setUp: () => when(
+        () => repository.duplicatePlaylist(playlist: playlist, newPlaylistName: 'Sunday Service (copy)'),
+      ).thenAnswer((_) async => true),
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => seed,
+      act: (cubit) => cubit.duplicatePlaylist(newPlaylistName: 'Sunday Service (copy)', playlist: playlist),
+      expect: () => <ShowPlaylistsState>[],
+      verify: (_) => verify(
+        () => repository.duplicatePlaylist(playlist: playlist, newPlaylistName: 'Sunday Service (copy)'),
+      ).called(1),
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
       'deletePlaylist reports the error when the repository could not delete the playlist',
       setUp: () => when(() => repository.deletePlaylist(playlist: playlist)).thenAnswer((_) async => false),
       build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),

@@ -322,6 +322,26 @@ class FirebaseFirestoreRepository {
     }
   }
 
+  /// Creates a new playlist for the same user with the given name and a copy of the music sheets of [playlist].
+  Future<bool> duplicatePlaylist({
+    required Playlist playlist,
+    required String newPlaylistName,
+  }) async {
+    try {
+      final playlistPayload = PlaylistPayload(
+        userId: playlist.userId,
+        name: newPlaylistName,
+        musicSheets: playlist.musicSheets,
+      );
+      await _instance.collection(FirebaseCollectionName.playlists).add(playlistPayload);
+      logger.i("Duplicating playlist ${playlist.name} as $newPlaylistName");
+      return true;
+    } catch (e, stackTrace) {
+      _logPlaylistWriteFailure(e, stackTrace, 'duplicating playlist ${playlist.playlistId} as $newPlaylistName');
+      return false;
+    }
+  }
+
   Future<bool> deletePlaylist({required Playlist playlist}) async {
     try {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).delete();

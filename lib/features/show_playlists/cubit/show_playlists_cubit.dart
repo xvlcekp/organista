@@ -61,6 +61,14 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
     _reportIfNotWritten(written);
   }
 
+  Future<void> duplicatePlaylist({required String newPlaylistName, required Playlist playlist}) async {
+    final written = await _firebaseFirestoreRepository.duplicatePlaylist(
+      playlist: playlist,
+      newPlaylistName: newPlaylistName,
+    );
+    _reportIfNotWritten(written);
+  }
+
   Future<void> deletePlaylist({required Playlist playlist}) async {
     // Stop listening to the document first: the owner-only read rule fails for a deleted document, so an open
     // listener would otherwise receive permission-denied once the delete goes through.

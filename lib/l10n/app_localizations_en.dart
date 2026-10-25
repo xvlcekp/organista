@@ -373,6 +373,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deletePlaylistMessage => 'Are you sure you want to delete this playlist? You cannot undo this operation!';
 
   @override
+  String get duplicatePlaylist => 'Duplicate playlist';
+
+  @override
+  String get duplicate => 'Duplicate';
+
+  @override
+  String playlistCopyName(String playlistName) {
+    return '$playlistName (copy)';
+  }
+
+  @override
   String get about => 'About';
 
   @override
