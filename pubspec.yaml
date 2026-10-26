@@ -78,6 +78,7 @@ dependencies:
   file: ^7.0.1
   pdf_combiner: ^6.0.4 # For exporting playlist to PDF
   firebase_app_check: ^0.4.1+4
+  connectivity_plus: ^7.3.1
 
 # Config for generating app icons, on config change, it needs to be run again `dart run flutter_launcher_icons:generate`
 flutter_launcher_icons:

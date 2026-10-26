@@ -7,6 +7,7 @@ import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/views/app.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:organista/services/connectivity/connectivity_service.dart';
 import 'package:organista/repositories/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +27,10 @@ class AppRepository extends StatelessWidget {
           create: (context) => FirebaseStorageRepository(
             storage: FirebaseStorage.instance,
           ),
+        ),
+        RepositoryProvider<ConnectivityService>(
+          create: (context) => ConnectivityService()..start(),
+          dispose: (service) => service.dispose(),
         ),
         RepositoryProvider<SettingsRepository>(
           create: (context) => SettingsRepository(

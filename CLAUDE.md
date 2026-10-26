@@ -79,6 +79,9 @@ lib/
 
 **Firebase Streams**: `StreamManager.instance` tracks active Firestore listeners so they can all be cancelled before account deletion (prevents permission-denied errors).
 
+
+**Network state**: `ConnectivityService` (lib/services/connectivity) is the single source of truth (`isOnline`, `onlineChanges`); `ConnectivityCubit` only mirrors it for widgets. Blocs read the service directly. Use it only for operations that genuinely need a network (Storage uploads, PDF export of uncached sheets, viewer error messages, adding *uncached* sheets to a playlist). Never pre-check connectivity before a plain Firestore write — Firestore queues those offline natively.
+
 **Error tracking**: Sentry. Captured via `Sentry.captureException()` in catch blocks and automatically via `SentryWidget` wrapper. `SentryWidget` wraps the root widget in `main.dart`.
 
 ### Testing Patterns

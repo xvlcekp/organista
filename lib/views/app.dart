@@ -6,6 +6,7 @@ import 'package:organista/dialogs/show_auth_error.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
+import 'package:organista/features/connectivity/cubit/connectivity_cubit.dart';
 import 'package:organista/features/main/view/main_screen.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
 import 'package:organista/features/settings/cubit/settings_state.dart';
@@ -18,6 +19,7 @@ import 'package:organista/logger/custom_logger.dart' show logger;
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:organista/services/connectivity/connectivity_service.dart';
 import 'package:organista/repositories/settings_repository.dart';
 import 'package:organista/services/auth/auth_service.dart';
 
@@ -39,6 +41,11 @@ class App extends StatelessWidget {
               )..add(
                 const AuthEventInitialize(),
               ),
+        ),
+        // Not lazy: widgets anywhere in the tree may read the network state, and it must already be current.
+        BlocProvider<ConnectivityCubit>(
+          lazy: false,
+          create: (context) => ConnectivityCubit(connectivityService: context.read<ConnectivityService>()),
         ),
         BlocProvider<AddEditMusicSheetCubit>(
           create: (context) => AddEditMusicSheetCubit(
