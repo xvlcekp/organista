@@ -623,6 +623,9 @@ class AppLocalizationsSk extends AppLocalizations {
       'Bez internetu sa dajú do zoznamu skladieb pridať len noty, ktoré už boli stiahnuté do zariadenia.';
 
   @override
+  String get sheetNotAvailableOffline => 'Bez internetu. Táto nota ešte nebola stiahnutá do zariadenia.';
+
+  @override
   String get authErrorNetworkRequestFailedText => 'Bez internetu. Skontrolujte pripojenie a skúste to znova.';
 
   @override

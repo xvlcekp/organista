@@ -1238,6 +1238,12 @@ abstract class AppLocalizations {
   /// **'Bez internetu sa dajú do zoznamu skladieb pridať len noty, ktoré už boli stiahnuté do zariadenia.'**
   String get addToPlaylistNoInternet;
 
+  /// No description provided for @sheetNotAvailableOffline.
+  ///
+  /// In sk, this message translates to:
+  /// **'Bez internetu. Táto nota ešte nebola stiahnutá do zariadenia.'**
+  String get sheetNotAvailableOffline;
+
   /// No description provided for @authErrorNetworkRequestFailedText.
   ///
   /// In sk, this message translates to:

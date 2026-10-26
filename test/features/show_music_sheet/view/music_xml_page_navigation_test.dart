@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/settings/cubit/settings_cubit.dart';
@@ -130,6 +131,10 @@ void main() {
 
     setUp(() {
       mockCacheManager = MockCacheManager();
+      // The viewer only opens a sheet it could fetch; the page under test is fake, so any bytes will do.
+      when(
+        () => mockCacheManager.getSingleFile(any()),
+      ).thenAnswer((_) async => MemoryFileSystem().file('song.musicxml')..writeAsBytesSync([1, 2, 3]));
       mockPlaylistBloc = MockPlaylistBloc();
       mockSettingsCubit = MockSettingsCubit();
       when(() => mockSettingsCubit.state).thenReturn(settingsWithArrows);
@@ -174,7 +179,11 @@ void main() {
     Future<FakeWebViewPlatform> pumpWithPages(WidgetTester tester, List<String> messages) async {
       final platform = FakeWebViewPlatform(pageMessages: messages);
       WebViewPlatform.instance = platform;
-      await tester.pumpWidget(buildWidget());
+      // The file is base64-encoded on a background isolate, which only completes under real async time.
+      await tester.runAsync(() async {
+        await tester.pumpWidget(buildWidget());
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      });
       await tester.pumpAndSettle();
       return platform;
     }

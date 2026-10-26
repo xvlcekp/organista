@@ -25,7 +25,7 @@ class MusicSheetView extends HookWidget {
   Widget build(BuildContext context) {
     final showTitle = useState(true);
 
-    return Stack(
+    final view = Stack(
       alignment: Alignment.center,
       children: [
         switch (source.mediaType) {
@@ -46,6 +46,11 @@ class MusicSheetView extends HookWidget {
           ),
       ],
     );
+
+    // The full-screen view is pushed as a bare route (no Scaffold) from a repository, while the playlist gallery
+    // sits in a Scaffold. Supplying the Material here gives the overlays (page counter, title, offline message)
+    // the Material text style in both cases; without it Flutter draws its yellow "no DefaultTextStyle" underline.
+    return mode == MusicSheetViewMode.full ? Material(type: MaterialType.transparency, child: view) : view;
   }
 }
 

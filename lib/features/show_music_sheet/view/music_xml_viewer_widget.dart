@@ -10,6 +10,7 @@ import 'package:organista/features/show_music_sheet/view/music_xml_controls_over
 import 'package:organista/features/show_music_sheet/view/page_navigation.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_thumbnail_widget.dart';
+import 'package:organista/features/show_music_sheet/view/sheet_load_error.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:provider/provider.dart';
@@ -45,15 +46,14 @@ class MusicXmlViewerWidget extends HookWidget {
 
   Future<WebViewController> _initializeWebView(
     BuildContext context,
+    String fileData,
     ValueNotifier<int> currentTranspose,
     ValueNotifier<double> currentLyricsPadding,
     ValueNotifier<(int, int)> pages,
     MusicSheetUrlSource? urlSource,
   ) async {
-    // Capture context-dependent objects BEFORE any await
-    final cacheManager = context.read<CacheManager>();
+    // Captured before any await
     final playlistBloc = context.read<PlaylistBloc>();
-    final fileData = await _loadFileData(cacheManager);
 
     final controller = WebViewController();
     controller
@@ -116,9 +116,10 @@ class MusicXmlViewerWidget extends HookWidget {
     return controller;
   }
 
-  /// Resolves the sheet to a base64 data URL the page can load offline. A url source that cannot be
-  /// downloaded falls back to its remote URL.
-  Future<String> _loadFileData(CacheManager cacheManager) async {
+  /// Resolves the sheet to a base64 data URL the page can load offline, or null when a url source cannot be
+  /// fetched (not on the device and no network). Handing the page the remote URL instead would leave it on its
+  /// own loading spinner forever, since the fetch inside the page fails for the same reason.
+  Future<String?> _loadFileData(CacheManager cacheManager) async {
     final Uint8List bytes;
     switch (source) {
       case MusicSheetBytesSource(bytes: final fileBytes):
@@ -128,7 +129,8 @@ class MusicXmlViewerWidget extends HookWidget {
           final cachedFile = await cacheManager.getSingleFile(musicSheet.fileUrl);
           bytes = await cachedFile.readAsBytes();
         } catch (e) {
-          return musicSheet.fileUrl;
+          logger.w('MusicXML sheet ${musicSheet.fileName} is not on the device and could not be fetched', error: e);
+          return null;
         }
     }
     // Offloaded to a background isolate because encoding large files on the main thread causes ANRs
@@ -140,15 +142,22 @@ class MusicXmlViewerWidget extends HookWidget {
   Future<void> _initialize(
     BuildContext context,
     ValueNotifier<WebViewController?> controller,
+    ValueNotifier<bool> loadFailed,
     ValueNotifier<int> currentTranspose,
     ValueNotifier<double> currentLyricsPadding,
     ValueNotifier<(int, int)> pages,
     MusicSheetUrlSource? urlSource,
   ) async {
     try {
+      final fileData = await _loadFileData(context.read<CacheManager>());
+      if (fileData == null) {
+        loadFailed.value = true;
+        return;
+      }
       if (context.mounted) {
         controller.value = await _initializeWebView(
           context,
+          fileData,
           currentTranspose,
           currentLyricsPadding,
           pages,
@@ -168,15 +177,23 @@ class MusicXmlViewerWidget extends HookWidget {
     // (current page, page count) of the rendered sheet
     final pages = useState<(int, int)>((1, 1));
     final controller = useState<WebViewController?>(null);
+    final loadFailed = useState(false);
 
     useEffect(() {
       if (mode == MusicSheetViewMode.thumbnail) return null;
-      _initialize(context, controller, currentTranspose, currentLyricsPadding, pages, urlSource);
+      _initialize(context, controller, loadFailed, currentTranspose, currentLyricsPadding, pages, urlSource);
       return null;
     }, const []);
 
     if (mode == MusicSheetViewMode.thumbnail) {
-      return MusicXmlThumbnailWidget(sequenceId: urlSource!.musicSheet.sequenceId);
+      return MusicXmlThumbnailWidget(
+        fileUrl: urlSource!.musicSheet.fileUrl,
+        sequenceId: urlSource.musicSheet.sequenceId,
+      );
+    }
+
+    if (loadFailed.value) {
+      return SheetLoadError(mode: mode);
     }
 
     final wvc = controller.value;

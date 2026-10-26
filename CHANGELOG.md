@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pridanie noty do zoznamu skladieb bez internetu už nezostane visieť na „Načítanie…“ – stiahnuté noty sa pridajú hneď, pri nestiahnutej sa zobrazí hláška
 - Zmeny v zoznamoch skladieb urobené bez internetu sa zobrazia okamžite a odošlú sa po pripojení
 - Neúspešný export zoznamu do PDF bez internetu vysvetlí, že sa dajú exportovať len už stiahnuté noty
+- Nestiahnutá nota otvorená bez internetu zobrazí hlášku namiesto samotnej ikony chyby
 - Zobrazenie prihlasovacej obrazovky pri zmene účtu (napr. po zmene hesla alebo zmazaní účtu na inom zariadení)
 - Neúspešná zmena zoznamu skladieb (vytvorenie, premenovanie, vymazanie, pridanie, odstránenie či presun nôt) zobrazí chybovú hlášku namiesto tichého zlyhania
 - Zrušenie prihlásenia cez Google alebo Apple už nezobrazuje chybu; skutočná chyba prihlásenia zobrazí svoj konkrétny popis

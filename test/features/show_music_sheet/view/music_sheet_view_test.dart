@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file/file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,6 +28,8 @@ void main() {
 
     setUp(() {
       mockCacheManager = MockCacheManager();
+      // The MusicXML thumbnail fetches its file through the cache too; keep it pending so the number is shown.
+      when(() => mockCacheManager.getSingleFile(any())).thenAnswer((_) => Completer<File>().future);
     });
 
     MusicSheetSource buildSource(String mediaType) {
@@ -77,6 +81,26 @@ void main() {
 
       expect(find.byType(MusicXmlViewerWidget), findsOneWidget);
       expect(find.byType(ImageViewerWidget), findsNothing);
+    });
+
+    testWidgets('full mode supplies the Material text style to its overlays even without a Scaffold', (tester) async {
+      // The repository opens the viewer as a bare route; without a Material ancestor the page counter and title
+      // would be drawn with Flutter's yellow "no DefaultTextStyle" double underline.
+      await tester.pumpWidget(buildWidget(buildSource('image'), MusicSheetViewMode.full));
+
+      final titleStyle = DefaultTextStyle.of(tester.element(find.text('my sheet'))).style;
+      expect(titleStyle.decoration, TextDecoration.none);
+      // The overlays' own Materials (e.g. the back button) sit deeper; the outermost one is the viewer's.
+      final outermost = tester.widget<Material>(
+        find.descendant(of: find.byType(MusicSheetView), matching: find.byType(Material)).first,
+      );
+      expect(outermost.type, MaterialType.transparency);
+    });
+
+    testWidgets('thumbnail and preview modes add no Material of their own', (tester) async {
+      await tester.pumpWidget(buildWidget(buildSource('image'), MusicSheetViewMode.preview));
+
+      expect(find.descendant(of: find.byType(MusicSheetView), matching: find.byType(Material)), findsNothing);
     });
 
     testWidgets('shows back button and title overlay in full mode', (tester) async {
