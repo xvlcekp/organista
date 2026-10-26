@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Zoznam skladieb sa už neprekresľuje dvakrát pri každej zmene (napr. pri presune nôt)
 - Zlepšenie logovania
 - Obrazovka pridania notového záznamu (pridanie, premenovanie) využíva pre náhľad nôt celú voľnú plochu namiesto tretiny obrazovky
+- Počítadlo strán sa pri jednostranových notách nezobrazuje
+- Názov nôt v spodnej časti obrazovky zaberá len toľko miesta, koľko potrebuje
 
 ### Deprecated
 

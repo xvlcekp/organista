@@ -39,9 +39,13 @@ class MusicSheetView extends HookWidget {
             bottom: AppTheme.symmetricOverlayPadding,
             left: AppTheme.symmetricOverlayPadding,
             right: AppTheme.symmetricOverlayPadding * _titleRightPaddingMultiplier,
-            child: DismissableTitle(
-              title: source.fileName,
-              onDismiss: () => showTitle.value = false,
+            // Align loosens the Positioned width so the title hugs its text and only ellipsizes when it must.
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: DismissableTitle(
+                title: source.fileName,
+                onDismiss: () => showTitle.value = false,
+              ),
             ),
           ),
       ],

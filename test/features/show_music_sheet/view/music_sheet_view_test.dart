@@ -111,6 +111,14 @@ void main() {
       expect(find.text('my sheet'), findsOneWidget);
     });
 
+    testWidgets('title takes only the width of its text', (tester) async {
+      await tester.pumpWidget(buildWidget(buildSource('image'), MusicSheetViewMode.full));
+
+      final titleWidth = tester.getSize(find.byType(DismissableTitle)).width;
+      final viewWidth = tester.getSize(find.byType(MusicSheetView)).width;
+      expect(titleWidth, lessThan(viewWidth / 2));
+    });
+
     testWidgets('hides back button and title overlay outside full mode', (tester) async {
       await tester.pumpWidget(buildWidget(buildSource('image'), MusicSheetViewMode.preview));
 
