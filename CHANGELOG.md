@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Nahrávanie nôt bez internetu už nezostane visieť 10 minút na „Načítanie…“ – bez pripojenia sa hneď zobrazí hláška
 - Zobrazenie prihlasovacej obrazovky pri zmene účtu (napr. po zmene hesla alebo zmazaní účtu na inom zariadení)
 - Neúspešná zmena zoznamu skladieb (vytvorenie, premenovanie, vymazanie, pridanie, odstránenie či presun nôt) zobrazí chybovú hlášku namiesto tichého zlyhania
 - Zrušenie prihlásenia cez Google alebo Apple už nezobrazuje chybu; skutočná chyba prihlásenia zobrazí svoj konkrétny popis

@@ -313,6 +313,7 @@
   "back": "Späť",
   "renameMusicSheetFailed": "Nepodarilo sa premenovať notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
   "uploadMusicSheetRecordFailed": "Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
+  "uploadMusicSheetNoInternet": "Bez internetu. Na nahratie notového záznamu je potrebné pripojenie.",
   "transposeLabel": "Transpozícia: {value}",
   "@transposeLabel": {
     "placeholders": {

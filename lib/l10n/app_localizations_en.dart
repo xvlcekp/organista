@@ -608,6 +608,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Failed to save music sheet record. Please check your connection and try again.';
 
   @override
+  String get uploadMusicSheetNoInternet => 'No internet connection. Uploading a music sheet requires a connection.';
+
+  @override
   String transposeLabel(String value) {
     return 'Transpose: $value';
   }

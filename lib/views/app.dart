@@ -51,6 +51,7 @@ class App extends StatelessWidget {
           create: (context) => AddEditMusicSheetCubit(
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
             firebaseStorageRepository: context.read<FirebaseStorageRepository>(),
+            connectivityService: context.read<ConnectivityService>(),
           ),
         ),
         // TODO: Consider moving AddMusicSheetsToPlaylistEvent to the AddEditMusicSheet feature / repository layer

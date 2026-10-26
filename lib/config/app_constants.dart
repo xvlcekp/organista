@@ -16,6 +16,11 @@ class AppConstants {
   /// Maximum number of objects to keep in cache
   static const int maxCacheObjects = 2000;
 
+  /// How long Firebase Storage retries an upload / a metadata operation before failing. The SDK defaults
+  /// (10 and 2 minutes) keep the user waiting behind a loader when the network is there but Firebase is not reachable.
+  static const Duration storageUploadRetryTime = Duration(minutes: 1);
+  static const Duration storageOperationRetryTime = Duration(seconds: 30);
+
   static const double nextPagetouchAreaHeight = 0.15;
 
   // App info

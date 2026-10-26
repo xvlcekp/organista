@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/managers/persistent_cache_manager.dart';
 import 'package:organista/views/app.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -25,7 +26,9 @@ class AppRepository extends StatelessWidget {
         ),
         RepositoryProvider<FirebaseStorageRepository>(
           create: (context) => FirebaseStorageRepository(
-            storage: FirebaseStorage.instance,
+            storage: FirebaseStorage.instance
+              ..setMaxUploadRetryTime(AppConstants.storageUploadRetryTime)
+              ..setMaxOperationRetryTime(AppConstants.storageOperationRetryTime),
           ),
         ),
         RepositoryProvider<ConnectivityService>(

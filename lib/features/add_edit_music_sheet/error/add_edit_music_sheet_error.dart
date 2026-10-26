@@ -21,3 +21,9 @@ class RenameMusicSheetFailedError extends AddEditMusicSheetError {
 class UploadMusicSheetRecordFailedError extends AddEditMusicSheetError {
   const UploadMusicSheetRecordFailedError() : super();
 }
+
+/// The device has no network, so the upload was not even started (Storage would only retry until it times out).
+@immutable
+class UploadMusicSheetNoInternetError extends AddEditMusicSheetError {
+  const UploadMusicSheetNoInternetError() : super();
+}

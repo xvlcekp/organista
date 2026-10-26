@@ -1220,6 +1220,12 @@ abstract class AppLocalizations {
   /// **'Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.'**
   String get uploadMusicSheetRecordFailed;
 
+  /// No description provided for @uploadMusicSheetNoInternet.
+  ///
+  /// In sk, this message translates to:
+  /// **'Bez internetu. Na nahratie notového záznamu je potrebné pripojenie.'**
+  String get uploadMusicSheetNoInternet;
+
   /// No description provided for @transposeLabel.
   ///
   /// In sk, this message translates to:
