@@ -1226,6 +1226,18 @@ abstract class AppLocalizations {
   /// **'Bez internetu. Na nahratie notového záznamu je potrebné pripojenie.'**
   String get uploadMusicSheetNoInternet;
 
+  /// No description provided for @exportFailedOffline.
+  ///
+  /// In sk, this message translates to:
+  /// **'Bez internetu sa dajú exportovať len noty, ktoré už boli stiahnuté do zariadenia.'**
+  String get exportFailedOffline;
+
+  /// No description provided for @addToPlaylistNoInternet.
+  ///
+  /// In sk, this message translates to:
+  /// **'Bez internetu sa dajú do zoznamu skladieb pridať len noty, ktoré už boli stiahnuté do zariadenia.'**
+  String get addToPlaylistNoInternet;
+
   /// No description provided for @authErrorNetworkRequestFailedText.
   ///
   /// In sk, this message translates to:

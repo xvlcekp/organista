@@ -228,12 +228,13 @@ class FirebaseFirestoreRepository {
 
   // PLAYLIST OPERATIONS
 
+  // The playlist streams deliver local writes as well (no pending-writes filter): offline, the local echo is the
+  // only snapshot there is, and the blocs' Equatable states skip the identical server echo that follows online.
   Stream<Playlist> getPlaylistStream(String playlistId) {
     return _instance
         .collection(FirebaseCollectionName.playlists)
         .doc(playlistId)
-        .snapshots(includeMetadataChanges: true)
-        .where((event) => !event.metadata.hasPendingWrites)
+        .snapshots()
         .map((snapshot) {
           final data = snapshot.data();
           if (!snapshot.exists || data == null) {
@@ -264,8 +265,7 @@ class FirebaseFirestoreRepository {
         .collection(FirebaseCollectionName.playlists)
         .where(PlaylistKey.userId, isEqualTo: userId)
         .orderBy(PlaylistKey.name)
-        .snapshots(includeMetadataChanges: true)
-        .where((event) => !event.metadata.hasPendingWrites)
+        .snapshots()
         .map((snapshot) {
           final documents = snapshot.docs;
           if (kDebugMode) {

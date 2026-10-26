@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
+import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
@@ -19,6 +20,8 @@ class PlaylistViewTest extends PlaylistBloc {
   PlaylistViewTest({
     required super.firebaseFirestoreRepository,
     required super.exportService,
+    required super.connectivityService,
+    required super.cacheManager,
   });
 
   void _setStateForTest(PlaylistState state) => emit(state);
@@ -61,6 +64,8 @@ void main() {
       bloc = PlaylistViewTest(
         firebaseFirestoreRepository: mockFirebaseFirestoreRepository,
         exportService: mockExportService,
+        connectivityService: MockConnectivityService(),
+        cacheManager: MockCacheManager(),
       );
     });
 
@@ -189,5 +194,33 @@ void main() {
         expect(find.byIcon(Icons.edit), findsNothing);
       },
     );
+
+    group('offline error messages', () {
+      Future<void> showError(WidgetTester tester, PlaylistError error) async {
+        bloc._setStateForTest(PlaylistLoadedState(isLoading: false, playlist: testPlaylist));
+        await tester.pumpWidget(createTestWidget());
+        await tester.pump();
+
+        bloc._setStateForTest(PlaylistErrorState(error: error, playlist: testPlaylist));
+        await tester.pump();
+      }
+
+      testWidgets('a failed export without a network names the cause', (tester) async {
+        await showError(tester, const ExportPlaylistOfflineError());
+
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(
+          find.textContaining('Without an internet connection only music sheets already downloaded'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('adding a sheet that is not on the device without a network names the cause', (tester) async {
+        await showError(tester, const PlaylistErrorNoInternet());
+
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.textContaining('can be added to a playlist'), findsOneWidget);
+      });
+    });
   });
 }

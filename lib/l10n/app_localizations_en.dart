@@ -611,6 +611,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadMusicSheetNoInternet => 'No internet connection. Uploading a music sheet requires a connection.';
 
   @override
+  String get exportFailedOffline =>
+      'Without an internet connection only music sheets already downloaded to this device can be exported.';
+
+  @override
+  String get addToPlaylistNoInternet =>
+      'Without an internet connection only music sheets already downloaded to this device can be added to a playlist.';
+
+  @override
   String get authErrorNetworkRequestFailedText => 'No internet connection. Check your connection and try again.';
 
   @override

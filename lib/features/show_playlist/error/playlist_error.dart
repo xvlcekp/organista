@@ -43,10 +43,22 @@ class ExportNoMusicSheetsPlaylistError extends PlaylistError {
   const ExportNoMusicSheetsPlaylistError() : super();
 }
 
+/// The device is offline and at least one of the sheets to add is not on the device, so it could not be shown.
+@immutable
+class PlaylistErrorNoInternet extends PlaylistError {
+  const PlaylistErrorNoInternet() : super();
+}
+
 /// Error when export fails
 @immutable
 class ExportPlaylistError extends PlaylistError {
   const ExportPlaylistError() : super();
+}
+
+/// Export failed while the device was offline: a sheet that was never downloaded cannot be exported.
+@immutable
+class ExportPlaylistOfflineError extends PlaylistError {
+  const ExportPlaylistOfflineError() : super();
 }
 
 /// Error when source file does not exist

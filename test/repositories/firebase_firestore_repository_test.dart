@@ -32,6 +32,20 @@ class MockCollectionReference extends Mock implements CollectionReference<Map<St
 // ignore: subtype_of_sealed_class
 class MockDocumentReference extends Mock implements DocumentReference<Map<String, dynamic>> {}
 
+// ignore: subtype_of_sealed_class
+class MockDocumentSnapshot extends Mock implements DocumentSnapshot<Map<String, dynamic>> {}
+
+// ignore: subtype_of_sealed_class
+class MockQuery extends Mock implements Query<Map<String, dynamic>> {}
+
+// ignore: subtype_of_sealed_class
+class MockQuerySnapshot extends Mock implements QuerySnapshot<Map<String, dynamic>> {}
+
+// ignore: subtype_of_sealed_class
+class MockQueryDocumentSnapshot extends Mock implements QueryDocumentSnapshot<Map<String, dynamic>> {}
+
+class MockSnapshotMetadata extends Mock implements SnapshotMetadata {}
+
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 
 void main() {
@@ -362,7 +376,7 @@ void main() {
         final playlistDocument = MockDocumentReference();
         when(() => mockFirestore.collection(FirebaseCollectionName.playlists)).thenReturn(playlistsCollection);
         when(() => playlistsCollection.doc(playlistId)).thenReturn(playlistDocument);
-        when(() => playlistDocument.snapshots(includeMetadataChanges: true)).thenAnswer(
+        when(() => playlistDocument.snapshots()).thenAnswer(
           (_) => Stream.error(deniedOnIos),
         );
         final deniedRepository = FirebaseFirestoreRepository(
@@ -380,6 +394,57 @@ void main() {
           isEmpty,
           reason: 'a listener on a deleted playlist is expected, not a security rules violation',
         );
+      });
+    });
+
+    group('playlist streams deliver local writes', () {
+      // Offline, a snapshot with pending writes is the only one there is: a cached sheet added to a playlist
+      // offline must show up at once. The former `hasPendingWrites` filter must not come back (see CLAUDE.md).
+      late MockFirebaseFirestore mockFirestore;
+      late MockCollectionReference playlistsCollection;
+      late MockSnapshotMetadata pendingMetadata;
+      final playlistJson = createTestPlaylistJson(name: 'Offline edit');
+
+      setUp(() {
+        mockFirestore = MockFirebaseFirestore();
+        playlistsCollection = MockCollectionReference();
+        pendingMetadata = MockSnapshotMetadata();
+        when(() => mockFirestore.collection(FirebaseCollectionName.playlists)).thenReturn(playlistsCollection);
+        when(() => pendingMetadata.hasPendingWrites).thenReturn(true);
+        when(() => pendingMetadata.isFromCache).thenReturn(true);
+      });
+
+      test('getPlaylistStream emits a snapshot that has pending writes', () async {
+        final document = MockDocumentReference();
+        final snapshot = MockDocumentSnapshot();
+        when(() => playlistsCollection.doc('playlist-1')).thenReturn(document);
+        when(() => document.snapshots()).thenAnswer((_) => Stream.value(snapshot));
+        when(() => snapshot.exists).thenReturn(true);
+        when(() => snapshot.data()).thenReturn(playlistJson);
+        when(() => snapshot.metadata).thenReturn(pendingMetadata);
+        final pendingRepository = FirebaseFirestoreRepository(instance: mockFirestore, skipSettingsConfiguration: true);
+
+        final playlist = await pendingRepository.getPlaylistStream('playlist-1').first;
+
+        expect(playlist.name, 'Offline edit');
+      });
+
+      test('getPlaylistsStream emits a snapshot that has pending writes', () async {
+        final query = MockQuery();
+        final querySnapshot = MockQuerySnapshot();
+        final document = MockQueryDocumentSnapshot();
+        when(() => playlistsCollection.where(PlaylistKey.userId, isEqualTo: 'user-123')).thenReturn(query);
+        when(() => query.orderBy(PlaylistKey.name)).thenReturn(query);
+        when(() => query.snapshots()).thenAnswer((_) => Stream.value(querySnapshot));
+        when(() => querySnapshot.docs).thenReturn([document]);
+        when(() => querySnapshot.metadata).thenReturn(pendingMetadata);
+        when(() => document.id).thenReturn('playlist-1');
+        when(() => document.data()).thenReturn(playlistJson);
+        final pendingRepository = FirebaseFirestoreRepository(instance: mockFirestore, skipSettingsConfiguration: true);
+
+        final playlists = await pendingRepository.getPlaylistsStream('user-123').first;
+
+        expect(playlists.map((playlist) => playlist.name), ['Offline edit']);
       });
     });
 

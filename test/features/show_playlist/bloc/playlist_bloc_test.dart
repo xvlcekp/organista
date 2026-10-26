@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:organista/config/app_constants.dart';
+import 'package:file/memory.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,16 +16,19 @@ import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/playlists/playlist_key.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
+import 'package:organista/services/connectivity/connectivity_service.dart';
 import 'package:organista/services/export_playlist/export_playlist_service.dart';
 
 import 'playlist_bloc_test.mocks.dart';
 
-@GenerateMocks([FirebaseFirestoreRepository, ExportPlaylistService])
+@GenerateMocks([FirebaseFirestoreRepository, ExportPlaylistService, ConnectivityService, CacheManager])
 void main() {
   group('PlaylistBloc', () {
     late PlaylistBloc bloc;
     late MockFirebaseFirestoreRepository mockFirebaseFirestoreRepository;
     late MockExportPlaylistService mockExportService;
+    late MockConnectivityService mockConnectivityService;
+    late MockCacheManager mockCacheManager;
     late AuthUser testUser;
     late Playlist testPlaylist;
     late MusicSheet testMusicSheet;
@@ -60,9 +68,136 @@ void main() {
         },
       );
 
+      mockConnectivityService = MockConnectivityService();
+      when(mockConnectivityService.isOnline).thenReturn(true);
+      mockCacheManager = MockCacheManager();
       bloc = PlaylistBloc(
         firebaseFirestoreRepository: mockFirebaseFirestoreRepository,
         exportService: mockExportService,
+        connectivityService: mockConnectivityService,
+        cacheManager: mockCacheManager,
+      );
+    });
+
+    group('AddMusicSheetsToPlaylistEvent offline', () {
+      MusicSheet newSheet({String id = 'sheet-offline'}) => MusicSheet(
+        json: {
+          MusicSheetKey.musicSheetId: id,
+          MusicSheetKey.userId: 'user1',
+          MusicSheetKey.createdAt: testTimestamp,
+          MusicSheetKey.fileUrl: 'https://example.com/offline.pdf',
+          MusicSheetKey.fileName: 'offline.pdf',
+          MusicSheetKey.originalFileStorageId: 'storage-offline',
+          MusicSheetKey.mediaType: 'pdf',
+          MusicSheetKey.sequenceId: 2,
+        },
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'rejects a sheet that is not on the device right away instead of waiting for the Firestore write, on every '
+        'attempt',
+        setUp: () {
+          when(mockConnectivityService.isOnline).thenReturn(false);
+          when(mockCacheManager.getFileFromCache(any)).thenAnswer((_) async => null);
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc
+          ..add(AddMusicSheetsToPlaylistEvent(musicSheets: [newSheet()], playlist: testPlaylist))
+          ..add(AddMusicSheetsToPlaylistEvent(musicSheets: [newSheet()], playlist: testPlaylist)),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const PlaylistErrorNoInternet(), playlist: testPlaylist),
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const PlaylistErrorNoInternet(), playlist: testPlaylist),
+        ],
+        verify: (_) => verifyNever(
+          mockFirebaseFirestoreRepository.addMusicSheetsToPlaylist(
+            playlist: anyNamed('playlist'),
+            musicSheets: anyNamed('musicSheets'),
+          ),
+        ),
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'adds a cached sheet without waiting for the server; the playlist stream delivers the local write',
+        setUp: () {
+          when(mockConnectivityService.isOnline).thenReturn(false);
+          when(mockCacheManager.getFileFromCache(any)).thenAnswer(
+            (_) async => FileInfo(MemoryFileSystem().file('cached.pdf'), FileSource.Cache, DateTime(2027), 'url'),
+          );
+          // Offline, Firestore completes the write only once it is back online.
+          when(
+            mockFirebaseFirestoreRepository.addMusicSheetsToPlaylist(
+              playlist: anyNamed('playlist'),
+              musicSheets: anyNamed('musicSheets'),
+            ),
+          ).thenAnswer((_) => Completer<bool>().future);
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(AddMusicSheetsToPlaylistEvent(musicSheets: [newSheet()], playlist: testPlaylist)),
+        expect: () => [PlaylistLoadedState(isLoading: true, playlist: testPlaylist)],
+        verify: (_) => verify(
+          mockFirebaseFirestoreRepository.addMusicSheetsToPlaylist(playlist: testPlaylist, musicSheets: [newSheet()]),
+        ).called(1),
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'still enforces the playlist capacity offline',
+        setUp: () {
+          when(mockConnectivityService.isOnline).thenReturn(false);
+          when(mockCacheManager.getFileFromCache(any)).thenAnswer(
+            (_) async => FileInfo(MemoryFileSystem().file('cached.pdf'), FileSource.Cache, DateTime(2027), 'url'),
+          );
+        },
+        build: () => bloc,
+        seed: () => PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        act: (bloc) => bloc.add(
+          AddMusicSheetsToPlaylistEvent(
+            musicSheets: List.generate(AppConstants.maxPlaylistCapacity, (i) => newSheet(id: 'sheet-$i')),
+            playlist: testPlaylist,
+          ),
+        ),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          isA<PlaylistErrorState>().having((s) => s.error, 'error', isA<PlaylistCapacityExceededError>()),
+        ],
+        verify: (_) => verifyNever(
+          mockFirebaseFirestoreRepository.addMusicSheetsToPlaylist(
+            playlist: anyNamed('playlist'),
+            musicSheets: anyNamed('musicSheets'),
+          ),
+        ),
+      );
+    });
+
+    group('ExportPlaylistEvent offline', () {
+      blocTest<PlaylistBloc, PlaylistState>(
+        'explains a failed export by the missing network when the device is offline',
+        setUp: () {
+          when(mockConnectivityService.isOnline).thenReturn(false);
+          when(mockExportService.exportPlaylistToPdf(playlist: anyNamed('playlist'))).thenAnswer((_) async => null);
+        },
+        build: () => bloc,
+        act: (bloc) => bloc.add(ExportPlaylistEvent(playlist: testPlaylist)),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const ExportPlaylistOfflineError(), playlist: testPlaylist),
+        ],
+      );
+
+      blocTest<PlaylistBloc, PlaylistState>(
+        'keeps the generic export error while online',
+        setUp: () {
+          when(mockExportService.exportPlaylistToPdf(playlist: anyNamed('playlist'))).thenAnswer((_) async => null);
+        },
+        build: () => bloc,
+        act: (bloc) => bloc.add(ExportPlaylistEvent(playlist: testPlaylist)),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
+          PlaylistErrorState(error: const ExportPlaylistError(), playlist: testPlaylist),
+        ],
       );
     });
 

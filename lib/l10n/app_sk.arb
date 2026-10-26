@@ -314,6 +314,8 @@
   "renameMusicSheetFailed": "Nepodarilo sa premenovať notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
   "uploadMusicSheetRecordFailed": "Nepodarilo sa uložiť notový záznam. Skontrolujte pripojenie k internetu a skúste to znova.",
   "uploadMusicSheetNoInternet": "Bez internetu. Na nahratie notového záznamu je potrebné pripojenie.",
+  "exportFailedOffline": "Bez internetu sa dajú exportovať len noty, ktoré už boli stiahnuté do zariadenia.",
+  "addToPlaylistNoInternet": "Bez internetu sa dajú do zoznamu skladieb pridať len noty, ktoré už boli stiahnuté do zariadenia.",
   "authErrorNetworkRequestFailedText": "Bez internetu. Skontrolujte pripojenie a skúste to znova.",
   "transposeLabel": "Transpozícia: {value}",
   "@transposeLabel": {

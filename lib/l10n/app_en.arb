@@ -314,6 +314,8 @@
   "renameMusicSheetFailed": "Failed to rename music sheet. Please check your connection and try again.",
   "uploadMusicSheetRecordFailed": "Failed to save music sheet record. Please check your connection and try again.",
   "uploadMusicSheetNoInternet": "No internet connection. Uploading a music sheet requires a connection.",
+  "exportFailedOffline": "Without an internet connection only music sheets already downloaded to this device can be exported.",
+  "addToPlaylistNoInternet": "Without an internet connection only music sheets already downloaded to this device can be added to a playlist.",
   "authErrorNetworkRequestFailedText": "No internet connection. Check your connection and try again.",
   "transposeLabel": "Transpose: {value}",
   "@transposeLabel": {

@@ -60,6 +60,8 @@ class App extends StatelessWidget {
           create: (context) => PlaylistBloc(
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),
             exportService: ExportPlaylistService(cacheManager: context.read<CacheManager>()),
+            connectivityService: context.read<ConnectivityService>(),
+            cacheManager: context.read<CacheManager>(),
           ),
         ),
         BlocProvider<SettingsCubit>(
