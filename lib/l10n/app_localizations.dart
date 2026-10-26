@@ -1226,6 +1226,12 @@ abstract class AppLocalizations {
   /// **'Bez internetu. Na nahratie notového záznamu je potrebné pripojenie.'**
   String get uploadMusicSheetNoInternet;
 
+  /// No description provided for @authErrorNetworkRequestFailedText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Bez internetu. Skontrolujte pripojenie a skúste to znova.'**
+  String get authErrorNetworkRequestFailedText;
+
   /// No description provided for @transposeLabel.
   ///
   /// In sk, this message translates to:

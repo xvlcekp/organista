@@ -611,6 +611,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadMusicSheetNoInternet => 'No internet connection. Uploading a music sheet requires a connection.';
 
   @override
+  String get authErrorNetworkRequestFailedText => 'No internet connection. Check your connection and try again.';
+
+  @override
   String transposeLabel(String value) {
     return 'Transpose: $value';
   }

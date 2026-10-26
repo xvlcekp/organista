@@ -616,6 +616,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get uploadMusicSheetNoInternet => 'Bez internetu. Na nahratie notového záznamu je potrebné pripojenie.';
 
   @override
+  String get authErrorNetworkRequestFailedText => 'Bez internetu. Skontrolujte pripojenie a skúste to znova.';
+
+  @override
   String transposeLabel(String value) {
     return 'Transpozícia: $value';
   }

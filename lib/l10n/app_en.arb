@@ -314,6 +314,7 @@
   "renameMusicSheetFailed": "Failed to rename music sheet. Please check your connection and try again.",
   "uploadMusicSheetRecordFailed": "Failed to save music sheet record. Please check your connection and try again.",
   "uploadMusicSheetNoInternet": "No internet connection. Uploading a music sheet requires a connection.",
+  "authErrorNetworkRequestFailedText": "No internet connection. Check your connection and try again.",
   "transposeLabel": "Transpose: {value}",
   "@transposeLabel": {
     "placeholders": {
