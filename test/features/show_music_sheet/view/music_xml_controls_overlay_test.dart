@@ -42,6 +42,49 @@ void main() {
   }
 
   group('MusicXmlControlsOverlay', () {
+    testWidgets('two overlays in one route survive a route transition (gallery mid-swipe + back)', (tester) async {
+      // The gallery is a PageView of full-screen sheets; while a swipe settles, two pages are mounted at once and
+      // the hero scan of a route transition walks both. Default-tagged FABs would collide and throw.
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => Scaffold(
+                    body: PageView(
+                      children: [
+                        for (var i = 0; i < 2; i++)
+                          Stack(
+                            children: [
+                              MusicXmlControlsOverlay(currentTranspose: 0, currentLyricsPadding: 0.5, wvc: wvc),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      await tester.drag(find.byType(PageView), const Offset(-300, 0));
+      await tester.pump();
+      expect(find.byType(FloatingActionButton), findsNWidgets(2));
+
+      Navigator.of(tester.element(find.byType(PageView))).pop();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('shows tune icon on FAB initially', (tester) async {
       await tester.pumpWidget(buildWidget());
 
