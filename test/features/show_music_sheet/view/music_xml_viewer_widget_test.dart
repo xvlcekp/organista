@@ -15,6 +15,7 @@ import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_controls_overlay.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_thumbnail_widget.dart';
 import 'package:organista/features/show_music_sheet/view/music_xml_viewer_widget.dart';
+import 'package:organista/features/show_music_sheet/view/sheet_load_error.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
@@ -22,6 +23,7 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart' show WebViewWidget;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 /// Fake platform that records the JavaScript the viewer runs and fires `onPageFinished`
@@ -214,12 +216,20 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('falls back to the remote url when the download fails', (tester) async {
-      when(() => mockCacheManager.getSingleFile(any())).thenThrow(Exception('offline'));
+    testWidgets('shows the load error instead of a page that never loads when the download fails', (tester) async {
+      // Handing the page the remote URL would leave it on its own spinner forever: the fetch inside the page
+      // fails for the same reason the download did.
+      when(() => mockCacheManager.getSingleFile(any())).thenAnswer((_) async => throw Exception('offline'));
 
-      final controller = await pumpUntilLoaded(tester, urlSource, MusicSheetViewMode.preview);
+      await tester.runAsync(() async {
+        await tester.pumpWidget(buildWidget(urlSource, MusicSheetViewMode.full));
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      });
+      await tester.pump();
 
-      expect(controller.runJavaScriptCalls, ['initSheet("https://example.com/song.musicxml", 3)']);
+      expect(find.byType(SheetLoadError), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(WebViewWidget), findsNothing);
     });
 
     testWidgets('shows thumbnail widget in thumbnail mode for url source', (tester) async {

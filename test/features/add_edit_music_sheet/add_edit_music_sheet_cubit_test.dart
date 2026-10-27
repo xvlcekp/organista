@@ -14,7 +14,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mockito/mockito.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:organista/features/add_edit_music_sheet/error/add_edit_music_sheet_error.dart';
 import 'package:organista/services/auth/auth_user.dart';
+import 'package:organista/services/connectivity/connectivity_service.dart';
 
 import 'add_edit_music_sheet_cubit_test.mocks.dart';
 
@@ -24,6 +26,7 @@ class AddEditMusicSheetCubitTest extends AddEditMusicSheetCubit {
   AddEditMusicSheetCubitTest({
     required FirebaseFirestoreRepository firestoreRepository,
     required FirebaseStorageRepository storageRepository,
+    required super.connectivityService,
   }) : super(
          firebaseFirestoreRepository: firestoreRepository,
          firebaseStorageRepository: storageRepository,
@@ -32,20 +35,46 @@ class AddEditMusicSheetCubitTest extends AddEditMusicSheetCubit {
   void setTestState(AddEditMusicSheetState state) => emit(state);
 }
 
-@GenerateMocks([FirebaseFirestoreRepository, FirebaseStorageRepository])
+@GenerateMocks([FirebaseFirestoreRepository, FirebaseStorageRepository, ConnectivityService])
 void main() {
   group('AddEditMusicSheetCubit', () {
     late AddEditMusicSheetCubit cubit;
     late MockFirebaseFirestoreRepository mockFirestoreRepository;
     late MockFirebaseStorageRepository mockStorageRepository;
+    late MockConnectivityService mockConnectivityService;
 
     setUp(() {
       mockFirestoreRepository = MockFirebaseFirestoreRepository();
       mockStorageRepository = MockFirebaseStorageRepository();
+      mockConnectivityService = MockConnectivityService();
+      when(mockConnectivityService.isOnline).thenReturn(true);
       cubit = AddEditMusicSheetCubit(
         firebaseFirestoreRepository: mockFirestoreRepository,
         firebaseStorageRepository: mockStorageRepository,
+        connectivityService: mockConnectivityService,
       );
+    });
+
+    test('uploadNewMusicSheet fails right away without a network, on every attempt', () async {
+      when(mockConnectivityService.isOnline).thenReturn(false);
+      final file = MusicSheetFile(
+        file: PlatformFile(name: 'test.pdf', size: 4, bytes: Uint8List.fromList([1, 2, 3, 4])),
+        mediaType: MediaType.pdf,
+      );
+      const user = AuthUser(id: 'user-1', email: 'user@test.com', isEmailVerified: true);
+      final emitted = cubit.stream.take(4).toList();
+
+      await cubit.uploadNewMusicSheet(user: user, file: file, fileName: 'new-name.pdf', repositoryId: 'repo-1');
+      // The user taps save again without a network: the error must be reported again (an identical consecutive
+      // state would be swallowed by Equatable, which is why each attempt starts with the loading state).
+      await cubit.uploadNewMusicSheet(user: user, file: file, fileName: 'new-name.pdf', repositoryId: 'repo-1');
+
+      final states = (await emitted).cast<UploadMusicSheetState>();
+      expect(states.map((state) => state.isLoading), [true, false, true, false]);
+      expect(states[1].error, isA<UploadMusicSheetNoInternetError>());
+      expect(states[3].error, isA<UploadMusicSheetNoInternetError>());
+      // Storage would only retry until its timeout, so it must not be called at all.
+      verifyNever(mockStorageRepository.uploadFile(file: anyNamed('file'), bucket: anyNamed('bucket')));
     });
 
     test('uploadNewMusicSheet emits loading false on success', () async {

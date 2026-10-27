@@ -33,6 +33,7 @@ class AddEditMusicSheetViewTest extends AddEditMusicSheetCubit {
   }) : super(
          firebaseFirestoreRepository: firestoreRepository,
          firebaseStorageRepository: storageRepository,
+         connectivityService: MockConnectivityService(),
        );
 
   void setStateForTest(AddEditMusicSheetState state) => emit(state);
@@ -468,7 +469,7 @@ void main() {
         );
       }
 
-      testWidgets('shows a snackbar when renaming fails', (tester) async {
+      testWidgets('shows an error dialog when renaming fails', (tester) async {
         final cubit =
             AddEditMusicSheetViewTest(
               firestoreRepository: mockFirestoreRepository,
@@ -499,9 +500,10 @@ void main() {
           find.textContaining('Failed to rename music sheet'),
           findsOneWidget,
         );
+        expect(find.byType(AlertDialog), findsOneWidget, reason: 'errors are shown in a dialog, not a snackbar');
       });
 
-      testWidgets('shows a snackbar for an unknown error', (tester) async {
+      testWidgets('shows an error dialog for an unknown error', (tester) async {
         final cubit =
             AddEditMusicSheetViewTest(
               firestoreRepository: mockFirestoreRepository,
@@ -527,9 +529,10 @@ void main() {
         await tester.pump();
 
         expect(find.textContaining('Unknown error'), findsOneWidget);
+        expect(find.byType(AlertDialog), findsOneWidget, reason: 'errors are shown in a dialog, not a snackbar');
       });
 
-      testWidgets('shows a snackbar when uploading the record fails', (tester) async {
+      testWidgets('shows an error dialog when uploading the record fails', (tester) async {
         final mockFile = MusicSheetFile(
           file: PlatformFile(name: 'test.png', size: 0, bytes: null),
           mediaType: MediaType.image,
@@ -561,6 +564,40 @@ void main() {
         expect(
           find.textContaining('Failed to save music sheet record'),
           findsOneWidget,
+        );
+        expect(find.byType(AlertDialog), findsOneWidget, reason: 'errors are shown in a dialog, not a snackbar');
+      });
+
+      testWidgets('explains a missing network in an error dialog', (tester) async {
+        final file = MusicSheetFile(
+          file: PlatformFile(name: 'scan.png', size: validPngBytes.length, bytes: validPngBytes),
+          mediaType: MediaType.image,
+        );
+        final cubit = AddEditMusicSheetViewTest(
+          firestoreRepository: mockFirestoreRepository,
+          storageRepository: mockStorageRepository,
+        )..setStateForTest(UploadMusicSheetState(file: file, repositoryId: 'repo-1', isLoading: true));
+        addTearDown(cubit.close);
+
+        await tester.pumpWidget(buildAppWithGoButton(cubit));
+        await tester.tap(find.text('go'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        cubit.setStateForTest(
+          UploadMusicSheetState(file: file, repositoryId: 'repo-1', error: const UploadMusicSheetNoInternetError()),
+        );
+        await tester.pump();
+
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(
+          find.textContaining('No internet connection. Uploading a music sheet requires a connection.'),
+          findsOneWidget,
+        );
+        expect(
+          find.byType(AddEditMusicSheetView),
+          findsOneWidget,
+          reason: 'the screen stays open so the user can retry',
         );
       });
 

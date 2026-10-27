@@ -15,6 +15,7 @@ import 'package:organista/models/repositories/repository.dart' as _i9;
 import 'package:organista/repositories/firebase_firestore_repository.dart' as _i3;
 import 'package:organista/repositories/firebase_storage_repository.dart' as _i10;
 import 'package:organista/services/auth/auth_user.dart' as _i5;
+import 'package:organista/services/connectivity/connectivity_service.dart' as _i12;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -103,6 +104,20 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
             Invocation.method(#renamePlaylist, [], {
               #newPlaylistName: newPlaylistName,
               #playlist: playlist,
+            }),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> duplicatePlaylist({
+    required _i6.Playlist? playlist,
+    required String? newPlaylistName,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#duplicatePlaylist, [], {
+              #playlist: playlist,
+              #newPlaylistName: newPlaylistName,
             }),
             returnValue: _i4.Future<bool>.value(false),
           )
@@ -212,6 +227,22 @@ class MockFirebaseFirestoreRepository extends _i1.Mock implements _i3.FirebaseFi
       (super.noSuchMethod(
             Invocation.method(#deleteMusicSheetFromRepository, [], {
               #musicSheet: musicSheet,
+              #repositoryId: repositoryId,
+            }),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> renameMusicSheetInRepository({
+    required _i8.MusicSheet? musicSheet,
+    required String? fileName,
+    required String? repositoryId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#renameMusicSheetInRepository, [], {
+              #musicSheet: musicSheet,
+              #fileName: fileName,
               #repositoryId: repositoryId,
             }),
             returnValue: _i4.Future<bool>.value(false),
@@ -358,4 +389,42 @@ class MockFirebaseStorageRepository extends _i1.Mock implements _i10.FirebaseSto
             returnValue: _i4.Future<_i2.Reference?>.value(),
           )
           as _i4.Future<_i2.Reference?>);
+}
+
+/// A class which mocks [ConnectivityService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConnectivityService extends _i1.Mock implements _i12.ConnectivityService {
+  MockConnectivityService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  bool get isOnline => (super.noSuchMethod(Invocation.getter(#isOnline), returnValue: false) as bool);
+
+  @override
+  _i4.Stream<bool> get onlineChanges =>
+      (super.noSuchMethod(
+            Invocation.getter(#onlineChanges),
+            returnValue: _i4.Stream<bool>.empty(),
+          )
+          as _i4.Stream<bool>);
+
+  @override
+  _i4.Future<void> start() =>
+      (super.noSuchMethod(
+            Invocation.method(#start, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> dispose() =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

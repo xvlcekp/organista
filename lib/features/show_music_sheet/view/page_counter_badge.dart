@@ -18,6 +18,8 @@ class PageCounterBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (pageCount <= 1) return const SizedBox.shrink();
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: _kHorizontalPadding, vertical: _kVerticalPadding),
       decoration: BoxDecoration(

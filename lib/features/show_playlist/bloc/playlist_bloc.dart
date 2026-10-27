@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -5,6 +7,8 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:meta/meta.dart' show immutable;
 import 'package:organista/extensions/num_extensions.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
+import 'package:organista/services/connectivity/connectivity_service.dart';
 import 'package:organista/services/export_playlist/export_playlist_service.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/logger/custom_logger.dart';
@@ -21,13 +25,19 @@ part 'playlist_state.dart';
 class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   final ExportPlaylistService _exportService;
+  final ConnectivityService _connectivityService;
+  final CacheManager _cacheManager;
   String? _currentPlaylistId;
 
   PlaylistBloc({
     required FirebaseFirestoreRepository firebaseFirestoreRepository,
     required ExportPlaylistService exportService,
+    required ConnectivityService connectivityService,
+    required CacheManager cacheManager,
   }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
        _exportService = exportService,
+       _connectivityService = connectivityService,
+       _cacheManager = cacheManager,
        super(PlaylistInitState()) {
     on<DeleteMusicSheetInPlaylistEvent>(_deleteMusicSheetInPlaylistEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
@@ -169,13 +179,28 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     // Add new music sheets if any (repository will validate capacity)
     if (newMusicSheets.isNotEmpty) {
       try {
-        final written = await _firebaseFirestoreRepository.addMusicSheetsToPlaylist(
-          playlist: playlist,
-          musicSheets: newMusicSheets,
-        );
-        if (!written) {
-          emit(PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: state.playlist));
-          return;
+        if (_connectivityService.isOnline) {
+          final written = await _firebaseFirestoreRepository.addMusicSheetsToPlaylist(
+            playlist: playlist,
+            musicSheets: newMusicSheets,
+          );
+          if (!written) {
+            emit(PlaylistErrorState(error: const PlaylistErrorUnknown(), playlist: state.playlist));
+            return;
+          }
+        } else {
+          // Offline only sheets already on the device make sense in a playlist. The loading state above is emitted
+          // first so that a repeated identical error is not swallowed by Equatable.
+          if (!await _allCached(newMusicSheets)) {
+            emit(PlaylistErrorState(error: const PlaylistErrorNoInternet(), playlist: state.playlist));
+            return;
+          }
+          // Validated here because the write below is not awaited: a Firestore write completes only once the server
+          // acknowledges it, while the local copy is updated at once and delivered by the playlist stream.
+          playlist.validateCapacityForAdding(newMusicSheets.length);
+          unawaited(
+            _firebaseFirestoreRepository.addMusicSheetsToPlaylist(playlist: playlist, musicSheets: newMusicSheets),
+          );
         }
       } on PlaylistCapacityExceededError catch (error) {
         emit(PlaylistErrorState(error: error, playlist: state.playlist));
@@ -191,6 +216,13 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       );
       emit(PlaylistErrorState(error: error, playlist: state.playlist));
     }
+  }
+
+  Future<bool> _allCached(List<MusicSheet> musicSheets) async {
+    for (final musicSheet in musicSheets) {
+      if (await _cacheManager.getFileFromCache(musicSheet.fileUrl) == null) return false;
+    }
+    return true;
   }
 
   Future<void> _exportPlaylistEvent(ExportPlaylistEvent event, Emitter<PlaylistState> emit) async {
@@ -209,12 +241,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       final tempOutputPath = await _exportService.exportPlaylistToPdf(playlist: playlist);
 
       if (tempOutputPath == null) {
-        emit(
-          PlaylistErrorState(
-            error: const ExportPlaylistError(),
-            playlist: playlist,
-          ),
-        );
+        emit(PlaylistErrorState(error: _exportError(), playlist: playlist));
         return;
       }
       emit(
@@ -226,14 +253,14 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
         ),
       );
     } catch (e) {
-      emit(
-        PlaylistErrorState(
-          error: const ExportPlaylistError(),
-          playlist: playlist,
-        ),
-      );
+      emit(PlaylistErrorState(error: _exportError(), playlist: playlist));
     }
   }
+
+  /// The export service skips sheets it cannot download, so offline the failure is explained by the missing
+  /// network rather than reported as a generic error.
+  PlaylistError _exportError() =>
+      _connectivityService.isOnline ? const ExportPlaylistError() : const ExportPlaylistOfflineError();
 
   /// Saves the exported file to user-selected location
   Future<void> _saveExportedPlaylistEvent(SaveExportedPlaylistEvent event, Emitter<PlaylistState> emit) async {

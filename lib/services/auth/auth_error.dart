@@ -12,6 +12,7 @@ const Map<String, AuthError> authErrorMapping = {
   'no-current-user': AuthErrorUserNotLoggedIn(),
   'user-disabled': AuthErrorUserDisabled(),
   'invalid-credential': AuthErrorInvalidCredential(),
+  'network-request-failed': AuthErrorNetworkRequestFailed(),
 };
 
 @immutable
@@ -34,6 +35,12 @@ class AuthErrorUnknown extends AuthError {
 @immutable
 class AuthGenericException extends AuthError {
   const AuthGenericException() : super();
+}
+
+/// Firebase Auth could not reach its servers: the device is offline or the network blocks it.
+@immutable
+class AuthErrorNetworkRequestFailed extends AuthError {
+  const AuthErrorNetworkRequestFailed() : super();
 }
 
 // auth/no-current-user

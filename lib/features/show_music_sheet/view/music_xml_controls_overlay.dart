@@ -97,6 +97,9 @@ class MusicXmlControlsOverlay extends HookWidget {
             const SizedBox(height: _kItemSpacing),
           ],
           FloatingActionButton(
+            // No hero: the gallery mounts two sheets while a swipe settles, and a route transition (e.g. a back
+            // gesture) would find two FABs with the default hero tag in one route and throw.
+            heroTag: null,
             onPressed: () => showMenu.value = !showMenu.value,
             backgroundColor: showMenu.value ? colorScheme.surfaceContainerHighest : colorScheme.primary,
             foregroundColor: showMenu.value ? colorScheme.onSurface : colorScheme.onPrimary,

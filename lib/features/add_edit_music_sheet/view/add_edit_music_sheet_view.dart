@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/add_edit_music_sheet/error/add_edit_music_sheet_error.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/add_edit_music_sheet/view/discard_changes_uploaded_music_sheet_dialog.dart';
@@ -57,11 +58,11 @@ class AddEditMusicSheetView extends HookWidget {
             final errorMessage = switch (error) {
               RenameMusicSheetFailedError() => localizations.renameMusicSheetFailed,
               UploadMusicSheetRecordFailedError() => localizations.uploadMusicSheetRecordFailed,
+              UploadMusicSheetNoInternetError() => localizations.uploadMusicSheetNoInternet,
               AddEditMusicSheetErrorUnknown() => localizations.unknownError,
             };
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${localizations.anErrorHappened}: $errorMessage')),
-            );
+            // A dialog, not a snackbar: the user has to acknowledge why the sheet was not saved.
+            showErrorDialog(context: context, text: errorMessage);
           }
         },
         builder: (context, state) {

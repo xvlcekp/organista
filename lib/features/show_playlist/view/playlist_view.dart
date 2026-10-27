@@ -175,10 +175,14 @@ class PlaylistView extends HookWidget {
         );
       case InitializationError():
         message = localizations.musicSheetInitializationError;
+      case PlaylistErrorNoInternet():
+        message = localizations.addToPlaylistNoInternet;
       case ExportNoMusicSheetsPlaylistError():
         message = localizations.noMusicSheetsToExport;
       case ExportPlaylistError():
         message = localizations.exportFailed;
+      case ExportPlaylistOfflineError():
+        message = localizations.exportFailedOffline;
       case SourceFileNotFoundPlaylistError():
         message = localizations.exportErrorSourceFileNotFound;
       case ExportSaveFailedPlaylistError():

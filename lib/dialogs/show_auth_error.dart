@@ -39,6 +39,8 @@ String getLocalizedMessage(AuthError authError, BuildContext context) {
     return loc.authErrorGoogleSignInFailedText;
   } else if (authError is AuthErrorAppleSignInFailed) {
     return loc.authErrorAppleSignInFailedText;
+  } else if (authError is AuthErrorNetworkRequestFailed) {
+    return loc.authErrorNetworkRequestFailedText;
   }
 
   return loc.errorUnknownText;

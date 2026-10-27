@@ -8,6 +8,7 @@ import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
 import 'package:organista/repositories/firebase_storage_repository.dart';
+import 'package:organista/services/connectivity/connectivity_service.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:path/path.dart';
 
@@ -16,12 +17,15 @@ part 'add_edit_music_sheet_state.dart';
 class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
   final FirebaseFirestoreRepository _firebaseFirestoreRepository;
   final FirebaseStorageRepository _firebaseStorageRepository;
+  final ConnectivityService _connectivityService;
 
   AddEditMusicSheetCubit({
     required FirebaseFirestoreRepository firebaseFirestoreRepository,
     required FirebaseStorageRepository firebaseStorageRepository,
+    required ConnectivityService connectivityService,
   }) : _firebaseFirestoreRepository = firebaseFirestoreRepository,
        _firebaseStorageRepository = firebaseStorageRepository,
+       _connectivityService = connectivityService,
        super(const InitMusicSheetState());
 
   void resetState() {
@@ -65,6 +69,8 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
   }) async {
     if (isClosed) return;
 
+    // Every attempt passes through the loading state, also the one that fails below: a repeated identical error
+    // state would otherwise be swallowed by Equatable and the dialog would show only once.
     emit(
       UploadMusicSheetState(
         file: file,
@@ -72,6 +78,21 @@ class AddEditMusicSheetCubit extends Cubit<AddEditMusicSheetState> {
         isLoading: true,
       ),
     );
+
+    // Storage has no offline mode: without a network `putData` only retries until it times out, while the user
+    // waits behind the loader. Fail right away instead.
+    if (!_connectivityService.isOnline) {
+      if (!isClosed) {
+        emit(
+          UploadMusicSheetState(
+            file: file,
+            repositoryId: repositoryId,
+            error: const UploadMusicSheetNoInternetError(),
+          ),
+        );
+      }
+      return;
+    }
 
     final Reference? reference = await _firebaseStorageRepository.uploadFile(
       file: file,

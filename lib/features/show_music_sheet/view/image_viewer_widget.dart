@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
+import 'package:organista/features/show_music_sheet/view/sheet_load_error.dart';
 import 'package:organista/models/music_sheets/music_sheet_source.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -31,7 +32,7 @@ class ImageViewerWidget extends StatelessWidget {
         maxScale: PhotoViewComputedScale.contained * _maxScaleMultiplier,
         initialScale: PhotoViewComputedScale.contained,
         loadingBuilder: (context, event) => const Center(child: CircularProgressIndicator()),
-        errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.error)),
+        errorBuilder: (context, error, stackTrace) => SheetLoadError(mode: mode),
         backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       );
     }
@@ -47,7 +48,7 @@ class ImageViewerWidget extends StatelessWidget {
         fit: BoxFit.contain,
         filterQuality: filterQuality,
         placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
+        errorWidget: (context, url, error) => SheetLoadError(mode: mode),
       ),
       MusicSheetBytesSource(:final bytes) => Image.memory(
         bytes,

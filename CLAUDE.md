@@ -79,6 +79,10 @@ lib/
 
 **Firebase Streams**: `StreamManager.instance` tracks active Firestore listeners so they can all be cancelled before account deletion (prevents permission-denied errors).
 
+**Playlist streams must deliver local (pending) writes — do not re-add a `hasPendingWrites` filter.** `getPlaylistStream` and `getPlaylistsStream` use plain `.snapshots()`; the `.where((event) => !event.metadata.hasPendingWrites)` filter (added in commit `b353e60` to avoid a write emitting twice: local echo + server ack) was deliberately removed. Offline, the local echo is the *only* snapshot there is: with the filter, a cached sheet added to a playlist offline is saved by Firestore but never appears in the UI until the device is back online, which looks like the add failed. Without the filter, offline adds show instantly, and so will deletes and reorders once their handlers stop awaiting the write (a Firestore write future completes only on server acknowledgement, so offline handlers must fire it with `unawaited` and let the stream update the UI). The cost of the double emission is nil in practice: the bloc states are Equatable, so the server echo with identical data is skipped before any rebuild; the only remaining extra rebuild is on playlist creation, where the server fills in `createdAt`. The log volume that motivated the filter was already fixed by downgrading the per-snapshot logs to debug.
+
+**Network state**: `ConnectivityService` (lib/services/connectivity) is the single source of truth (`isOnline`, `onlineChanges`); `ConnectivityCubit` only mirrors it for widgets. Blocs read the service directly. Use it only for operations that genuinely need a network (Storage uploads, PDF export of uncached sheets, viewer error messages, adding *uncached* sheets to a playlist). Never pre-check connectivity before a plain Firestore write — Firestore queues those offline natively.
+
 **Error tracking**: Sentry. Captured via `Sentry.captureException()` in catch blocks and automatically via `SentryWidget` wrapper. `SentryWidget` wraps the root widget in `main.dart`.
 
 ### Testing Patterns

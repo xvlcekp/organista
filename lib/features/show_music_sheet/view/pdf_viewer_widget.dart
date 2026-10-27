@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:organista/extensions/hex_color.dart';
+import 'package:organista/features/show_music_sheet/view/sheet_load_error.dart';
 import 'package:organista/features/show_music_sheet/view/music_sheet_view.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_page_counter.dart';
 import 'package:organista/features/show_music_sheet/view/pdf_page_navigation.dart';
@@ -38,7 +39,7 @@ class PdfViewerWidget extends HookWidget {
     }
 
     if (loadResult.hasError || loadResult.controller == null) {
-      return const Center(child: Icon(Icons.warning_rounded, color: Colors.red));
+      return SheetLoadError(mode: mode);
     }
 
     final pdfController = loadResult.controller!;
