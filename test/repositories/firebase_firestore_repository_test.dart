@@ -561,6 +561,63 @@ void main() {
       });
     });
 
+    group('modifiedAt', () {
+      Future<DateTime?> modifiedAtOf(String playlistId) async {
+        final doc = await fakeFirestore.collection(FirebaseCollectionName.playlists).doc(playlistId).get();
+        return (doc.data()?[PlaylistKey.modifiedAt] as Timestamp?)?.toDate();
+      }
+
+      test('a new playlist and its duplicate are stamped as modified now', () async {
+        final before = DateTime.now();
+        await repository.addNewPlaylist(playlistName: 'New', userId: 'user-123');
+        final original = await createTestPlaylist(playlistId: 'orig');
+        await repository.duplicatePlaylist(playlist: original, newPlaylistName: 'Copy');
+
+        final playlists = await fakeFirestore.collection(FirebaseCollectionName.playlists).get();
+        final written = playlists.docs.where((doc) => doc.id != 'orig');
+        expect(written, hasLength(2));
+        for (final doc in written) {
+          final modifiedAt = (doc.data()[PlaylistKey.modifiedAt] as Timestamp?)?.toDate();
+          expect(modifiedAt, isNotNull, reason: '${doc.data()[PlaylistKey.name]} must be stamped');
+          expect(modifiedAt!.isBefore(before), isFalse);
+        }
+      });
+
+      test('every change to a playlist stamps it as modified now', () async {
+        final sheet = createTestMusicSheet(musicSheetId: 'sheet-1', fileName: 'Sheet 1.pdf');
+        final playlist = await createTestPlaylist(musicSheets: [sheet.toJson()]);
+        expect(await modifiedAtOf(playlist.playlistId), isNull, reason: 'a legacy playlist starts without the field');
+
+        final writes = <String, Future<bool> Function()>{
+          'renamePlaylist': () => repository.renamePlaylist(newPlaylistName: 'Renamed', playlist: playlist),
+          'addMusicSheetsToPlaylist': () => repository.addMusicSheetsToPlaylist(
+            playlist: playlist,
+            musicSheets: [createTestMusicSheet(musicSheetId: 'sheet-2', fileName: 'Sheet 2.pdf')],
+          ),
+          'renameMusicSheetInPlaylist': () async =>
+              repository.renameMusicSheetInPlaylist(musicSheet: sheet, fileName: 'New.pdf', playlist: playlist),
+          'updateMusicSheetTransposition': () =>
+              repository.updateMusicSheetTransposition(musicSheet: sheet, transposition: 2, playlist: playlist),
+          'deleteMusicSheetInPlaylist': () =>
+              repository.deleteMusicSheetInPlaylist(musicSheet: sheet, playlist: playlist),
+          'musicSheetReorder': () => repository.musicSheetReorder(playlist: playlist),
+        };
+
+        for (final entry in writes.entries) {
+          await fakeFirestore.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+            PlaylistKey.modifiedAt: FieldValue.delete(),
+          });
+          final before = DateTime.now();
+
+          expect(await entry.value(), isTrue, reason: '${entry.key} must succeed');
+
+          final modifiedAt = await modifiedAtOf(playlist.playlistId);
+          expect(modifiedAt, isNotNull, reason: '${entry.key} must stamp modifiedAt');
+          expect(modifiedAt!.isBefore(before), isFalse, reason: '${entry.key} must stamp the current time');
+        }
+      });
+    });
+
     group('deletePlaylist', () {
       test('should delete playlist successfully', () async {
         final playlist = await createTestPlaylist();

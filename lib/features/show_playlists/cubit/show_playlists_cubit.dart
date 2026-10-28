@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart' show immutable;
+import 'package:organista/config/app_constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
+import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/stream_identifier.dart';
 import 'package:organista/managers/stream_manager.dart';
@@ -33,7 +37,7 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
 
     // Always subscribe to the broadcast stream (even if reusing existing stream)
     _streamSubscription = broadcastStream.listen((playlists) {
-      emit(PlaylistsLoadedState(playlists: playlists.toList()));
+      emit(PlaylistsLoadedState(playlists: playlists.toList(), searchQuery: state.searchQuery, sort: state.sort));
     });
 
     logger.d('Subscribed to playlists stream for user: $userId');
@@ -48,7 +52,18 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
     return super.close();
   }
 
+  void search(String query) {
+    emit(PlaylistsLoadedState(playlists: state.playlists, searchQuery: query, sort: state.sort));
+  }
+
+  void sortBy(PlaylistSort sort) {
+    emit(PlaylistsLoadedState(playlists: state.playlists, searchQuery: state.searchQuery, sort: sort));
+  }
+
   Future<void> addPlaylist({required String playlistName, required String userId}) async {
+    if (_isAtPlaylistLimit()) {
+      return;
+    }
     final written = await _firebaseFirestoreRepository.addNewPlaylist(playlistName: playlistName, userId: userId);
     _reportIfNotWritten(written);
   }
@@ -62,6 +77,9 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
   }
 
   Future<void> duplicatePlaylist({required String newPlaylistName, required Playlist playlist}) async {
+    if (_isAtPlaylistLimit()) {
+      return;
+    }
     final written = await _firebaseFirestoreRepository.duplicatePlaylist(
       playlist: playlist,
       newPlaylistName: newPlaylistName,
@@ -77,14 +95,34 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
     _reportIfNotWritten(written);
   }
 
-  /// Shows a failed write (already logged by the repository). The error is cleared right away so that Equatable
-  /// does not swallow the next identical one.
+  /// Reports the limit instead of writing once the user owns the maximum number of playlists. Playlists above the
+  /// limit (created before it existed) are left alone; only creating more is refused.
+  bool _isAtPlaylistLimit() {
+    const maximum = AppConstants.maximumPlaylistsCount;
+    if (state.playlists.length < maximum) {
+      return false;
+    }
+    logger.i('User already has $maximum playlists, skipping creation');
+    _report(const MaximumPlaylistsCountExceeded(maximumPlaylistsCount: maximum));
+    return true;
+  }
+
+  /// Shows a failed write (already logged by the repository).
   void _reportIfNotWritten(bool written) {
-    if (written || isClosed) {
+    if (!written) {
+      _report(const PlaylistErrorUnknown());
+    }
+  }
+
+  /// The error is cleared right away so that Equatable does not swallow the next identical one.
+  void _report(PlaylistError error) {
+    if (isClosed) {
       return;
     }
     final playlists = state.playlists;
-    emit(PlaylistsLoadedState(playlists: playlists, error: const PlaylistErrorUnknown()));
-    emit(PlaylistsLoadedState(playlists: playlists));
+    final query = state.searchQuery;
+    final sort = state.sort;
+    emit(PlaylistsLoadedState(playlists: playlists, searchQuery: query, sort: sort, error: error));
+    emit(PlaylistsLoadedState(playlists: playlists, searchQuery: query, sort: sort));
   }
 }

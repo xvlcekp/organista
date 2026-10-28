@@ -273,6 +273,36 @@ class AppLocalizationsSk extends AppLocalizations {
       'Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.';
 
   @override
+  String get searchPlaylists => 'Vyhľadať zoznam skladieb...';
+
+  @override
+  String get noPlaylistsFound => 'Nenašli sa žiadne zoznamy skladieb';
+
+  @override
+  String get sortPlaylists => 'Zoradiť zoznamy skladieb';
+
+  @override
+  String get sortByName => 'Podľa názvu';
+
+  @override
+  String get sortByNewest => 'Od najnovších';
+
+  @override
+  String get sortByModified => 'Naposledy upravené';
+
+  @override
+  String get playlistCreated => 'Vytvorené';
+
+  @override
+  String get today => 'dnes';
+
+  @override
+  String get yesterday => 'včera';
+
+  @override
+  String get playlistModified => 'Upravené';
+
+  @override
   String get musicSheets => 'Počet nôt';
 
   @override
@@ -524,6 +554,11 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get repositoryCannotModifyOtherUsersError => 'Môžete upravovať len vlastné repozitáre!';
+
+  @override
+  String maximumPlaylistsCountExceededError(int maximumPlaylistsCount) {
+    return 'Dosiahli ste maximálny počet zoznamov skladieb ($maximumPlaylistsCount). Pred vytvorením nových zoznamov prosím vymažte niektoré existujúce.';
+  }
 
   @override
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {

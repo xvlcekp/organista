@@ -608,6 +608,66 @@ abstract class AppLocalizations {
   /// **'Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.'**
   String get createFirstPlaylist;
 
+  /// No description provided for @searchPlaylists.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vyhľadať zoznam skladieb...'**
+  String get searchPlaylists;
+
+  /// No description provided for @noPlaylistsFound.
+  ///
+  /// In sk, this message translates to:
+  /// **'Nenašli sa žiadne zoznamy skladieb'**
+  String get noPlaylistsFound;
+
+  /// No description provided for @sortPlaylists.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zoradiť zoznamy skladieb'**
+  String get sortPlaylists;
+
+  /// No description provided for @sortByName.
+  ///
+  /// In sk, this message translates to:
+  /// **'Podľa názvu'**
+  String get sortByName;
+
+  /// No description provided for @sortByNewest.
+  ///
+  /// In sk, this message translates to:
+  /// **'Od najnovších'**
+  String get sortByNewest;
+
+  /// No description provided for @sortByModified.
+  ///
+  /// In sk, this message translates to:
+  /// **'Naposledy upravené'**
+  String get sortByModified;
+
+  /// No description provided for @playlistCreated.
+  ///
+  /// In sk, this message translates to:
+  /// **'Vytvorené'**
+  String get playlistCreated;
+
+  /// No description provided for @today.
+  ///
+  /// In sk, this message translates to:
+  /// **'dnes'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In sk, this message translates to:
+  /// **'včera'**
+  String get yesterday;
+
+  /// No description provided for @playlistModified.
+  ///
+  /// In sk, this message translates to:
+  /// **'Upravené'**
+  String get playlistModified;
+
   /// No description provided for @musicSheets.
   ///
   /// In sk, this message translates to:
@@ -1063,6 +1123,12 @@ abstract class AppLocalizations {
   /// In sk, this message translates to:
   /// **'Môžete upravovať len vlastné repozitáre!'**
   String get repositoryCannotModifyOtherUsersError;
+
+  /// Error message when user tries to create or duplicate more playlists than allowed
+  ///
+  /// In sk, this message translates to:
+  /// **'Dosiahli ste maximálny počet zoznamov skladieb ({maximumPlaylistsCount}). Pred vytvorením nových zoznamov prosím vymažte niektoré existujúce.'**
+  String maximumPlaylistsCountExceededError(int maximumPlaylistsCount);
 
   /// Error message when user tries to create more repositories than allowed
   ///

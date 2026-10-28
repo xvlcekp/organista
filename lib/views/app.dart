@@ -120,12 +120,6 @@ class App extends StatelessWidget {
                 }
               },
             ),
-            // TODO: I have opened a playlist, I minimize the app, returns back and other playlist is loaded with original name
-            // TODO: named routes how to acces it - based on vandad's 1. video of state management course
-            // use library https://pub.dev/packages/go_router for advanced routing
-            // routes: {
-            //   '/add-image':(context) => const
-            // },
           );
         },
       ),

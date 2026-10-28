@@ -30,6 +30,7 @@ class AppConstants {
 
   // Playlist limits
   static const int maxPlaylistCapacity = 50;
+  static const int maximumPlaylistsCount = 75;
 
   // Cloud Logging: entries are buffered and sent in one request per batch
   static const Duration cloudLoggingFlushInterval = Duration(seconds: 5);

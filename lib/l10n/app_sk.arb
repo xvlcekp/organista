@@ -86,6 +86,16 @@
   "newPlaylist": "Nový zoznam skladieb",
   "noPlaylistsYet": "Zatiaľ žiadne zoznamy skladieb",
   "createFirstPlaylist": "Vytvorte svoj prvý zoznam skladieb.\nDo zoznamu skladieb si pridáte noty z repozitárov v ďalšom kroku.",
+  "searchPlaylists": "Vyhľadať zoznam skladieb...",
+  "noPlaylistsFound": "Nenašli sa žiadne zoznamy skladieb",
+  "sortPlaylists": "Zoradiť zoznamy skladieb",
+  "sortByName": "Podľa názvu",
+  "sortByNewest": "Od najnovších",
+  "sortByModified": "Naposledy upravené",
+  "playlistCreated": "Vytvorené",
+  "today": "dnes",
+  "yesterday": "včera",
+  "playlistModified": "Upravené",
   "musicSheets": "Počet nôt",
   "searchMusicSheets": "Vyhľadať noty...",
   "noMusicSheetsFound": "Nenašli sa žiadne noty",
@@ -252,6 +262,16 @@
   "repositoryNotFoundError": "Repozitár nebol nájdený!",
   "repositoryCannotModifyPublicError": "Verejné repozitáre nie je možné upravovať!",
   "repositoryCannotModifyOtherUsersError": "Môžete upravovať len vlastné repozitáre!",
+  "maximumPlaylistsCountExceededError": "Dosiahli ste maximálny počet zoznamov skladieb ({maximumPlaylistsCount}). Pred vytvorením nových zoznamov prosím vymažte niektoré existujúce.",
+  "@maximumPlaylistsCountExceededError": {
+    "description": "Error message when user tries to create or duplicate more playlists than allowed",
+    "placeholders": {
+      "maximumPlaylistsCount": {
+        "type": "int",
+        "description": "The maximum number of playlists allowed"
+      }
+    }
+  },
   "maximumRepositoriesCountExceededError": "Dosiahli ste maximálny počet repozitárov ({maximumRepositoriesCount}). Pred vytvorením nových repozitárov prosím vymažte niektoré existujúce.",
   "@maximumRepositoriesCountExceededError": {
     "description": "Error message when user tries to create more repositories than allowed",

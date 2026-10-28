@@ -33,6 +33,9 @@ void main() {
     late Playlist testPlaylist;
     late MusicSheet testMusicSheet;
     late Timestamp testTimestamp;
+    late Playlist firstPlaylist;
+    late Playlist secondPlaylist;
+    late StreamController<Playlist> firstStream;
 
     setUp(() {
       mockFirebaseFirestoreRepository = MockFirebaseFirestoreRepository();
@@ -223,6 +226,54 @@ void main() {
         expect: () => [
           PlaylistLoadedState(isLoading: true, playlist: testPlaylist),
           PlaylistLoadedState(isLoading: false, playlist: testPlaylist),
+        ],
+      );
+
+      // Regression: every opened playlist keeps its stream handler alive (the handlers run concurrently and never
+      // finish). An update on a previously opened playlist, e.g. when Firestore re-syncs after the app resumes from
+      // the background, must not replace the playlist currently on screen.
+      blocTest<PlaylistBloc, PlaylistState>(
+        'ignores updates from a previously opened playlist',
+        setUp: () {
+          final suffix = DateTime.now().microsecondsSinceEpoch;
+          firstPlaylist = Playlist(
+            playlistId: 'first_$suffix',
+            json: {PlaylistKey.userId: 'user1', PlaylistKey.createdAt: testTimestamp, PlaylistKey.name: 'First'},
+          );
+          secondPlaylist = Playlist(
+            playlistId: 'second_$suffix',
+            json: {PlaylistKey.userId: 'user1', PlaylistKey.createdAt: testTimestamp, PlaylistKey.name: 'Second'},
+          );
+          firstStream = StreamController<Playlist>();
+          when(
+            mockFirebaseFirestoreRepository.getPlaylistStream(firstPlaylist.playlistId),
+          ).thenAnswer((_) => firstStream.stream);
+          when(
+            mockFirebaseFirestoreRepository.getPlaylistStream(secondPlaylist.playlistId),
+          ).thenAnswer((_) => Stream.value(secondPlaylist));
+        },
+        build: () => bloc,
+        act: (bloc) async {
+          bloc.add(InitPlaylistEvent(user: testUser, playlist: firstPlaylist));
+          await Future<void>.delayed(Duration.zero);
+          firstStream.add(firstPlaylist);
+          await Future<void>.delayed(Duration.zero);
+          bloc.add(InitPlaylistEvent(user: testUser, playlist: secondPlaylist));
+          await Future<void>.delayed(Duration.zero);
+          firstStream.add(
+            Playlist(
+              playlistId: firstPlaylist.playlistId,
+              json: {PlaylistKey.userId: 'user1', PlaylistKey.createdAt: testTimestamp, PlaylistKey.name: 'Renamed'},
+            ),
+          );
+          await Future<void>.delayed(Duration.zero);
+        },
+        tearDown: () => firstStream.close(),
+        expect: () => [
+          PlaylistLoadedState(isLoading: true, playlist: firstPlaylist),
+          PlaylistLoadedState(isLoading: false, playlist: firstPlaylist),
+          PlaylistLoadedState(isLoading: true, playlist: secondPlaylist),
+          PlaylistLoadedState(isLoading: false, playlist: secondPlaylist),
         ],
       );
     });

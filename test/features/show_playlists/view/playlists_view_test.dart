@@ -7,6 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
+import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/playlists_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
@@ -55,6 +56,7 @@ void main() {
       json: {
         PlaylistKey.userId: 'test-user-123',
         PlaylistKey.createdAt: testTimestamp,
+        PlaylistKey.modifiedAt: Timestamp.fromDate(DateTime(2024, 2, 20)),
         PlaylistKey.name: 'Sunday Service',
         PlaylistKey.musicSheets: [sampleMusicSheetJson],
       },
@@ -65,6 +67,7 @@ void main() {
       json: {
         PlaylistKey.userId: 'test-user-123',
         PlaylistKey.createdAt: testTimestamp,
+        PlaylistKey.modifiedAt: testTimestamp,
         PlaylistKey.name: 'Christmas Songs',
         PlaylistKey.musicSheets: const [],
       },
@@ -125,7 +128,8 @@ void main() {
             BlocProvider<ShowPlaylistsCubit>.value(value: mockShowPlaylistsCubit),
             BlocProvider<PlaylistBloc>.value(value: mockPlaylistBloc),
           ],
-          child: const PlaylistsView(),
+          // The main screen hosts the view inside a Scaffold; the search field needs that Material ancestor.
+          child: const Material(child: PlaylistsView()),
         ),
       );
     }
@@ -264,7 +268,10 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.widgetWithText(TextField, 'Sunday Service'), findsOneWidget);
 
-        await tester.enterText(find.byType(TextField), 'Evening Service');
+        await tester.enterText(
+          find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField)),
+          'Evening Service',
+        );
         await tester.tap(find.text('Rename'));
         await tester.pumpAndSettle();
 
@@ -320,7 +327,10 @@ void main() {
 
         await tester.tap(find.text('Duplicate playlist'));
         await tester.pumpAndSettle();
-        await tester.enterText(find.byType(TextField), 'Sunday Service');
+        await tester.enterText(
+          find.descendant(of: find.byType(AlertDialog), matching: find.byType(TextField)),
+          'Sunday Service',
+        );
         await tester.tap(find.text('Duplicate'));
         await tester.pumpAndSettle();
 
@@ -359,6 +369,186 @@ void main() {
       });
     });
 
+    group('Playlist count limit', () {
+      testWidgets('explains the limit when a playlist could not be created because of it', (tester) async {
+        const limitError = MaximumPlaylistsCountExceeded(maximumPlaylistsCount: 75);
+        final loaded = PlaylistsLoadedState(playlists: [testPlaylist1]);
+        final widget = createTestWidget(initialState: loaded);
+        whenListen(
+          mockShowPlaylistsCubit,
+          Stream.fromIterable([
+            PlaylistsLoadedState(playlists: [testPlaylist1], error: limitError),
+            loaded,
+          ]),
+          initialState: loaded,
+        );
+
+        await tester.pumpWidget(widget);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(
+            'You have reached the maximum number of playlists (75). Please delete some playlists before creating new ones.',
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Unknown error'), findsNothing);
+      });
+    });
+
+    group('Search and sort', () {
+      testWidgets('typing into the search field asks the cubit to filter', (tester) async {
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [testPlaylist1])));
+        await tester.pump();
+
+        await tester.enterText(find.widgetWithText(TextField, 'Search playlists...'), 'sun');
+
+        verify(() => mockShowPlaylistsCubit.search('sun')).called(1);
+      });
+
+      testWidgets('shows only the playlists matching the search', (tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1, testPlaylist2], searchQuery: 'christ'),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('Christmas Songs'), findsOneWidget);
+        expect(find.text('Sunday Service'), findsNothing);
+      });
+
+      testWidgets('explains when the search matches no playlist', (tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1], searchQuery: 'xyz'),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('No playlists found'), findsOneWidget);
+        expect(find.text('No playlists yet'), findsNothing);
+        expect(find.byType(TextField), findsOneWidget, reason: 'the search field stays so the query can be changed');
+      });
+
+      testWidgets('hides the search field while the user has no playlists', (tester) async {
+        await tester.pumpWidget(createTestWidget(initialState: const PlaylistsLoadedState(playlists: [])));
+        await tester.pump();
+
+        expect(find.byType(TextField), findsNothing);
+      });
+
+      testWidgets('the sort chooser preselects the current order', (tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1], sort: PlaylistSort.modified),
+          ),
+        );
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.sort));
+        await tester.pumpAndSettle();
+
+        final group = tester.widget<RadioGroup<PlaylistSort>>(find.byType(RadioGroup<PlaylistSort>));
+        expect(group.groupValue, PlaylistSort.modified);
+      });
+
+      testWidgets('the sort button offers the orders and asks the cubit to sort', (tester) async {
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [testPlaylist1])));
+        await tester.pump();
+
+        await tester.tap(find.byIcon(Icons.sort));
+        await tester.pumpAndSettle();
+        expect(find.text('By name'), findsOneWidget);
+        expect(find.text('Recently modified'), findsOneWidget);
+
+        await tester.tap(find.text('Newest first'));
+        await tester.pumpAndSettle();
+
+        verify(() => mockShowPlaylistsCubit.sortBy(PlaylistSort.newest)).called(1);
+        expect(find.text('By name'), findsNothing, reason: 'choosing an order closes the chooser');
+      });
+    });
+
+    group('Playlist date', () {
+      testWidgets('shows when the playlist was last modified by default', (tester) async {
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [testPlaylist1])));
+        await tester.pump();
+
+        expect(find.text('Modified: 2/20/2024'), findsOneWidget);
+        expect(find.textContaining('Created'), findsNothing);
+      });
+
+      testWidgets('says "today" for a playlist modified today', (tester) async {
+        final today = Playlist(
+          playlistId: 'today',
+          json: {
+            PlaylistKey.userId: 'test-user-123',
+            PlaylistKey.createdAt: testTimestamp,
+            PlaylistKey.modifiedAt: Timestamp.fromDate(DateTime.now()),
+            PlaylistKey.name: 'Fresh',
+            PlaylistKey.musicSheets: const [],
+          },
+        );
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [today])));
+        await tester.pump();
+
+        expect(find.text('Modified: today'), findsOneWidget);
+      });
+
+      testWidgets('shows when the playlist was created while sorted by newest', (tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1], sort: PlaylistSort.newest),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('Created: 1/15/2024'), findsOneWidget);
+        expect(find.textContaining('Modified'), findsNothing);
+      });
+
+      testWidgets('shows when the playlist was last modified while sorted by modified', (tester) async {
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [testPlaylist1], sort: PlaylistSort.modified),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('Modified: 2/20/2024'), findsOneWidget);
+      });
+
+      testWidgets('shows no modified date either while the server has not stamped the playlist yet', (tester) async {
+        final pending = Playlist(
+          playlistId: 'pending',
+          json: const {PlaylistKey.userId: 'test-user-123', PlaylistKey.name: 'Pending', PlaylistKey.musicSheets: []},
+        );
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [pending])));
+        await tester.pump();
+
+        expect(find.text('Pending'), findsOneWidget);
+        expect(find.textContaining('Modified'), findsNothing);
+      });
+
+      testWidgets('shows no date while the server has not stamped the playlist yet', (tester) async {
+        // A playlist written offline echoes back without `createdAt` until the server acknowledges it.
+        final pending = Playlist(
+          playlistId: 'pending',
+          json: const {PlaylistKey.userId: 'test-user-123', PlaylistKey.name: 'Pending', PlaylistKey.musicSheets: []},
+        );
+        await tester.pumpWidget(
+          createTestWidget(
+            initialState: PlaylistsLoadedState(playlists: [pending], sort: PlaylistSort.newest),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('Pending'), findsOneWidget);
+        expect(find.textContaining('1970'), findsNothing);
+      });
+    });
+
     group('Basic Interactions', () {
       testWidgets('should have proper widget hierarchy', (tester) async {
         await tester.pumpWidget(
@@ -386,6 +576,7 @@ void main() {
             json: {
               PlaylistKey.userId: 'test-user-123',
               PlaylistKey.createdAt: testTimestamp,
+              PlaylistKey.modifiedAt: testTimestamp,
               PlaylistKey.name: 'Playlist $index',
               PlaylistKey.musicSheets: const [],
             },

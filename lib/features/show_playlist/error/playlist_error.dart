@@ -32,6 +32,13 @@ class PlaylistCapacityExceededError extends PlaylistError {
   }) : super();
 }
 
+/// The user already has the maximum number of playlists; creating or duplicating one is refused.
+@immutable
+class MaximumPlaylistsCountExceeded extends PlaylistError {
+  final int maximumPlaylistsCount;
+  const MaximumPlaylistsCountExceeded({required this.maximumPlaylistsCount}) : super();
+}
+
 @immutable
 class InitializationError extends PlaylistError {
   const InitializationError() : super();

@@ -17,6 +17,7 @@ class PlaylistPayload extends MapView<String, dynamic> {
            PlaylistKey.userId: userId,
            PlaylistKey.name: name,
            PlaylistKey.createdAt: FieldValue.serverTimestamp(),
+           PlaylistKey.modifiedAt: Timestamp.now(),
            PlaylistKey.musicSheets: musicSheets.map((musicSheet) => musicSheet.toJson()).toList(),
          },
        );

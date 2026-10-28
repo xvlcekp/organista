@@ -272,6 +272,36 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create your first playlist.\nYou will add music sheets from repositories in the next step.';
 
   @override
+  String get searchPlaylists => 'Search playlists...';
+
+  @override
+  String get noPlaylistsFound => 'No playlists found';
+
+  @override
+  String get sortPlaylists => 'Sort playlists';
+
+  @override
+  String get sortByName => 'By name';
+
+  @override
+  String get sortByNewest => 'Newest first';
+
+  @override
+  String get sortByModified => 'Recently modified';
+
+  @override
+  String get playlistCreated => 'Created';
+
+  @override
+  String get today => 'today';
+
+  @override
+  String get yesterday => 'yesterday';
+
+  @override
+  String get playlistModified => 'Modified';
+
+  @override
   String get musicSheets => 'Music sheets';
 
   @override
@@ -521,6 +551,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repositoryCannotModifyOtherUsersError => 'You can only modify your own repositories';
+
+  @override
+  String maximumPlaylistsCountExceededError(int maximumPlaylistsCount) {
+    return 'You have reached the maximum number of playlists ($maximumPlaylistsCount). Please delete some playlists before creating new ones.';
+  }
 
   @override
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {

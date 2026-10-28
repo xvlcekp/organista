@@ -38,6 +38,19 @@ void main() {
       expect(playlist.musicSheets.first.fileName, 'Amazing Grace.pdf');
     });
 
+    test('reads modifiedAt from JSON', () {
+      final modified = Timestamp.fromDate(DateTime(2024, 2, 1));
+      final playlist = Playlist(playlistId: 'p', json: {...samplePlaylistJson, PlaylistKey.modifiedAt: modified});
+
+      expect(playlist.modifiedAt, DateTime(2024, 2, 1));
+    });
+
+    test('a playlist written before modifiedAt existed counts as modified when it was created', () {
+      final playlist = Playlist(playlistId: 'p', json: samplePlaylistJson);
+
+      expect(playlist.modifiedAt, playlist.createdAt);
+    });
+
     test('should create empty Playlist using factory constructor', () {
       final playlist = Playlist.empty();
 

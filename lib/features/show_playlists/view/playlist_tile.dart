@@ -6,6 +6,8 @@ import 'package:organista/config/app_theme.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
+import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
+import 'package:organista/features/show_playlists/view/relative_date.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/delete_playlist_dialog.dart';
 import 'package:organista/features/show_playlists/view/duplicate_playlist_dialog.dart';
@@ -17,7 +19,10 @@ class PlaylistTile extends StatelessWidget {
   final Playlist playlist;
   final AuthUser user;
 
-  const PlaylistTile({required this.playlist, required this.user, super.key});
+  /// Decides which date the tile shows: the creation date when sorted by newest, the last change otherwise.
+  final PlaylistSort sort;
+
+  const PlaylistTile({required this.playlist, required this.user, required this.sort, super.key});
 
   static const double _iconContainerSize = 44.0;
   static const double _iconContainerBorderRadius = 10.0;
@@ -37,6 +42,9 @@ class PlaylistTile extends StatelessWidget {
     final localizations = context.loc;
     final tileColor = _tileColors[playlist.playlistId.hashCode.abs() % _tileColors.length];
     final onSurfaceVariant = theme.colorScheme.onSurfaceVariant;
+    final showCreated = sort == PlaylistSort.newest;
+    final dateLabel = showCreated ? localizations.playlistCreated : localizations.playlistModified;
+    final date = showCreated ? playlist.createdAt : playlist.modifiedAt;
 
     return Card(
       child: InkWell(
@@ -71,9 +79,20 @@ class PlaylistTile extends StatelessWidget {
                       style: theme.textTheme.titleMedium,
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      '${localizations.musicSheets}: ${playlist.musicSheets.length}',
-                      style: theme.textTheme.bodySmall?.copyWith(color: onSurfaceVariant),
+                    Row(
+                      children: [
+                        Text(
+                          '${localizations.musicSheets}: ${playlist.musicSheets.length}',
+                          style: theme.textTheme.bodySmall?.copyWith(color: onSurfaceVariant),
+                        ),
+                        const Spacer(),
+                        // A playlist written offline echoes back without `createdAt` (the epoch) until the server stamps it.
+                        if (date.millisecondsSinceEpoch > 0)
+                          Text(
+                            '$dateLabel: ${formatRelativeDate(date, now: DateTime.now(), localizations: localizations)}',
+                            style: theme.textTheme.bodySmall?.copyWith(color: onSurfaceVariant),
+                          ),
+                      ],
                     ),
                   ],
                 ),
