@@ -437,6 +437,34 @@ class AppLocalizationsSk extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Často kladené otázky';
 
   @override
+  String get userGuide => 'Návod na používanie';
+
+  @override
+  String get whatsNew => 'Novinky';
+
+  @override
+  String get musicSheetSources => 'Zdroje nôt';
+
+  @override
+  String get rateApp => 'Ohodnotiť aplikáciu';
+
+  @override
+  String get shareApp => 'Zdieľať aplikáciu';
+
+  @override
+  String shareAppText(String playStoreUrl, String appStoreUrl) {
+    return 'Organista – aplikácia pre organistov na správu a zobrazovanie nôt.\nAndroid: $playStoreUrl\niPhone: $appStoreUrl';
+  }
+
+  @override
+  String whatsNewInVersion(String version) {
+    return 'Čo je nové vo verzii $version';
+  }
+
+  @override
+  String get show => 'Zobraziť';
+
+  @override
   String get couldNotOpenUrl => 'Nepodarilo sa otvoriť URL';
 
   @override

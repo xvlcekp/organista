@@ -10,3 +10,48 @@
 [data-md-color-scheme="slate"] .md-typeset video {
   border-color: rgba(255, 255, 255, 0.16);
 }
+
+/* Feature tables on the "Novinky" page: three columns on desktop, one feature under another on phones.
+   Each table has three rows (titles, images, descriptions); on phones the cells are re-ordered per feature. */
+@media screen and (max-width: 44.9375em) {
+  .md-typeset .feature-grid table {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .md-typeset .feature-grid tbody,
+  .md-typeset .feature-grid tr {
+    display: contents;
+  }
+
+  /* `table:not([class])` matches the specificity of Material's own cell rules */
+  .md-typeset .feature-grid table:not([class]) th,
+  .md-typeset .feature-grid table:not([class]) td {
+    display: block;
+    width: auto;
+    padding: 0.4em 0;
+    text-align: center;
+    border: 0;
+  }
+
+  .md-typeset .feature-grid table:not([class]) th {
+    font-size: 1.1em;
+    margin-top: 1.5em;
+  }
+
+  .md-typeset .feature-grid img,
+  .md-typeset .feature-grid video {
+    max-width: 80%;
+  }
+
+  .md-typeset .feature-grid tr:nth-child(1) > th:nth-child(1) { order: 1; }
+  .md-typeset .feature-grid tr:nth-child(2) > td:nth-child(1) { order: 2; }
+  .md-typeset .feature-grid tr:nth-child(3) > td:nth-child(1) { order: 3; }
+  .md-typeset .feature-grid tr:nth-child(1) > th:nth-child(2) { order: 4; }
+  .md-typeset .feature-grid tr:nth-child(2) > td:nth-child(2) { order: 5; }
+  .md-typeset .feature-grid tr:nth-child(3) > td:nth-child(2) { order: 6; }
+  .md-typeset .feature-grid tr:nth-child(1) > th:nth-child(3) { order: 7; }
+  .md-typeset .feature-grid tr:nth-child(2) > td:nth-child(3) { order: 8; }
+  .md-typeset .feature-grid tr:nth-child(3) > td:nth-child(3) { order: 9; }
+}

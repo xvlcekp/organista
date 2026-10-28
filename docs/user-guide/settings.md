@@ -31,3 +31,14 @@ môžete pamäť uvoľniť ručne — noty sa pri ďalšom otvorení znova stiah
 - **Odstrániť účet** — natrvalo vymaže váš účet aj všetky vaše dáta (zoznamy skladieb,
   osobné repozitáre a nahraté noty). *Táto akcia sa nedá vrátiť späť.* Ak sa dáta nepodarí
   vymazať, účet zostane zachovaný a aplikácia zobrazí hlášku **Nastala chyba** — skúste to neskôr znova.
+
+## O aplikácii
+
+Obrazovku otvoríte cez menu **⋮** vpravo hore → **O aplikácii**. Nájdete tu odkazy na
+**Návod na používanie**, **Často kladené otázky**, **Novinky** a **Zdroje nôt** z tejto príručky,
+tlačidlá **Ohodnotiť aplikáciu** (otvorí Google Play alebo App Store) a **Zdieľať aplikáciu**
+(pošle známym odkazy, z ktorých je možné aplikáciu bezplatne stiahnuť z Google Play alebo App Store)
+a kontaktný e-mail — ťuknutím sa otvorí váš poštový klient.
+
+Po aktualizácii aplikácie sa na domovskej obrazovke raz zobrazí lišta **Čo je nové vo verzii …**;
+tlačidlom **Zobraziť** otvoríte stránku [Novinky](whats-new.md).

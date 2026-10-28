@@ -4,6 +4,7 @@ Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 
 ## Verzia 1.3.2 - 6.9.2026
 
+<div class="feature-grid">
 <table>
 <tr>
 <th width="33.33%">Digitálne noty v PDF exporte</th>
@@ -21,6 +22,7 @@ Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 <td width="33.33%">V nastaveniach vidíte, pod akým účtom ste prihlásení („Prihlásený ako“).</td>
 </tr>
 </table>
+</div>
 
 ### Nové noty
 
@@ -67,6 +69,7 @@ tlačidlami nahor/nadol/reset.
 
 ## Verzia 1.2.0 - 5.2.2026
 
+<div class="feature-grid">
 <table>
 <tr>
 <th width="33.33%">Zobrazenie nôt na celú obrazovku</th>
@@ -84,6 +87,7 @@ tlačidlami nahor/nadol/reset.
 <td width="33.33%">Pridané diela Slzy pokánia (pôstne) a CHRISTUS RESURREXIT (veľkonočné) predohry zo stránky <a href="https://organspaniadolina.sk/na-stiahnutie/">https://organspaniadolina.sk/na-stiahnutie/</a></td>
 </tr>
 </table>
+</div>
 
 ### Ďalšie zmeny
 
@@ -100,6 +104,7 @@ tlačidlami nahor/nadol/reset.
 
 ## Verzia 1.1.0 - 22.12.2025
 
+<div class="feature-grid">
 <table>
 <tr>
 <th width="33.33%">Export playlistu do PDF</th>
@@ -117,6 +122,7 @@ tlačidlami nahor/nadol/reset.
 <td width="33.33%">Možnosť vyčistiť offline úložisko. Zároveň sa offline uložené noty automaticky nevymažúpo nejakom čase systémom, ako doteraz.</td>
 </tr>
 </table>
+</div>
 
 ### Ďalšie zmeny
 
@@ -134,6 +140,7 @@ tlačidlami nahor/nadol/reset.
 
 ## Verzia 1.0.6 - 4.10.2025
 
+<div class="feature-grid">
 <table>
 <tr>
 <th width="33.33%">Vlastné repozitáre</th>
@@ -151,6 +158,7 @@ tlačidlami nahor/nadol/reset.
 <td width="33.33%">Pridaný repozitár s predohrami JKS - advent</td>
 </tr>
 </table>
+</div>
 
 ### Ďalšie zmeny
 
@@ -179,6 +187,7 @@ tlačidlami nahor/nadol/reset.
 
 ## Verzia 1.0.4 - 28.6.2025
 
+<div class="feature-grid">
 <table>
 <tr>
 <th width="33.33%">Zrýchlené posúvanie strán</th>
@@ -196,9 +205,11 @@ tlačidlami nahor/nadol/reset.
 <td width="33.33%">S novým nastavením sa nemusíte obávať, že počas hrania náhle zhasne displej.</td>
 </tr>
 </table>
+</div>
 
 ## Verzia 1.0.3 - 11.5.2025
 
+<div class="feature-grid">
 <table>
 <tr>
 <th width="33.33%">Posúvanie strán dotykom</th>
@@ -216,3 +227,4 @@ tlačidlami nahor/nadol/reset.
 <td width="33.33%">Odpovede v rôznych tóninách, ďalších 60 transponovaných JKS, výber svadobných...</td>
 </tr>
 </table>
+</div>

@@ -23,7 +23,7 @@ vždy po ruke — usporiadané presne v poradí, v akom ich budete hrať.
 
 ## Inštalácia
 
-Aplikácia je dostupná pre Android v obchode Google Play a pre iPhone/iPad v App Store:
+Aplikáciu je možné bezplatne stiahnuť z Google Play (Android) alebo App Store (iPhone/iPad):
 
 [:material-google-play: Stiahnuť z Google Play](https://play.google.com/store/apps/details?id=sk.anickaapavol.organista){ .md-button .md-button--primary }
 [:material-apple: Stiahnuť z App Store](https://apps.apple.com/sk/app/organista/id6755677722){ .md-button .md-button--primary }

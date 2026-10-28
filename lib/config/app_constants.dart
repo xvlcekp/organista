@@ -25,7 +25,15 @@ class AppConstants {
 
   // App info
   static const String contactEmail = 'rozpravaciaappka@gmail.com';
-  static const String faqUrl = 'https://xvlcekp.github.io/organista';
+  static const String userGuideUrl = 'https://xvlcekp.github.io/organista/';
+  static const String faqUrl = '${userGuideUrl}faq/';
+  static const String whatsNewUrl = '${userGuideUrl}whats-new/';
+  static const String musicSheetSourcesUrl = '${userGuideUrl}music-sheet-sources/';
+  static const String appStoreId = '6755677722';
+  static const String playStoreUrl = 'https://play.google.com/store/apps/details?id=sk.anickaapavol.organista';
+  static const String appStoreUrl = 'https://apps.apple.com/sk/app/organista/id$appStoreId';
+  static const Duration whatsNewSnackBarDuration = Duration(seconds: 10);
+  static const int copyrightStartYear = 2025;
   static const int maximumRepositoriesCount = 10;
 
   // Playlist limits
