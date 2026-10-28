@@ -11,8 +11,6 @@ plugins {
 
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.16.0')
-    implementation 'com.google.android.play:app-update:2.1.0'
-    implementation 'com.google.android.play:app-update-ktx:2.1.0'
 }
 
 android {
@@ -75,6 +73,14 @@ android {
                 keyAlias System.getenv("CM_KEY_ALIAS")
                 keyPassword System.getenv("CM_KEY_PASSWORD")
             }
+        }
+    }
+
+    packaging {
+        resources {
+            // pdfbox-android (via pdf_combiner) pulls in BouncyCastle, whose post-quantum crypto ships ~8 MB of
+            // lookup tables (picnic/sike .properties). PDF merging never touches them.
+            excludes += ['org/bouncycastle/pqc/**']
         }
     }
 

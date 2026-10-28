@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Aplikácia je asi o 6 MB menšia – odstránené nepoužívané knižnice a súbory
 - Zoznam skladieb sa už nemaže potiahnutím doľava; premenovanie, duplikovanie aj vymazanie sú v ponuke po dlhom podržaní zoznamu
 - Nastavenie „Nechať obrazovku zapnutú“ je predvolene zapnuté
 - Menšie okraje strany a menšie medzery pri dlhých slabikách – noty na telefóne asi o 8 % väčšie
