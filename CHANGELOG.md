@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Vyhľadávanie zoznamov skladieb podľa názvu a zoradenie podľa názvu, od najnovších alebo naposledy upravených
 - Pri každom zozname skladieb sa zobrazuje dátum poslednej úpravy, pri zoradení od najnovších dátum vytvorenia
+- Jeden účet môže mať najviac 75 zoznamov skladieb; existujúce zoznamy nad limitom zostávajú
 - Duplikovanie zoznamu skladieb – dlhým podržaním zoznamu a voľbou „Duplikovať zoznam skladieb“ vznikne kópia so všetkými notami
 - Digitálne JKS majú všetky slohy pod notami a pribudlo pretáčanie strán podobne ako pri viac-stranových PDF
 

@@ -547,6 +547,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repositoryCannotModifyOtherUsersError => 'You can only modify your own repositories';
 
   @override
+  String maximumPlaylistsCountExceededError(int maximumPlaylistsCount) {
+    return 'You have reached the maximum number of playlists ($maximumPlaylistsCount). Please delete some playlists before creating new ones.';
+  }
+
+  @override
   String maximumRepositoriesCountExceededError(int maximumRepositoriesCount) {
     return 'You have reached the maximum number of repositories ($maximumRepositoriesCount). Please delete some repositories before creating new ones.';
   }

@@ -369,6 +369,33 @@ void main() {
       });
     });
 
+    group('Playlist count limit', () {
+      testWidgets('explains the limit when a playlist could not be created because of it', (tester) async {
+        const limitError = MaximumPlaylistsCountExceeded(maximumPlaylistsCount: 75);
+        final loaded = PlaylistsLoadedState(playlists: [testPlaylist1]);
+        final widget = createTestWidget(initialState: loaded);
+        whenListen(
+          mockShowPlaylistsCubit,
+          Stream.fromIterable([
+            PlaylistsLoadedState(playlists: [testPlaylist1], error: limitError),
+            loaded,
+          ]),
+          initialState: loaded,
+        );
+
+        await tester.pumpWidget(widget);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(
+            'You have reached the maximum number of playlists (75). Please delete some playlists before creating new ones.',
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('Unknown error'), findsNothing);
+      });
+    });
+
     group('Search and sort', () {
       testWidgets('typing into the search field asks the cubit to filter', (tester) async {
         await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [testPlaylist1])));

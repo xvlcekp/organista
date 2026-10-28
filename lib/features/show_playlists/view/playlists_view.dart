@@ -36,8 +36,16 @@ class PlaylistsView extends HookWidget {
       children: [
         BlocConsumer<ShowPlaylistsCubit, ShowPlaylistsState>(
           listener: (context, state) {
-            if (state case PlaylistsLoadedState(error: final PlaylistError _)) {
-              showErrorDialog(context: context, text: localizations.errorUnknownText);
+            switch (state) {
+              case PlaylistsLoadedState(error: final MaximumPlaylistsCountExceeded error):
+                showErrorDialog(
+                  context: context,
+                  text: localizations.maximumPlaylistsCountExceededError(error.maximumPlaylistsCount),
+                );
+              case PlaylistsLoadedState(error: final PlaylistError _):
+                showErrorDialog(context: context, text: localizations.errorUnknownText);
+              default:
+                break;
             }
           },
           builder: (context, state) {

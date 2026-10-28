@@ -1112,6 +1112,12 @@ abstract class AppLocalizations {
   /// **'Môžete upravovať len vlastné repozitáre!'**
   String get repositoryCannotModifyOtherUsersError;
 
+  /// Error message when user tries to create or duplicate more playlists than allowed
+  ///
+  /// In sk, this message translates to:
+  /// **'Dosiahli ste maximálny počet zoznamov skladieb ({maximumPlaylistsCount}). Pred vytvorením nových zoznamov prosím vymažte niektoré existujúce.'**
+  String maximumPlaylistsCountExceededError(int maximumPlaylistsCount);
+
   /// Error message when user tries to create more repositories than allowed
   ///
   /// In sk, this message translates to:

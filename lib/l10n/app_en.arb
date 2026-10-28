@@ -260,6 +260,16 @@
   "repositoryNotFoundError": "Repository not found",
   "repositoryCannotModifyPublicError": "Cannot modify public repositories",
   "repositoryCannotModifyOtherUsersError": "You can only modify your own repositories",
+  "maximumPlaylistsCountExceededError": "You have reached the maximum number of playlists ({maximumPlaylistsCount}). Please delete some playlists before creating new ones.",
+  "@maximumPlaylistsCountExceededError": {
+    "description": "Error message when user tries to create or duplicate more playlists than allowed",
+    "placeholders": {
+      "maximumPlaylistsCount": {
+        "type": "int",
+        "description": "The maximum number of playlists allowed"
+      }
+    }
+  },
   "maximumRepositoriesCountExceededError": "You have reached the maximum number of repositories ({maximumRepositoriesCount}). Please delete some repositories before creating new ones.",
   "@maximumRepositoriesCountExceededError": {
     "description": "Error message when user tries to create more repositories than allowed",

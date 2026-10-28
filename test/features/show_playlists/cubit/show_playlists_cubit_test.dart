@@ -4,6 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
 import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
@@ -132,6 +133,122 @@ void main() {
       seed: () => seed,
       act: (cubit) => cubit.addPlaylist(playlistName: 'Advent', userId: userId),
       expect: () => <ShowPlaylistsState>[],
+    );
+  });
+
+  group('ShowPlaylistsCubit playlist count limit', () {
+    final full = List.generate(
+      AppConstants.maximumPlaylistsCount,
+      (i) => Playlist(
+        playlistId: 'p$i',
+        json: const {PlaylistKey.userId: userId, PlaylistKey.name: 'Playlist', PlaylistKey.musicSheets: []},
+      ),
+    );
+    final seed = PlaylistsLoadedState(playlists: full);
+    const limitError = MaximumPlaylistsCountExceeded(maximumPlaylistsCount: AppConstants.maximumPlaylistsCount);
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'addPlaylist reports the limit and writes nothing once the user has the maximum number of playlists',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => seed,
+      act: (cubit) => cubit.addPlaylist(playlistName: 'One more', userId: userId),
+      expect: () => [PlaylistsLoadedState(playlists: full, error: limitError), seed],
+      verify: (_) => verifyNever(
+        () => repository.addNewPlaylist(
+          playlistName: any(named: 'playlistName'),
+          userId: any(named: 'userId'),
+        ),
+      ),
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'duplicatePlaylist reports the limit and writes nothing once the user has the maximum number of playlists',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => seed,
+      act: (cubit) => cubit.duplicatePlaylist(newPlaylistName: 'Copy', playlist: full.first),
+      expect: () => [PlaylistsLoadedState(playlists: full, error: limitError), seed],
+      verify: (_) => verifyNever(
+        () => repository.duplicatePlaylist(
+          playlist: any(named: 'playlist'),
+          newPlaylistName: any(named: 'newPlaylistName'),
+        ),
+      ),
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'the limit counts every playlist, not only those matching the current search',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: full, searchQuery: 'matches nothing'),
+      act: (cubit) => cubit.addPlaylist(playlistName: 'One more', userId: userId),
+      expect: () => [
+        PlaylistsLoadedState(playlists: full, searchQuery: 'matches nothing', error: limitError),
+        PlaylistsLoadedState(playlists: full, searchQuery: 'matches nothing'),
+      ],
+      verify: (_) => verifyNever(
+        () => repository.addNewPlaylist(
+          playlistName: any(named: 'playlistName'),
+          userId: any(named: 'userId'),
+        ),
+      ),
+    );
+
+    // A user who created more playlists than the limit before it existed.
+    final aboveLimit = List.generate(
+      94,
+      (i) => Playlist(
+        playlistId: 'p$i',
+        json: const {PlaylistKey.userId: userId, PlaylistKey.name: 'Playlist', PlaylistKey.musicSheets: []},
+      ),
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'addPlaylist is refused as well when the user is already above the maximum',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: aboveLimit),
+      act: (cubit) => cubit.addPlaylist(playlistName: 'One more', userId: userId),
+      expect: () => [
+        PlaylistsLoadedState(playlists: aboveLimit, error: limitError),
+        PlaylistsLoadedState(playlists: aboveLimit),
+      ],
+      verify: (_) => verifyNever(
+        () => repository.addNewPlaylist(
+          playlistName: any(named: 'playlistName'),
+          userId: any(named: 'userId'),
+        ),
+      ),
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'renaming and deleting still work for a user above the maximum',
+      setUp: () {
+        when(
+          () => repository.renamePlaylist(newPlaylistName: 'Renamed', playlist: aboveLimit.first),
+        ).thenAnswer((_) async => true);
+        when(() => repository.deletePlaylist(playlist: aboveLimit.last)).thenAnswer((_) async => true);
+      },
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: aboveLimit),
+      act: (cubit) async {
+        await cubit.editPlaylistName(newPlaylistName: 'Renamed', playlist: aboveLimit.first);
+        await cubit.deletePlaylist(playlist: aboveLimit.last);
+      },
+      expect: () => <ShowPlaylistsState>[],
+      verify: (_) {
+        verify(() => repository.renamePlaylist(newPlaylistName: 'Renamed', playlist: aboveLimit.first)).called(1);
+        verify(() => repository.deletePlaylist(playlist: aboveLimit.last)).called(1);
+      },
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'addPlaylist still writes while the user is one below the maximum',
+      setUp: () => when(
+        () => repository.addNewPlaylist(playlistName: 'Last one', userId: userId),
+      ).thenAnswer((_) async => true),
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: full.sublist(1)),
+      act: (cubit) => cubit.addPlaylist(playlistName: 'Last one', userId: userId),
+      expect: () => <ShowPlaylistsState>[],
+      verify: (_) => verify(() => repository.addNewPlaylist(playlistName: 'Last one', userId: userId)).called(1),
     );
   });
 
