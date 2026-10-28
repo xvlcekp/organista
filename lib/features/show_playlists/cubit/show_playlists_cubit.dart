@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart' show immutable;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
+import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/managers/stream_identifier.dart';
 import 'package:organista/managers/stream_manager.dart';
@@ -33,7 +36,7 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
 
     // Always subscribe to the broadcast stream (even if reusing existing stream)
     _streamSubscription = broadcastStream.listen((playlists) {
-      emit(PlaylistsLoadedState(playlists: playlists.toList()));
+      emit(PlaylistsLoadedState(playlists: playlists.toList(), searchQuery: state.searchQuery, sort: state.sort));
     });
 
     logger.d('Subscribed to playlists stream for user: $userId');
@@ -46,6 +49,14 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
     // Note: StreamManager handles removeListener automatically via onCancel
     _streamSubscription?.cancel();
     return super.close();
+  }
+
+  void search(String query) {
+    emit(PlaylistsLoadedState(playlists: state.playlists, searchQuery: query, sort: state.sort));
+  }
+
+  void sortBy(PlaylistSort sort) {
+    emit(PlaylistsLoadedState(playlists: state.playlists, searchQuery: state.searchQuery, sort: sort));
   }
 
   Future<void> addPlaylist({required String playlistName, required String userId}) async {
@@ -84,7 +95,11 @@ class ShowPlaylistsCubit extends Cubit<ShowPlaylistsState> {
       return;
     }
     final playlists = state.playlists;
-    emit(PlaylistsLoadedState(playlists: playlists, error: const PlaylistErrorUnknown()));
-    emit(PlaylistsLoadedState(playlists: playlists));
+    final query = state.searchQuery;
+    final sort = state.sort;
+    emit(
+      PlaylistsLoadedState(playlists: playlists, searchQuery: query, sort: sort, error: const PlaylistErrorUnknown()),
+    );
+    emit(PlaylistsLoadedState(playlists: playlists, searchQuery: query, sort: sort));
   }
 }

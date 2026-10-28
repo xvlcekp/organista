@@ -272,6 +272,30 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create your first playlist.\nYou will add music sheets from repositories in the next step.';
 
   @override
+  String get searchPlaylists => 'Search playlists...';
+
+  @override
+  String get noPlaylistsFound => 'No playlists found';
+
+  @override
+  String get sortPlaylists => 'Sort playlists';
+
+  @override
+  String get sortByName => 'By name';
+
+  @override
+  String get sortByNewest => 'Newest first';
+
+  @override
+  String get sortByModified => 'Recently modified';
+
+  @override
+  String get playlistCreated => 'Created';
+
+  @override
+  String get playlistModified => 'Modified';
+
+  @override
   String get musicSheets => 'Music sheets';
 
   @override

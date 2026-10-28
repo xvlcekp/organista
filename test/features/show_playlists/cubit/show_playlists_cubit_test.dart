@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/show_playlist/error/playlist_error.dart';
+import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/managers/stream_identifier.dart';
 import 'package:organista/managers/stream_manager.dart';
@@ -130,6 +132,111 @@ void main() {
       seed: () => seed,
       act: (cubit) => cubit.addPlaylist(playlistName: 'Advent', userId: userId),
       expect: () => <ShowPlaylistsState>[],
+    );
+  });
+
+  group('ShowPlaylistsCubit search and sort', () {
+    Playlist makePlaylist(String id, String name, DateTime createdAt, {DateTime? modifiedAt}) => Playlist(
+      playlistId: id,
+      json: {
+        PlaylistKey.userId: userId,
+        PlaylistKey.name: name,
+        PlaylistKey.createdAt: Timestamp.fromDate(createdAt),
+        if (modifiedAt != null) PlaylistKey.modifiedAt: Timestamp.fromDate(modifiedAt),
+        PlaylistKey.musicSheets: const [],
+      },
+    );
+
+    // Stream order is by name, which is what the server delivers.
+    final advent = makePlaylist('p1', 'Advent', DateTime(2024, 12, 1));
+    final funeral = makePlaylist('p2', 'Pohreb', DateTime(2025, 3, 5));
+    final wedding = makePlaylist('p3', 'Svadba Žilina', DateTime(2025, 1, 20));
+    final byName = [advent, funeral, wedding];
+
+    test('visiblePlaylists keeps the stream order when nothing is searched or sorted', () {
+      final state = PlaylistsLoadedState(playlists: byName);
+      expect(state.visiblePlaylists, byName);
+    });
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'search filters by name ignoring case and diacritics',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: byName),
+      act: (cubit) => cubit.search('zilina'),
+      verify: (cubit) {
+        expect(cubit.state.searchQuery, 'zilina');
+        expect(cubit.state.visiblePlaylists, [wedding]);
+      },
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'sortBy newest puts the most recently created playlist first',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: byName),
+      act: (cubit) => cubit.sortBy(PlaylistSort.newest),
+      verify: (cubit) {
+        expect(cubit.state.sort, PlaylistSort.newest);
+        expect(cubit.state.visiblePlaylists, [funeral, wedding, advent]);
+      },
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'sortBy modified puts the most recently changed playlist first, old playlists counting as changed on creation',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      // Advent is the oldest but was edited last; Pohreb was never edited since modifiedAt existed.
+      seed: () => PlaylistsLoadedState(
+        playlists: [
+          makePlaylist('p1', 'Advent', DateTime(2024, 12, 1), modifiedAt: DateTime(2025, 4, 1)),
+          funeral,
+          wedding,
+        ],
+      ),
+      act: (cubit) => cubit.sortBy(PlaylistSort.modified),
+      verify: (cubit) => expect(cubit.state.visiblePlaylists.map((p) => p.name), ['Advent', 'Pohreb', 'Svadba Žilina']),
+    );
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'sortBy name restores the stream order',
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: byName, sort: PlaylistSort.newest),
+      act: (cubit) => cubit.sortBy(PlaylistSort.name),
+      verify: (cubit) => expect(cubit.state.visiblePlaylists, byName),
+    );
+
+    test('a new list from the playlists stream keeps the search query and sort', () async {
+      final source = StreamController<Iterable<Playlist>>();
+      when(() => repository.getPlaylistsStream(userId)).thenAnswer((_) => source.stream);
+      final cubit = ShowPlaylistsCubit(firebaseFirestoreRepository: repository)
+        ..startSubscribingPlaylists(userId: userId)
+        ..search('a')
+        ..sortBy(PlaylistSort.newest);
+
+      source.add(byName);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(cubit.state.searchQuery, 'a');
+      expect(cubit.state.sort, PlaylistSort.newest);
+      expect(cubit.state.visiblePlaylists, [wedding, advent]);
+
+      await cubit.close();
+      await source.close();
+    });
+
+    blocTest<ShowPlaylistsCubit, ShowPlaylistsState>(
+      'a reported write failure keeps the search query and sort',
+      setUp: () => when(() => repository.deletePlaylist(playlist: advent)).thenAnswer((_) async => false),
+      build: () => ShowPlaylistsCubit(firebaseFirestoreRepository: repository),
+      seed: () => PlaylistsLoadedState(playlists: byName, searchQuery: 'a', sort: PlaylistSort.newest),
+      act: (cubit) => cubit.deletePlaylist(playlist: advent),
+      expect: () => [
+        PlaylistsLoadedState(
+          playlists: byName,
+          searchQuery: 'a',
+          sort: PlaylistSort.newest,
+          error: const PlaylistErrorUnknown(),
+        ),
+        PlaylistsLoadedState(playlists: byName, searchQuery: 'a', sort: PlaylistSort.newest),
+      ],
     );
   });
 }

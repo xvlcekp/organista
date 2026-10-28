@@ -15,7 +15,23 @@ Obrazovka **Moje zoznamy skladieb** je domovská obrazovka aplikácie.
 ![Zoznam vytvorený](assets/screenshots/playlists-list.png){ width="300" }
 </div>
 
-Pri každom zozname vidíte počet nôt, ktoré obsahuje.
+Pri každom zozname vidíte počet nôt, ktoré obsahuje, a vpravo dole dátum poslednej úpravy (**Upravené**).
+Pri zoradení **Od najnovších** sa namiesto neho zobrazuje dátum vytvorenia (**Vytvorené**).
+
+## Vyhľadávanie a zoradenie zoznamov
+
+Keď máte zoznamov viac, nad nimi je pole **Vyhľadať zoznam skladieb...** — stačí napísať časť názvu.
+Na diakritike ani veľkých písmenách nezáleží, *svadba* nájde aj *Svadba Žilina*. Ak sa nič nenájde, zobrazí
+sa hláška **Nenašli sa žiadne zoznamy skladieb**.
+
+Ikona **zoradenia** vpravo od vyhľadávania ponúka dve možnosti:
+
+- **Podľa názvu** — predvolené abecedné poradie.
+- **Od najnovších** — naposledy vytvorený (alebo duplikovaný) zoznam je hore.
+- **Naposledy upravené** — hore je zoznam, v ktorom ste naposledy niečo menili (názov, noty, ich poradie
+  či transpozíciu). Zoznamy, ktoré ste od aktualizácie ešte neupravovali, sa radia podľa dátumu vytvorenia.
+
+![Vyhľadávanie a zoradenie zoznamov](assets/screenshots/playlists-search-sort.png){ width="300" }
 
 ## Premenovanie, duplikovanie a vymazanie zoznamu
 
