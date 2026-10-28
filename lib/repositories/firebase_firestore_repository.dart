@@ -312,6 +312,7 @@ class FirebaseFirestoreRepository {
   }) async {
     try {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.modifiedAt: Timestamp.now(),
         PlaylistKey.name: newPlaylistName,
       });
       logger.i("Renaming playlist ${playlist.name} to $newPlaylistName");
@@ -415,6 +416,7 @@ class FirebaseFirestoreRepository {
 
       // Update Firestore with the complete list in a single atomic operation
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.modifiedAt: Timestamp.now(),
         PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
 
@@ -435,6 +437,7 @@ class FirebaseFirestoreRepository {
   }) {
     try {
       _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.modifiedAt: Timestamp.now(),
         PlaylistKey.musicSheets: playlist.musicSheets.renameSheet(musicSheet.musicSheetId, fileName).toJsonList(),
       });
       logger.d("musicSheetRename update successful");
@@ -462,6 +465,7 @@ class FirebaseFirestoreRepository {
           )
           .toList();
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.modifiedAt: Timestamp.now(),
         PlaylistKey.musicSheets: updatedMusicSheets.toJsonList(),
       });
       logger.d(
@@ -485,6 +489,7 @@ class FirebaseFirestoreRepository {
     try {
       logger.i("Removing music sheet ${musicSheet.fileName} from playlist");
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.modifiedAt: Timestamp.now(),
         PlaylistKey.musicSheets: playlist.musicSheets.removeById(musicSheet.musicSheetId).toJsonList(),
       });
       return true;
@@ -501,6 +506,7 @@ class FirebaseFirestoreRepository {
   Future<bool> musicSheetReorder({required Playlist playlist}) async {
     try {
       await _instance.collection(FirebaseCollectionName.playlists).doc(playlist.playlistId).update({
+        PlaylistKey.modifiedAt: Timestamp.now(),
         PlaylistKey.musicSheets: playlist.musicSheets.toJsonList(),
       });
       logger.d("musicSheetReorder update successful");

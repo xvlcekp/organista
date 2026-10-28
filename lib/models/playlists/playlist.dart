@@ -11,6 +11,10 @@ class Playlist extends Equatable {
   final String playlistId;
   final String userId;
   final DateTime createdAt;
+
+  /// Last change to the playlist (device time). Playlists written before the field existed count as modified
+  /// when they were created.
+  final DateTime modifiedAt;
   final String name;
   final List<MusicSheet> musicSheets;
 
@@ -24,6 +28,8 @@ class Playlist extends Equatable {
     required Map<String, dynamic> json,
   }) : userId = json[PlaylistKey.userId] ?? '',
        createdAt = ((json[PlaylistKey.createdAt] ?? Timestamp(0, 0)) as Timestamp).toDate(),
+       modifiedAt = ((json[PlaylistKey.modifiedAt] ?? json[PlaylistKey.createdAt] ?? Timestamp(0, 0)) as Timestamp)
+           .toDate(),
        name = json[PlaylistKey.name] ?? '',
        // Using the dynamic type for a Map<> is considered fine, since there is no better way to declare a type of a JSON payload.
        // ignore: avoid-dynamic
@@ -35,7 +41,7 @@ class Playlist extends Equatable {
   String toString() => 'Playlist, id = $playlistId, createdAt = $createdAt';
 
   @override
-  List<Object?> get props => [playlistId, userId, createdAt, name, musicSheets];
+  List<Object?> get props => [playlistId, userId, createdAt, modifiedAt, name, musicSheets];
 
   List<Map<String, dynamic>> toMusicSheetJson() => musicSheets.map((sheet) => sheet.toJson()).toList();
 

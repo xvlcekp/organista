@@ -6,6 +6,7 @@ class PlaylistKey {
   static const userId = FirebaseCommonKeys.userId;
   static const createdAt = FirebaseCommonKeys.createdAt;
   static const name = 'name';
+  static const modifiedAt = 'modifiedAt';
   static const musicSheets = 'musicSheets';
 
   const PlaylistKey._();
