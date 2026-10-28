@@ -153,6 +153,25 @@
   "signedInAs": "Signed in as",
   "version": "Version",
   "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "userGuide": "User guide",
+  "whatsNew": "What's new",
+  "musicSheetSources": "Music sheet sources",
+  "rateApp": "Rate the app",
+  "shareApp": "Share the app",
+  "shareAppText": "Organista – an app for organists to manage and display music sheets.\nAndroid: {playStoreUrl}\niPhone: {appStoreUrl}",
+  "@shareAppText": {
+    "placeholders": {
+      "playStoreUrl": {"type": "String"},
+      "appStoreUrl": {"type": "String"}
+    }
+  },
+  "whatsNewInVersion": "What's new in version {version}",
+  "@whatsNewInVersion": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "show": "Show",
   "couldNotOpenUrl": "Could not open the URL",
   "errorOpeningUrl": "Error opening URL: {url}",
   "@errorOpeningUrl": {

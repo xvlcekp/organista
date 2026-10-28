@@ -914,6 +914,54 @@ abstract class AppLocalizations {
   /// **'Často kladené otázky'**
   String get frequentlyAskedQuestions;
 
+  /// No description provided for @userGuide.
+  ///
+  /// In sk, this message translates to:
+  /// **'Návod na používanie'**
+  String get userGuide;
+
+  /// No description provided for @whatsNew.
+  ///
+  /// In sk, this message translates to:
+  /// **'Novinky'**
+  String get whatsNew;
+
+  /// No description provided for @musicSheetSources.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zdroje nôt'**
+  String get musicSheetSources;
+
+  /// No description provided for @rateApp.
+  ///
+  /// In sk, this message translates to:
+  /// **'Ohodnotiť aplikáciu'**
+  String get rateApp;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zdieľať aplikáciu'**
+  String get shareApp;
+
+  /// No description provided for @shareAppText.
+  ///
+  /// In sk, this message translates to:
+  /// **'Organista – aplikácia pre organistov na správu a zobrazovanie nôt.\nAndroid: {playStoreUrl}\niPhone: {appStoreUrl}'**
+  String shareAppText(String playStoreUrl, String appStoreUrl);
+
+  /// No description provided for @whatsNewInVersion.
+  ///
+  /// In sk, this message translates to:
+  /// **'Čo je nové vo verzii {version}'**
+  String whatsNewInVersion(String version);
+
+  /// No description provided for @show.
+  ///
+  /// In sk, this message translates to:
+  /// **'Zobraziť'**
+  String get show;
+
   /// No description provided for @couldNotOpenUrl.
   ///
   /// In sk, this message translates to:

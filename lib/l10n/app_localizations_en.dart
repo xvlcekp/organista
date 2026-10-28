@@ -435,6 +435,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get frequentlyAskedQuestions => 'Frequently Asked Questions';
 
   @override
+  String get userGuide => 'User guide';
+
+  @override
+  String get whatsNew => 'What\'s new';
+
+  @override
+  String get musicSheetSources => 'Music sheet sources';
+
+  @override
+  String get rateApp => 'Rate the app';
+
+  @override
+  String get shareApp => 'Share the app';
+
+  @override
+  String shareAppText(String playStoreUrl, String appStoreUrl) {
+    return 'Organista – an app for organists to manage and display music sheets.\nAndroid: $playStoreUrl\niPhone: $appStoreUrl';
+  }
+
+  @override
+  String whatsNewInVersion(String version) {
+    return 'What\'s new in version $version';
+  }
+
+  @override
+  String get show => 'Show';
+
+  @override
   String get couldNotOpenUrl => 'Could not open the URL';
 
   @override

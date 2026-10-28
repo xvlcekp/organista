@@ -110,7 +110,7 @@ The Slovak end-user guide lives in `docs/user-guide/` (MkDocs Material, config i
 
 Preview locally: `pip install mkdocs-material && mkdocs serve` → http://127.0.0.1:8000/organista/. Verify with `mkdocs build --strict` before pushing.
 
-`docs/user-guide/whats-new.md` is the **single source of truth for product highlights/release notes** (per-version feature showcases with images/videos in `docs/user-guide/assets/whats-new/<version>/`). README deliberately only links to it — do not re-add a changelog section to README. Raw HTML `<img>`/`<video>` tags in MkDocs pages need `../assets/...` paths (MkDocs only rewrites Markdown image paths, not raw HTML).
+`docs/user-guide/whats-new.md` is the **single source of truth for product highlights/release notes** (per-version feature showcases with images/videos in `docs/user-guide/assets/whats-new/<version>/`). README deliberately only links to it — do not re-add a changelog section to README. Raw HTML `<img>`/`<video>` tags in MkDocs pages need `../assets/...` paths (MkDocs only rewrites Markdown image paths, not raw HTML). Every feature table in `whats-new.md` (three columns: titles, images, descriptions) must be wrapped in `<div class="feature-grid">…</div>`; `stylesheets/extra.css` stacks those cells one feature under another on phones.
 
 ## iOS CocoaPods lockfile (MANDATORY after any pubspec.yaml change)
 

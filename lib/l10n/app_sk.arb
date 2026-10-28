@@ -153,6 +153,25 @@
   "signedInAs": "Prihlásený ako",
   "version": "Verzia",
   "frequentlyAskedQuestions": "Často kladené otázky",
+  "userGuide": "Návod na používanie",
+  "whatsNew": "Novinky",
+  "musicSheetSources": "Zdroje nôt",
+  "rateApp": "Ohodnotiť aplikáciu",
+  "shareApp": "Zdieľať aplikáciu",
+  "shareAppText": "Organista – aplikácia pre organistov na správu a zobrazovanie nôt.\nAndroid: {playStoreUrl}\niPhone: {appStoreUrl}",
+  "@shareAppText": {
+    "placeholders": {
+      "playStoreUrl": {"type": "String"},
+      "appStoreUrl": {"type": "String"}
+    }
+  },
+  "whatsNewInVersion": "Čo je nové vo verzii {version}",
+  "@whatsNewInVersion": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "show": "Zobraziť",
   "couldNotOpenUrl": "Nepodarilo sa otvoriť URL",
   "errorOpeningUrl": "Chyba pri otváraní URL: {url}",
   "@errorOpeningUrl": {

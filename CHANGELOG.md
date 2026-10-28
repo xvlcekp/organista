@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Po aktualizácii aplikácie sa raz zobrazí lišta „Čo je nové vo verzii …“ s odkazom na stránku Novinky
+- Obrazovka „O aplikácii“ má samostatné odkazy na návod, časté otázky, novinky a zdroje nôt, tlačidlá „Ohodnotiť aplikáciu“ a „Zdieľať aplikáciu“ a klikateľný kontaktný e-mail
 - Vyhľadávanie zoznamov skladieb podľa názvu a zoradenie podľa názvu, od najnovších alebo naposledy upravených
 - Pri každom zozname skladieb sa zobrazuje, kedy bol naposledy upravený (dnes, včera, deň v týždni, inak dátum); pri zoradení od najnovších dátum vytvorenia
 - Jeden účet môže mať najviac 75 zoznamov skladieb; existujúce zoznamy nad limitom zostávajú

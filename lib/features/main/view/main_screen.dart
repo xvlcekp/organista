@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:organista/config/app_constants.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/popup_menu/main_popup_menu_button.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
@@ -8,6 +9,9 @@ import 'package:organista/features/show_repositories/cubit/show_repositories_cub
 import 'package:organista/features/show_repositories/models/repositories_view_mode.dart';
 import 'package:organista/features/show_repositories/view/repositories_view.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
+import 'package:organista/repositories/settings_repository.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,6 +24,31 @@ class _MainScreenState extends State<MainScreen> {
   static const double _appBarIconSpacing = 8.0;
   static const double _navigationBarHeight = 64.0;
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _showWhatsNewAfterUpdate();
+  }
+
+  /// Once per installed version, offers the "what's new" page of the user guide.
+  Future<void> _showWhatsNewAfterUpdate() async {
+    final settingsRepository = context.read<SettingsRepository>();
+    final version = (await PackageInfo.fromPlatform()).version;
+    if (settingsRepository.getLastSeenVersion() == version || !mounted) return;
+    await settingsRepository.saveLastSeenVersion(version);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.loc.whatsNewInVersion(version)),
+        duration: AppConstants.whatsNewSnackBarDuration,
+        action: SnackBarAction(
+          label: context.loc.show,
+          onPressed: () => launchUrl(Uri.parse(AppConstants.whatsNewUrl), mode: LaunchMode.externalApplication),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
