@@ -293,6 +293,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playlistCreated => 'Created';
 
   @override
+  String get today => 'today';
+
+  @override
+  String get yesterday => 'yesterday';
+
+  @override
   String get playlistModified => 'Modified';
 
   @override

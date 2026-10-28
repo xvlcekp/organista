@@ -93,6 +93,8 @@
   "sortByNewest": "Newest first",
   "sortByModified": "Recently modified",
   "playlistCreated": "Created",
+  "today": "today",
+  "yesterday": "yesterday",
   "playlistModified": "Modified",
   "musicSheets": "Music sheets",
   "searchMusicSheets": "Search music sheets...",

@@ -18,7 +18,8 @@ Obrazovka **Moje zoznamy skladieb** je domovská obrazovka aplikácie.
 Jeden účet môže mať najviac **75 zoznamov skladieb** — po dosiahnutí tohto počtu aplikácia nový zoznam
 (ani kópiu) nevytvorí a zobrazí hlášku **Dosiahli ste maximálny počet zoznamov skladieb (75)**.
 
-Pri každom zozname vidíte počet nôt, ktoré obsahuje, a vpravo dole dátum poslednej úpravy (**Upravené**).
+Pri každom zozname vidíte počet nôt, ktoré obsahuje, a vpravo dole, kedy ste ho naposledy upravili (**Upravené**):
+*dnes*, *včera*, v rámci týždňa deň v týždni (napr. *nedeľa*) a pri starších zoznamoch dátum.
 Pri zoradení **Od najnovších** sa namiesto neho zobrazuje dátum vytvorenia (**Vytvorené**).
 
 ## Vyhľadávanie a zoradenie zoznamov

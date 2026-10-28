@@ -650,6 +650,18 @@ abstract class AppLocalizations {
   /// **'Vytvorené'**
   String get playlistCreated;
 
+  /// No description provided for @today.
+  ///
+  /// In sk, this message translates to:
+  /// **'dnes'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In sk, this message translates to:
+  /// **'včera'**
+  String get yesterday;
+
   /// No description provided for @playlistModified.
   ///
   /// In sk, this message translates to:

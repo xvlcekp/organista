@@ -294,6 +294,12 @@ class AppLocalizationsSk extends AppLocalizations {
   String get playlistCreated => 'Vytvorené';
 
   @override
+  String get today => 'dnes';
+
+  @override
+  String get yesterday => 'včera';
+
+  @override
   String get playlistModified => 'Upravené';
 
   @override

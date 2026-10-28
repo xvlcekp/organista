@@ -479,6 +479,23 @@ void main() {
         expect(find.textContaining('Created'), findsNothing);
       });
 
+      testWidgets('says "today" for a playlist modified today', (tester) async {
+        final today = Playlist(
+          playlistId: 'today',
+          json: {
+            PlaylistKey.userId: 'test-user-123',
+            PlaylistKey.createdAt: testTimestamp,
+            PlaylistKey.modifiedAt: Timestamp.fromDate(DateTime.now()),
+            PlaylistKey.name: 'Fresh',
+            PlaylistKey.musicSheets: const [],
+          },
+        );
+        await tester.pumpWidget(createTestWidget(initialState: PlaylistsLoadedState(playlists: [today])));
+        await tester.pump();
+
+        expect(find.text('Modified: today'), findsOneWidget);
+      });
+
       testWidgets('shows when the playlist was created while sorted by newest', (tester) async {
         await tester.pumpWidget(
           createTestWidget(

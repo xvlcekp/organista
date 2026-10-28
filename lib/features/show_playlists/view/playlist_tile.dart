@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:organista/config/app_theme.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/features/show_playlist/view/playlist_view.dart';
 import 'package:organista/features/show_playlists/cubit/playlist_sort.dart';
+import 'package:organista/features/show_playlists/view/relative_date.dart';
 import 'package:organista/features/show_playlists/cubit/show_playlists_cubit.dart';
 import 'package:organista/features/show_playlists/view/delete_playlist_dialog.dart';
 import 'package:organista/features/show_playlists/view/duplicate_playlist_dialog.dart';
@@ -89,7 +89,7 @@ class PlaylistTile extends StatelessWidget {
                         // A playlist written offline echoes back without `createdAt` (the epoch) until the server stamps it.
                         if (date.millisecondsSinceEpoch > 0)
                           Text(
-                            '$dateLabel: ${DateFormat.yMd(Localizations.localeOf(context).toString()).format(date)}',
+                            '$dateLabel: ${formatRelativeDate(date, now: DateTime.now(), localizations: localizations)}',
                             style: theme.textTheme.bodySmall?.copyWith(color: onSurfaceVariant),
                           ),
                       ],
