@@ -2,6 +2,92 @@
 
 Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 
+## Verzia 1.4.0 - 30.10.2026
+
+### Digitálne JKS: všetky slohy pod notami
+
+Všetkých 557 piesní repozitára **JKS - digitálne** má teraz každú slohu pod notami — vyše 1 100 slôh, ktoré boli
+doteraz len ako text pod piesňou. Piesne s viac ako tromi slohami majú ďalšie slohy na ďalších stranách pod
+rovnakými notami a strany sa otáčajú rovnako ako pri PDF. Nová verzia vykresľovania zároveň ubrala
+**95 % prekrývajúceho sa textu** — dve tretiny piesní sú na telefóne úplne bez prekryvov (predtým 3,5 %)
+a 96 % piesní vyzerá na rovnakom telefóne lepšie.
+
+!!! note "Noty, ktoré už máte v zozname skladieb"
+    Digitálne JKS a Ordinárium, ktoré ste si pridali do zoznamu skladieb pred touto aktualizáciou, zostávajú
+    v pôvodnej podobe. Novú verziu získate, keď notu zo zoznamu vymažete a znova ju pridáte z repozitára.
+
+<div class="feature-grid">
+<table>
+<tr>
+<th width="50%">88. Tichá noc – verzia 1.3.2</th>
+<th width="50%">88. Tichá noc – verzia 1.4.0 (2 strany)</th>
+</tr>
+<tr>
+<td width="50%"><img src="../assets/whats-new/1.4.0/ticha_noc_1.3.2.png"></td>
+<td width="50%"><img src="../assets/whats-new/1.4.0/ticha_noc_1.4.0.png"></td>
+</tr>
+<tr>
+<td width="50%">Slohy 4 a 5 len ako text pod piesňou, bez skladateľa a prekladateľa, s údajom o tempe.</td>
+<td width="50%">Slohy 4 a 5 na druhej strane pod notami, skladateľ aj prekladateľ v hlavičke.</td>
+</tr>
+</table>
+</div>
+
+<div class="feature-grid">
+<table>
+<tr>
+<th width="50%">303. Duša Kristova – verzia 1.3.2</th>
+<th width="50%">303. Duša Kristova – verzia 1.4.0</th>
+</tr>
+<tr>
+<td width="50%"><img src="../assets/whats-new/1.4.0/dusa_kristova_1.3.2.png"></td>
+<td width="50%"><img src="../assets/whats-new/1.4.0/dusa_kristova_1.4.0.png"></td>
+</tr>
+<tr>
+<td width="50%">Slabiky sa prekrývajú takmer v každom takte.</td>
+<td width="50%">Text je čitateľný a noty sú väčšie.</td>
+</tr>
+</table>
+</div>
+
+### Zoznamy skladieb
+
+<div class="feature-grid">
+<table>
+<tr>
+<th width="33.33%">Vyhľadávanie a zoradenie</th>
+<th width="33.33%">Duplikovanie zoznamu</th>
+<th width="33.33%">Obrazovka O aplikácii</th>
+</tr>
+<tr>
+<td width="33.33%"><img src="../assets/whats-new/1.4.0/playlists_search_sort.png"></td>
+<td width="33.33%"><img src="../assets/whats-new/1.4.0/playlist_context_menu.png"></td>
+<td width="33.33%"><img src="../assets/whats-new/1.4.0/about_screen.png"></td>
+</tr>
+<tr>
+<td width="33.33%">Zoznamy nájdete podľa názvu a zoradíte podľa názvu, od najnovších alebo naposledy upravených. Pri každom zozname vidíte, kedy ste ho naposledy upravili.</td>
+<td width="33.33%">Dlhým podržaním zoznamu ho premenujete, zduplikujete so všetkými notami alebo vymažete.</td>
+<td width="33.33%">Odkazy na návod, časté otázky, novinky a zdroje nôt, hodnotenie a zdieľanie aplikácie. Po aktualizácii vás aplikácia na novinky upozorní.</td>
+</tr>
+</table>
+</div>
+
+### Nové noty
+
+- Samostatné digitálne noty pre piesne, ktoré boli doteraz súčasťou inej piesne: JKS 44, 53, 178, 408b, 408c,
+  409b a 409c ([Zdroje nôt](music-sheet-sources.md#30102026))
+- Digitálne Ordinárium sv. omše: zachované repetície a volty a riadky zalomené ako v pôvodnom zápise
+
+### Ďalšie zmeny
+
+- Zmeny v zoznamoch skladieb bez internetu sa zobrazia hneď a odošlú sa po pripojení; bez internetu aplikácia
+  namiesto čakania hneď vysvetlí, čo sa nedá (nahrávanie nôt, nestiahnuté noty, prihlásenie)
+- Nastavenie **Nechať obrazovku zapnutú** je predvolene zapnuté
+- Náhľad nôt pri pridávaní a premenovaní zaberá celú obrazovku; pri nahrávaní MusicXML sa zobrazí náhľad
+- Na iPhone sa dajú vybrať MusicXML súbory pri nahrávaní vlastných nôt
+- Aplikácia je asi o 6 MB menšia
+- Opravené odstránenie účtu a ďalšie chyby
+
 ## Verzia 1.3.2 - 6.9.2026
 
 <div class="feature-grid">

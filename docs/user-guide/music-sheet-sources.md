@@ -14,11 +14,11 @@ K dispozícii sú noty, ktoré sú dostupné verejne na internete.
   **Tieto noty zatiaľ neprešli kontrolou a slúžia na testovanie** (pozri upozornenie nižšie)
 
 !!! warning "Digitálne noty z Liturgického spevníka I. sú zatiaľ testovacie"
-Noty z _Liturgického spevníka I._ zdigitalizoval **Tomáš Polonec**, ktorému za túto prácu patrí veľká
-vďaka. Pri exporte do formátu MusicXML a následnom zobrazení v aplikácii (knižnica OSMD) však vznikli
-nepresnosti a chyby - napríklad v texte, či rozložení taktov. Noty preto zatiaľ neprešli
-kontrolou a slúžia na testovanie. Materiálu je veľa, preto sa budeme postupne venovať najprv tým
-najdôležitejším častiam. Pri hraní si ich radšej porovnajte s tlačeným _Liturgickým spevníkom I._
+    Noty z _Liturgického spevníka I._ zdigitalizoval **Tomáš Polonec**, ktorému za túto prácu patrí veľká
+    vďaka. Pri exporte do formátu MusicXML a následnom zobrazení v aplikácii (knižnica OSMD) však vznikli
+    nepresnosti a chyby - napríklad v texte, či rozložení taktov. Noty preto zatiaľ neprešli
+    kontrolou a slúžia na testovanie. Materiálu je veľa, preto sa budeme postupne venovať najprv tým
+    najdôležitejším častiam. Pri hraní si ich radšej porovnajte s tlačeným _Liturgickým spevníkom I._
 
     **Má zmysel v opravách pokračovať?** Radi by sme vedeli, či tieto digitálne noty niekto používa a či sa
     oplatí venovať čas ich opravám. Za akúkoľvek spätnú väzbu (či ich používate, ktoré časti sú pre vás
@@ -33,8 +33,13 @@ Postupne je v pláne pridávať ďalší obsah.
 
 ## História úprav
 
-### 17.10.2026
+### 30.10.2026
 
+- **JKS - digitálne**: všetky slohy všetkých 557 piesní sú pod notami — vyše 1 100 slôh, ktoré boli doteraz len
+  ako text pod piesňou. Piesne s viac ako tromi slohami majú ďalšie slohy na ďalších stranách pod rovnakými notami.
+- Samostatné noty pre piesne, ktoré boli doteraz súčasťou inej piesne: 44 Narodil sa Kristus Pán, 53 Nesiem vám noviny,
+  178 Čo stanica prvá tu vyobrazuje, 408b a 408c Prijmi, Matka, veniec (Bolestný a Slávnostný ruženec)
+  a 409a–c Tys' Matka Božia odveká (Radostný, Bolestný a Slávnostný ruženec)
 - Vylepšené digitálne Ordinárium sv. omše – zachované repetície a volty (napr. 655 Agnus) a riadky zalomené rovnako ako v pôvodnom zápise (napr. 642 Glória)
 
 ### 6.9.2026
