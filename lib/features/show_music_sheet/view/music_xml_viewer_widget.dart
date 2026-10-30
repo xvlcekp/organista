@@ -21,10 +21,18 @@ class MusicXmlViewerWidget extends HookWidget {
     super.key,
     required this.source,
     this.mode = MusicSheetViewMode.full,
+    this.showOverlays = true,
+    this.onSheetTap,
   });
 
   final MusicSheetSource source;
   final MusicSheetViewMode mode;
+
+  /// Whether the controls (page counter, transposition label, settings button) are shown.
+  final bool showOverlays;
+
+  /// Called when the page JavaScript reports a tap on the sheet.
+  final VoidCallback? onSheetTap;
 
   static const int _kChannelPrefixLength = 2;
 
@@ -107,6 +115,10 @@ class MusicXmlViewerWidget extends HookWidget {
       ..addJavaScriptChannel(
         'PageChannel',
         onMessageReceived: (JavaScriptMessage message) {
+          if (message.message == 'tap') {
+            onSheetTap?.call();
+            return;
+          }
           final parsed = parsePageMessage(message.message);
           if (parsed != null) pages.value = parsed;
         },
@@ -216,7 +228,7 @@ class MusicXmlViewerWidget extends HookWidget {
             onPrevious: () => wvc.runJavaScript('prevPage()'),
             onNext: () => wvc.runJavaScript('nextPage()'),
           ),
-        if (mode == MusicSheetViewMode.full)
+        if (mode == MusicSheetViewMode.full && showOverlays)
           MusicXmlControlsOverlay(
             currentTranspose: currentTranspose.value,
             currentLyricsPadding: currentLyricsPadding.value,

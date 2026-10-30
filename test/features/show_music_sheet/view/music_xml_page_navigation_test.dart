@@ -156,7 +156,7 @@ void main() {
       );
     });
 
-    Widget buildWidget() {
+    Widget buildWidget({Widget? child}) {
       return Provider<CacheManager>.value(
         value: mockCacheManager,
         child: MultiBlocProvider(
@@ -169,19 +169,19 @@ void main() {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
-              body: MusicXmlViewerWidget(source: urlSource, mode: MusicSheetViewMode.full),
+              body: child ?? MusicXmlViewerWidget(source: urlSource, mode: MusicSheetViewMode.full),
             ),
           ),
         ),
       );
     }
 
-    Future<FakeWebViewPlatform> pumpWithPages(WidgetTester tester, List<String> messages) async {
+    Future<FakeWebViewPlatform> pumpWithPages(WidgetTester tester, List<String> messages, {Widget? child}) async {
       final platform = FakeWebViewPlatform(pageMessages: messages);
       WebViewPlatform.instance = platform;
       // The file is base64-encoded on a background isolate, which only completes under real async time.
       await tester.runAsync(() async {
-        await tester.pumpWidget(buildWidget());
+        await tester.pumpWidget(buildWidget(child: child));
         await Future<void>.delayed(const Duration(milliseconds: 100));
       });
       await tester.pumpAndSettle();
@@ -224,6 +224,27 @@ void main() {
 
       expect(find.text('2/3'), findsOneWidget);
       expect(find.byType(PdfNavigationTouchArea), findsNothing);
+    });
+
+    testWidgets('a tap on the sheet hides the counter, controls and title, the next tap shows them', (tester) async {
+      final platform = await pumpWithPages(
+        tester,
+        ['p:2/3', 'tap'],
+        child: MusicSheetView(source: urlSource, mode: MusicSheetViewMode.full),
+      );
+
+      expect(find.text('2/3'), findsNothing);
+      expect(find.byIcon(Icons.tune), findsNothing);
+      expect(find.text('song.musicxml'), findsNothing);
+      // The page-turn areas stay: tapping them turns the page, not the overlays
+      expect(find.byType(PdfNavigationTouchArea), findsNWidgets(2));
+
+      platform.lastController!.channels['PageChannel']!.onMessageReceived(const JavaScriptMessage(message: 'tap'));
+      await tester.pump();
+
+      expect(find.text('2/3'), findsOneWidget);
+      expect(find.byIcon(Icons.tune), findsOneWidget);
+      expect(find.text('song.musicxml'), findsOneWidget);
     });
   });
 
