@@ -32,6 +32,12 @@ Platí to pre PDF ako aj pre **digitálne noty JKS**: piesne s viac ako tromi sl
 majú ďalšie slohy na ďalších stranách pod rovnakými notami. Na obrazovke je vždy
 jedna strana; počítadlo strán je pri digitálnych notách nad modrým tlačidlom ovládania.
 Strany digitálnych nôt otočíte aj potiahnutím prstom nahor alebo nadol, rovnako ako pri PDF.
+Ťuknutím na digitálne noty skryjete tlačidlo ovládania, počítadlo strán aj názov piesne, aby nezakrývali
+posledné riadky; ďalším ťuknutím ich znova zobrazíte.
+
+<video autoplay loop muted playsinline controls width="300">
+  <source src="../assets/videos/hide-controls.mp4" type="video/mp4">
+</video>
 
 <div class="grid" markdown>
 ![Digitálne noty – 1. strana](assets/screenshots/sheet-fullscreen.png){ width="300" }

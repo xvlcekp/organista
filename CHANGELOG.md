@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Jeden účet môže mať najviac 75 zoznamov skladieb; existujúce zoznamy nad limitom zostávajú
 - Duplikovanie zoznamu skladieb – dlhým podržaním zoznamu a voľbou „Duplikovať zoznam skladieb“ vznikne kópia so všetkými notami
 - Digitálne JKS majú všetky slohy pod notami (vyše 1 100 slôh presunutých z textu pod piesňou) a pribudlo pretáčanie strán podobne ako pri viac-stranových PDF
+- Ťuknutie na digitálne noty skryje tlačidlo ovládania, počítadlo strán a názov piesne, ďalšie ťuknutie ich zobrazí
 - Samostatné digitálne noty pre JKS 44, 53, 178, 408b, 408c, 409b a 409c (doteraz súčasť inej piesne)
 
 ### Changed

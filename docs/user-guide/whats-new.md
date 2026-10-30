@@ -82,6 +82,7 @@ a 96 % piesní vyzerá na rovnakom telefóne lepšie.
 
 - Zmeny v zoznamoch skladieb bez internetu sa zobrazia hneď a odošlú sa po pripojení; bez internetu aplikácia
   namiesto čakania hneď vysvetlí, čo sa nedá (nahrávanie nôt, nestiahnuté noty, prihlásenie)
+- Ťuknutím na digitálne noty skryjete tlačidlo ovládania, počítadlo strán a názov piesne; ďalším ťuknutím ich zobrazíte
 - Nastavenie **Nechať obrazovku zapnutú** je predvolene zapnuté
 - Náhľad nôt pri pridávaní a premenovaní zaberá celú obrazovku; pri nahrávaní MusicXML sa zobrazí náhľad
 - Na iPhone sa dajú vybrať MusicXML súbory pri nahrávaní vlastných nôt
