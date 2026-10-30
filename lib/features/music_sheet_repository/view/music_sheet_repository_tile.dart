@@ -61,7 +61,7 @@ class MusicSheetRepositoryTile extends HookWidget {
 
     useEffect(() {
       _checkIfCached(cacheManager).then((cached) {
-        isCached.value = cached;
+        if (context.mounted) isCached.value = cached;
       });
       return null;
     }, [musicSheet.fileUrl]);
@@ -82,7 +82,7 @@ class MusicSheetRepositoryTile extends HookWidget {
                   .then((_) {
                     // Check cache status after returning from the view
                     _checkIfCached(cacheManager).then((cached) {
-                      isCached.value = cached;
+                      if (context.mounted) isCached.value = cached;
                     });
                   });
             },
