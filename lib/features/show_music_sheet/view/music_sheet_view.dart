@@ -24,6 +24,8 @@ class MusicSheetView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final showTitle = useState(true);
+    // A tap on a digital sheet hides the overlays covering its bottom lines; the next tap brings them back.
+    final showOverlays = useState(true);
 
     final view = Stack(
       alignment: Alignment.center,
@@ -31,10 +33,15 @@ class MusicSheetView extends HookWidget {
         switch (source.mediaType) {
           MediaType.image => ImageViewerWidget(source: source, mode: mode),
           MediaType.pdf => PdfViewerWidget(source: source, mode: mode),
-          MediaType.musicxml => MusicXmlViewerWidget(source: source, mode: mode),
+          MediaType.musicxml => MusicXmlViewerWidget(
+            source: source,
+            mode: mode,
+            showOverlays: showOverlays.value,
+            onSheetTap: () => showOverlays.value = !showOverlays.value,
+          ),
         },
         if (mode == MusicSheetViewMode.full) const BackButtonWidget(),
-        if (mode == MusicSheetViewMode.full && showTitle.value)
+        if (mode == MusicSheetViewMode.full && showTitle.value && showOverlays.value)
           Positioned(
             bottom: AppTheme.symmetricOverlayPadding,
             left: AppTheme.symmetricOverlayPadding,

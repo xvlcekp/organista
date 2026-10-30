@@ -28,7 +28,7 @@ Keď máte zoznamov viac, nad nimi je pole **Vyhľadať zoznam skladieb...** —
 Na diakritike ani veľkých písmenách nezáleží, *svadba* nájde aj *Svadba Žilina*. Ak sa nič nenájde, zobrazí
 sa hláška **Nenašli sa žiadne zoznamy skladieb**.
 
-Ikona **zoradenia** vpravo od vyhľadávania ponúka dve možnosti:
+Ikona **zoradenia** vpravo od vyhľadávania ponúka tri možnosti:
 
 - **Podľa názvu** — predvolené abecedné poradie.
 - **Od najnovších** — naposledy vytvorený (alebo duplikovaný) zoznam je hore.

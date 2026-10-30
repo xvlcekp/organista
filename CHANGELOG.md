@@ -9,24 +9,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Deprecated
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+### Security
+
+-
+
+## [1.4.0] - 2026-10-29
+
+### Added
+
 - Po aktualizácii aplikácie sa raz zobrazí lišta „Čo je nové vo verzii …“ s odkazom na stránku Novinky
 - Obrazovka „O aplikácii“ má samostatné odkazy na návod, časté otázky, novinky a zdroje nôt, tlačidlá „Ohodnotiť aplikáciu“ a „Zdieľať aplikáciu“ a klikateľný kontaktný e-mail
 - Vyhľadávanie zoznamov skladieb podľa názvu a zoradenie podľa názvu, od najnovších alebo naposledy upravených
 - Pri každom zozname skladieb sa zobrazuje, kedy bol naposledy upravený (dnes, včera, deň v týždni, inak dátum); pri zoradení od najnovších dátum vytvorenia
 - Jeden účet môže mať najviac 75 zoznamov skladieb; existujúce zoznamy nad limitom zostávajú
 - Duplikovanie zoznamu skladieb – dlhým podržaním zoznamu a voľbou „Duplikovať zoznam skladieb“ vznikne kópia so všetkými notami
-- Digitálne JKS majú všetky slohy pod notami a pribudlo pretáčanie strán podobne ako pri viac-stranových PDF
+- Digitálne JKS majú všetky slohy pod notami (vyše 1 100 slôh presunutých z textu pod piesňou) a pribudlo pretáčanie strán podobne ako pri viac-stranových PDF
+- Ťuknutie na digitálne noty skryje tlačidlo ovládania, počítadlo strán a názov piesne, ďalšie ťuknutie ich zobrazí
+- Samostatné digitálne noty pre JKS 44, 53, 178, 408b, 408c, 409b a 409c (doteraz súčasť inej piesne)
 
 ### Changed
 
 - Aplikácia je asi o 6 MB menšia – odstránené nepoužívané knižnice a súbory
 - Zoznam skladieb sa už nemaže potiahnutím doľava; premenovanie, duplikovanie aj vymazanie sú v ponuke po dlhom podržaní zoznamu
 - Nastavenie „Nechať obrazovku zapnutú“ je predvolene zapnuté
-- Menšie okraje strany a menšie medzery pri dlhých slabikách – noty na telefóne asi o 8 % väčšie
+- Nová verzia knižnice OSMD 2.2.1 na vykresľovanie digitálnych nôt
+- V digitálnych JKS o 95 % menej prekrývajúceho sa textu; dve tretiny piesní sú bez prekryvov (predtým 3,5 %)
+- Menšie okraje strany a menšie medzery pri dlhých slabikách – noty na telefóne asi o 5 % väčšie
 - Čísla slôh („1.“, „1.-4.“) sú vľavo pred prvou slabikou každého riadku ako v tlačenom spevníku; názvy častí („Kyrie:“, „Glória:“) kurzívou pred číslom
-- Optimalizované rozloženie digitálnych nôt
-- Priblíženie/oddialenie v digitálnych notách sa dá teraz lepšie prispôsobiť a zabezpečuje menej prekryvov na menších displejcoj
-- Zlepšenie čitateľnosti nôt
+- Tlačidlá „Rozšíriť/Zúžiť medzery v texte“ v digitálnych notách lepšie odstraňujú prekryvy textu na menších displejoch
+- Digitálne noty už nezobrazujú údaj o tempe (napr. „♩. = 20“)
+- Digitálne Ordinárium sv. omše: zachované repetície a volty a riadky zalomené ako v pôvodnom zápise
+- Noty digitálnych JKS a Ordinária, ktoré už sú v zozname skladieb, zostávajú v pôvodnej podobe; novú verziu prinesie ich opätovné pridanie z repozitára
 - Nižšia spotreba dát a batérie
 - Počet nôt v repozitári sa načítava len raz namiesto pri každom prekreslení zoznamu repozitárov
 - Zoznam skladieb sa už neprekresľuje dvakrát pri každej zmene (napr. pri presune nôt)
@@ -57,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Opravené odstránenie účtu – dáta sa vymažú úplne, a ak sa to nepodarí, účet zostane zachovaný a zobrazí sa chyba
 - Opravená chyba pri odchode z PDF noty počas vykresľovania strany (Android)
 - Menej falošných chýb hlásených na pozadí (výpadok siete, iOS, vymazaný zoznam skladieb)
+- Skladateľ a autor textu digitálnych nôt sa už nezobrazujú mimo obrazovky
 - Transpozícia digitálnych nôt nanovo prispôsobí zväčšenie oboma smermi – po transpozícii nahor a späť už noty neostávajú menšie
 - Pri nahrávaní vlastného MusicXML súboru sa pred uložením zobrazí náhľad nôt namiesto chybného hlásenia „Súbor je poškodený“
 - Na iOS sa dajú MusicXML súbory vybrať pri nahrávaní vlastných nôt (predtým boli v okne výberu súboru neaktívne)

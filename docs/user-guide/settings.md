@@ -40,5 +40,7 @@ tlačidlá **Ohodnotiť aplikáciu** (otvorí Google Play alebo App Store) a **Z
 (pošle známym odkazy, z ktorých je možné aplikáciu bezplatne stiahnuť z Google Play alebo App Store)
 a kontaktný e-mail — ťuknutím sa otvorí váš poštový klient.
 
+![O aplikácii](assets/screenshots/about-screen.png){ width="300" }
+
 Po aktualizácii aplikácie sa na domovskej obrazovke raz zobrazí lišta **Čo je nové vo verzii …**;
 tlačidlom **Zobraziť** otvoríte stránku [Novinky](whats-new.md).

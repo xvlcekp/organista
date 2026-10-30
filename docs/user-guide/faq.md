@@ -85,9 +85,7 @@ nezhasla. Ak je toto nastavenie vypnuté, zariadenie sa riadi nastavením systé
 ### Funguje aplikácia bez internetu?
 
 Pre stiahnutie nôt je potrebný internet (wifi / mobilné dáta). Ak už raz noty stiahnete
-a máte ich uložené v playliste, noty sa budú zobrazovať aj bez internetu. Najlepšie je si
-to doma vyskúšať s vypnutou wifi, aby vás v kostole nič neprekvapilo. Do budúcna zvažujem
-implementovať technicky náročnejšiu možnosť, aby aplikácia fungovala plne offline.
+a máte ich uložené v playliste, noty sa budú zobrazovať aj bez internetu. Zoznamy skladieb môžete upravovať aj bez internetu — zmeny sa odošlú po pripojení. Najlepšie je si to doma vyskúšať s vypnutou wifi, aby vás v kostole nič neprekvapilo. Do budúcna zvažujem implementovať technicky náročnejšiu možnosť, aby aplikácia fungovala plne offline.
 
 ### Je aplikácia dostupná pre iPady, resp. platformu iOS?
 
@@ -125,8 +123,14 @@ stačí sa na novom zariadení prihlásiť.
 
 ### Prečo ma aplikácia sama odhlásila?
 
-Prihlásenie na zariadení bude nekatívne, keď si na inom zariadení zmeníte heslo alebo zmažete účet. Aplikácia vás vtedy vráti na prihlasovaciu obrazovku s hláškou
+Prihlásenie na zariadení bude neaktívne, keď si na inom zariadení zmeníte heslo alebo zmažete účet. Aplikácia vás vtedy vráti na prihlasovaciu obrazovku s hláškou
 „Žiadny používateľ nie je momentálne prihlásený!“. Po zmene hesla sa stačí znova prihlásiť – zoznamy skladieb aj noty zostávajú uložené v účte.
+
+### Prečo sa pieseň v zozname skladieb líši od tej v repozitári?
+
+Zoznam skladieb si pamätá notu v podobe, v akej ste ju pridali. Keď sa noty v repozitári vylepšia
+(napr. digitálne JKS vo verzii 1.4.0), nota v zozname zostane pôvodná — novú verziu získate, keď ju
+zo zoznamu vymažete a znova pridáte z repozitára.
 
 ### Prečo je pri piesni v zozname iný názov ako v repozitári?
 

@@ -563,14 +563,18 @@
         // scrolled to its bottom goes forward, a swipe down at the top goes back, so a page taller
         // than the screen scrolls first. Pages that fit the screen are at both ends and turn on
         // any vertical swipe. The export WebView loads this file too but never receives touches.
+        // A short touch that barely moves is a tap: the app shows or hides its overlays.
         const SWIPE_MIN_PX = 60;
-        let swipe = null; // { y, x, atTop, atBottom } of the touch start
+        const TAP_MAX_MOVE_PX = 10;
+        const TAP_MAX_MS = 300;
+        let swipe = null; // { y, x, time, atTop, atBottom } of the touch start
         document.addEventListener('touchstart', e => {
             if (!pagedView || e.touches.length !== 1) { swipe = null; return; }
             const se = document.scrollingElement;
             swipe = {
                 y: e.touches[0].clientY,
                 x: e.touches[0].clientX,
+                time: performance.now(),
                 atTop: se.scrollTop <= 1,
                 atBottom: se.scrollTop + se.clientHeight >= se.scrollHeight - 1,
             };
@@ -579,8 +583,13 @@
             if (!swipe) return;
             const dy = e.changedTouches[0].clientY - swipe.y;
             const dx = e.changedTouches[0].clientX - swipe.x;
-            const { atTop, atBottom } = swipe;
+            const { atTop, atBottom, time } = swipe;
             swipe = null;
+            if (Math.abs(dx) < TAP_MAX_MOVE_PX && Math.abs(dy) < TAP_MAX_MOVE_PX && performance.now() - time < TAP_MAX_MS) {
+                // The channel exists only in the viewer, not in the export WebView
+                if (typeof PageChannel !== 'undefined') PageChannel.postMessage('tap');
+                return;
+            }
             if (Math.abs(dy) < SWIPE_MIN_PX || Math.abs(dx) > Math.abs(dy)) return;
             if (dy < 0 && atBottom) nextPage();
             else if (dy > 0 && atTop) prevPage();

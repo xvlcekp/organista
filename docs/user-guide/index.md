@@ -39,7 +39,7 @@ a rušivé reklamy do liturgie nepatria.
 4. [Hrajte!](viewing-music-sheets.md)
 
 Celý postup — od vytvorenia zoznamu skladieb, pridania nôt a zapnutia navigačných šípok
-až po hranie s otáčaním strán — si môžete pozrieť v krátkom videu:
+až po hranie s transpozíciou a otáčaním strán — si môžete pozrieť v krátkom videu:
 
 <video autoplay loop muted playsinline controls width="300">
   <source src="assets/videos/complete-walkthrough.mp4" type="video/mp4">

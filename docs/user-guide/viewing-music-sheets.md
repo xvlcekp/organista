@@ -32,14 +32,25 @@ Platí to pre PDF ako aj pre **digitálne noty JKS**: piesne s viac ako tromi sl
 majú ďalšie slohy na ďalších stranách pod rovnakými notami. Na obrazovke je vždy
 jedna strana; počítadlo strán je pri digitálnych notách nad modrým tlačidlom ovládania.
 Strany digitálnych nôt otočíte aj potiahnutím prstom nahor alebo nadol, rovnako ako pri PDF.
+Ťuknutím na digitálne noty skryjete tlačidlo ovládania, počítadlo strán aj názov piesne, aby nezakrývali
+posledné riadky; ďalším ťuknutím ich znova zobrazíte.
+
+<video autoplay loop muted playsinline controls width="300">
+  <source src="../assets/videos/hide-controls.mp4" type="video/mp4">
+</video>
+
+<div class="grid" markdown>
+![Digitálne noty – 1. strana](assets/screenshots/sheet-fullscreen.png){ width="300" }
+![Digitálne noty – 2. strana so slohami 4 a 5](assets/screenshots/sheet-musicxml-page2.png){ width="300" }
+</div>
 
 !!! tip
-Obrazovka počas hrania predvolene nezhasne. Ak to nechcete, v [Nastaveniach](settings.md)
-vypnite **Nechať obrazovku zapnutú**.
+    Obrazovka počas hrania predvolene nezhasne. Ak to nechcete, v [Nastaveniach](settings.md)
+    vypnite **Nechať obrazovku zapnutú**.
 
 !!! note "Bluetooth pedál alebo klávesnica"
-Na listovanie môžete použiť aj **Bluetooth pedál či klávesnicu** — šikovné,
-keď máte obe ruky (aj nohy) zamestnané hraním.
+    Na listovanie môžete použiť aj **Bluetooth pedál či klávesnicu** — šikovné,
+    keď máte obe ruky (aj nohy) zamestnané hraním.
 
 ## Transpozícia (MusicXML)
 
@@ -65,7 +76,8 @@ Transpozícia sa pri note v zozname skladieb **zapamätá** — pri ďalšom otv
 
 V paneli nájdete aj:
 
-- **Rozšíriť/zúžiť medzery v texte** (tlačidlá pri ikone **÷**) — vie pomocť zmenšiť noty ak sa prekrývajú, alebo zväčšiť noty aj je tam dosť voľného miesta,
+- **Rozšíriť/zúžiť medzery v texte** (tlačidlá pri ikone **÷**) — širšie medzery pomôžu, ak sa text prekrýva (noty budú o niečo menšie);
+  užšie noty zväčšia, ak je v texte dosť voľného miesta,
 - **Skryť text / Zobraziť text** — schová alebo zobrazí text piesne pod notami.
 
 ## Práca bez internetu
@@ -74,3 +86,8 @@ Noty, ktoré ste už mali otvorené, sa ukladajú do pamäte telefónu a zobrazi
 pripojenia — na chóre bez signálu sa teda na svoj zoznam skladieb môžete spoľahnúť.
 V repozitári ich spoznáte podľa zelenej fajky. Podrobnosti o úložisku nájdete
 v [Nastaveniach](settings.md#sprava-uloziska).
+
+Nota, ktorá ešte nebola stiahnutá, sa bez internetu nezobrazí — aplikácia vypíše hlášku
+**Bez internetu. Táto nota ešte nebola stiahnutá do zariadenia.** Bez internetu môžete do zoznamu skladieb
+pridať len už stiahnuté noty. Vytvorenie, premenovanie či úpravy zoznamov sa bez internetu zobrazia hneď
+a odošlú sa, keď sa telefón znova pripojí. Nahrať vlastné noty sa dá len s pripojením.
