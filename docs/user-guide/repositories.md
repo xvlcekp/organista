@@ -15,8 +15,8 @@ kontrolou - viac v [Zdrojoch nôt](music-sheet-sources.md)).
 Globálne repozitáre sa nedajú upravovať — noty z nich si pridávate do svojich zoznamov skladieb.
 
 !!! info "Odkiaľ noty pochádzajú"
-Prehľad všetkých zdrojov aj históriu pridávania nôt nájdete na stránke
-[Zdroje nôt](music-sheet-sources.md).
+    Prehľad všetkých zdrojov aj históriu pridávania nôt nájdete na stránke
+    [Zdroje nôt](music-sheet-sources.md).
 
 ### Vyhľadávanie
 
@@ -28,8 +28,8 @@ V repozitári píšte do políčka **Vyhľadať noty...** — výsledky sa filtr
 </div>
 
 !!! info "Zelená fajka"
-Zelená fajka pri piesni znamená, že notový záznam je uložený v pamäti telefónu
-a zobrazí sa **aj bez internetu**.
+    Zelená fajka pri piesni znamená, že notový záznam je uložený v pamäti telefónu
+    a zobrazí sa **aj bez internetu**.
 
 ## Osobný repozitár
 

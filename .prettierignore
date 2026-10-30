@@ -1,0 +1,2 @@
+# MkDocs admonitions (!!! note) need 4-space indented bodies, which Prettier strips
+docs/user-guide/

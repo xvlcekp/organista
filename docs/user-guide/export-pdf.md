@@ -30,3 +30,4 @@ Po dokončení sa zobrazí hlásenie **Zoznam úspešne exportovaný**:
 !!! note
     Ak sa niektorú notu nepodarí stiahnuť alebo pripraviť, export pokračuje ďalej —
     do PDF sa dostanú všetky ostatné noty.
+    Bez internetu sa dajú exportovať len noty, ktoré už boli stiahnuté do zariadenia.
