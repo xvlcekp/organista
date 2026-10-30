@@ -106,6 +106,16 @@ void main() {
     await dismissSnackBar(tester);
   });
 
+  testWidgets('hides the what\'s-new snackbar after its duration even though it has an action', (tester) async {
+    when(() => settingsRepository.getLastSeenVersion()).thenReturn(null);
+
+    await pumpUntilSnackBarShown(tester);
+    await dismissSnackBar(tester);
+    await tester.pump(const Duration(seconds: 1)); // snackbar slides out
+
+    expect(find.byType(SnackBar), findsNothing);
+  });
+
   testWidgets('stays quiet when the installed version was already seen', (tester) async {
     when(() => settingsRepository.getLastSeenVersion()).thenReturn(installedVersion);
 

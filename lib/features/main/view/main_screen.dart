@@ -42,6 +42,8 @@ class _MainScreenState extends State<MainScreen> {
       SnackBar(
         content: Text(context.loc.whatsNewInVersion(version)),
         duration: AppConstants.whatsNewSnackBarDuration,
+        // A snackbar with an action persists by default, which would ignore the duration.
+        persist: false,
         action: SnackBarAction(
           label: context.loc.show,
           onPressed: () => launchUrl(Uri.parse(AppConstants.whatsNewUrl), mode: LaunchMode.externalApplication),
