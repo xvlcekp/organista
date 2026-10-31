@@ -1,0 +1,37 @@
+{
+  "_comment": "Ordered list of store screenshots. `shot` is the raw capture base name in docs/screenshots/raw/{android,ipad}/. Texts are Slovak because both store listings are Slovak. `fullscreen: true` marks viewer screens, which hide the OS bars themselves and must not be cropped.",
+  "shots": [
+    {
+      "shot": "viewer-clean",
+      "title": "Noty na celú obrazovku",
+      "subtitle": "Ťuknutím skryjete ovládanie, strany otáčate jedným dotykom.",
+      "fullscreen": true
+    },
+    {
+      "shot": "playlists",
+      "title": "Zoznam skladieb na každú omšu",
+      "subtitle": "Pripravte si noty na nedeľu, svadbu či pohreb vopred."
+    },
+    {
+      "shot": "playlist",
+      "title": "Noty v poradí, v akom ich hráte",
+      "subtitle": "Vstup, Kyrie, žalm, Sanktus, prijímanie… poradie upravíte dlhým podržaním."
+    },
+    {
+      "shot": "transpose",
+      "title": "Transponujte digitálne noty",
+      "subtitle": "JKS a ordinárium v ľubovoľnej tónine, so všetkými slohami pod notami.",
+      "fullscreen": true
+    },
+    {
+      "shot": "repositories",
+      "title": "JKS, žalmy aj ordinárium",
+      "subtitle": "Vyše 3 000 notových záznamov v spoločných repozitároch, k tomu vlastné noty."
+    },
+    {
+      "shot": "repo-jks",
+      "title": "Celý JKS v digitálnej podobe",
+      "subtitle": "Vyhľadajte pieseň podľa čísla alebo názvu a pridajte ju do zoznamu."
+    }
+  ]
+}

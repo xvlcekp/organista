@@ -1,0 +1,39 @@
+# Raw tablet screenshots on the iPad Pro 13-inch simulator (2064x2752, logical 1032x1376).
+# Precondition: the debug app was just launched, is signed in as demo@organista.app and shows
+# "Moje zoznamy skladieb". Run from the repo root:
+#   dart --packages=.dart_tool/package_config.json tools/store-screenshots/vm_driver.dart <ws-url> < tools/store-screenshots/ipad_capture.txt
+# The simulator shows no status bar until the app has opened a full-screen sheet once, so the
+# viewer shots come first; every y coordinate after that includes the 24 pt status bar.
+tap 516 165
+sleep 6000
+# 25. V spôsobe chleba (saved transposition -2); MusicXML takes up to ~25 s to render
+tap 516 555
+sleep 25000
+tap 987 1330
+sleep 1500
+shot docs/screenshots/raw/ipad/transpose.png
+tap 987 1330
+sleep 800
+tap 40 40
+sleep 2500
+# 28. Príde Kristus; the tap-to-hide gesture lives in the WebView, so send it as JS
+tap 516 700
+sleep 25000
+js PageChannel.postMessage('tap')
+sleep 1500
+shot docs/screenshots/raw/ipad/viewer-clean.png
+tap 40 40
+sleep 3000
+shot docs/screenshots/raw/ipad/playlist.png
+tap 40 40
+sleep 3000
+shot docs/screenshots/raw/ipad/playlists.png
+# Repozitáre tab; the grid is the third Scrollable on that screen
+tap 772 1341
+sleep 5000
+shot docs/screenshots/raw/ipad/repositories.png
+scroll 2 1620
+sleep 1500
+tap 774 774
+sleep 7000
+shot docs/screenshots/raw/ipad/repo-jks.png
