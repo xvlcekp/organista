@@ -33,6 +33,18 @@ Postupne je v pláne pridávať ďalší obsah.
 
 ## História úprav
 
+### 2.11.2026
+
+- Digitálne JKS a Ordinárium, ktoré ste mali v zoznamoch skladieb z pôvodných repozitárov, sú automaticky
+  prepnuté na nové verzie (slohy pod notami, repetície a volty). Nič netreba znova pridávať.
+
+### 1.11.2026
+
+- **JKS - digitálne**: vylepšené zobrazenie piesní 150a, 150b, 256, 348, 350, 417, 510 a 526. Ak ich už máte
+  v zozname skladieb, nová verzia sa vám zobrazí automaticky.
+- **JKS**: pieseň 256 (Tu skrúšení v prach padáme) nahradená opravenou verziou. Ak ste ju už mali v zozname
+  skladieb, nová verzia sa vám zobrazí automaticky.
+
 ### 30.10.2026
 
 - **JKS - digitálne**: všetky slohy všetkých 557 piesní sú pod notami — vyše 1 100 slôh, ktoré boli doteraz len

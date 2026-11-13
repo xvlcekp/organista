@@ -12,10 +12,6 @@ rovnakými notami a strany sa otáčajú rovnako ako pri PDF. Nová verzia vykre
 **95 % prekrývajúceho sa textu** — dve tretiny piesní sú na telefóne úplne bez prekryvov (predtým 3,5 %)
 a 96 % piesní vyzerá na rovnakom telefóne lepšie.
 
-!!! note "Noty, ktoré už máte v zozname skladieb"
-    Digitálne JKS a Ordinárium, ktoré ste si pridali do zoznamu skladieb pred touto aktualizáciou, zostávajú
-    v pôvodnej podobe. Novú verziu získate, keď notu zo zoznamu vymažete a znova ju pridáte z repozitára.
-
 <div class="feature-grid">
 <table>
 <tr>
