@@ -145,14 +145,14 @@ class UploadFolderScreen extends HookWidget {
     }
 
     void pickJsonFile() {
-      FilePicker.pickFiles(
+      FilePicker.pickFile(
             type: FileType.custom,
             allowedExtensions: ['json'],
           )
-          .then((result) {
-            if (result != null && result.files.isNotEmpty) {
+          .then((file) async {
+            if (file != null) {
               try {
-                String jsonString = utf8.decode(result.files.single.bytes!);
+                String jsonString = utf8.decode(await file.readAsBytes());
                 Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
                 filenameMapping.value = jsonData.map((key, value) => MapEntry(key, value.toString()));
@@ -186,13 +186,9 @@ class UploadFolderScreen extends HookWidget {
       isUploading.value = true;
       uploadedFiles.value = [];
 
-      FilePickerResult? result = await FilePicker.pickFiles(
-        allowMultiple: true,
-        type: FileType.any,
-        withData: true,
-      );
+      final files = await FilePicker.pickFiles();
 
-      if (result == null) {
+      if (files.isEmpty) {
         logger.i("No files selected.");
         isUploading.value = false;
         return;
@@ -210,11 +206,9 @@ class UploadFolderScreen extends HookWidget {
         }
       }
 
-      for (var file in result.files) {
+      for (var file in files) {
         try {
-          if (file.bytes == null) continue;
-
-          MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
+          MusicSheetFile musicSheetFile = MusicSheetFile.fromBytes(name: file.name, bytes: await file.readAsBytes());
           String fileNameToUse = _mapFileName(file.name, filenameMapping.value);
 
           logger.i(

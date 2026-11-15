@@ -1,43 +1,26 @@
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:organista/models/music_sheets/media_type.dart';
 
-/// A class that represents a music sheet file with its associated metadata.
+/// A music sheet file picked for upload: its name, its content and the [MediaType] derived from the name.
 class MusicSheetFile {
-  final PlatformFile file;
+  final String name;
+  final Uint8List bytes;
   final MediaType mediaType;
 
-  /// Creates a new [MusicSheetFile] instance.
-  ///
-  /// Requires a [file] and its corresponding [mediaType].
   const MusicSheetFile({
-    required this.file,
+    required this.name,
+    required this.bytes,
     required this.mediaType,
   });
 
-  /// Creates a [MusicSheetFile] from a [PlatformFile].
-  ///
-  /// Automatically determines the [MediaType] from the file's name.
-  factory MusicSheetFile.fromPlatformFile(PlatformFile file) {
-    final mediaType = MediaType.fromPath(file.name);
-    return MusicSheetFile(
-      file: file,
-      mediaType: mediaType,
-    );
+  /// Derives the [MediaType] from [name]; throws [UnsupportedFileExtensionException] for any other extension.
+  factory MusicSheetFile.fromBytes({required String name, required Uint8List bytes}) {
+    return MusicSheetFile(name: name, bytes: bytes, mediaType: MediaType.fromPath(name));
   }
 
-  /// The name of the file.
-  String get name => file.name;
-
   /// The size of the file in bytes.
-  int get size => file.size;
-
-  /// The file extension.
-  String? get extension => file.extension;
-
-  /// The file data as bytes.
-  Uint8List? get bytes => file.bytes;
+  int get size => bytes.length;
 
   @override
   String toString() => 'MusicSheetFile(name: $name, mediaType: $mediaType)';

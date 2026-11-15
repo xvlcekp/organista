@@ -134,12 +134,12 @@ Errors are reported via `Sentry.captureException()` in catch blocks and automati
 
 ## Shorebird
 
-Shorebird is a tool that allows instant patches for applications on iOS/Android without need reviews on stores. However Shorebird doesn't support obfuscation for iOS yet. They plan to add the support in year 2026.  
-This is skipped so far and needs to be fixed in the future:  
+Shorebird is a tool that allows instant patches for applications on iOS/Android without need reviews on stores.
+Shorebird supports obfuscation on all platforms, iOS included, since Shorebird 1.6.84 with Flutter 3.41.2
+(https://docs.shorebird.dev/code-push/guides/security-tools/). The Shorebird release step on Codemagic passes:  
 `--obfuscate --split-debug-info=build/debug-info --extra-gen-snapshot-options=--save-obfuscation-map=build/app/obfuscation.map.json`
 
 The Shorebird is used as an integration on Codemagic - tool to auto deploy app to stores.
-https://github.com/shorebirdtech/shorebird/issues/1619
 
 ## Firebase
 

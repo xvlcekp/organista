@@ -131,6 +131,8 @@ git status ios/Podfile.lock   # must show up as modified if any plugin/pod versi
 
 If `pod install` fails on a version conflict, run `pod update` for the offending pod (e.g. `pod update FirebaseAppCheck`). Never finish a pubspec-related task without having run this and mentioning the `Podfile.lock` state in the summary.
 
+`ios/Podfile` sets `$FirebaseSDKVersion = '12.19.0'`: firebase_core asks for 12.19.3, a security patch published only for FirebaseCore and FirebaseFirestore, so FirebaseAnalytics 12.19.3 does not exist (firebase-ios-sdk#17015). Core and Firestore still resolve to 12.19.3 through `~> 12.19.0`. Firebase stopped publishing new pods to CocoaPods after October 2026, so the next Firebase upgrade means moving iOS to Swift Package Manager; drop the override then.
+
 ## Releasing
 
 1. Update `CHANGELOG.md` and add a version section to `docs/user-guide/whats-new.md` (product highlights)

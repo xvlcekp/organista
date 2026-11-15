@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart' show CacheManager;
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -23,6 +23,18 @@ class PdfLoadResult {
 /// Opens the [PdfDocument] backing a music sheet. Injectable so tests can
 /// exercise the load/dispose lifecycle without the native pdfium bindings.
 typedef PdfDocumentOpener = Future<PdfDocument> Function();
+
+/// Whether [error] means the file could not be fetched rather than that the app misbehaved: the device is offline
+/// ([SocketException], [ClientException], [OSError]), the network intercepts TLS ([TlsException], e.g. a captive
+/// portal presenting its own certificate) or Storage refused or failed the download ([HttpException], e.g. 403 for
+/// a file its owner has since deleted from their repository, or a 5xx).
+@visibleForTesting
+bool isPdfFetchFailure(Object error) =>
+    error is SocketException ||
+    error is TlsException ||
+    error is HttpException ||
+    error is ClientException ||
+    error is OSError;
 
 /// Closes [document], logging instead of throwing when the native side refuses.
 ///
@@ -122,8 +134,8 @@ PdfLoadResult usePdfDocument(MusicSheetSource source, {PdfDocumentOpener? docume
         }
         completer.complete();
       } catch (e, stackTrace) {
-        if (e is SocketException || e is ClientException || e is OSError) {
-          logger.w("Failed to load PDF due to network error (device is offline)", error: e);
+        if (isPdfFetchFailure(e)) {
+          logger.w("Failed to load PDF: the file could not be fetched", error: e);
         } else {
           logger.e("Failed to load PDF", error: e, stackTrace: stackTrace);
         }

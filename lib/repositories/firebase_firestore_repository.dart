@@ -151,11 +151,13 @@ class FirebaseFirestoreRepository {
       await userDoc.set(userPayload);
 
       logger.i('Successfully created user document for ${user.id}');
-    } on FirebaseException catch (e) {
-      // Re-throw Firebase exceptions
-      logger.e('Firebase error creating user document: $e', error: e, stackTrace: StackTrace.current);
-      rethrow;
     } catch (e, stackTrace) {
+      if (_firestoreErrorCode(e) == 'unavailable') {
+        // Signed in but Firestore is unreachable, so the existence check above cannot be answered. The sign-in
+        // itself succeeded and nothing else needs the document, so creation is left to the next login.
+        logger.w('Skipped creating user document for ${user.id}: Firestore is unreachable', error: e);
+        return;
+      }
       logger.e('Error creating user document', error: e, stackTrace: stackTrace);
       rethrow;
     }

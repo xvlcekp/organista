@@ -162,20 +162,21 @@ class MusicXmlViewerWidget extends HookWidget {
   ) async {
     try {
       final fileData = await _loadFileData(context.read<CacheManager>());
+      // The viewer can be left while the file loads or the WebView is set up, which disposes the notifiers.
+      if (!context.mounted) return;
       if (fileData == null) {
         loadFailed.value = true;
         return;
       }
-      if (context.mounted) {
-        controller.value = await _initializeWebView(
-          context,
-          fileData,
-          currentTranspose,
-          currentLyricsPadding,
-          pages,
-          urlSource,
-        );
-      }
+      final webViewController = await _initializeWebView(
+        context,
+        fileData,
+        currentTranspose,
+        currentLyricsPadding,
+        pages,
+        urlSource,
+      );
+      if (context.mounted) controller.value = webViewController;
     } catch (e, st) {
       logger.e('Failed to initialize MusicXML viewer', error: e, stackTrace: st);
     }

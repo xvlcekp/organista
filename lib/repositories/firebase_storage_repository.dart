@@ -55,13 +55,8 @@ class FirebaseStorageRepository {
 
       logger.i('Uploading file ${file.name} with mime type ${mimeType ?? 'unknown'}');
 
-      if (file.bytes == null) {
-        logger.e('File bytes are null, cannot upload file ${file.name}');
-        return null;
-      }
-
       await ref.putData(
-        file.bytes!,
+        file.bytes,
         SettableMetadata(
           contentType: mimeType,
           customMetadata: {

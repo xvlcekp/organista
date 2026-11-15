@@ -1,14 +1,20 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:organista/config/app_constants.dart';
+import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
 import 'package:organista/l10n/app_localizations.dart';
+import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
 import 'package:organista/models/repositories/repository.dart';
@@ -22,6 +28,63 @@ class MockMusicSheetRepositoryBloc extends MockBloc<MusicSheetRepositoryEvent, M
 class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 
 class MockCacheManager extends Mock implements CacheManager {}
+
+class MockAddEditMusicSheetCubit extends MockCubit<AddEditMusicSheetState> implements AddEditMusicSheetCubit {}
+
+/// A picked file whose size is known up front and whose content is read only on demand.
+final class FakePlatformFile extends PlatformFile {
+  FakePlatformFile({required this.name, required this.size, Uint8List? content}) : _content = content;
+
+  @override
+  final String name;
+  final int size;
+  final Uint8List? _content;
+  bool contentRead = false;
+
+  @override
+  Uri get uri => Uri.file('/picked/$name');
+
+  // Not used by the upload; the type is inferred from PlatformFile, so cross_file need not be a dependency.
+  @override
+  get xFile => throw UnimplementedError();
+
+  @override
+  int? lengthSync() => size;
+
+  @override
+  Future<int?> length() async => size;
+
+  @override
+  Future<Uint8List> readAsBytes() async {
+    contentRead = true;
+    return _content ?? Uint8List(0);
+  }
+
+  @override
+  Stream<Uint8List> readAsByteStream() => Stream.fromFuture(readAsBytes());
+}
+
+/// Stands in for the native file picker and returns [picked].
+class FakeFilePickerPlatform extends FilePickerPlatform {
+  FakeFilePickerPlatform(this.picked);
+
+  final PlatformFile picked;
+
+  @override
+  Future<PlatformFile?> pickFile({
+    String? dialogTitle,
+    String? initialDirectory,
+    FileType type = FileType.any,
+    List<String>? allowedExtensions,
+    Function(FilePickerStatus)? onFileLoading,
+    int compressionQuality = 0,
+    AndroidOptions androidOptions = const AndroidOptions(),
+    DarwinOptions darwinOptions = const DarwinOptions(),
+    WindowsOptions windowsOptions = const WindowsOptions(),
+    LinuxOptions linuxOptions = const LinuxOptions(),
+    WebOptions webOptions = const WebOptions(),
+  }) async => picked;
+}
 
 void main() {
   late MockMusicSheetRepositoryBloc mockBloc;
@@ -163,6 +226,60 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ScrollAwareFab), findsNothing);
+    });
+  });
+
+  group('uploading a picked file', () {
+    late MockAddEditMusicSheetCubit mockAddEditCubit;
+
+    setUp(() {
+      mockAddEditCubit = MockAddEditMusicSheetCubit();
+      when(() => mockAddEditCubit.state).thenReturn(const InitMusicSheetState());
+      registerFallbackValue(MusicSheetFile.fromBytes(name: 'fallback.pdf', bytes: Uint8List(0)));
+    });
+
+    Future<void> pick(WidgetTester tester, PlatformFile picked) async {
+      final previousPicker = FilePickerPlatform.instance;
+      FilePickerPlatform.instance = FakeFilePickerPlatform(picked);
+      addTearDown(() => FilePickerPlatform.instance = previousPicker);
+
+      await tester.pumpWidget(
+        BlocProvider<AddEditMusicSheetCubit>.value(value: mockAddEditCubit, child: buildView()),
+      );
+      await tester.pump();
+      await tester.tap(find.byType(ScrollAwareFab));
+      await tester.pump();
+    }
+
+    testWidgets('rejects a file over the limit without reading it', (tester) async {
+      // ORGANISTA-6M: a 110 MB file was read into memory before the size check and crashed with OutOfMemoryError.
+      final huge = FakePlatformFile(name: 'huge.pdf', size: AppConstants.maxFileSizeBytes + 1);
+
+      await pick(tester, huge);
+
+      expect(huge.contentRead, isFalse);
+      expect(find.text('File is too large. Maximum size is ${AppConstants.maxFileSizeMB}MB.'), findsOneWidget);
+      verifyNever(
+        () => mockAddEditCubit.uploadMusicSheet(
+          file: any(named: 'file'),
+          repositoryId: any(named: 'repositoryId'),
+        ),
+      );
+    });
+
+    testWidgets('reads an accepted file and hands it to the upload', (tester) async {
+      await pick(tester, FakePlatformFile(name: 'sheet.pdf', size: 3, content: Uint8List.fromList([1, 2, 3])));
+
+      final uploaded =
+          verify(
+                () => mockAddEditCubit.uploadMusicSheet(
+                  file: captureAny(named: 'file'),
+                  repositoryId: 'repo-1',
+                ),
+              ).captured.single
+              as MusicSheetFile;
+      expect(uploaded.name, 'sheet.pdf');
+      expect(uploaded.bytes, [1, 2, 3]);
     });
   });
 }

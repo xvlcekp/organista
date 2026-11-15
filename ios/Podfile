@@ -4,6 +4,13 @@ platform :ios, '15.0'
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
+# firebase_core asks every Firebase plugin for SDK 12.19.3, but 12.19.3 was a security patch that shipped only
+# FirebaseCore and FirebaseFirestore; FirebaseAnalytics, Auth, Storage and App Check stay at 12.19.0
+# (https://github.com/firebase/firebase-ios-sdk/issues/17015), so `pod install` cannot resolve the analytics pod.
+# Pinning the plugins to 12.19.0 still gets Core and Firestore 12.19.3 through the umbrella pod's `~> 12.19.0`.
+# Remove once firebase_core requests a version that exists for every Firebase pod.
+$FirebaseSDKVersion = '12.19.0'
+
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,

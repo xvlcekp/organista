@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:mockito/annotations.dart';
 import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_sheet_cubit.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
@@ -57,10 +56,7 @@ void main() {
 
     test('uploadNewMusicSheet fails right away without a network, on every attempt', () async {
       when(mockConnectivityService.isOnline).thenReturn(false);
-      final file = MusicSheetFile(
-        file: PlatformFile(name: 'test.pdf', size: 4, bytes: Uint8List.fromList([1, 2, 3, 4])),
-        mediaType: MediaType.pdf,
-      );
+      final file = MusicSheetFile(name: 'test.pdf', bytes: Uint8List.fromList([1, 2, 3, 4]), mediaType: MediaType.pdf);
       const user = AuthUser(id: 'user-1', email: 'user@test.com', isEmailVerified: true);
       final emitted = cubit.stream.take(4).toList();
 
@@ -78,13 +74,9 @@ void main() {
     });
 
     test('uploadNewMusicSheet emits loading false on success', () async {
-      final mockPlatformFile = PlatformFile(
-        name: 'test.pdf',
-        size: 1024,
-        bytes: Uint8List.fromList([1, 2, 3, 4]),
-      );
       final mockFile = MusicSheetFile(
-        file: mockPlatformFile,
+        name: 'test.pdf',
+        bytes: Uint8List.fromList([1, 2, 3, 4]),
         mediaType: MediaType.pdf,
       );
       const user = AuthUser(id: 'user-1', email: 'user@test.com', isEmailVerified: true);
@@ -120,13 +112,9 @@ void main() {
     });
 
     test('uploadNewMusicSheet captures error and stops loading', () async {
-      final mockPlatformFile = PlatformFile(
-        name: 'test.pdf',
-        size: 1024,
-        bytes: Uint8List.fromList([1, 2, 3, 4]),
-      );
       final mockFile = MusicSheetFile(
-        file: mockPlatformFile,
+        name: 'test.pdf',
+        bytes: Uint8List.fromList([1, 2, 3, 4]),
         mediaType: MediaType.pdf,
       );
       const user = AuthUser(id: 'user-1', email: 'user@test.com', isEmailVerified: true);
@@ -231,13 +219,9 @@ void main() {
 
     test('resetState should emit InitMusicSheetState', () {
       // First change to a different state
-      final mockPlatformFile = PlatformFile(
-        name: 'test.pdf',
-        size: 1024,
-        bytes: Uint8List.fromList([1, 2, 3, 4]),
-      );
       final mockFile = MusicSheetFile(
-        file: mockPlatformFile,
+        name: 'test.pdf',
+        bytes: Uint8List.fromList([1, 2, 3, 4]),
         mediaType: MediaType.pdf,
       );
       cubit.uploadMusicSheet(file: mockFile, repositoryId: 'repo-123');
@@ -250,13 +234,9 @@ void main() {
     });
 
     test('uploadMusicSheet should emit UploadMusicSheetState with correct data', () {
-      final mockPlatformFile = PlatformFile(
-        name: 'test.pdf',
-        size: 1024,
-        bytes: Uint8List.fromList([1, 2, 3, 4]),
-      );
       final mockFile = MusicSheetFile(
-        file: mockPlatformFile,
+        name: 'test.pdf',
+        bytes: Uint8List.fromList([1, 2, 3, 4]),
         mediaType: MediaType.pdf,
       );
 
@@ -320,13 +300,9 @@ void main() {
       expect(cubit.state, const InitMusicSheetState());
 
       // Transition to upload state
-      final mockPlatformFile = PlatformFile(
-        name: 'test.pdf',
-        size: 1024,
-        bytes: Uint8List.fromList([1, 2, 3, 4]),
-      );
       final mockFile = MusicSheetFile(
-        file: mockPlatformFile,
+        name: 'test.pdf',
+        bytes: Uint8List.fromList([1, 2, 3, 4]),
         mediaType: MediaType.pdf,
       );
       cubit.uploadMusicSheet(file: mockFile, repositoryId: 'repo-123');

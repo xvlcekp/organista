@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -139,14 +138,7 @@ void main() {
     });
 
     testWidgets('does not pop while loading upload', (tester) async {
-      final mockFile = MusicSheetFile(
-        file: PlatformFile(
-          name: 'test.png',
-          size: 0,
-          bytes: null,
-        ),
-        mediaType: MediaType.image,
-      );
+      final mockFile = MusicSheetFile(name: 'test.png', bytes: validPngBytes, mediaType: MediaType.image);
       final cubit =
           AddEditMusicSheetViewTest(
             firestoreRepository: mockFirestoreRepository,
@@ -205,43 +197,8 @@ void main() {
       expect(route, isA<MaterialPageRoute<void>>());
     });
 
-    testWidgets('shows placeholder text when uploaded file has no bytes', (tester) async {
-      final mockFile = MusicSheetFile(
-        file: PlatformFile(name: 'test.png', size: 0, bytes: null),
-        mediaType: MediaType.image,
-      );
-      final cubit =
-          AddEditMusicSheetViewTest(
-            firestoreRepository: mockFirestoreRepository,
-            storageRepository: mockStorageRepository,
-          )..setStateForTest(
-            UploadMusicSheetState(file: mockFile, repositoryId: 'repo-1'),
-          );
-      addTearDown(cubit.close);
-
-      await tester.pumpWidget(
-        BlocProvider<AddEditMusicSheetCubit>.value(
-          value: cubit,
-          child: Provider<CacheManager>.value(
-            value: DefaultCacheManager(),
-            child: const MaterialApp(
-              locale: Locale('en'),
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              home: AddEditMusicSheetView(),
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('No file data available'), findsOneWidget);
-    });
-
     testWidgets('renders a music sheet preview when the uploaded file has bytes', (tester) async {
-      final mockFile = MusicSheetFile(
-        file: PlatformFile(name: 'test.png', size: validPngBytes.length, bytes: validPngBytes),
-        mediaType: MediaType.image,
-      );
+      final mockFile = MusicSheetFile(name: 'test.png', bytes: validPngBytes, mediaType: MediaType.image);
       final cubit =
           AddEditMusicSheetViewTest(
             firestoreRepository: mockFirestoreRepository,
@@ -271,10 +228,7 @@ void main() {
     });
 
     testWidgets('gives the preview all the space the name field and buttons leave', (tester) async {
-      final mockFile = MusicSheetFile(
-        file: PlatformFile(name: 'test.png', size: validPngBytes.length, bytes: validPngBytes),
-        mediaType: MediaType.image,
-      );
+      final mockFile = MusicSheetFile(name: 'test.png', bytes: validPngBytes, mediaType: MediaType.image);
       final cubit =
           AddEditMusicSheetViewTest(
             firestoreRepository: mockFirestoreRepository,
@@ -533,10 +487,7 @@ void main() {
       });
 
       testWidgets('shows an error dialog when uploading the record fails', (tester) async {
-        final mockFile = MusicSheetFile(
-          file: PlatformFile(name: 'test.png', size: 0, bytes: null),
-          mediaType: MediaType.image,
-        );
+        final mockFile = MusicSheetFile(name: 'test.png', bytes: validPngBytes, mediaType: MediaType.image);
         final cubit =
             AddEditMusicSheetViewTest(
               firestoreRepository: mockFirestoreRepository,
@@ -569,10 +520,7 @@ void main() {
       });
 
       testWidgets('explains a missing network in an error dialog', (tester) async {
-        final file = MusicSheetFile(
-          file: PlatformFile(name: 'scan.png', size: validPngBytes.length, bytes: validPngBytes),
-          mediaType: MediaType.image,
-        );
+        final file = MusicSheetFile(name: 'scan.png', bytes: validPngBytes, mediaType: MediaType.image);
         final cubit = AddEditMusicSheetViewTest(
           firestoreRepository: mockFirestoreRepository,
           storageRepository: mockStorageRepository,
@@ -602,10 +550,7 @@ void main() {
       });
 
       testWidgets('pops the screen after a successful upload', (tester) async {
-        final mockFile = MusicSheetFile(
-          file: PlatformFile(name: 'test.png', size: 0, bytes: null),
-          mediaType: MediaType.image,
-        );
+        final mockFile = MusicSheetFile(name: 'test.png', bytes: validPngBytes, mediaType: MediaType.image);
         final cubit =
             AddEditMusicSheetViewTest(
               firestoreRepository: mockFirestoreRepository,

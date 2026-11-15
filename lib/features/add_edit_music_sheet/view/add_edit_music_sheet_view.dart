@@ -86,17 +86,14 @@ class AddEditMusicSheetView extends HookWidget {
                     Expanded(
                       child: switch (state) {
                         InitMusicSheetState() => const CircularProgressIndicator(),
-                        UploadMusicSheetState() =>
-                          state.file.bytes != null
-                              ? MusicSheetView(
-                                  source: MusicSheetBytesSource(
-                                    bytes: state.file.bytes!,
-                                    mediaType: state.file.mediaType,
-                                    fileName: state.file.name,
-                                  ),
-                                  mode: MusicSheetViewMode.preview,
-                                )
-                              : Center(child: Text(localizations.noFileDataAvailable)),
+                        UploadMusicSheetState() => MusicSheetView(
+                          source: MusicSheetBytesSource(
+                            bytes: state.file.bytes,
+                            mediaType: state.file.mediaType,
+                            fileName: state.file.name,
+                          ),
+                          mode: MusicSheetViewMode.preview,
+                        ),
                         EditMusicSheetState() => MusicSheetView(
                           source: MusicSheetUrlSource(state.musicSheet),
                           mode: MusicSheetViewMode.preview,

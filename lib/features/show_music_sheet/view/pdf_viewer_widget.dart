@@ -30,6 +30,40 @@ class PdfViewerWidget extends HookWidget {
     this.mode = MusicSheetViewMode.full,
   });
 
+  /// pdfx's default builders with [_pageBuilder] in place of its page builder.
+  @visibleForTesting
+  static const PdfViewBuilders<DefaultBuilderOptions> viewBuilders = PdfViewBuilders<DefaultBuilderOptions>(
+    options: DefaultBuilderOptions(),
+    pageBuilder: _pageBuilder,
+  );
+
+  /// Same page as pdfx builds by default, except that a failure of [pageImage] nobody waits for is not
+  /// reported as unhandled.
+  ///
+  /// `PdfView` requests the page again on every rebuild (a rotation is enough), but Flutter loads only the first
+  /// of those equal image providers, so the later futures have no listener. When the sheet is left while they
+  /// are still queued, the document is closed underneath them and they fail with
+  /// `PdfDocumentAlreadyClosedException` (pdfx issue #651), which then surfaces as a fatal in Sentry although
+  /// the page is no longer on screen. The image that is actually displayed still receives its own error.
+  static PhotoViewGalleryPageOptions _pageBuilder(
+    BuildContext context,
+    Future<PdfPageImage> pageImage,
+    int index,
+    PdfDocument document,
+  ) {
+    pageImage.ignore();
+    return PhotoViewGalleryPageOptions(
+      imageProvider: PdfPageImageProvider(pageImage, index, document.id),
+      minScale: PhotoViewComputedScale.contained,
+      maxScale: PhotoViewComputedScale.contained * _maxPageScale,
+      initialScale: PhotoViewComputedScale.contained,
+      heroAttributes: PhotoViewHeroAttributes(tag: '${document.id}-$index'),
+    );
+  }
+
+  /// How far a page can be zoomed in, relative to fitting the screen (pdfx's default).
+  static const double _maxPageScale = 3.0;
+
   @override
   Widget build(BuildContext context) {
     final loadResult = usePdfDocument(source);
@@ -55,6 +89,7 @@ class PdfViewerWidget extends HookWidget {
         PdfView(
           controller: pdfController,
           scrollDirection: Axis.vertical,
+          builders: viewBuilders,
           renderer: (PdfPage page) {
             return page.render(
               width: page.width * qualityMultiplier,
