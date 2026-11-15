@@ -294,14 +294,13 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       final result = await FilePicker.saveFile(
         dialogTitle: 'Export to PDF',
         fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-        bytes: bytes, // Required on Android & iOS
+        mimeType: 'application/pdf',
+        bytes: bytes,
       );
 
       logger.d('File picker result: $result');
 
-      if (result != null && result.isNotEmpty) {
+      if (result != null) {
         // File was saved by file picker
         logger.d('File saved to user-selected location: $result');
         emit(

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/authentication/login/login_view.dart';
+import 'package:organista/features/connectivity/cubit/connectivity_cubit.dart';
 import 'package:organista/widgets/email_text_field.dart';
 import 'package:organista/widgets/password_text_field.dart';
 import 'package:organista/widgets/organista_logo.dart';
@@ -13,6 +14,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter/foundation.dart';
 
 class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
+
+class MockConnectivityCubit extends MockCubit<ConnectivityState> implements ConnectivityCubit {}
 
 class FakeAuthEvent extends Fake implements AuthEvent {}
 
@@ -137,6 +140,21 @@ void main() {
     await tester.pump();
 
     verify(() => mockAuthBloc.add(const AuthEventSignInWithGoogle())).called(1);
+  });
+
+  testWidgets('Google Sign-In offline shows the no-connection message instead of signing in', (tester) async {
+    final connectivityCubit = MockConnectivityCubit();
+    when(() => connectivityCubit.state).thenReturn(const ConnectivityState(isOnline: false));
+    await tester.pumpWidget(
+      BlocProvider<ConnectivityCubit>.value(value: connectivityCubit, child: createWidgetUnderTest()),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Sign in with Google'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No internet connection. Check your connection and try again.'), findsOneWidget);
+    verifyNever(() => mockAuthBloc.add(const AuthEventSignInWithGoogle()));
   });
 
   testWidgets('Apple Sign-In triggers AuthEventSignInWithApple on iOS', (tester) async {

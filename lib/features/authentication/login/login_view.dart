@@ -7,6 +7,7 @@ import 'package:organista/config/config_controller.dart';
 import 'package:organista/dialogs/error_dialog.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/authentication/login/forgot_password_dialog.dart';
+import 'package:organista/features/connectivity/cubit/connectivity_cubit.dart';
 import 'package:organista/extensions/buildcontext/localization.dart';
 import 'package:organista/widgets/email_text_field.dart';
 import 'package:organista/widgets/organista_logo.dart';
@@ -129,6 +130,12 @@ class LoginView extends HookWidget {
                     // Google Sign-In Button
                     OutlinedButton.icon(
                       onPressed: () {
+                        // Offline, Google Play Services fails as `canceled` ("[16] Account reauth failed."), which
+                        // reads as a broken sign-in; name the missing connection instead (ORGANISTA-76).
+                        if (context.read<ConnectivityCubit?>()?.state.isOnline == false) {
+                          showErrorDialog(context: context, text: localizations.authErrorNetworkRequestFailedText);
+                          return;
+                        }
                         context.read<AuthBloc>().add(
                           const AuthEventSignInWithGoogle(),
                         );

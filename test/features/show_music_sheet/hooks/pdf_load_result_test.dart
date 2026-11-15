@@ -21,9 +21,7 @@ class MockPdfDocument extends Mock implements PdfDocument {}
 
 void main() {
   group('PDF Load Error Handling', () {
-    bool isNetworkError(Object error) {
-      return error is SocketException || error is http.ClientException || error is OSError;
-    }
+    const isNetworkError = isPdfFetchFailure;
 
     group('Network Error Detection (Unit Tests)', () {
       final networkErrors = [
@@ -36,6 +34,18 @@ void main() {
             osError: OSError('No address associated with hostname', 7),
           ),
           'SocketException with OSError (Sentry scenario)',
+        ),
+        (
+          const HandshakeException('Handshake error in client (OS Error: CERTIFICATE_VERIFY_FAILED)'),
+          'HandshakeException from a network that intercepts TLS (ORGANISTA-77)',
+        ),
+        (
+          HttpExceptionWithStatus(403, 'Invalid statusCode: 403', uri: Uri.parse('https://example.com/deleted.pdf')),
+          'HTTP 403 for a file deleted from Storage (ORGANISTA-1B)',
+        ),
+        (
+          HttpExceptionWithStatus(503, 'Invalid statusCode: 503', uri: Uri.parse('https://example.com/sheet.pdf')),
+          'HTTP 503 from Storage (ORGANISTA-63)',
         ),
       ];
 

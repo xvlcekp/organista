@@ -211,6 +211,31 @@ void main() {
         expect(userDoc.exists, true);
         expect(userDoc.data()?[UserInfoKey.displayName], 'Existing Name');
       });
+
+      FirebaseFirestoreRepository repositoryWhoseUserLookupFails(String code) {
+        final usersCollection = MockCollectionReference();
+        final userDocument = MockDocumentReference();
+        final mockFirestore = MockFirebaseFirestore();
+        when(() => mockFirestore.collection(FirebaseCollectionName.users)).thenReturn(usersCollection);
+        when(() => usersCollection.doc(any())).thenReturn(userDocument);
+        when(() => userDocument.get()).thenThrow(FirebaseException(plugin: 'cloud_firestore', code: code));
+        return FirebaseFirestoreRepository(instance: mockFirestore, skipSettingsConfiguration: true);
+      }
+
+      test('leaves creation to the next login when Firestore is unreachable right after signing in', () async {
+        // ORGANISTA-71: "[cloud_firestore/unavailable] Failed to get document because the client is offline."
+        await expectLater(
+          repositoryWhoseUserLookupFails('unavailable').createUserDocument(user: createTestAuthUser()),
+          completes,
+        );
+      });
+
+      test('still fails on any other Firestore error', () async {
+        await expectLater(
+          repositoryWhoseUserLookupFails('permission-denied').createUserDocument(user: createTestAuthUser()),
+          throwsA(isA<FirebaseException>()),
+        );
+      });
     });
 
     group('deleteUser', () {

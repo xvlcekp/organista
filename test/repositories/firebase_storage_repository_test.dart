@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -148,14 +147,7 @@ void main() {
       test('should upload file successfully and return reference', () async {
         const bucket = 'test-bucket';
         final bytes = Uint8List.fromList([1, 2, 3]);
-        final file = MusicSheetFile(
-          file: PlatformFile(
-            name: 'test.pdf',
-            size: 3,
-            bytes: bytes,
-          ),
-          mediaType: MediaType.pdf,
-        );
+        final file = MusicSheetFile(name: 'test.pdf', bytes: bytes, mediaType: MediaType.pdf);
 
         final mockBucketRef = MockReference();
         final mockFileRef = MockReference();
@@ -185,45 +177,10 @@ void main() {
         ).called(1);
       });
 
-      test('should return null when file bytes are null', () async {
-        const bucket = 'test-bucket';
-        final file = MusicSheetFile(
-          file: PlatformFile(
-            name: 'test.pdf',
-            size: 0,
-            bytes: null,
-          ),
-          mediaType: MediaType.pdf,
-        );
-
-        final mockBucketRef = MockReference();
-        final mockFileRef = MockReference();
-
-        when(() => mockStorage.ref(bucket)).thenReturn(mockBucketRef);
-        // We need to return a valid reference for child() call as implementation calls it first
-        when(() => mockBucketRef.child(any())).thenReturn(mockFileRef);
-        when(() => mockFileRef.fullPath).thenReturn('test-bucket/uuid');
-
-        final result = await repository.uploadFile(
-          file: file,
-          bucket: bucket,
-        );
-
-        expect(result, isNull);
-        verify(() => mockStorage.ref(bucket)).called(1);
-      });
-
       test('should return null and log error when upload fails', () async {
         const bucket = 'test-bucket';
         final bytes = Uint8List.fromList([1, 2, 3]);
-        final file = MusicSheetFile(
-          file: PlatformFile(
-            name: 'test.pdf',
-            size: 3,
-            bytes: bytes,
-          ),
-          mediaType: MediaType.pdf,
-        );
+        final file = MusicSheetFile(name: 'test.pdf', bytes: bytes, mediaType: MediaType.pdf);
 
         final mockBucketRef = MockReference();
         final mockFileRef = MockReference();

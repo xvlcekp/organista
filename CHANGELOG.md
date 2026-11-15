@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--
+- Aktualizované knižnice (Firebase, výber súborov, zdieľanie, PDF prehliadač, cache nôt, Sentry)
 
 ### Deprecated
 
@@ -25,7 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--
+- „Zdieľať aplikáciu“ na iPade už nepadá
+- Zoznam stiahnutých nôt sa pri náhlom ukončení aplikácie už nepoškodí
+- Výber príliš veľkého súboru pri nahrávaní nôt už nezhodí aplikáciu – veľkosť sa overí pred načítaním súboru
+- Prihlásenie cez Google bez internetu zobrazí hlášku o chýbajúcom pripojení namiesto všeobecnej chyby
+- Prihlásenie sa dokončí aj vtedy, keď je databáza hneď po prihlásení nedostupná
+- Opustenie PDF nôt počas načítavania strany už nehlási chybu „Document already closed“
+- Nedostupný súbor s notami (bez internetu, zablokovaná sieť, vymazaný súbor) sa už nehlási ako chyba aplikácie
 
 ### Security
 

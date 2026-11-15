@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,41 +144,31 @@ class MusicSheetRepositoryView extends HookWidget {
       exitSelectionMode();
     }
 
-    void onUploadPressed() {
-      FilePicker.pickFiles(
+    Future<void> onUploadPressed() async {
+      final picked = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'pdf', 'png', 'musicxml'],
-        withData: true,
-      ).then((result) {
-        if (result != null) {
-          try {
-            final PlatformFile file = result.files.first;
-            final MusicSheetFile musicSheetFile = MusicSheetFile.fromPlatformFile(file);
-
-            if (file.size > AppConstants.maxFileSizeBytes) {
-              if (context.mounted) {
-                showErrorDialog(
-                  context: context,
-                  text: localizations.fileTooLarge(AppConstants.maxFileSizeMB),
-                );
-              }
-              return;
-            }
-
-            if (context.mounted) {
-              context.read<AddEditMusicSheetCubit>().uploadMusicSheet(
-                file: musicSheetFile,
-                repositoryId: repositoryId,
-              );
-              Navigator.of(context).push<void>(AddEditMusicSheetView.route());
-            }
-          } on UnsupportedFileExtensionException {
-            if (context.mounted) {
-              showErrorDialog(context: context, text: localizations.unsupportedFileExtension);
-            }
-          }
+      );
+      if (picked == null || !context.mounted) return;
+      try {
+        // Throws for an unsupported extension before anything is read.
+        MediaType.fromPath(picked.name);
+      } on UnsupportedFileExtensionException {
+        await showErrorDialog(context: context, text: localizations.unsupportedFileExtension);
+        return;
+      }
+      // Checked before the content is read: a 110 MB file loaded into memory crashed the app (OutOfMemoryError).
+      final size = await picked.length();
+      if (size != null && size > AppConstants.maxFileSizeBytes) {
+        if (context.mounted) {
+          await showErrorDialog(context: context, text: localizations.fileTooLarge(AppConstants.maxFileSizeMB));
         }
-      });
+        return;
+      }
+      final musicSheetFile = MusicSheetFile.fromBytes(name: picked.name, bytes: await picked.readAsBytes());
+      if (!context.mounted) return;
+      context.read<AddEditMusicSheetCubit>().uploadMusicSheet(file: musicSheetFile, repositoryId: repositoryId);
+      unawaited(Navigator.of(context).push<void>(AddEditMusicSheetView.route()));
     }
 
     return PopScope<Object?>(
