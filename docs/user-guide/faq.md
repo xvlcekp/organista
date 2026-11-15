@@ -128,9 +128,8 @@ Prihlásenie na zariadení bude neaktívne, keď si na inom zariadení zmeníte 
 
 ### Prečo sa pieseň v zozname skladieb líši od tej v repozitári?
 
-Zoznam skladieb si pamätá notu v podobe, v akej ste ju pridali. Keď sa noty v repozitári vylepšia
-(napr. digitálne JKS vo verzii 1.4.0), nota v zozname zostane pôvodná — novú verziu získate, keď ju
-zo zoznamu vymažete a znova pridáte z repozitára.
+Zoznam skladieb si pamätá notu v podobe, v akej ste ju pridali. Keď sa noty v repozitári vylepšia,
+nota v zozname zostane pôvodná — novú verziu získate, keď ju zo zoznamu vymažete a znova pridáte z repozitára.
 
 ### Prečo je pri piesni v zozname iný názov ako v repozitári?
 
