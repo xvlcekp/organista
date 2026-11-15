@@ -40,6 +40,7 @@ dependencies:
   cloud_firestore: ^7.1.0
   firebase_analytics: ^13.0.1
   bloc: ^9.0.0
+  bloc_concurrency: ^0.3.0
   flutter_bloc: ^9.0.0
   uuid: ^4.5.1
   firebase_storage: ^14.0.1

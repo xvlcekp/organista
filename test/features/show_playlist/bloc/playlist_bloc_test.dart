@@ -229,9 +229,9 @@ void main() {
         ],
       );
 
-      // Regression: every opened playlist keeps its stream handler alive (the handlers run concurrently and never
-      // finish). An update on a previously opened playlist, e.g. when Firestore re-syncs after the app resumes from
-      // the background, must not replace the playlist currently on screen.
+      // Regression: an update on a previously opened playlist, e.g. when Firestore re-syncs after the app resumes
+      // from the background, must not replace the playlist currently on screen. Opening the next playlist cancels the
+      // previous playlist's stream handler.
       blocTest<PlaylistBloc, PlaylistState>(
         'ignores updates from a previously opened playlist',
         setUp: () {
