@@ -123,10 +123,7 @@ class PlaylistView extends HookWidget {
                         scrollController: scrollController,
                         itemCount: playlist.musicSheets.length,
                         onReorderStart: (_) => HapticFeedback.heavyImpact(),
-                        onReorder: (oldIndex, newIndex) {
-                          if (oldIndex < newIndex) {
-                            newIndex -= 1;
-                          }
+                        onReorderItem: (oldIndex, newIndex) {
                           final musicSheet = playlist.musicSheets.removeAt(oldIndex);
                           playlist.musicSheets.insert(newIndex, musicSheet);
                           context.read<PlaylistBloc>().add(

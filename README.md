@@ -94,15 +94,19 @@ Versions history:
 - 3.32.5
 - 3.38.1
 - 3.41.9 - 16.5.2026
+- 3.47.9 - 15.11.2026
+
+Before upgrading, check that Shorebird supports the target version (`flutter_release/<version>` branches in
+[shorebirdtech/flutter](https://github.com/shorebirdtech/flutter)); releases are built through Shorebird.
 
 ### iOS
 
-Reinstall dependencies:
+Native dependencies come from Swift Package Manager (no CocoaPods). To re-resolve them:
 
 ```
-cd ios
-pod deintegrate (remove all iOS dependencies from workspace)
-pod install
+flutter clean
+rm -rf ~/Library/Developer/Xcode/DerivedData/Runner-*
+flutter build ios --debug --no-codesign
 ```
 
 Release process:
