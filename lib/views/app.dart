@@ -54,8 +54,6 @@ class App extends StatelessWidget {
             connectivityService: context.read<ConnectivityService>(),
           ),
         ),
-        // TODO: Consider moving AddMusicSheetsToPlaylistEvent to the AddEditMusicSheet feature / repository layer
-        // and this doesn't need to be as a public bloc
         BlocProvider<PlaylistBloc>(
           create: (context) => PlaylistBloc(
             firebaseFirestoreRepository: context.read<FirebaseFirestoreRepository>(),

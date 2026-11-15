@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:meta/meta.dart' show immutable;
@@ -27,7 +28,6 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   final ExportPlaylistService _exportService;
   final ConnectivityService _connectivityService;
   final CacheManager _cacheManager;
-  String? _currentPlaylistId;
 
   PlaylistBloc({
     required FirebaseFirestoreRepository firebaseFirestoreRepository,
@@ -42,7 +42,8 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
     on<DeleteMusicSheetInPlaylistEvent>(_deleteMusicSheetInPlaylistEvent);
     on<ReorderMusicSheetEvent>(_reorderMusicSheetEvent);
     on<AddMusicSheetsToPlaylistEvent>(_addMusicSheetsToPlaylistEvent);
-    on<InitPlaylistEvent>(_initPlaylistEvent);
+    // The playlist stream keeps the handler running until the next playlist is opened, which cancels it.
+    on<InitPlaylistEvent>(_initPlaylistEvent, transformer: restartable());
     on<ExportPlaylistEvent>(_exportPlaylistEvent);
     on<SaveExportedPlaylistEvent>(_saveExportedPlaylistEvent);
     on<UpdateMusicSheetTranspositionEvent>(_updateMusicSheetTranspositionEvent);
@@ -98,9 +99,7 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
   Future<void> _initPlaylistEvent(InitPlaylistEvent event, Emitter<PlaylistState> emit) async {
     logger.d("Init playlist was called");
 
-    // Update current playlist ID to prevent old stream handlers from emitting states
     final playlistId = event.playlist.playlistId;
-    _currentPlaylistId = playlistId;
 
     emit(
       PlaylistLoadedState(
@@ -120,33 +119,18 @@ class PlaylistBloc extends Bloc<PlaylistEvent, PlaylistState> {
       // Use emit.forEach to keep the event handler alive while processing the stream
       await emit.forEach<Playlist>(
         broadcastStream,
-        onData: (playlist) {
-          // Only emit state if this playlist is still the current one
-          // This prevents old stream handlers from updating state when switching playlists
-          if (_currentPlaylistId == playlist.playlistId) {
-            return PlaylistLoadedState(
-              isLoading: false,
-              playlist: playlist,
-            );
-          }
-          // Return current state unchanged if playlist has changed
-          return state;
-        },
+        onData: (playlist) => PlaylistLoadedState(
+          isLoading: false,
+          playlist: playlist,
+        ),
         onError: (error, stackTrace) {
           logger.e('Error in playlist stream $playlistId', error: error, stackTrace: stackTrace);
-          // Only emit error if this is still the current playlist
-          if (_currentPlaylistId == playlistId) {
-            return PlaylistErrorState(error: const InitializationError(), playlist: state.playlist);
-          }
-          return state;
+          return PlaylistErrorState(error: const InitializationError(), playlist: state.playlist);
         },
       );
     } catch (e, stackTrace) {
       logger.e('Error initializing playlist stream $playlistId', error: e, stackTrace: stackTrace);
-      // Only emit error if this is still the current playlist
-      if (_currentPlaylistId == playlistId) {
-        emit(PlaylistErrorState(error: const InitializationError(), playlist: state.playlist));
-      }
+      emit(PlaylistErrorState(error: const InitializationError(), playlist: state.playlist));
     }
   }
 
