@@ -135,6 +135,13 @@ git status ios/   # Package.resolved shows up as modified if a native SDK versio
 
 Plugins pin their native SDKs in their own `Package.swift` (e.g. firebase_core pins `firebase-ios-sdk` with `exact:`), so Firebase iOS follows the FlutterFire plugin versions. If a local iOS build fails with "has different definitions in different modules" after a plugin upgrade, run `flutter clean` and delete `~/Library/Developer/Xcode/DerivedData/Runner-*`. Never finish a pubspec-related task without mentioning the `Package.resolved` state in the summary.
 
+## GitHub Actions versions
+
+`.github/dependabot.yml` opens one grouped `chore(deps)` PR per month that bumps the `uses:` versions in
+`.github/workflows/`. Actions nested inside another action (e.g. `actions/github-script` inside
+`codecov/codecov-action`) can only be updated by bumping that parent action. Before merging a major bump, read its
+release notes for breaking changes. Dart packages are not managed by Dependabot because of the iOS lockfile rule above.
+
 ## Releasing
 
 1. Update `CHANGELOG.md` and add a version section to `docs/user-guide/whats-new.md` (product highlights)

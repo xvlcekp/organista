@@ -12,8 +12,6 @@ import 'package:organista/services/auth/auth_provider.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-// TODO - unify auth error messages in general, ideally do not throw custom errors (see how Vandad deals with that)
-
 class FirebaseAuthProvider implements AuthProvider {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
@@ -53,9 +51,11 @@ class FirebaseAuthProvider implements AuthProvider {
     required String email,
     required String password,
   }) async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
+    await _mapFirebaseErrors(
+      () => FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      ),
     );
     final user = currentUser;
     if (user != null) {
@@ -83,9 +83,11 @@ class FirebaseAuthProvider implements AuthProvider {
     required String email,
     required String password,
   }) async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
+    await _mapFirebaseErrors(
+      () => FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      ),
     );
     final user = currentUser;
     if (user != null) {
@@ -262,7 +264,7 @@ class FirebaseAuthProvider implements AuthProvider {
     final user = currentUser;
     if (user != null) {
       // Sign out from both Firebase and Google (fire and forget for instant UI response)
-      await FirebaseAuth.instance.signOut();
+      await _mapFirebaseErrors(FirebaseAuth.instance.signOut);
       unawaited(_googleSignIn.signOut());
     } else {
       throw const AuthErrorUserNotLoggedIn();
@@ -273,7 +275,7 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<void> sendEmailVerification() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await user.sendEmailVerification();
+      await _mapFirebaseErrors(user.sendEmailVerification);
     } else {
       throw const AuthErrorUserNotLoggedIn();
     }
@@ -281,7 +283,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
   @override
   Future<bool> sendPasswordResetEmail({required String email}) async {
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    await _mapFirebaseErrors(() => FirebaseAuth.instance.sendPasswordResetEmail(email: email));
     return true;
   }
 
@@ -290,7 +292,7 @@ class FirebaseAuthProvider implements AuthProvider {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        await user.delete();
+        await _mapFirebaseErrors(user.delete);
       } catch (e) {
         // If user deletion fails, try to sign out first then delete
         try {
@@ -303,6 +305,16 @@ class FirebaseAuthProvider implements AuthProvider {
     } else {
       throw const AuthErrorUserNotLoggedIn();
     }
+  }
+}
+
+/// Runs a Firebase Auth call and rethrows its [FirebaseAuthException] as the matching [AuthError],
+/// so nothing Firebase-specific leaks out of the provider.
+Future<T> _mapFirebaseErrors<T>(Future<T> Function() action) async {
+  try {
+    return await action();
+  } on FirebaseAuthException catch (e, stackTrace) {
+    Error.throwWithStackTrace(AuthError.from(e), stackTrace);
   }
 }
 

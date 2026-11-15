@@ -1,0 +1,15 @@
+# Keeps the `uses:` versions in .github/workflows/ current (e.g. Node.js runtime deprecations of actions).
+# Dart/Flutter packages are deliberately not managed here: a pubspec change also needs an iOS build to refresh
+# Package.resolved (see CLAUDE.md), which Dependabot cannot do.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ['*']
+    commit-message:
+      prefix: chore
+      include: scope
