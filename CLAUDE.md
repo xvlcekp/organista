@@ -119,25 +119,27 @@ raw captures from the Android phone emulator and the iPad simulator in `docs/scr
 with Slovak captions into every required canvas size in `docs/screenshots/store/<target>/`. Re-run the
 capture scripts and `compose.py` after a visible UI change before a release.
 
-## iOS CocoaPods lockfile (MANDATORY after any pubspec.yaml change)
+## iOS Swift Package Manager lockfile (MANDATORY after any pubspec.yaml change)
 
-**Every time `pubspec.yaml` or `pubspec.lock` changes (adding/removing/upgrading a package, `flutter pub upgrade`, Flutter SDK bump, version bump before a release), `ios/Podfile.lock` MUST be regenerated in the same change and included in the diff.** A stale `Podfile.lock` is the #1 cause of failed Codemagic iOS release builds (see commit `8d94589` "forgot to update cocopods").
+iOS uses Swift Package Manager only; CocoaPods was removed with the Flutter 3.47 upgrade (no `Podfile`, no `pod`
+commands). The native iOS lockfile is `Package.resolved`, kept twice with identical content:
+`ios/Runner.xcworkspace/xcshareddata/swiftpm/` and `ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/`.
+
+**Every time `pubspec.yaml` or `pubspec.lock` changes (adding/removing/upgrading a package, `flutter pub upgrade`, Flutter SDK bump), run an iOS build so Xcode re-resolves the packages, and include any `Package.resolved` change in the same diff.** A stale native lockfile was the #1 cause of failed Codemagic iOS release builds in the CocoaPods era (commit `8d94589` "forgot to update cocopods").
 
 ```bash
 flutter pub get
-cd ios && pod install --repo-update && cd ..
-git status ios/Podfile.lock   # must show up as modified if any plugin/pod version changed
+flutter build ios --debug --no-codesign
+git status ios/   # Package.resolved shows up as modified if a native SDK version changed
 ```
 
-If `pod install` fails on a version conflict, run `pod update` for the offending pod (e.g. `pod update FirebaseAppCheck`). Never finish a pubspec-related task without having run this and mentioning the `Podfile.lock` state in the summary.
-
-`ios/Podfile` sets `$FirebaseSDKVersion = '12.19.0'`: firebase_core asks for 12.19.3, a security patch published only for FirebaseCore and FirebaseFirestore, so FirebaseAnalytics 12.19.3 does not exist (firebase-ios-sdk#17015). Core and Firestore still resolve to 12.19.3 through `~> 12.19.0`. Firebase stopped publishing new pods to CocoaPods after October 2026, so the next Firebase upgrade means moving iOS to Swift Package Manager; drop the override then.
+Plugins pin their native SDKs in their own `Package.swift` (e.g. firebase_core pins `firebase-ios-sdk` with `exact:`), so Firebase iOS follows the FlutterFire plugin versions. If a local iOS build fails with "has different definitions in different modules" after a plugin upgrade, run `flutter clean` and delete `~/Library/Developer/Xcode/DerivedData/Runner-*`. Never finish a pubspec-related task without mentioning the `Package.resolved` state in the summary.
 
 ## Releasing
 
 1. Update `CHANGELOG.md` and add a version section to `docs/user-guide/whats-new.md` (product highlights)
 2. Bump version in `pubspec.yaml`
-3. **Regenerate `ios/Podfile.lock`** (see the section above) and make sure it is part of the release diff
+3. **Run an iOS build to refresh `Package.resolved`** (see the section above) and make sure any change is part of the release diff
 4. Commit and push, then create a GitHub release tag
 5. Codemagic automatically builds and distributes on a release tag (via Shorebird integration)
 

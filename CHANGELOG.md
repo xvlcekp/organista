@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Aktualizované knižnice (Firebase, výber súborov, zdieľanie, PDF prehliadač, cache nôt, Sentry)
+- Flutter 3.47, na iOS Firebase 13 cez Swift Package Manager (bez CocoaPods), Android Gradle Plugin 9.1
 
 ### Deprecated
 
