@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
@@ -137,7 +136,7 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
-        'emits [LoggedOut(loading), LoggedOut(error)] on FirebaseAuthException',
+        'emits [LoggedOut(loading), LoggedOut(error)] on AuthError',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -147,7 +146,7 @@ void main() {
         setUp: () {
           when(
             () => authProvider.logIn(email: email, password: password),
-          ).thenThrow(FirebaseAuthException(code: 'user-not-found'));
+          ).thenThrow(const AuthErrorUserNotFound());
         },
         expect: () => [
           const AuthStateLoggedOut(isLoading: true),
@@ -178,7 +177,7 @@ void main() {
       const password = 'password';
 
       blocTest<AuthBloc, AuthState>(
-        'emits [LoggedOut(loading), LoggedIn(user)] on success and creates Firestore doc',
+        'emits [Registration(loading), LoggedIn(user)] on success and creates Firestore doc',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -189,7 +188,7 @@ void main() {
           when(() => authProvider.createUser(email: email, password: password)).thenAnswer((_) async => validUser);
         },
         expect: () => [
-          const AuthStateLoggedOut(isLoading: true),
+          const AuthStateIsInRegistrationView(isLoading: true),
           const AuthStateLoggedIn(isLoading: false, user: validUser),
         ],
         verify: (_) {
@@ -198,7 +197,7 @@ void main() {
       );
 
       blocTest<AuthBloc, AuthState>(
-        'emits [LoggedOut(loading), LoggedOut(error)] on FirebaseAuthException',
+        'stays on the registration screen with the error on AuthError',
         build: () => AuthBloc(
           authProvider: authProvider,
           firebaseFirestoreRepository: firebaseFirestoreRepository,
@@ -208,11 +207,28 @@ void main() {
         setUp: () {
           when(
             () => authProvider.createUser(email: email, password: password),
-          ).thenThrow(FirebaseAuthException(code: 'email-already-in-use'));
+          ).thenThrow(const AuthErrorEmailAlreadyInUse());
         },
         expect: () => [
-          const AuthStateLoggedOut(isLoading: true),
-          const AuthStateLoggedOut(isLoading: false, authError: AuthErrorEmailAlreadyInUse()),
+          const AuthStateIsInRegistrationView(isLoading: true),
+          const AuthStateIsInRegistrationView(isLoading: false, authError: AuthErrorEmailAlreadyInUse()),
+        ],
+      );
+
+      blocTest<AuthBloc, AuthState>(
+        'stays on the registration screen with a generic error on any other exception',
+        build: () => AuthBloc(
+          authProvider: authProvider,
+          firebaseFirestoreRepository: firebaseFirestoreRepository,
+          firebaseStorageRepository: firebaseStorageRepository,
+        ),
+        act: (bloc) => bloc.add(const AuthEventRegister(email: email, password: password)),
+        setUp: () {
+          when(() => authProvider.createUser(email: email, password: password)).thenThrow(Exception());
+        },
+        expect: () => [
+          const AuthStateIsInRegistrationView(isLoading: true),
+          const AuthStateIsInRegistrationView(isLoading: false, authError: AuthGenericException()),
         ],
       );
     });

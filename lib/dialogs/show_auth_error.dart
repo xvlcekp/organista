@@ -15,33 +15,21 @@ Future<void> showAuthError({
 String getLocalizedMessage(AuthError authError, BuildContext context) {
   final loc = context.loc;
 
-  if (authError is AuthGenericException) {
-    return loc.authGenericExceptionText;
-  } else if (authError is AuthErrorUserNotLoggedIn) {
-    return loc.authErrorUserNotLoggedInText;
-  } else if (authError is AuthErrorRequiresRecentLogin) {
-    return loc.authErrorRequiresRecentLoginText;
-  } else if (authError is AuthErrorOperationNotAllowed) {
-    return loc.authErrorOperationNotAllowedText;
-  } else if (authError is AuthErrorUserNotFound) {
-    return loc.authErrorUserNotFoundText;
-  } else if (authError is AuthErrorWeakPassword) {
-    return loc.authErrorWeakPasswordText;
-  } else if (authError is AuthErrorInvalidEmail) {
-    return loc.authErrorInvalidEmailText;
-  } else if (authError is AuthErrorEmailAlreadyInUse) {
-    return loc.authErrorEmailAlreadyInUseText;
-  } else if (authError is AuthErrorUserDisabled) {
-    return loc.authErrorUserDisabledText;
-  } else if (authError is AuthErrorInvalidCredential) {
-    return loc.authErrorInvalidCredentialText;
-  } else if (authError is AuthErrorGoogleSignInFailed) {
-    return loc.authErrorGoogleSignInFailedText;
-  } else if (authError is AuthErrorAppleSignInFailed) {
-    return loc.authErrorAppleSignInFailedText;
-  } else if (authError is AuthErrorNetworkRequestFailed) {
-    return loc.authErrorNetworkRequestFailedText;
-  }
-
-  return loc.errorUnknownText;
+  return switch (authError) {
+    AuthGenericException() => loc.authGenericExceptionText,
+    AuthErrorUserNotLoggedIn() => loc.authErrorUserNotLoggedInText,
+    AuthErrorRequiresRecentLogin() => loc.authErrorRequiresRecentLoginText,
+    AuthErrorOperationNotAllowed() => loc.authErrorOperationNotAllowedText,
+    AuthErrorUserNotFound() => loc.authErrorUserNotFoundText,
+    AuthErrorWeakPassword() => loc.authErrorWeakPasswordText,
+    AuthErrorInvalidEmail() => loc.authErrorInvalidEmailText,
+    AuthErrorEmailAlreadyInUse() => loc.authErrorEmailAlreadyInUseText,
+    AuthErrorUserDisabled() => loc.authErrorUserDisabledText,
+    AuthErrorInvalidCredential() => loc.authErrorInvalidCredentialText,
+    AuthErrorGoogleSignInFailed() => loc.authErrorGoogleSignInFailedText,
+    AuthErrorAppleSignInFailed() => loc.authErrorAppleSignInFailedText,
+    AuthErrorNetworkRequestFailed() => loc.authErrorNetworkRequestFailedText,
+    // A cancellation never reaches the dialog: the bloc turns it into a plain logged-out state.
+    AuthErrorUnknown() || AuthErrorSignInCanceled() => loc.errorUnknownText,
+  };
 }

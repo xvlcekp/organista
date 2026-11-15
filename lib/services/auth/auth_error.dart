@@ -15,8 +15,10 @@ const Map<String, AuthError> authErrorMapping = {
   'network-request-failed': AuthErrorNetworkRequestFailed(),
 };
 
+/// Every auth failure the app knows about. `AuthProvider` implementations throw only these, so callers
+/// catch a single type, and `sealed` makes every `switch` over it (e.g. the error dialog text) exhaustive.
 @immutable
-abstract class AuthError {
+sealed class AuthError implements Exception {
   const AuthError();
 
   factory AuthError.from(FirebaseAuthException exception) {

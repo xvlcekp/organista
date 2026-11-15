@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseException, FirebaseAuthException;
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseException;
 import 'package:organista/logger/custom_logger.dart';
 import 'package:organista/services/auth/auth_error.dart';
 import 'package:organista/repositories/firebase_firestore_repository.dart';
@@ -129,12 +129,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       unawaited(_updateSentryUser(null));
-    } on FirebaseAuthException catch (e) {
+    } on AuthError catch (e) {
       emit(
         AuthStateLoggedIn(
           isLoading: false,
           user: user,
-          authError: AuthError.from(e),
+          authError: e,
         ),
       );
     } on FirebaseException {
@@ -172,11 +172,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(
         const AuthStateLoggedOut(isLoading: false),
       );
-    } on FirebaseAuthException catch (e) {
+    } on AuthError catch (e) {
       emit(
         AuthStateLoggedOut(
           isLoading: false,
-          authError: AuthError.from(e),
+          authError: e,
         ),
       );
     } catch (e) {
@@ -223,8 +223,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _authEventRegister(AuthEventRegister event, Emitter<AuthState> emit) async {
+    // Loading and errors keep the registration state, so the user stays on (and keeps the input in) RegisterView.
     emit(
-      const AuthStateLoggedOut(isLoading: true),
+      const AuthStateIsInRegistrationView(isLoading: true),
     );
     try {
       final authUser = await _authProvider.createUser(
@@ -245,16 +246,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: authUser,
         ),
       );
-    } on FirebaseAuthException catch (e) {
+    } on AuthError catch (e) {
       emit(
-        AuthStateLoggedOut(
+        AuthStateIsInRegistrationView(
           isLoading: false,
-          authError: AuthError.from(e),
+          authError: e,
         ),
       );
     } catch (e) {
       emit(
-        const AuthStateLoggedOut(
+        const AuthStateIsInRegistrationView(
           isLoading: false,
           authError: AuthGenericException(),
         ),
@@ -291,11 +292,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: authUser,
         ),
       );
-    } on FirebaseAuthException catch (e) {
+    } on AuthError catch (e) {
       emit(
         AuthStateLoggedOut(
           isLoading: false,
-          authError: AuthError.from(e),
+          authError: e,
         ),
       );
     } catch (e) {
@@ -320,11 +321,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           passwordResetSent: resetSuccess,
         ),
       );
-    } on FirebaseAuthException catch (e) {
+    } on AuthError catch (e) {
       emit(
         AuthStateLoggedOut(
           isLoading: false,
-          authError: AuthError.from(e),
+          authError: e,
           passwordResetSent: false,
         ),
       );
@@ -371,13 +372,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           authError: e,
         ),
       );
-    } on FirebaseAuthException catch (e) {
-      emit(
-        AuthStateLoggedOut(
-          isLoading: false,
-          authError: AuthError.from(e),
-        ),
-      );
     } catch (e) {
       emit(
         const AuthStateLoggedOut(
@@ -420,13 +414,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AuthStateLoggedOut(
           isLoading: false,
           authError: e,
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      emit(
-        AuthStateLoggedOut(
-          isLoading: false,
-          authError: AuthError.from(e),
         ),
       );
     } catch (e) {
