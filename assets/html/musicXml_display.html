@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>MusicXML Display</title>
-    <script src="OSMD_2.2.1-c6e8e8e9.min.js"></script>
+    <script src="OSMD_2.3.1.min.js"></script>
     <style>
         html {
             background-color: #f0f0f0;
@@ -272,6 +272,7 @@
         // LyricsXPaddingReductionForLongNotes, scaled by LyricsXPaddingFactorForLongLyrics
         // (sheet 2: -9 % zoom instead, OSMD Sheet Lab 2026-10-08). A section name put back into
         // the lyric (see drawVerseLabels) gets the full padding whatever the hymn factor.
+        // Still needed with OSMD 2.3.1: StaveNote keeps the quarter-distance check.
         function installLongNotePadding() {
             const C = opensheetmusicdisplay.VexFlowConverter;
             if (!C || C.__longNotePadding) return;
@@ -309,7 +310,7 @@
         //
         // The JKS sheets carry the verse number at the first syllable of every original line
         // ("1. Moc", "1.-4. Na", "Kyrie: 1. Bo"). The number stays in the lyric text: OSMD
-        // (2.2.1 + c6e8e8e9, LyricsVerseNumberLeftOfLyric) puts a leading number left of the
+        // (2.3.0+, LyricsVerseNumberLeftOfLyric with PR #1838) puts a leading number left of the
         // lyric wherever the verse starts a staff line, exactly where MuseScore puts it, and
         // spaces the syllable as if it had no number. Section names ("Kyrie:", "Glória:") are
         // not numbers: they are kept on the lyric entry (le.__verseLabel = { section, number })
@@ -642,19 +643,20 @@
 
         async function initializeDisplay(pageFormat = "Endless", paged = false) {
             pagedView = paged;
+            // OSMD 2.3+: free the previous sheet's instance before making a new one
+            if (osmd) osmd.dispose();
             const opts = {
-                backend:                                      "svg",
-                autoResize:                                   false,
-                disableCursor:                                true,
-                preferredSkyBottomLineBatchCalculatorBackend: 1,
-                drawTitle:                                    true,
-                drawComposer:                                 true,
-                drawCredits:                                  true,
-                drawMeasureNumbers:                           false,
-                pageFormat:                                   pageFormat,
-                newSystemFromXML:                             true,
-                newSystemFromNewPageInXML:                    true,
-                newPageFromXML:                               paged,
+                backend:                   "svg",
+                autoResize:                false,
+                disableCursor:             true,
+                drawTitle:                 true,
+                drawComposer:              true,
+                drawCredits:               true,
+                drawMeasureNumbers:        false,
+                pageFormat:                pageFormat,
+                newSystemFromXML:          true,
+                newSystemFromNewPageInXML: true,
+                newPageFromXML:            paged,
             };
             osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay("osmdContainer", opts);
             osmd.TransposeCalculator = new opensheetmusicdisplay.TransposeCalculator();
