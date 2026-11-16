@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prihlásenie sa dokončí aj vtedy, keď je databáza hneď po prihlásení nedostupná
 - Opustenie PDF nôt počas načítavania strany už nehlási chybu „Document already closed“
 - Nedostupný súbor s notami (bez internetu, zablokovaná sieť, vymazaný súbor) sa už nehlási ako chyba aplikácie
+- Pri výbere viacerých piesní v repozitári sa do playlistu pridajú aj piesne označené pri predchádzajúcom vyhľadávaní
 
 ### Security
 

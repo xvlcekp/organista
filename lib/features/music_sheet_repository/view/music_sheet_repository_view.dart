@@ -214,7 +214,8 @@ class MusicSheetRepositoryView extends HookWidget {
                     onPressed: () {
                       final selectedCount = getSelectedCount();
                       if (selectedCount > 0 && repoState is MusicSheetRepositoryLoaded) {
-                        showPlaylistSelectionDialog(context, repoState.filteredMusicSheets);
+                        // All sheets, not just filtered: sheets selected under an earlier search query stay selected.
+                        showPlaylistSelectionDialog(context, repoState.allMusicSheets);
                       }
                     },
                   );
