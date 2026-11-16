@@ -23,6 +23,12 @@ alebo z vášho osobného repozitára s vlastnými notami.
 !!! tip "Pridanie viacerých piesní naraz"
     Dlhým podržaním prsta na piesni zapnete režim výberu — označíte viac piesní naraz
     (k dispozícii je aj **Vybrať všetko**) a pridáte ich jedným ťuknutím.
+    Označené piesne zostanú označené, aj keď zmeníte text vyhľadávania — môžete
+    tak postupne vyhľadať a označiť piesne s rôznymi názvami.
+
+<video autoplay loop muted playsinline controls width="300">
+  <source src="../assets/videos/multi-select-search.mp4" type="video/mp4">
+</video>
 
 Ťuknutím na názov piesne v repozitári si ju môžete najprv prezrieť — pridáte ju
 až modrou šípkou.

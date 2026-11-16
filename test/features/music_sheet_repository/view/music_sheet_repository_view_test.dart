@@ -1,6 +1,8 @@
+import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +15,12 @@ import 'package:organista/features/add_edit_music_sheet/cubit/add_edit_music_she
 import 'package:organista/features/authentication/auth_bloc/auth_bloc.dart';
 import 'package:organista/features/music_sheet_repository/bloc/music_sheet_repository_bloc.dart';
 import 'package:organista/features/music_sheet_repository/view/music_sheet_repository_view.dart';
+import 'package:organista/features/show_playlist/bloc/playlist_bloc.dart';
 import 'package:organista/l10n/app_localizations.dart';
 import 'package:organista/models/internal/music_sheet_file.dart';
 import 'package:organista/models/music_sheets/music_sheet.dart';
 import 'package:organista/models/music_sheets/music_sheet_key.dart';
+import 'package:organista/models/playlists/playlist.dart';
 import 'package:organista/models/repositories/repository.dart';
 import 'package:organista/services/auth/auth_user.dart';
 import 'package:organista/widgets/scroll_aware_fab.dart';
@@ -30,6 +34,8 @@ class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 class MockCacheManager extends Mock implements CacheManager {}
 
 class MockAddEditMusicSheetCubit extends MockCubit<AddEditMusicSheetState> implements AddEditMusicSheetCubit {}
+
+class MockPlaylistBloc extends MockBloc<PlaylistEvent, PlaylistState> implements PlaylistBloc {}
 
 /// A picked file whose size is known up front and whose content is read only on demand.
 final class FakePlatformFile extends PlatformFile {
@@ -226,6 +232,59 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ScrollAwareFab), findsNothing);
+    });
+  });
+
+  group('adding selected sheets to the playlist', () {
+    MusicSheet sheet(String id, String name) => MusicSheet(
+      json: {
+        MusicSheetKey.musicSheetId: id,
+        MusicSheetKey.userId: 'user-1',
+        MusicSheetKey.createdAt: Timestamp.now(),
+        MusicSheetKey.fileUrl: 'https://example.com/$id.pdf',
+        MusicSheetKey.fileName: name,
+        MusicSheetKey.originalFileStorageId: 'storage-$id',
+        MusicSheetKey.mediaType: 'pdf',
+        MusicSheetKey.sequenceId: 0,
+        MusicSheetKey.transposition: 0,
+      },
+    );
+
+    testWidgets('keeps sheets selected under an earlier search query', (tester) async {
+      final angel = sheet('sheet-a', 'Anjel Pána');
+      final lord = sheet('sheet-b', 'Bože, čo si Ty');
+      final all = [angel, lord];
+      final states = StreamController<MusicSheetRepositoryState>.broadcast();
+      addTearDown(states.close);
+      void emit(MusicSheetRepositoryLoaded state) {
+        when(() => mockBloc.state).thenReturn(state);
+        states.add(state);
+      }
+
+      when(() => mockBloc.stream).thenAnswer((_) => states.stream);
+      when(() => mockBloc.state).thenReturn(MusicSheetRepositoryLoaded(allMusicSheets: all, filteredMusicSheets: all));
+
+      final playlistBloc = MockPlaylistBloc();
+      final playlist = Playlist.empty();
+      when(() => playlistBloc.state).thenReturn(PlaylistLoadedState(isLoading: false, playlist: playlist));
+
+      await tester.pumpWidget(BlocProvider<PlaylistBloc>.value(value: playlistBloc, child: buildView()));
+      await tester.pump();
+
+      emit(MusicSheetRepositoryLoaded(allMusicSheets: all, filteredMusicSheets: [angel], searchQuery: 'anjel'));
+      await tester.pump();
+      await tester.longPress(find.text('Anjel Pána'));
+      await tester.pump();
+
+      emit(MusicSheetRepositoryLoaded(allMusicSheets: all, filteredMusicSheets: [lord], searchQuery: 'bože'));
+      await tester.pump();
+      await tester.tap(find.text('Bože, čo si Ty'));
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.playlist_add));
+      await tester.pump();
+
+      verify(() => playlistBloc.add(AddMusicSheetsToPlaylistEvent(musicSheets: all, playlist: playlist))).called(1);
     });
   });
 

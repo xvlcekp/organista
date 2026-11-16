@@ -9,10 +9,3 @@ class FirebaseCollectionName {
   static const String repositories = 'repositories';
   const FirebaseCollectionName._();
 }
-
-// TODO: Databases
-
-// Categories - multiple tags - JKS, Advent, Vianocne, Postne ...
-// Playlists - playlistName, isPublic, userId
-// Playlist content - playListId, musicSheetId, sequenceId
-// Music sheets - owner, fileUrl,
