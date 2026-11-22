@@ -10,6 +10,8 @@ Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
   spevníka [spevnik.sk](https://www.spevnik.sk/4nt.htm) (Hudobná subkomisia Liturgickej komisie KBS).
   Obsahuje 251 spevov, z toho 42 vo viacerých spracovaniach — tie majú za názvom číslo v zátvorke,
   napr. „Blízko si, Pane (1)“ až „(3)“. Podrobnosti v [Zdrojoch nôt](music-sheet-sources.md#23112026).
+- **JKS - digitálne**: v piesni 238 (Bože, svetov mocný Pane) opravený text 1. slohy („odprosuje za svoj blud“)
+  a skrátené označenia častí pred číslami slôh
 
 ### Ďalšie zmeny
 

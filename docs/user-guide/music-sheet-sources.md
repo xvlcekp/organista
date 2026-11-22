@@ -37,10 +37,12 @@ Postupne je v pláne pridávať ďalší obsah.
 
 ### 23.11.2026
 
-Nový repozitár **Nová tvorba** - 297 nôt (PDF) novej tvorby k _Liturgickému spevníku_ zo stránky
-<https://www.spevnik.sk/4nt.htm> (stav stránky z 9. 3. 2014). Ide o 251 spevov; 42 z nich je vo viacerých
-spracovaniach, ktoré majú za názvom číslo v zátvorke, napr. „Blízko si, Pane (1)“, „(2)“ a „(3)“ alebo
-„Dušu dvíham (1a)“ až „(4)“.
+- Nový repozitár **Nová tvorba** - 297 nôt (PDF) novej tvorby k _Liturgickému spevníku_ zo stránky
+  <https://www.spevnik.sk/4nt.htm> (stav stránky z 9. 3. 2014). Ide o 251 spevov; 42 z nich je vo viacerých
+  spracovaniach, ktoré majú za názvom číslo v zátvorke, napr. „Blízko si, Pane (1)“, „(2)“ a „(3)“ alebo
+  „Dušu dvíham (1a)“ až „(4)“.
+- **JKS - digitálne**: v piesni 238 (Bože, svetov mocný Pane) opravený text 1. slohy - „odprosuje za svoj blud“
+  namiesto „modlí sa tu za svoj blud“ - a skrátené označenia častí pred číslami slôh (Glór., Eva., Kré., Ofer., Sank.).
 
 ### 2.11.2026
 

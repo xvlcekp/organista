@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Opustenie PDF nôt počas načítavania strany už nehlási chybu „Document already closed“
 - Nedostupný súbor s notami (bez internetu, zablokovaná sieť, vymazaný súbor) sa už nehlási ako chyba aplikácie
 - Pri výbere viacerých piesní v repozitári sa do playlistu pridajú aj piesne označené pri predchádzajúcom vyhľadávaní
+- Digitálne JKS 238: opravený text 1. slohy („odprosuje za svoj blud“) a skrátené označenia častí (Glór., Eva., Kré.)
 
 ### Security
 
