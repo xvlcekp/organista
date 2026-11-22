@@ -6,7 +6,8 @@ Repozitár je knižnica notových záznamov. Nájdete ich na spodnej lište pod 
 
 Spoločné knižnice dostupné všetkým používateľom — napríklad **JKS - digitálne**
 (Jednotný katolícky spevník v digitálnej podobe s možnosťou transpozície), žalmy pre
-jednotlivé liturgické obdobia, **Mariánska kytica**, **Ordinárium sv. omše** či jeho digitálna verzia
+jednotlivé liturgické obdobia, **Mariánska kytica**, **Nová tvorba** (nová tvorba k Liturgickému spevníku),
+**Ordinárium sv. omše** či jeho digitálna verzia
 **Ordinárium sv. omše - digitálne** (zdigitalizoval Tomáš Polonec pre MuseScore; zatiaľ testovacia verzia, noty neprešli
 kontrolou - viac v [Zdrojoch nôt](music-sheet-sources.md)).
 
