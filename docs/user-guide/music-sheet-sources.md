@@ -28,10 +28,19 @@ K dispozícii sú noty, ktoré sú dostupné verejne na internete.
 - **Svadba** - výber z knihy: „A budú dvaja jedno telo" (Amantius Akimjak)
 - **Predohry JKS** - od Petra Franyena zo stránky <https://organspaniadolina.sk/na-stiahnutie/>
 - **Mariánska kytica** - <http://notypreorgan.comehere.cz/files/Marianska_kytica-cela.pdf>
+- **Nová tvorba** - nová tvorba k _Liturgickému spevníku_ z oficiálnej stránky spevníka
+  <https://www.spevnik.sk/4nt.htm> (© Hudobná subkomisia Liturgickej komisie KBS)
 
 Postupne je v pláne pridávať ďalší obsah.
 
 ## História úprav
+
+### 23.11.2026
+
+Nový repozitár **Nová tvorba** - 297 nôt (PDF) novej tvorby k _Liturgickému spevníku_ zo stránky
+<https://www.spevnik.sk/4nt.htm> (stav stránky z 9. 3. 2014). Ide o 251 spevov; 42 z nich je vo viacerých
+spracovaniach, ktoré majú za názvom číslo v zátvorke, napr. „Blízko si, Pane (1)“, „(2)“ a „(3)“ alebo
+„Dušu dvíham (1a)“ až „(4)“.
 
 ### 2.11.2026
 

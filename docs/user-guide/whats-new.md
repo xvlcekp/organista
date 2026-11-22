@@ -2,6 +2,24 @@
 
 Prehľad noviniek a hlavných funkcií aplikácie v jednotlivých verziách.
 
+## Verzia 1.4.1 - 23.11.2026
+
+### Nové noty
+
+- Nový repozitár **Nová tvorba** — 297 nôt novej tvorby k _Liturgickému spevníku_ z oficiálnej stránky
+  spevníka [spevnik.sk](https://www.spevnik.sk/4nt.htm) (Hudobná subkomisia Liturgickej komisie KBS).
+  Obsahuje 251 spevov, z toho 42 vo viacerých spracovaniach — tie majú za názvom číslo v zátvorke,
+  napr. „Blízko si, Pane (1)“ až „(3)“. Podrobnosti v [Zdrojoch nôt](music-sheet-sources.md#23112026).
+
+### Ďalšie zmeny
+
+- Pri výbere viacerých piesní v repozitári sa do zoznamu skladieb pridajú aj piesne označené pri predchádzajúcom
+  vyhľadávaní
+- Rýchlejšia transpozícia a prekresľovanie digitálnych nôt
+- **Zdieľať aplikáciu** na iPade už funguje správne
+- Pokus o prihlásenie cez Google bez internetu zobrazí hlášku o chýbajúcom pripojení
+- Aktualizované knižnice a ďalšie opravy chýb
+
 ## Verzia 1.4.0 - 30.10.2026
 
 ### Digitálne JKS: všetky slohy pod notami

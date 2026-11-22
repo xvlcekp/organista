@@ -13,6 +13,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+-
+
+### Deprecated
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+### Security
+
+-
+
+## [1.4.1] - 2026-11-23
+
+### Added
+
+- Nový repozitár „Nová tvorba“ – 297 nôt novej tvorby k Liturgickému spevníku zo stránky spevnik.sk
+
+### Changed
+
 - Aktualizované knižnice (Firebase, výber súborov, zdieľanie, PDF prehliadač, cache nôt, Sentry)
 - Flutter 3.47, na iOS Firebase 13 cez Swift Package Manager (bez CocoaPods), Android Gradle Plugin 9.1
 - Nová verzia knižnice OSMD 2.3.1 – rýchlejšia transpozícia a prekresľovanie digitálnych nôt, vzhľad zostáva rovnaký

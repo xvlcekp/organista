@@ -1,6 +1,6 @@
 # Texty pre obchody (App Store a Google Play)
 
-Jednotné texty pre obe obchodné stránky v slovenčine, stav k verzii 1.4.0 (30. 10. 2026).
+Jednotné texty pre obe obchodné stránky v slovenčine, stav k verzii 1.4.1 (23. 11. 2026).
 Limity: App Store – názov 30, podtitul 30, propagačný text 170, kľúčové slová 100, popis 4000 znakov;
 Google Play – názov 30, krátky popis 80, úplný popis 4000 znakov. Snímky obrazovky: `docs/screenshots/store/`
 (postup v `tools/store-screenshots/README.md`).
@@ -26,6 +26,7 @@ SPOLOČNÉ REPOZITÁRE NÔT
 • Responzóriové žalmy na nedele, slávenia, férie a liturgické obdobia (advent, Vianoce, pôst, Veľká noc).
 • Ordinárium sv. omše (odpovede, Kyrie, Glória, Sanktus, Agnus – zostavy I–VII) aj v digitálnej verzii.
 • Predohry k JKS, Mariánska kytica, svadobné piesne.
+• Nová tvorba – 297 nôt novej tvorby k Liturgickému spevníku.
 • Pieseň nájdete okamžite vyhľadávaním podľa čísla alebo názvu; viac piesní pridáte naraz.
 
 VLASTNÉ NOTY
@@ -61,20 +62,18 @@ Noty a zoznamy na každú omšu
 
 ### Propagačný text (170)
 
-Nové: celý digitálny JKS so všetkými slohami pod notami, duplikovanie a vyhľadávanie zoznamov skladieb, ťuknutím skryjete ovládanie nôt.
+Nové: repozitár Nová tvorba – 297 nôt novej tvorby k Liturgickému spevníku. Celý digitálny JKS so všetkými slohami pod notami, rýchlejšia transpozícia.
 
 ### Kľúčové slová (100, oddelené čiarkou)
 
 organ,organista,noty,JKS,spevník,žalmy,omša,kantor,liturgia,transpozícia,MusicXML,kostol,chór,zbor
 
-### Čo je nové (verzia 1.4.0)
+### Čo je nové (verzia 1.4.1)
 
-• Digitálne JKS: všetkých 557 piesní má všetky slohy pod notami; dlhšie piesne majú ďalšie slohy na ďalších stranách. O 95 % menej prekrývajúceho sa textu.
-• Ťuknutím na digitálne noty skryjete ovládanie, počítadlo strán aj názov.
-• Zoznamy skladieb: vyhľadávanie, zoradenie (podľa názvu, od najnovších, naposledy upravené), duplikovanie a dátum poslednej úpravy. Ponuka po dlhom podržaní zoznamu.
-• Obrazovka „O aplikácii“ s odkazmi na návod, otázky, novinky a zdroje nôt, tlačidlá Ohodnotiť a Zdieľať.
-• Nové samostatné noty JKS 44, 53, 178, 408b, 408c, 409b, 409c; vylepšené digitálne Ordinárium.
-• Aplikácia je o 6 MB menšia.
+• Nový repozitár Nová tvorba – 297 nôt novej tvorby k Liturgickému spevníku.
+• Pri výbere viacerých piesní v repozitári sa do zoznamu skladieb pridajú aj piesne označené pri predchádzajúcom vyhľadávaní.
+• Rýchlejšia transpozícia a prekresľovanie digitálnych nôt.
+• Opravy: zdieľanie aplikácie na iPade, výber príliš veľkého súboru pri nahrávaní nôt, prihlásenie cez Google bez internetu.
 
 ## Google Play
 
@@ -86,6 +85,6 @@ Noty a zoznamy skladieb na omšu: JKS, žalmy, ordinárium, transpozícia, offli
 
 Rovnaký ako spoločný popis vyššie.
 
-### Poznámky k vydaniu (verzia 1.4.0, 500)
+### Poznámky k vydaniu (verzia 1.4.1, 500)
 
-Digitálne JKS so všetkými slohami pod notami a otáčaním strán; ťuknutím skryjete ovládanie nôt. Zoznamy skladieb: vyhľadávanie, zoradenie, duplikovanie a dátum poslednej úpravy. Nová obrazovka O aplikácii, menšia veľkosť aplikácie.
+Nový repozitár Nová tvorba – 297 nôt novej tvorby k Liturgickému spevníku. Rýchlejšia transpozícia a prekresľovanie digitálnych nôt. Pri výbere viacerých piesní v repozitári sa pridajú aj piesne označené pri predchádzajúcom vyhľadávaní. Opravy chýb.
