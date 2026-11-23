@@ -4,6 +4,8 @@
 
 Info about project for organists: https://xvlcekp.github.io/organista/
 
+Promo video: https://youtu.be/VDxI2hkpkOw
+
 ## Novinky (changelog)
 
 Prehľad noviniek a hlavných funkcií aplikácie s obrázkami a videami je v používateľskej príručke:
