@@ -11,15 +11,13 @@
   border-color: rgba(255, 255, 255, 0.16);
 }
 
-/* YouTube embed: full content width, 16:9 */
-.md-typeset .youtube-embed {
+/* Promo video on the home page: full content width, 16:9 */
+.md-typeset .promo-video {
   display: block;
   clear: both;
   width: 100%;
   max-width: 720px;
   aspect-ratio: 16 / 9;
-  border: 0;
-  border-radius: 12px;
 }
 
 /* Feature tables on the "Novinky" page: three columns on desktop, one feature under another on phones.

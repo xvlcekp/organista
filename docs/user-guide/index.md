@@ -7,9 +7,9 @@ vždy po ruke — usporiadané presne v poradí, v akom ich budete hrať.
 
 ## Predstavenie vo videu
 
-<iframe class="youtube-embed" src="https://www.youtube-nocookie.com/embed/VDxI2hkpkOw" title="Aplikácia Organista"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<video class="promo-video" controls playsinline preload="metadata" title="Aplikácia Organista">
+  <source src="assets/videos/promo.mp4#t=0.001" type="video/mp4">
+</video>
 
 ## Čo aplikácia dokáže
 
