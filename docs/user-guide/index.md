@@ -5,6 +5,12 @@
 **Organista** je mobilná aplikácia pre organistov a hudobníkov, ktorá vám pomôže mať všetky noty
 vždy po ruke — usporiadané presne v poradí, v akom ich budete hrať.
 
+## Predstavenie vo videu
+
+<iframe class="youtube-embed" src="https://www.youtube-nocookie.com/embed/VDxI2hkpkOw" title="Aplikácia Organista"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Čo aplikácia dokáže
 
 - **Zoznamy skladieb** — pripravte si noty na svätú omšu či koncert dopredu a počas hrania už len listujte.
